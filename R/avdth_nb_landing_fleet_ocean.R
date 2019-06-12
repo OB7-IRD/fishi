@@ -46,10 +46,10 @@ avdth_nb_landing_year_fleet_ocean <- function (avdth_con,
                 "Please correct it before running the function."))
   }
   # Query importation ----
-  avdth_nb_landing_year_fleet_ocean_query <- paste(readLines(con = file.path("D:\\IRD\\4-Developpement\\1-R\\6-Packages\\fishi\\inst\\sql",
-                                                                             "avdth_nb_landing_fleet_ocean.sql",
-                                                                             fsep = "\\")),
-                                              collapse = "\n")
+  avdth_nb_landing_year_fleet_ocean_query <- paste(readLines(con = system.file("sql",
+                                                                               "avdth_nb_landing_fleet_ocean.sql",
+                                                                               package = "fishi")),
+                                                   collapse = "\n")
   # Value(s) interpolation(s) ----
   avdth_nb_landing_year_fleet_ocean_query <- toolbox::sql_inset(db_type = "access",
                                                                 replacement = year,
