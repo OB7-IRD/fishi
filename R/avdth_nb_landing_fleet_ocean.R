@@ -69,8 +69,8 @@ avdth_nb_landing_year_fleet_ocean <- function (avdth_con,
   # Data design ----
   avdth_nb_landing_fleet_ocean <- avdth_nb_landing_fleet_ocean %>%
     dplyr::group_by(year_nblanding,
-             month_nblanding,
-             ocean) %>%
+                    month_nblanding,
+                    ocean) %>%
     dplyr::summarise(nb_landing = sum(nb_landing)) %>%
     dplyr::ungroup()
 
