@@ -117,15 +117,15 @@ avdth_nblanding_year_fleet_ocean <- function (avdth_con,
                                nb_landing))
   # Graphic design
   tmp <- ggplot2::ggplot(data = avdth_nblanding_fleet_ocean_final,
-                         aes(x = month_nblanding,
-                             y = nb_landing)) +
+                         ggplot2::aes(x = month_nblanding,
+                                      y = nb_landing)) +
     ggplot2::geom_bar(stat = "identity",
                       width = 0.8,
                       fill = "steelblue") +
     ggplot2::scale_x_discrete(limits = c(1:12)) +
-    ggplot2::geom_text(aes(label = ifelse(nb_landing == 0,
-                                          "",
-                                          nb_landing)),
+    ggplot2::geom_text(ggplot2::aes(label = ifelse(nb_landing == 0,
+                                                   "",
+                                                   nb_landing)),
                        vjust = -0.3,
                        size = 3.5) +
     ggplot2::theme(

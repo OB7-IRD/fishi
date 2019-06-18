@@ -96,6 +96,8 @@ avdth_prcwellsample_year_fleet_ocean <- function(avdth_con,
                                    totwell))
   tmp <- avdth_prcwellsample_year_fleet_ocean_final[, 1:5] %>%
     dplyr::mutate(type = "well_sampled") %>%
+    dplyr::rename(totwell = wellsample) %>%
+    rbind(avdth_prcwellsample_year_fleet_ocean_final[, c(1:4, 6)])
 
 
 
@@ -126,6 +128,6 @@ avdth_prcwellsample_year_fleet_ocean <- function(avdth_con,
   }
   # Graphic design ----
   tmp <- ggplot2::ggplot(avdth_prcwellsample_year_fleet_ocean_final,
-                         aes(fill = condition, y = value, x = specie)) +
+                         ggplot2::aes(fill = condition, y = value, x = specie)) +
     geom_bar(stat ="identity")
 }

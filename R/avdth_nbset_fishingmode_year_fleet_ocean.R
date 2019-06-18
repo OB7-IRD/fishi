@@ -102,14 +102,14 @@ avdth_nbset_fishingmode_year_fleet_ocean <- function(avdth_con,
                                                "Undetermined")))
   # Graphic design ----
   tmp <- ggplot2::ggplot(data = avdth_nbset_fishingmode_year_fleet_ocean,
-                         aes(x = month_nbset,
-                             y = nb_set,
-                             fill = fishing_mode)) +
+                         ggplot2::aes(x = month_nbset,
+                                      y = nb_set,
+                                      fill = fishing_mode)) +
     ggplot2::geom_bar(stat = "identity",
                       width = 0.8,
                       position = position_dodge()) +
     ggplot2::scale_x_discrete(limits = c(1:12)) +
-    ggplot2::geom_text(aes(label = nb_set),
+    ggplot2::geom_text(ggplot2::aes(label = nb_set),
                        vjust = -0.3,
                        size = 2.5,
                        position = position_dodge(0.9)) +

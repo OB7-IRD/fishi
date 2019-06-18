@@ -140,9 +140,9 @@ avdth_catches_sp_fishingmode_year_fleet_ocean <- function (avdth_con,
   }
   # Graphic design ----
   tmp <- ggplot2::ggplot(avdth_catches_sp_fishingmode_year_fleet_ocean,
-                         aes(x = month_catch,
-                             y = catch,
-                             fill = specie_name)) +
+                         ggplot2::aes(x = month_catch,
+                                      y = catch,
+                                      fill = specie_name)) +
     geom_area() +
     ggplot2::scale_x_discrete(limits = c(min(avdth_catches_sp_fishingmode_year_fleet_ocean$month_catch):max(avdth_catches_sp_fishingmode_year_fleet_ocean$month_catch))) +
     ggplot2::ggtitle(label = paste0("Catches on ",
