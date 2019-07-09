@@ -55,18 +55,18 @@ avdth_nbset_fishingmode_year_fleet_ocean <- function(avdth_con,
                                                                                       package = "fishi")),
                                                           collapse = "\n")
   # Value(s) interpolation(s) ----
-  avdth_nbset_fishingmode_year_fleet_ocean_query <- toolbox::sql_inset(db_type = "access",
-                                                                       replacement = year,
-                                                                       pattern = "year_interpolate",
-                                                                       query = avdth_nbset_fishingmode_year_fleet_ocean_query)
-  avdth_nbset_fishingmode_year_fleet_ocean_query <- toolbox::sql_inset(db_type = "access",
-                                                                       replacement = fleet,
-                                                                       pattern = "fleet_interpolate",
-                                                                       query = avdth_nbset_fishingmode_year_fleet_ocean_query)
-  avdth_nbset_fishingmode_year_fleet_ocean_query <- toolbox::sql_inset(db_type = "access",
-                                                                       replacement = ocean,
-                                                                       pattern = "ocean_interpolate",
-                                                                       query = avdth_nbset_fishingmode_year_fleet_ocean_query)
+  avdth_nbset_fishingmode_year_fleet_ocean_query <- furdeb::sql_inset(db_type = "access",
+                                                                      replacement = year,
+                                                                      pattern = "year_interpolate",
+                                                                      query = avdth_nbset_fishingmode_year_fleet_ocean_query)
+  avdth_nbset_fishingmode_year_fleet_ocean_query <- furdeb::sql_inset(db_type = "access",
+                                                                      replacement = fleet,
+                                                                      pattern = "fleet_interpolate",
+                                                                      query = avdth_nbset_fishingmode_year_fleet_ocean_query)
+  avdth_nbset_fishingmode_year_fleet_ocean_query <- furdeb::sql_inset(db_type = "access",
+                                                                      replacement = ocean,
+                                                                      pattern = "ocean_interpolate",
+                                                                      query = avdth_nbset_fishingmode_year_fleet_ocean_query)
   # Data importation ----
   avdth_nbset_fishingmode_year_fleet_ocean <- DBI::dbGetQuery(avdth_con,
                                                               avdth_nbset_fishingmode_year_fleet_ocean_query)
@@ -107,16 +107,16 @@ avdth_nbset_fishingmode_year_fleet_ocean <- function(avdth_con,
                                       fill = fishing_mode)) +
     ggplot2::geom_bar(stat = "identity",
                       width = 0.8,
-                      position = position_dodge()) +
+                      position = ggplot2::position_dodge()) +
     ggplot2::scale_x_discrete(limits = c(1:12)) +
     ggplot2::geom_text(ggplot2::aes(label = nb_set),
                        vjust = -0.3,
                        size = 2.5,
-                       position = position_dodge(0.9)) +
+                       position = ggplot2::position_dodge(0.9)) +
     ggplot2::scale_fill_brewer(palette = "Paired", name = "Fishing mode") +
     ggplot2::theme(
-      axis.text.y = element_blank(),
-      axis.ticks.y = element_blank()
+      axis.text.y = ggplot2::element_blank(),
+      axis.ticks.y = ggplot2::element_blank()
     ) +
     ggplot2::ggtitle(label = paste0("Number of sets for the ",
                                     fleet_name,

@@ -83,21 +83,21 @@ avdth_catches_sp_fishingmode_year_fleet_ocean <- function (avdth_con,
                                                                                            package = "fishi")),
                                                                collapse = "\n")
   # Value(s) interpolation(s) ----
-  avdth_catches_sp_fishingmode_year_fleet_ocean_query <- toolbox::sql_inset(db_type = "access",
-                                                                            replacement = year,
-                                                                            pattern = "year_interpolate",
-                                                                            query = avdth_catches_sp_fishingmode_year_fleet_ocean_query)
-  avdth_catches_sp_fishingmode_year_fleet_ocean_query <- toolbox::sql_inset(db_type = "access",
-                                                                            replacement = fleet,
-                                                                            pattern = "fleet_interpolate",
-                                                                            query = avdth_catches_sp_fishingmode_year_fleet_ocean_query)
-  avdth_catches_sp_fishingmode_year_fleet_ocean_query <- toolbox::sql_inset(db_type = "access",
-                                                                            replacement = ocean,
-                                                                            pattern = "ocean_interpolate",
-                                                                            query = avdth_catches_sp_fishingmode_year_fleet_ocean_query)
-  avdth_catches_sp_fishingmode_year_fleet_ocean_query <- toolbox::sql_inset(db_type = "access",
-                                                                            replacement = fishing_mode,
-                                                                            pattern = "fishing_mode_interpolate",
+  avdth_catches_sp_fishingmode_year_fleet_ocean_query <- furdeb::sql_inset(db_type = "access",
+                                                                           replacement = year,
+                                                                           pattern = "year_interpolate",
+                                                                           query = avdth_catches_sp_fishingmode_year_fleet_ocean_query)
+  avdth_catches_sp_fishingmode_year_fleet_ocean_query <- furdeb::sql_inset(db_type = "access",
+                                                                           replacement = fleet,
+                                                                           pattern = "fleet_interpolate",
+                                                                           query = avdth_catches_sp_fishingmode_year_fleet_ocean_query)
+  avdth_catches_sp_fishingmode_year_fleet_ocean_query <- furdeb::sql_inset(db_type = "access",
+                                                                           replacement = ocean,
+                                                                           pattern = "ocean_interpolate",
+                                                                           query = avdth_catches_sp_fishingmode_year_fleet_ocean_query)
+  avdth_catches_sp_fishingmode_year_fleet_ocean_query <- furdeb::sql_inset(db_type = "access",
+                                                                           replacement = fishing_mode,
+                                                                           pattern = "fishing_mode_interpolate",
                                                                             query = avdth_catches_sp_fishingmode_year_fleet_ocean_query)
   # Data importation ----
   avdth_catches_sp_fishingmode_year_fleet_ocean <- DBI::dbGetQuery(avdth_con,
@@ -143,7 +143,7 @@ avdth_catches_sp_fishingmode_year_fleet_ocean <- function (avdth_con,
                          ggplot2::aes(x = month_catch,
                                       y = catch,
                                       fill = specie_name)) +
-    geom_area() +
+    ggplot2::geom_area() +
     ggplot2::scale_x_discrete(limits = c(min(avdth_catches_sp_fishingmode_year_fleet_ocean$month_catch):max(avdth_catches_sp_fishingmode_year_fleet_ocean$month_catch))) +
     ggplot2::ggtitle(label = paste0("Catches on ",
                                     fishing_mode,

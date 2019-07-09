@@ -8,11 +8,13 @@
 \description{
 Provide statistical indicators for exploratory processes of data associated to fisheries.
 }
-\section{List of available functions}{
+\section{For AVDTH database}{
 
 \itemize{
 \item{\code{\link{avdth_nblanding_year_fleet_ocean}}}
 \item{\code{\link{avdth_nbset_fishingmode_year_fleet_ocean}}}
+\item{\code{\link{avdth_catches_sp_fishingmode_year_fleet_ocean}}}
+\item{\code{\link{avdth_wellsample_year_fleet_ocean}}}
 }
 }
 
@@ -30,7 +32,4 @@ Useful links:
   \item Report bugs at \url{https://github.com/OB7-IRD/fishi/issues}
 }
 
-}
-\author{
-Mathieu Depetris, \email{mathieu.depetris@ird.fr}
 }

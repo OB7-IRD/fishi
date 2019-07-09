@@ -55,18 +55,18 @@ avdth_nblanding_year_fleet_ocean <- function (avdth_con,
                                                                                package = "fishi")),
                                                    collapse = "\n")
   # Value(s) interpolation(s) ----
-  avdth_nblanding_year_fleet_ocean_query <- toolbox::sql_inset(db_type = "access",
-                                                                replacement = year,
-                                                                pattern = "year_interpolate",
-                                                                query = avdth_nblanding_year_fleet_ocean_query)
-  avdth_nblanding_year_fleet_ocean_query <- toolbox::sql_inset(db_type = "access",
-                                                                replacement = fleet,
-                                                                pattern = "fleet_interpolate",
-                                                                query = avdth_nblanding_year_fleet_ocean_query)
-  avdth_nblanding_year_fleet_ocean_query <- toolbox::sql_inset(db_type = "access",
-                                                                replacement = ocean,
-                                                                pattern = "ocean_interpolate",
-                                                                query = avdth_nblanding_year_fleet_ocean_query)
+  avdth_nblanding_year_fleet_ocean_query <- furdeb::sql_inset(db_type = "access",
+                                                              replacement = year,
+                                                              pattern = "year_interpolate",
+                                                              query = avdth_nblanding_year_fleet_ocean_query)
+  avdth_nblanding_year_fleet_ocean_query <- furdeb::sql_inset(db_type = "access",
+                                                              replacement = fleet,
+                                                              pattern = "fleet_interpolate",
+                                                              query = avdth_nblanding_year_fleet_ocean_query)
+  avdth_nblanding_year_fleet_ocean_query <- furdeb::sql_inset(db_type = "access",
+                                                              replacement = ocean,
+                                                              pattern = "ocean_interpolate",
+                                                              query = avdth_nblanding_year_fleet_ocean_query)
   # Data importation ----
   avdth_nblanding_fleet_ocean <- DBI::dbGetQuery(avdth_con,
                                                  avdth_nblanding_year_fleet_ocean_query)
@@ -111,7 +111,8 @@ avdth_nblanding_year_fleet_ocean <- function (avdth_con,
                                                                                 c("year_nblanding",
                                                                                   "month_nblanding",
                                                                                   "ocean")))) %>%
-    dplyr::left_join(avdth_nblanding_fleet_ocean) %>%
+    dplyr::left_join(avdth_nblanding_fleet_ocean,
+                     by = c("year_nblanding", "month_nblanding", "ocean")) %>%
     dplyr::mutate(nb_landing = ifelse(is.na(nb_landing),
                                0,
                                nb_landing))
@@ -129,8 +130,8 @@ avdth_nblanding_year_fleet_ocean <- function (avdth_con,
                        vjust = -0.3,
                        size = 3.5) +
     ggplot2::theme(
-      axis.text.y = element_blank(),
-      axis.ticks.y = element_blank()
+      axis.text.y = ggplot2::element_blank(),
+      axis.ticks.y = ggplot2::element_blank()
     ) +
     ggplot2::ggtitle(label = paste0("Number of landings for the ",
                                     fleet_name,
