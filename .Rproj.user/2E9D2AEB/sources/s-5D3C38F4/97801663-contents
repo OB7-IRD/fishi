@@ -1,0 +1,354 @@
+# Setup -------------------------------------------------------------------
+#To do the first time and if there are a new version of ToolBox package
+library(devtools)
+devtools::install_git('git@git.outils-is.ird.fr:ob7/ToolBox_R.git')
+devtools::install_git('https://git.outils-is.ird.fr/ob7/ToolBox_R.git')
+#Packages
+library(dplyr)
+library(ToolBox)
+library(RPostgreSQL)
+library(ggplot2)
+library(gridExtra)
+
+#Add the configuration file
+config_env=configuration_file("db")
+
+# Db connection (with T3 prod) --------------------------------------------
+t3_connection=db_connection(config_env[["t3plus_user"]],
+                            config_env[["t3plus_password"]],
+                            config_env[["t3plus_dbname"]],
+                            config_env[["t3plus_host"]],
+                            config_env[["t3plus_port"]])
+
+# Number of landings by fleet and ocean -----------------------------------
+t3_nb_landings_fleet_sqlQry=paste(readLines(con=file.path(config_env[["work_path"]], "3-Scripts\\2-SQL", "t3_nblandings_fleet_ocean.sql", fsep="\\")), collapse="\n")
+t3_nb_landings_fleet=dbGetQuery(t3_connection, t3_nb_landings_fleet_sqlQry)
+t3_nb_landings_fleet$month_landing=as.factor(t3_nb_landings_fleet$month_landing)
+
+for (ocean in unique(t3_nb_landings_fleet$ocean_landing)) {
+  tmp1=subset(t3_nb_landings_fleet, ocean_landing==ocean)
+  tmp2=ggplot(data=tmp1, 
+              aes(x=month_landing, 
+                  y=nb_landing))+
+    geom_bar(stat="identity", width=0.8, fill="steelblue")+
+    geom_text(aes(label=nb_landing), vjust=-0.3, size=3.5)+
+    theme(
+      axis.text.y=element_blank(),
+      axis.ticks.y=element_blank()
+    )+
+    ggtitle(label=paste("Number of landings for the ", 
+                        tmp1[1,"fleet_country"], 
+                        " fleet in the ", 
+                        tmp1[1,"ocean_landing"], 
+                        " (", 
+                        tmp1[1,"year_landing"], 
+                        ")", 
+                        sep=""))
+  ggsave(paste(tmp1[1,"fleet_country"], 
+               if (tmp1[1,"ocean_landing"]=="Atlantic Ocean") {"AO"} else {
+                 if (tmp1[1,"ocean_landing"]=="Indian Ocean") {"IO"} else {
+                   stop("Be careful, you need to update the ocean referential")
+                 }
+               }, 
+               tmp1[1,"year_landing"], 
+               "nb_landings.png", 
+               sep="_"),
+         plot=tmp2,
+         path=file.path(config_env[["work_path"]], "4-Sorties", fsep="\\"))
+  if (ocean==last(unique(t3_nb_landings_fleet$ocean_landing))) {
+    rm(ocean, tmp1, tmp2)
+  }
+}
+
+# Number of sets by fishing mode, fleet and ocean -------------------------
+t3_nbset_fishingmode_fleet_ocean_sqlQry=paste(readLines(con=file.path(config_env[["work_path"]], "3-Scripts\\2-SQL", "t3_nbset_fishingmode_fleet_ocean.sql", fsep="\\")), collapse="\n")
+t3_nbset_fishingmode_fleet_ocean=dbGetQuery(t3_connection, t3_nbset_fishingmode_fleet_ocean_sqlQry)
+t3_nbset_fishingmode_fleet_ocean$month_set=as.factor(t3_nbset_fishingmode_fleet_ocean$month_set)
+
+for (ocean in unique(t3_nbset_fishingmode_fleet_ocean$ocean_set)) {
+  tmp1=subset(t3_nbset_fishingmode_fleet_ocean, ocean_set==ocean)
+  tmp2=ggplot(data=tmp1, 
+              aes(x=month_set, 
+                  y=nb_set, 
+                  fill=fishing_mode))+
+    geom_bar(stat="identity", width=0.8, position=position_dodge())+
+    geom_text(aes(label=nb_set), vjust=-0.3, size=2.5, position=position_dodge(0.9))+
+    scale_fill_brewer(palette="Paired")+
+    theme(
+      axis.text.y=element_blank(),
+      axis.ticks.y=element_blank()
+    )+
+    ggtitle(label=paste("Number of sets for the ", 
+                        tmp1[1,"fleet_country"], 
+                        " fleet in the ", 
+                        tmp1[1,"ocean_set"], 
+                        " by fishing mode (", 
+                        tmp1[1,"year_set"], 
+                        ")", 
+                        sep=""))
+  ggsave(paste(tmp1[1,"fleet_country"], 
+               if (tmp1[1,"ocean_set"]=="Atlantic Ocean") {"AO"} else {
+                 if (tmp1[1,"ocean_set"]=="Indian Ocean") {"IO"} else {
+                   stop("Be careful, you need to update the ocean referential")
+                 }
+               }, 
+               tmp1[1,"year_set"], 
+               "nbset_fishingmode.png", 
+               sep="_"),
+         plot=tmp2,
+         path=file.path(config_env[["work_path"]], "4-Sorties", fsep="\\"))
+  if (ocean==last(unique(t3_nbset_fishingmode_fleet_ocean$ocean_set))) {
+    rm(ocean, tmp1, tmp2)
+  }
+}
+
+# Catches by species, fishing mode, fleet and ocean -----------------------
+t3_catches_sp_fishingmode_fleet_ocean_sqlQry=paste(readLines(con=file.path(config_env[["work_path"]], "3-Scripts\\2-SQL", "t3_catches_sp_fishingmode_fleet_ocean.sql", fsep="\\")), collapse="\n")
+t3_catches_sp_fishingmode_fleet_ocean=dbGetQuery(t3_connection, t3_catches_sp_fishingmode_fleet_ocean_sqlQry)
+t3_catches_sp_fishingmode_fleet_ocean$month_catches=as.factor(t3_catches_sp_fishingmode_fleet_ocean$month_catches)
+
+for (ocean in unique(t3_catches_sp_fishingmode_fleet_ocean$ocean_catches)) {
+  for (month in unique(t3_catches_sp_fishingmode_fleet_ocean[t3_catches_sp_fishingmode_fleet_ocean$ocean_catches==ocean, "month_catches"])) {
+    tmp1=subset(t3_catches_sp_fishingmode_fleet_ocean, ocean_catches==ocean & month_catches==month)
+    tmp2=vector("list", length(unique(tmp1$fishing_mode)))
+    names(tmp2)=unique(tmp1$fishing_mode)
+    for (fm in unique(tmp1$fishing_mode)) {
+      tmp3=subset(tmp1, ocean_catches==ocean & month_catches==month & fishing_mode==fm)
+      tmp2[[fm]]=ggplot(tmp3, aes(x=month_catches, y=weight, fill=specie_code))+
+        geom_bar(width=1, stat="identity")+
+        facet_grid(month_catches~fishing_mode)+
+        coord_polar("y")
+    }
+    ggsave(paste(tmp1[1,"fleet_country"], 
+                 if (tmp1[1,"ocean_catches"]=="Atlantic Ocean") {"AO"} else {
+                   if (tmp1[1,"ocean_catches"]=="Indian Ocean") {"IO"} else {
+                     stop("Be careful, you need to update the ocean referential")
+                   }
+                 }, 
+                 tmp1[1,"year_catches"],
+                 tmp1[1, "month_catches"],
+                 "catches_sp_fishingmode.png", 
+                 sep="_"),
+           plot=arrangeGrob(grobs=tmp2, nrow=1, ncol=length(tmp2)),
+           path=file.path(config_env[["work_path"]], "4-Sorties", fsep="\\"))
+  }
+  if (ocean==last(unique(t3_catches_sp_fishingmode_fleet_ocean$ocean_catches))) {
+    rm(ocean, fm, month, tmp1, tmp2, tmp3)
+  }
+}
+
+# Ratio of wells sampled on total number of wells, by fishing mode --------
+t3_allwells_fishingmode_fleet_ocean_sqlQry=paste(readLines(con=file.path(config_env[["work_path"]], "3-Scripts\\2-SQL", "t3_allwells_fishingmode_fleet_ocean.sql", fsep="\\")), collapse="\n")
+t3_allwells_fishingmode_fleet_ocean=dbGetQuery(t3_connection, t3_allwells_fishingmode_fleet_ocean_sqlQry)
+
+t3_wellssampling_fishingmode_fleet_ocean_sqlQry=paste(readLines(con=file.path(config_env[["work_path"]], "3-Scripts\\2-SQL", "t3_wellssampling_fishingmode_fleet_ocean.sql", fsep="\\")), collapse="\n")
+t3_wellssampling_fishingmode_fleet_ocean=dbGetQuery(t3_connection, t3_wellssampling_fishingmode_fleet_ocean_sqlQry)
+
+t3_well_fishingmode_fleet_ocean=t3_allwells_fishingmode_fleet_ocean %>%
+  full_join(t3_wellssampling_fishingmode_fleet_ocean) %>%
+  mutate(nb_well_sample=ifelse(is.na(nb_well_sample), 0, nb_well_sample),
+         nb_well_notsample=nbtt_well-nb_well_sample,
+         nb_well_ratio=round(nb_well_sample/nbtt_well, 2),
+         month_sample=as.factor(month_sample))
+
+t3_well_fishingmode_fleet_ocean_bis=mutate(rename(select(t3_well_fishingmode_fleet_ocean, -nb_well_notsample, -nb_well_ratio),
+                                                   nb_well=nb_well_sample),
+                                            type_sample="Sampled") %>%
+  rbind(mutate(rename(select(t3_well_fishingmode_fleet_ocean, -nb_well_sample, -nb_well_ratio),
+                      nb_well=nb_well_notsample),
+               type_sample="No sampled")) %>%
+  mutate(nb_well_pourcentage=round(ifelse(nb_well==0, 0, nb_well*100/nbtt_well), 2))
+
+for (ocean in unique(t3_well_fishingmode_fleet_ocean$ocean_sample)) {
+  tmp1=subset(t3_well_fishingmode_fleet_ocean, ocean_sample==ocean & fishing_mode!="Unknown")
+  tmp2=ggplot(data=tmp1, 
+              aes(x=month_sample, 
+                  y=nb_well_ratio, 
+                  fill=fishing_mode))+
+    geom_bar(stat="identity", width=0.8, position=position_dodge())+
+    geom_text(aes(label=nb_well_ratio), vjust=-0.3, size=2.5, position=position_dodge(0.9))+
+    scale_fill_brewer(palette="Paired")+
+    theme(
+      axis.text.y=element_blank(),
+      axis.ticks.y=element_blank()
+    )+
+    ggtitle(label=paste("Ratio of sampled wells on total wells for the ", 
+                        tmp1[1,"fleet_country"], 
+                        " fleet in the ", 
+                        tmp1[1,"ocean_sample"], 
+                        " by fishing mode (", 
+                        tmp1[1,"year_sample"], 
+                        ")", 
+                        sep=""))
+  ggsave(paste(tmp1[1,"fleet_country"], 
+               if (tmp1[1,"ocean_sample"]=="Atlantic Ocean") {"AO"} else {
+                 if (tmp1[1,"ocean_sample"]=="Indian Ocean") {"IO"} else {
+                   stop("Be careful, you need to update the ocean referential")
+                 }
+               }, 
+               tmp1[1,"year_sample"], 
+               "ratiowells_fishingmode.png", 
+               sep="_"),
+         plot=tmp2,
+         path=file.path(config_env[["work_path"]], "4-Sorties", fsep="\\"))
+  if (ocean==last(unique(t3_well_fishingmode_fleet_ocean$ocean_sample))) {
+    rm(ocean, tmp1, tmp2)
+  }
+}
+
+for (ocean in unique(t3_well_fishingmode_fleet_ocean_bis$ocean_sample)) {
+  tmp1=subset(t3_well_fishingmode_fleet_ocean_bis, ocean_sample==ocean)
+  tmp2=ggplot(data=tmp1,
+              aes(x=month_sample, 
+                  y=nb_well_pourcentage,
+                  fill=type_sample))+
+    geom_bar(stat="identity", width=0.8)+
+    facet_grid(~fishing_mode)+
+    scale_fill_brewer(palette="Paired")
+  ggsave(paste(tmp1[1,"fleet_country"], 
+               if (tmp1[1,"ocean_sample"]=="Atlantic Ocean") {"AO"} else {
+                 if (tmp1[1,"ocean_sample"]=="Indian Ocean") {"IO"} else {
+                   stop("Be careful, you need to update the ocean referential")
+                 }
+               }, 
+               tmp1[1,"year_sample"], 
+               "wellsampled_fishingmode.png", 
+               sep="_"),
+         plot=tmp2,
+         path=file.path(config_env[["work_path"]], "4-Sorties", fsep="\\"))
+  if (ocean==last(unique(t3_well_fishingmode_fleet_ocean_bis$ocean_sample))) {
+    rm(ocean, tmp1, tmp2)
+  }
+}
+
+# Number of length samples (total and by vessel) by fleet and ocean -------
+t3_nbsampling_length_total_fleet_ocean_sqlQry=paste(readLines(con=file.path(config_env[["work_path"]], "3-Scripts\\2-SQL", "t3_nbsampling_length_total_fleet_ocean.sql", fsep="\\")), collapse="\n")
+t3_nbsampling_length_total_fleet_ocean=dbGetQuery(t3_connection, t3_nbsampling_length_total_fleet_ocean_sqlQry)
+t3_nbsampling_length_total_fleet_ocean$month_sampling=as.factor(t3_nbsampling_length_total_fleet_ocean$month_sampling)
+
+t3_nbsampling_length_vessel_fleet_ocean_sqlQry=paste(readLines(con=file.path(config_env[["work_path"]], "3-Scripts\\2-SQL", "t3_nbsampling_length_vessel_fleet_ocean.sql", fsep="\\")), collapse="\n")
+t3_nbsampling_length_vessel_fleet_ocean=dbGetQuery(t3_connection, t3_nbsampling_length_vessel_fleet_ocean_sqlQry)
+t3_nbsampling_length_vessel_fleet_ocean$month_sampling=as.factor(t3_nbsampling_length_vessel_fleet_ocean$month_sampling)
+
+for (ocean in unique(t3_nbsampling_length_total_fleet_ocean$ocean_landings)) {
+  tmp1=subset(t3_nbsampling_length_total_fleet_ocean, ocean_landings==ocean)
+  tmp2=ggplot(data=tmp1, 
+              aes(x=month_sampling, 
+                  y=nbsampling_lenght_tt))+
+    geom_bar(stat="identity", width=0.8, fill="steelblue")+
+    geom_text(aes(label=nbsampling_lenght_tt), vjust=-0.3, size=3)+
+    theme(
+      axis.text.y=element_blank(),
+      axis.ticks.y=element_blank()
+    )+
+    ggtitle(label=paste("Number of total length samples for the ", 
+                        tmp1[1,"fleet_country"], 
+                        " fleet in the ", 
+                        tmp1[1,"ocean_landings"], 
+                        " by fishing mode (", 
+                        tmp1[1,"year_sampling"], 
+                        ")", 
+                        sep=""))
+  ggsave(paste(tmp1[1,"fleet_country"], 
+               if (tmp1[1,"ocean_landings"]=="Atlantic Ocean") {"AO"} else {
+                 if (tmp1[1,"ocean_landings"]=="Indian Ocean") {"IO"} else {
+                   stop("Be careful, you need to update the ocean referential")
+                 }
+               }, 
+               tmp1[1,"year_sampling"], 
+               "total_lengthsampling.png", 
+               sep="_"),
+         plot=tmp2,
+         path=file.path(config_env[["work_path"]], "4-Sorties", fsep="\\"))
+  if (ocean==last(unique(t3_nbsampling_length_total_fleet_ocean$ocean_landings))) {
+    rm(ocean, tmp1, tmp2)
+  }
+}
+
+for (ocean in unique(t3_nbsampling_length_vessel_fleet_ocean$ocean_landings)) {
+  tmp1=subset(t3_nbsampling_length_vessel_fleet_ocean, ocean_landings==ocean)
+  tmp2=ggplot(data=tmp1, 
+              aes(x=month_sampling, 
+                  y=nbsampling_lenght_tt,
+                  fill=vessel_name))+
+    geom_bar(stat="identity", width=0.8)+
+    scale_fill_brewer(palette="Paired")+
+    ggtitle(label=paste("Number of length samples by vessels for the ", 
+                        tmp1[1,"fleet_country"], 
+                        " fleet in the ", 
+                        tmp1[1,"ocean_landings"], 
+                        " by fishing mode (", 
+                        tmp1[1,"year_sampling"], 
+                        ")", 
+                        sep=""))
+  ggsave(paste(tmp1[1,"fleet_country"], 
+               if (tmp1[1,"ocean_landings"]=="Atlantic Ocean") {"AO"} else {
+                 if (tmp1[1,"ocean_landings"]=="Indian Ocean") {"IO"} else {
+                   stop("Be careful, you need to update the ocean referential")
+                 }
+               }, 
+               tmp1[1,"year_sampling"], 
+               "lengthsampling_vessels.png", 
+               sep="_"),
+         plot=tmp2,
+         path=file.path(config_env[["work_path"]], "4-Sorties", fsep="\\"))
+  if (ocean==last(unique(t3_nbsampling_length_vessel_fleet_ocean$ocean_landings))) {
+    rm(ocean, tmp1, tmp2)
+  }
+}
+
+# Length distribution of fish sampling, by species, fleet and ocean -------
+t3_distributionlength_sp_fleet_ocean_sqlQry=paste(readLines(con=file.path(config_env[["work_path"]], "3-Scripts\\2-SQL", "t3_distributionlength_sp_fleet_ocean.sql", fsep="\\")), collapse="\n")
+t3_distributionlength_sp_fleet_ocean=dbGetQuery(t3_connection, t3_distributionlength_sp_fleet_ocean_sqlQry)
+t3_distributionlength_sp_fleet_ocean$month_landings=as.factor(t3_distributionlength_sp_fleet_ocean$month_landings)
+t3_distributionlength_sp_fleet_ocean$lengthclass=as.factor(t3_distributionlength_sp_fleet_ocean$lengthclass)
+
+for (ocean in unique(t3_distributionlength_sp_fleet_ocean$ocean_catches)) {
+  for (month in unique(t3_distributionlength_sp_fleet_ocean[t3_distributionlength_sp_fleet_ocean$ocean_catches==ocean, "month_landings"])) {
+    tmp1=subset(t3_distributionlength_sp_fleet_ocean, ocean_catches==ocean & month_landings==1)
+    for (sp in unique(tmp1$species)) {
+      tmp2=subset(tmp1, species=sp)
+      tmp3=ggplot(data=tmp2,
+                  aes(x=lengthclass,
+                      y=nf_fish_sampling))+
+        geom_bar(stat="identity", width=0.8, fill="steelblue")+
+        ggtitle(label=paste("Length distribution of ",
+                            sp,
+                            " sampling for the ",
+                            tmp1[1,"fleet_country"], 
+                            " fleet in the ", 
+                            tmp1[1,"ocean_catches"], 
+                            " (",
+                            tmp1[1, "month_landings"],
+                            "-",
+                            tmp1[1,"year_landings"], 
+                            ")", 
+                            sep=""))
+      ggsave(paste(tmp1[1,"fleet_country"], 
+                   if (tmp1[1,"ocean_catches"]=="Atlantic Ocean") {"AO"} else {
+                     if (tmp1[1,"ocean_catches"]=="Indian Ocean") {"IO"} else {
+                       stop("Be careful, you need to update the ocean referential")
+                     }
+                   }, 
+                   tmp1[1,"year_landings"], 
+                   tmp1[1,"month_landings"],
+                   "lengthdistribution",
+                   sp,
+                   "sampling.png", 
+                   sep="_"),
+             plot=tmp3,
+             path=file.path(config_env[["work_path"]], "4-Sorties", fsep="\\"))
+    }
+  }
+  if (ocean==last(unique(t3_distributionlength_sp_fleet_ocean$ocean_catches))) {
+    rm(ocean, month, sp, tmp1, tmp2, tmp3)
+  }
+}
+
+# Location of sets by fishing mode, fleet and ocean -----------------------
+t3_setlocation_fishingmode_fleet_ocean_sqlQry=paste(readLines(con=file.path(config_env[["work_path"]], "3-Scripts\\2-SQL", "t3_setlocation_fishingmode_fleet_ocean.sql", fsep="\\")), collapse="\n")
+t3_setlocation_fishingmode_fleet_ocean=dbGetQuery(t3_connection, t3_setlocation_fishingmode_fleet_ocean_sqlQry)
+
+# Location of sampled sets by fishing mode, fleet and ocean ---------------
+t3_setsampledlocation_fishingmode_fleet_ocean_sqlQry=paste(readLines(con=file.path(config_env[["work_path"]], "3-Scripts\\2-SQL", "t3_setsampledlocation_fishingmode_fleet_ocean.sql", fsep="\\")), collapse="\n")
+t3_setsampledlocation_fishingmode_fleet_ocean=dbGetQuery(t3_connection, t3_setsampledlocation_fishingmode_fleet_ocean_sqlQry)

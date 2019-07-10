@@ -1,0 +1,25 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1562675994204.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "97801663",
+    "lastKnownWriteTime" : 1547808532,
+    "last_content_update" : 1547808532,
+    "path" : "D:/IRD/5-Projets_&_themes/12-Indicateurs/3-Scripts/logbook_indicators.R",
+    "project_path" : null,
+    "properties" : {
+        "cursorPosition" : "119,24",
+        "scrollLine" : "0"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 3,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}
