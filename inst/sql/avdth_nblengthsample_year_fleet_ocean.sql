@@ -11,12 +11,16 @@ FROM
 	INNER JOIN MAREE t ON (echf.C_BAT=t.C_BAT AND echf.D_DBQ=t.D_DBQ))
 	INNER JOIN PORT h ON t.C_PORT_DBQ=h.C_PORT
 WHERE
-	YEAR(echf.D_DBQ) = 2015
-	AND v.C_FLOTTE IN (1, 41)
-	AND IIF(h.V_LON_P > 20, 2, 1) = 1
+	YEAR(echf.D_DBQ) = year_interpolate
+	AND v.C_FLOTTE IN fleet_interpolate
+	AND IIF(h.V_LON_P > 20, 2, 1) = ocean_interpolate
 GROUP BY
 	co.C_ISO3166_A3
 	,YEAR(echf.D_DBQ)
 	,MONTH(echf.D_DBQ)
 	,IIF(h.V_LON_P > 20, 2, 1)
+ORDER BY
+	co.C_ISO3166_A3
+	,YEAR(echf.D_DBQ)
+	,MONTH(echf.D_DBQ)
 ;

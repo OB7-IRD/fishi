@@ -49,11 +49,13 @@ avdth_nblanding_year_fleet_ocean <- function (avdth_con,
                 "\n",
                 "Please correct it before running the function."))
   }
+
   # Query importation ----
   avdth_nblanding_year_fleet_ocean_query <- paste(readLines(con = system.file("sql",
                                                                                "avdth_nblanding_year_fleet_ocean.sql",
                                                                                package = "fishi")),
                                                    collapse = "\n")
+
   # Value(s) interpolation(s) ----
   avdth_nblanding_year_fleet_ocean_query <- furdeb::sql_inset(db_type = "access",
                                                               replacement = year,
@@ -67,9 +69,11 @@ avdth_nblanding_year_fleet_ocean <- function (avdth_con,
                                                               replacement = ocean,
                                                               pattern = "ocean_interpolate",
                                                               query = avdth_nblanding_year_fleet_ocean_query)
+
   # Data importation ----
   avdth_nblanding_fleet_ocean <- DBI::dbGetQuery(avdth_con,
                                                  avdth_nblanding_year_fleet_ocean_query)
+
   # Data design ----
   avdth_nblanding_fleet_ocean <- avdth_nblanding_fleet_ocean %>%
     dplyr::group_by(year_nblanding,
@@ -116,7 +120,8 @@ avdth_nblanding_year_fleet_ocean <- function (avdth_con,
     dplyr::mutate(nb_landing = ifelse(is.na(nb_landing),
                                0,
                                nb_landing))
-  # Graphic design
+
+  # Graphic design ----
   tmp <- ggplot2::ggplot(data = avdth_nblanding_fleet_ocean_final,
                          ggplot2::aes(x = month_nblanding,
                                       y = nb_landing)) +
