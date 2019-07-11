@@ -6,6 +6,7 @@
 #' \item{\code{\link{avdth_catches_sp_fishingmode_year_fleet_ocean}}}
 #' \item{\code{\link{avdth_wellsample_year_fleet_ocean}}}
 #' \item{\code{\link{avdth_nblengthsample_year_fleet_ocean}}}
+#' \item{\code{\link{avdth_nblengthsample_year_fleet_ocean_vessel}}}
 #' }
 #' @section Vignettes link:
 #' \itemize{

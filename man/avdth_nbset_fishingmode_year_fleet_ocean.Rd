@@ -19,7 +19,7 @@ avdth_nbset_fishingmode_year_fleet_ocean(avdth_con, year, fleet, ocean,
 \item{fleet_name}{Fleet(s) name(s) (character value).}
 }
 \value{
-A R list with data/informations for produce a graphic (bar charts) associated to query data specifications.
+A R list with data/informations for produce a graphic (grouped barplot) associated to query data specifications.
 }
 \description{
 Number of set by fishing mode, year, fleet and ocean.

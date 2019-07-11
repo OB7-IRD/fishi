@@ -8,7 +8,7 @@
 #' @param ocean Ocean selected (numeric value). You can select only one ocean (related to output design). Check the vignette related to the referentials for more precisely on accepted values.
 #' @param fleet_name Fleet(s) name(s) (character value).
 #' @references \url{https://github.com/OB7-IRD/fishi}
-#' @return A R list with data/informations for produce a graphic (bar charts) associated to query data specifications.
+#' @return A R list with data/informations for produce a graphic (grouped barplot) associated to query data specifications.
 #' @examples
 #' # For the argument fleet, 1 = France and 41 = Mayotte
 #' # For the argument ocean, 1 = Atlantic Ocean

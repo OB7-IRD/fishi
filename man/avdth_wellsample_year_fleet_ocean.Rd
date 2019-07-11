@@ -21,7 +21,7 @@ avdth_wellsample_year_fleet_ocean(avdth_con, year, fleet, ocean,
 \item{percentage}{If you want to display values in percentages (logical type expected). By default false.}
 }
 \value{
-A R list with data/informations for produce a graphic (bar charts) associated to query data specifications.
+A R list with data/informations for produce a graphic (stacked barplot or stacked percent barplot) associated to query data specifications.
 }
 \description{
 Number of sampled wells regarding the total wells available by year, fleet and ocean.

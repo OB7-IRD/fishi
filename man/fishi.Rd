@@ -16,6 +16,7 @@ Provide statistical indicators for exploratory processes of data associated to f
 \item{\code{\link{avdth_catches_sp_fishingmode_year_fleet_ocean}}}
 \item{\code{\link{avdth_wellsample_year_fleet_ocean}}}
 \item{\code{\link{avdth_nblengthsample_year_fleet_ocean}}}
+\item{\code{\link{avdth_nblengthsample_year_fleet_ocean_vessel}}}
 }
 }
 

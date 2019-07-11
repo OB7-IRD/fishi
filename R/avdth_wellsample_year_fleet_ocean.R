@@ -9,7 +9,7 @@
 #' @param fleet_name Fleet(s) name(s) (character value expected).
 #' @param percentage If you want to display values in percentages (logical type expected). By default false.
 #' @references \url{https://github.com/OB7-IRD/fishi}
-#' @return A R list with data/informations for produce a graphic (bar charts) associated to query data specifications.
+#' @return A R list with data/informations for produce a graphic (stacked barplot or stacked percent barplot) associated to query data specifications.
 #' @examples
 #' # For the argument fleet, 1 = France and 41 = Mayotte
 #' # For the argument ocean, 1 = Atlantic Ocean
@@ -59,7 +59,7 @@ avdth_wellsample_year_fleet_ocean <- function(avdth_con,
                 "\n",
                 "Please correct it before running the function."))
   }
-  if (missing(percentage) || !(is.logical(percentage))) {
+  if (!(is.logical(percentage))) {
     stop(paste0("Missing argument \"percentage\" or not a logical object.",
                 "\n",
                 "Please correct it before running the function."))
