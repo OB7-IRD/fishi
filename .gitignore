@@ -6,7 +6,7 @@
 .RData
 
 # RStudio files
-#.Rproj.user/
+.Rproj.user/
 
 # Temporary files created by R markdown
 *.utf8.md
