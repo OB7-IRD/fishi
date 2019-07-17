@@ -95,7 +95,7 @@ balbaya_catches_sp_fishingmode_year_month_fleet_ocean <- function(balbaya_con,
     balbaya_catches_sp_fishingmode_year_month_fleet_ocean_final <- balbaya_catches_sp_fishingmode_year_month_fleet_ocean
   } else {
     balbaya_catches_sp_fishingmode_year_month_fleet_ocean_final <- balbaya_catches_sp_fishingmode_year_month_fleet_ocean %>%
-      filter(specie_name %in% specie)
+      dplyr::filter(specie_name %in% specie)
   }
 
   # Ocean(s) name(s)
@@ -106,12 +106,12 @@ balbaya_catches_sp_fishingmode_year_month_fleet_ocean <- function(balbaya_con,
 
   # Final deisgn
   balbaya_catches_sp_fishingmode_year_month_fleet_ocean_final <- balbaya_catches_sp_fishingmode_year_month_fleet_ocean_final %>%
-    group_by(year_catch, month_catch, specie_name) %>%
-    summarise(catch = sum(catch)) %>%
-    ungroup() %>%
-    mutate(year_month = paste(year_catch, month_catch, "01", sep = "-"),
-           year_month = lubridate::ymd(year_month)) %>%
-    arrange(year_catch, month_catch)
+    dplyr::group_by(year_catch, month_catch, specie_name) %>%
+    dplyr::summarise(catch = sum(catch)) %>%
+    dplyr::ungroup() %>%
+    dplyr::mutate(year_month = paste(year_catch, month_catch, "01", sep = "-"),
+                  year_month = lubridate::ymd(year_month)) %>%
+    dplyr::arrange(year_catch, month_catch)
 
   # Graphic design ----
   tmp <- ggplot2::ggplot(balbaya_catches_sp_fishingmode_year_month_fleet_ocean_final,
@@ -122,7 +122,7 @@ balbaya_catches_sp_fishingmode_year_month_fleet_ocean <- function(balbaya_con,
     ggplot2::scale_x_date(date_breaks = "months",
                           date_labels = "%Y-%m",
                           expand = c(0, 0)) +
-    ggplot2::theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+    ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 90, hjust = 1)) +
     ggplot2::ggtitle(label = paste0("Catches on ",
                                     fishing_mode_name,
                                     " for the ",
