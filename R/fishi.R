@@ -1,12 +1,14 @@
 #' @title Package Fisheries Indicators
 #' @section For AVDTH database:
 #' \itemize{
-#' \item{\code{\link{avdth_nblanding_year_fleet_ocean}}}
-#' \item{\code{\link{avdth_nbset_fishingmode_year_fleet_ocean}}}
-#' \item{\code{\link{avdth_catches_sp_fishingmode_year_fleet_ocean}}}
-#' \item{\code{\link{avdth_wellsample_year_fleet_ocean}}}
-#' \item{\code{\link{avdth_nblengthsample_year_fleet_ocean}}}
-#' \item{\code{\link{avdth_nblengthsample_year_fleet_ocean_vessel}}}
+#' \item{\code{\link{avdth_nblanding_year_month_fleet_ocean}}}
+#' \item{\code{\link{avdth_nbset_fishingmode_year_month_fleet_ocean}}}
+#' \item{\code{\link{avdth_catches_sp_fishingmode_year_month_fleet_ocean}}}
+#' \item{\code{\link{avdth_wellsample_year_month_fleet_ocean}}}
+#' \item{\code{\link{avdth_nblengthsample_year_month_fleet_ocean}}}
+#' \item{\code{\link{avdth_nblengthsample_year_month_fleet_ocean_vessel}}}
+#' \item{\code{\link{avdth_setloc_fishingmode_year_month_fleet_ocean}}}
+#' \item{\code{\link{avdth_setlocsample_fishingmode_year_month_fleet_ocean}}}
 #' }
 #' @section Vignettes link:
 #' \itemize{
