@@ -1,5 +1,5 @@
-#' @title Number of length sampled by year, month, fleet, ocean and vessel
-#' @description Number of length sampled by year, month, fleet, ocean and vessel.
+#' @title Number of length sampled by year, month, fleet, ocean and vessel (associated to an AVDTH database)
+#' @description Number of length sampled by year, month, fleet, ocean and vessel (associated to an AVDTH database).
 #' @name avdth_nblengthsample_year_month_fleet_ocean_vessel
 #' @author Mathieu Depetris, \email{mathieu.depetris@@ird.fr}
 #' @param avdth_con AVDTH database connection object.

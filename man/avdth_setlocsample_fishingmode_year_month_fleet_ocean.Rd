@@ -3,7 +3,7 @@
 %   R/avdth_setlocsample_fishingmode_year_month_fleet_ocean.R
 \name{avdth_setlocsample_fishingmode_year_month_fleet_ocean}
 \alias{avdth_setlocsample_fishingmode_year_month_fleet_ocean}
-\title{Sampled sets location by year, month, fleet, fishing mode and ocean}
+\title{Sampled sets location by year, month, fleet, fishing mode and ocean (associated to an AVDTH database)}
 \usage{
 avdth_setlocsample_fishingmode_year_month_fleet_ocean(avdth_con, year,
   fleet, ocean, fishing_mode, fleet_name)
@@ -25,7 +25,7 @@ avdth_setlocsample_fishingmode_year_month_fleet_ocean(avdth_con, year,
 A R list (one list for each month of the year selected) with data/informations for produce a map associated to query data specifications.
 }
 \description{
-Sampled sets location by year, month, fleet, fishing mode and ocean.
+Sampled sets location by year, month, fleet, fishing mode and ocean (associated to an AVDTH database).
 }
 \examples{
 # For the argument fleet, 1 = France and 41 = Mayotte

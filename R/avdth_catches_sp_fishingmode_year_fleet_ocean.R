@@ -1,5 +1,5 @@
-#' @title Catches by species, fishing mode, year, month, fleet and ocean
-#' @description Catches by species, fishing mode, year, month, fleet and ocean.
+#' @title Catches by species, fishing mode, year, month, fleet and ocean (associated to an AVDTH database)
+#' @description Catches by species, fishing mode, year, month, fleet and ocean (associated to an AVDTH database).
 #' @name avdth_catches_sp_fishingmode_year_month_fleet_ocean
 #' @author Mathieu Depetris, \email{mathieu.depetris@@ird.fr}
 #' @param avdth_con AVDTH database connection object.
@@ -77,6 +77,7 @@ avdth_catches_sp_fishingmode_year_month_fleet_ocean <- function (avdth_con,
          "\n",
          "Please correct it before running the function.")
   }
+
   # Query importation ----
   avdth_catches_sp_fishingmode_year_month_fleet_ocean_query <- paste(readLines(con = system.file("sql",
                                                                                                  "avdth_catches_sp_fishingmode_year_month_fleet_ocean.sql",
@@ -103,23 +104,31 @@ avdth_catches_sp_fishingmode_year_month_fleet_ocean <- function (avdth_con,
   avdth_catches_sp_fishingmode_year_month_fleet_ocean <- DBI::dbGetQuery(avdth_con,
                                                                          avdth_catches_sp_fishingmode_year_month_fleet_ocean_query)
   # Data design ----
+  # Species selection
+  if (length(specie) == 1 && specie == "all") {
+    avdth_catches_sp_fishingmode_year_month_fleet_ocean_final <- avdth_catches_sp_fishingmode_year_month_fleet_ocean
+  } else {
+    avdth_catches_sp_fishingmode_year_month_fleet_ocean_final <- dplyr::filter(.data = avdth_catches_sp_fishingmode_year_month_fleet_ocean,
+                                                                               specie_name %in% specie)
+  }
+
   # Ocean name
-  if (unique(avdth_catches_sp_fishingmode_year_month_fleet_ocean$ocean) == 1) {
+  if (unique(avdth_catches_sp_fishingmode_year_month_fleet_ocean_final$ocean) == 1) {
     ocean_name <- "Atlantic Ocean"
   } else {
-    if (unique(avdth_catches_sp_fishingmode_year_month_fleet_ocean$ocean) == 2) {
+    if (unique(avdth_catches_sp_fishingmode_year_month_fleet_ocean_final$ocean) == 2) {
       ocean_name <- "Indian Ocean"
     } else {
-      if (unique(avdth_catches_sp_fishingmode_year_month_fleet_ocean$ocean) == 3) {
+      if (unique(avdth_catches_sp_fishingmode_year_month_fleet_ocean_final$ocean) == 3) {
         ocean_name <- "West Pacific Ocean"
       } else {
-        if (unique(avdth_catches_sp_fishingmode_year_month_fleet_ocean$ocean) == 4) {
+        if (unique(avdth_catches_sp_fishingmode_year_month_fleet_ocean_final$ocean) == 4) {
           ocean_name <- "East Pacific Ocean"
         } else {
-          if (unique(avdth_catches_sp_fishingmode_year_month_fleet_ocean$ocean) == 5) {
+          if (unique(avdth_catches_sp_fishingmode_year_month_fleet_ocean_final$ocean) == 5) {
             ocean_name <- "Pacific Ocean"
           } else {
-            if (unique(avdth_catches_sp_fishingmode_year_month_fleet_ocean$ocean) == 6) {
+            if (unique(avdth_catches_sp_fishingmode_year_month_fleet_ocean_final$ocean) == 6) {
               ocean_name <- "Undetermined"
             }
           }
@@ -128,23 +137,19 @@ avdth_catches_sp_fishingmode_year_month_fleet_ocean <- function (avdth_con,
     }
   }
   # Fishing mode
-  fishing_mode <- ifelse(unique(avdth_catches_sp_fishingmode_year_month_fleet_ocean$fishing_mode) == "BL",
+  fishing_mode <- ifelse(unique(avdth_catches_sp_fishingmode_year_month_fleet_ocean_final$fishing_mode) == "BL",
                          "free school",
-                         ifelse(unique(avdth_catches_sp_fishingmode_year_month_fleet_ocean$fishing_mode) == "BO",
+                         ifelse(unique(avdth_catches_sp_fishingmode_year_month_fleet_ocean_final$fishing_mode) == "BO",
                                 "floating object",
                                 "undetermined school"))
-  # Species selection
-  if (unique(specie != "all")) {
-    avdth_catches_sp_fishingmode_year_month_fleet_ocean <- dplyr::filter(.data = avdth_catches_sp_fishingmode_year_month_fleet_ocean,
-                                                                         specie_name %in% specie)
-  }
+
   # Graphic design ----
-  tmp <- ggplot2::ggplot(avdth_catches_sp_fishingmode_year_month_fleet_ocean,
+  tmp <- ggplot2::ggplot(avdth_catches_sp_fishingmode_year_month_fleet_ocean_final,
                          ggplot2::aes(x = month_catch,
                                       y = catch,
                                       fill = specie_name)) +
     ggplot2::geom_area() +
-    ggplot2::scale_x_discrete(limits = c(min(avdth_catches_sp_fishingmode_year_month_fleet_ocean$month_catch):max(avdth_catches_sp_fishingmode_year_month_fleet_ocean$month_catch))) +
+    ggplot2::scale_x_discrete(limits = c(min(avdth_catches_sp_fishingmode_year_month_fleet_ocean_final$month_catch):max(avdth_catches_sp_fishingmode_year_month_fleet_ocean_final$month_catch))) +
     ggplot2::ggtitle(label = paste0("Catches on ",
                                     fishing_mode,
                                     " for the ",

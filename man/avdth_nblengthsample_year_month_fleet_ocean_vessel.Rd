@@ -3,7 +3,7 @@
 %   R/avdth_nblengthsample_year_month_fleet_ocean_vessel.R
 \name{avdth_nblengthsample_year_month_fleet_ocean_vessel}
 \alias{avdth_nblengthsample_year_month_fleet_ocean_vessel}
-\title{Number of length sampled by year, month, fleet, ocean and vessel}
+\title{Number of length sampled by year, month, fleet, ocean and vessel (associated to an AVDTH database)}
 \usage{
 avdth_nblengthsample_year_month_fleet_ocean_vessel(avdth_con, year, fleet,
   ocean, fleet_name, percentage = F)
@@ -25,7 +25,7 @@ avdth_nblengthsample_year_month_fleet_ocean_vessel(avdth_con, year, fleet,
 A R list with data/informations for produce a graphic (stacked barplot or stacked percent barplot) associated to query data specifications.
 }
 \description{
-Number of length sampled by year, month, fleet, ocean and vessel.
+Number of length sampled by year, month, fleet, ocean and vessel (associated to an AVDTH database).
 }
 \examples{
 # For the argument fleet, 1 = France and 41 = Mayotte

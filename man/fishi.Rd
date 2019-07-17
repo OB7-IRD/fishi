@@ -22,6 +22,13 @@ Provide statistical indicators for exploratory processes of data associated to f
 }
 }
 
+\section{For balbaya database}{
+
+\itemize{
+\item{\code{\link{balbaya_catches_sp_fishingmode_year_month_fleet_ocean}}}
+}
+}
+
 \section{Vignettes link}{
 
 \itemize{

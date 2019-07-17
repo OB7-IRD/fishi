@@ -3,7 +3,7 @@
 %   R/avdth_nbset_fishingmode_year_month_fleet_ocean.R
 \name{avdth_nbset_fishingmode_year_month_fleet_ocean}
 \alias{avdth_nbset_fishingmode_year_month_fleet_ocean}
-\title{Number of set by fishing mode, year, month, fleet and ocean}
+\title{Number of set by fishing mode, year, month, fleet and ocean (associated to an AVDTH database)}
 \usage{
 avdth_nbset_fishingmode_year_month_fleet_ocean(avdth_con, year, fleet,
   ocean, fleet_name)
@@ -23,7 +23,7 @@ avdth_nbset_fishingmode_year_month_fleet_ocean(avdth_con, year, fleet,
 A R list with data/informations for produce a graphic (grouped barplot) associated to query data specifications.
 }
 \description{
-Number of set by fishing mode, year, month, fleet and ocean.
+Number of set by fishing mode, year, month, fleet and ocean (associated to an AVDTH database).
 }
 \examples{
 # For the argument fleet, 1 = France and 41 = Mayotte

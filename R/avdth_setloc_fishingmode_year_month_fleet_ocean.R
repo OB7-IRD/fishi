@@ -1,5 +1,5 @@
-#' @title Set location by year, month, fleet, fishing mode and ocean
-#' @description Set location by year, month, fleet, fishing mode and ocean.
+#' @title Set location by year, month, fleet, fishing mode and ocean (associated to an AVDTH database)
+#' @description Set location by year, month, fleet, fishing mode and ocean (associated to an AVDTH database).
 #' @name avdth_setloc_fishingmode_year_month_fleet_ocean
 #' @author Mathieu Depetris, \email{mathieu.depetris@@ird.fr}
 #' @param avdth_con AVDTH database connection object.

@@ -10,6 +10,10 @@
 #' \item{\code{\link{avdth_setloc_fishingmode_year_month_fleet_ocean}}}
 #' \item{\code{\link{avdth_setlocsample_fishingmode_year_month_fleet_ocean}}}
 #' }
+#' @section For balbaya database:
+#' \itemize{
+#' \item{\code{\link{balbaya_catches_sp_fishingmode_year_month_fleet_ocean}}}
+#' }
 #' @section Vignettes link:
 #' \itemize{
 #' \item{\code{\link{../doc/referentials.html}}}

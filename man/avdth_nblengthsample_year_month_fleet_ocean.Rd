@@ -2,7 +2,7 @@
 % Please edit documentation in R/avdth_nblengthsample_year_month_fleet_ocean.R
 \name{avdth_nblengthsample_year_month_fleet_ocean}
 \alias{avdth_nblengthsample_year_month_fleet_ocean}
-\title{Number of length sampled by year, month, fleet and ocean}
+\title{Number of length sampled by year, month, fleet and ocean (associated to an AVDTH database)}
 \usage{
 avdth_nblengthsample_year_month_fleet_ocean(avdth_con, year, fleet, ocean,
   fleet_name)
@@ -22,7 +22,7 @@ avdth_nblengthsample_year_month_fleet_ocean(avdth_con, year, fleet, ocean,
 A R list with data/informations for produce a graphic (barplot) associated to query data specifications.
 }
 \description{
-Number of length sampled by year, month, fleet and ocean.
+Number of length sampled by year, month, fleet and ocean (associated to an AVDTH database).
 }
 \examples{
 # For the argument fleet, 1 = France and 41 = Mayotte
