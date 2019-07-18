@@ -3,7 +3,7 @@
 %   R/balbaya_catches_sp_fishingmode_year_month_fleet_ocean.R
 \name{balbaya_catches_sp_fishingmode_year_month_fleet_ocean}
 \alias{balbaya_catches_sp_fishingmode_year_month_fleet_ocean}
-\title{Catches by species, fishing mode, year, month, fleet and ocean (associated to an balbaya database)}
+\title{Catches by species, fishing mode, year, month, fleet and ocean (associated to a balbaya database)}
 \usage{
 balbaya_catches_sp_fishingmode_year_month_fleet_ocean(balbaya_con, year,
   fleet, ocean, fishing_mode, fleet_name, specie = c("BET", "YFT",
@@ -28,7 +28,7 @@ balbaya_catches_sp_fishingmode_year_month_fleet_ocean(balbaya_con, year,
 A R list with data/informations for produce a graphic (stacked area) associated to query data specifications.
 }
 \description{
-Catches by species, fishing mode, year, month, fleet and ocean (associated to an balbaya database).
+Catches by species, fishing mode, year, month, fleet and ocean (associated to a balbaya database).
 }
 \examples{
 # For the argument fleet, 1 = France and 41 = Mayotte

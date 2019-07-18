@@ -1,5 +1,5 @@
-#' @title Catches by species, fishing mode, year, month, fleet and ocean (associated to an balbaya database)
-#' @description Catches by species, fishing mode, year, month, fleet and ocean (associated to an balbaya database).
+#' @title Catches by species, fishing mode, year, month, fleet and ocean (associated to a balbaya database)
+#' @description Catches by species, fishing mode, year, month, fleet and ocean (associated to a balbaya database).
 #' @name balbaya_catches_sp_fishingmode_year_month_fleet_ocean
 #' @author Mathieu Depetris, \email{mathieu.depetris@@ird.fr}
 #' @param avdth_con Balbaya database connection object.
