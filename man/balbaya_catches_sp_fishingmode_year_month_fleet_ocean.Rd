@@ -7,9 +7,11 @@
 \usage{
 balbaya_catches_sp_fishingmode_year_month_fleet_ocean(balbaya_con, year,
   fleet, ocean, fishing_mode, fleet_name, specie = c("BET", "YFT",
-  "SKJ"))
+  "SKJ"), acronym = TRUE)
 }
 \arguments{
+\item{balbaya_con}{Balbaya database connection object.}
+
 \item{year}{Year selected (numeric value). You can select only one year (related to output design).}
 
 \item{fleet}{Fleet(s) selected (numeric value). You can select several fleets. Check the vignette related to the referentials for more precisely on accepted values.}
@@ -22,7 +24,7 @@ balbaya_catches_sp_fishingmode_year_month_fleet_ocean(balbaya_con, year,
 
 \item{specie}{Specie(s) name(s) selected. Specify specie code (on 3 letters) and add several species with the function c(). If you want to display all the species available, enter "all" in the argument. By default the function shows the 3 major tropical tunas (YFT, BET and SKJ).}
 
-\item{avdth_con}{Balbaya database connection object.}
+\item{acronyme}{If you want to show acronym in the legend or full term. Be default TRUE.}
 }
 \value{
 A R list with data/informations for produce a graphic (stacked area) associated to query data specifications.
@@ -35,7 +37,7 @@ Catches by species, fishing mode, year, month, fleet and ocean (associated to a 
 # For the argument ocean, 1 = Atlantic Ocean and 2 = Indian Ocean
 # For the argument fishing_mode, 1 = Floating object and 2 = Free school
 # By default, for 3 major tropical tunas
-tmp1 <- balbaya_catches_sp_fishingmode_year_month_fleet_ocean(avdth_con = avdth_connection,
+tmp1 <- balbaya_catches_sp_fishingmode_year_month_fleet_ocean(balbaya_con = balbaya_connection,
                                                               year = 2017,
                                                               fleet = c(1, 41),
                                                               ocean = c(1, 2),
