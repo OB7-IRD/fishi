@@ -80,17 +80,22 @@ balbaya_nbset_fishingmode_gear_year_month_fleet_ocean <- function(balbaya_con,
          "Please correct it before running the function.")
   }
   if (!is.logical(monthly)) {
-    stop("Missing argument \"monthly\" or not logical value.",
+    stop("Argument \"monthly\" is not logical value.",
          "\n",
          "Please correct it before running the function.")
   }
   if (!is.logical(neg_set)) {
-    stop("Missing argument \"neg_set\" or not logical value.",
+    stop("Argument \"neg_set\" is not logical value.",
          "\n",
          "Please correct it before running the function.")
   }
   if (!is.logical(pos_set)) {
-    stop("Missing argument \"pos_set\" or not logical value.",
+    stop("Argument \"pos_set\" is not logical value.",
+         "\n",
+         "Please correct it before running the function.")
+  }
+  if (!is.logical(acronym)) {
+    stop("Argument \"acronym\" is not logical value.",
          "\n",
          "Please correct it before running the function.")
   }
@@ -150,9 +155,6 @@ balbaya_nbset_fishingmode_gear_year_month_fleet_ocean <- function(balbaya_con,
   } else {
     year_name <- year
   }
-
-  # Gear(s) name(s)
-
 
   balbaya_nbset_fishingmode_gear_year_month_fleet_ocean <- balbaya_nbset_fishingmode_gear_year_month_fleet_ocean[, c("country", "year_set", "month_set", "ocean_code", "fishing_mode", "gear", "nb_set")] %>%
     dplyr::mutate(set_type = "Positive and negative sets") %>%

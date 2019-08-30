@@ -4,7 +4,7 @@
 \name{fishi}
 \alias{fishi}
 \alias{fishi-package}
-\title{Package Fisheries Indicators}
+\title{Package FISHeries Indicators}
 \description{
 Provide statistical indicators for exploratory processes of data associated to fisheries.
 }

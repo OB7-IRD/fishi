@@ -1,4 +1,4 @@
-#' @title Package Fisheries Indicators
+#' @title Package FISHeries Indicators
 #' @section For AVDTH database:
 #' \subsection{Catches}{
 #' \itemize{
