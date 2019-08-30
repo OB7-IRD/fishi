@@ -38,6 +38,7 @@ Provide statistical indicators for exploratory processes of data associated to f
 \subsection{Effort}{
 \itemize{
 \item{\code{\link{balbaya_nbset_fishingmode_gear_year_month_fleet_ocean}}}
+\item{\code{\link{balbaya_temporal_effort_fishingmode_gear_year_month_fleet_ocean}}}
 }}
 }
 
