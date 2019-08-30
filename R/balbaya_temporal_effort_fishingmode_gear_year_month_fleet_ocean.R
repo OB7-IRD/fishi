@@ -175,7 +175,7 @@ balbaya_temporal_effort_fishingmode_gear_year_month_fleet_ocean <- function(balb
 
   if (monthly == FALSE) {
     balbaya_temporal_effort_fishingmode_gear_year_month_fleet_ocean <- balbaya_temporal_effort_fishingmode_gear_year_month_fleet_ocean %>%
-      dplyr::group_by(country, year_effort, effort_type) %>%
+      dplyr::group_by(year_effort, effort_type) %>%
       dplyr::summarise(effort_value = sum(effort_value)) %>%
       dplyr::ungroup() %>%
       dplyr::mutate(time_scale = paste(year_effort, "01", "01", sep = "-"),
@@ -183,7 +183,7 @@ balbaya_temporal_effort_fishingmode_gear_year_month_fleet_ocean <- function(balb
     date_scale_params <- c("year", "%Y", "Year")
   } else {
     balbaya_temporal_effort_fishingmode_gear_year_month_fleet_ocean <- balbaya_temporal_effort_fishingmode_gear_year_month_fleet_ocean %>%
-      dplyr::group_by(country, year_effort, month_effort, effort_type) %>%
+      dplyr::group_by(year_effort, month_effort, effort_type) %>%
       dplyr::summarise(effort_value = sum(effort_value)) %>%
       dplyr::ungroup() %>%
       dplyr::mutate(time_scale = paste(year_effort,
