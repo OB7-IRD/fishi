@@ -1,3 +1,5 @@
+![fishi_logo](fishi_logo.png)
+
 # Package R fishi
 Statistical indicators for exploratory processes of data associated to fisheries
 
