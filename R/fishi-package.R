@@ -31,6 +31,5 @@
 #' \itemize{
 #' \item{\code{\link{../doc/referentials.html}}}
 #' }
-#' @docType package
-#' @name fishi
+#' @keywords internal
 "_PACKAGE"

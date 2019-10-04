@@ -2,8 +2,8 @@ Package: fishi
 Type: Package
 Title: Package Fisheries Indicators
 Version: 0.1.0
-Author: person("Mathieu", "Depetris", email = "mathieu.depetris@ird.fr", role = c("aut", "cre"))
-Maintainer: Mathieu Depetris <mathieu.depetris@ird.fr>
+Authors@R: c(person("Ob7 -", "Observatory of Exploited Tropical Pelagic Ecosystems", email = "ob7@ird.fr", role = c("cre")),
+    person("Mathieu", "Depetris", email = "mathieu.depetris@ird.fr", role = c("aut")))
 Description: Provide statistical indicators for exploratory processes of data associated to fisheries.
 License: GPL-3
 Encoding: UTF-8
