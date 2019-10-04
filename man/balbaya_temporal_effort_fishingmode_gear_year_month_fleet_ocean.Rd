@@ -53,6 +53,7 @@ For now, you can display 5 temporal variables:
 # For the argument ocean, 1 = Atlantic Ocean and 2 = Indian Ocean
 # For the argument fishing_mode, 1 = Floating object and 2 = Free school
 # For the argument gear, 1 = Purse seiner
+\dontrun{
 tmp1 <- balbaya_temporal_effort_fishingmode_gear_year_month_fleet_ocean(balbaya_con = balabay_connection,
                                                                         year = c(2017, 2018),
                                                                         fleet = c(1, 41),
@@ -62,11 +63,5 @@ tmp1 <- balbaya_temporal_effort_fishingmode_gear_year_month_fleet_ocean(balbaya_
                                                                         fleet_name = "French fleet",
                                                                         monthly = TRUE,
                                                                         variables = c("time_at_sea", "days_at_sea", "fishing_time", "fishing_days", "searching_days"),
-                                                                        acronym = TRUE)
-}
-\references{
-\url{https://github.com/OB7-IRD/fishi}
-}
-\author{
-Mathieu Depetris, \email{mathieu.depetris@ird.fr}
+                                                                        acronym = TRUE)}
 }

@@ -1,7 +1,6 @@
+#' @name balbaya_nbset_fishingmode_gear_year_month_fleet_ocean
 #' @title Number of sets by fishing mode, gear, year, month, fleet and ocean (associated to a balbaya database)
 #' @description Number of sets by fishing mode, year, month, fleet and ocean (associated to a balbaya database).
-#' @name balbaya_nbset_fishingmode_gear_year_month_fleet_ocean
-#' @author Mathieu Depetris, \email{mathieu.depetris@@ird.fr}
 #' @param balbaya_con Balbaya database connection object.
 #' @param year Year selected (numerical value). You can select only one year (related to output design).
 #' @param fleet Fleet(s) selected (numerical value(s)). You can select several fleets. Check the vignette related to the referentials for more precisely on accepted values.
@@ -13,14 +12,13 @@
 #' @param neg_set If you want to display information about number of negative set (logical value). By defaut TRUE.
 #' @param pos_set If you want to display information about number of postive set (logical value). By defaut TRUE.
 #' @param acronyme If you want to show acronym in the legend or full term. Be default TRUE.
-#' @references \url{https://github.com/OB7-IRD/fishi}
 #' @return A R list with data/informations for produce a graphic (stacked area) associated to query data specifications.
-#' @export
 #' @examples
 #' # For the argument fleet, 1 = France and 41 = Mayotte
 #' # For the argument ocean, 1 = Atlantic Ocean and 2 = Indian Ocean
 #' # For the argument fishing_mode, 1 = Floating object and 2 = Free school
 #' # For the argument gear, 1 = Purse seiner
+#' \dontrun{
 #' tmp1 <- balbaya_nbset_fishingmode_gear_year_month_fleet_ocean(balbaya_con = balabay_connection,
 #'                                                               year = c(2017, 2018),
 #'                                                               fleet = c(1, 41),
@@ -31,7 +29,13 @@
 #'                                                               monthly = TRUE,
 #'                                                               neg_set = TRUE,
 #'                                                               pos_set = TRUE,
-#'                                                               acronym = TRUE)
+#'                                                               acronym = TRUE)}
+#' @export
+#' @importFrom furdeb sql_inset ocean_code_to_name fishing_mode_code_to_name gear_code_to_name
+#' @importFrom  DBI dbGetQuery
+#' @importFrom dplyr mutate rename group_by summarise ungroup
+#' @importFrom lubridate ymd
+#' @importFrom ggplot2 ggplot aes geom_line scale_x_date scale_colour_discrete theme element_text ggtitle xlab ylab
 balbaya_nbset_fishingmode_gear_year_month_fleet_ocean <- function(balbaya_con,
                                                                   year,
                                                                   fleet,

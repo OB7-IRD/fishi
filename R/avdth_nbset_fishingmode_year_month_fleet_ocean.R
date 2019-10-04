@@ -1,23 +1,26 @@
+#' @name avdth_nbset_fishingmode_year_month_fleet_ocean
 #' @title Number of set by fishing mode, year, month, fleet and ocean (associated to an AVDTH database)
 #' @description Number of set by fishing mode, year, month, fleet and ocean (associated to an AVDTH database).
-#' @name avdth_nbset_fishingmode_year_month_fleet_ocean
-#' @author Mathieu Depetris, \email{mathieu.depetris@@ird.fr}
 #' @param avdth_con AVDTH database connection object.
 #' @param year Year selected (numeric value). You can select only one year (related to output design).
 #' @param fleet Fleet(s) selected (numeric value). You can select several fleets. Check the vignette related to the referentials for more precisely on accepted values.
 #' @param ocean Ocean selected (numeric value). You can select only one ocean (related to output design). Check the vignette related to the referentials for more precisely on accepted values.
 #' @param fleet_name Fleet(s) name(s) (character value).
-#' @references \url{https://github.com/OB7-IRD/fishi}
 #' @return A R list with data/informations for produce a graphic (grouped barplot) associated to query data specifications.
 #' @examples
 #' # For the argument fleet, 1 = France and 41 = Mayotte
 #' # For the argument ocean, 1 = Atlantic Ocean
+#' \dontrun{
 #' tmp <- avdth_nbset_fishingmode_year_month_fleet_ocean(avdth_con = avdth_connection,
 #'                                                       year = 2017,
 #'                                                       fleet = c(1 , 41),
 #'                                                       ocean = 1,
-#'                                                       fleet_name = "french fleet")
+#'                                                       fleet_name = "french fleet")}
 #' @export
+#' @importFrom furdeb sql_inset
+#' @importFrom DBI dbGetQuery
+#' @importFrom dplyr rowwise mutate
+#' @importFrom ggplot2 ggplot aes geom_bar position_dodge scale_x_discrete geom_text scale_fill_brewer theme element_blank ggtitle xlab ylab
 avdth_nbset_fishingmode_year_month_fleet_ocean <- function(avdth_con,
                                                            year,
                                                            fleet,

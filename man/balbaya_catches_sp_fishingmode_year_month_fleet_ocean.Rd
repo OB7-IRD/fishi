@@ -37,16 +37,11 @@ Catches by species, fishing mode, year, month, fleet and ocean (associated to a 
 # For the argument ocean, 1 = Atlantic Ocean and 2 = Indian Ocean
 # For the argument fishing_mode, 1 = Floating object and 2 = Free school
 # By default, for 3 major tropical tunas
+\dontrun{
 tmp1 <- balbaya_catches_sp_fishingmode_year_month_fleet_ocean(balbaya_con = balbaya_connection,
                                                               year = 2017,
                                                               fleet = c(1, 41),
                                                               ocean = c(1, 2),
                                                               fishing_mode = c(1, 2)
-                                                              fleet_name = "french fleet")
-}
-\references{
-\url{https://github.com/OB7-IRD/fishi}
-}
-\author{
-Mathieu Depetris, \email{mathieu.depetris@ird.fr}
+                                                              fleet_name = "french fleet")}
 }

@@ -1,26 +1,29 @@
+#' @name avdth_setloc_fishingmode_year_month_fleet_ocean
 #' @title Set location by year, month, fleet, fishing mode and ocean (associated to an AVDTH database)
 #' @description Set location by year, month, fleet, fishing mode and ocean (associated to an AVDTH database).
-#' @name avdth_setloc_fishingmode_year_month_fleet_ocean
-#' @author Mathieu Depetris, \email{mathieu.depetris@@ird.fr}
 #' @param avdth_con AVDTH database connection object.
 #' @param year Year selected (numeric value). You can select only one year (related to output design).
 #' @param fleet Fleet(s) selected (numeric value). You can select several fleets. Check the vignette related to the referentials for more precisely on accepted values.
 #' @param ocean Ocean selected (numeric value). You can select only one ocean (related to output design). Check the vignette related to the referentials for more precisely on accepted values.
 #' @param fishing_mode Type of fishing mode. Check the vignette related to the referentials for more precisely on accepted values.
 #' @param fleet_name Fleet(s) name(s) (character value).
-#' @references \url{https://github.com/OB7-IRD/fishi}
 #' @return A R list (one list for each month of the year selected) with data/informations for produce a map associated to query data specifications.
 #' @examples
 #' # For the argument fleet, 1 = France and 41 = Mayotte
 #' # For the argument ocean, 1 = Atlantic Ocean
 #' # For the argument fishing_mode, 1 = Floating object
+#' \dontrun{
 #' tmp <- avdth_setloc_fishingmode_year_month_fleet_ocean(avdth_con = avdth_connection,
 #'                                                        year = 2017,
 #'                                                        fleet = c(1 , 41),
 #'                                                        ocean = 1,
 #'                                                        fishing_mode = 1,
-#'                                                        fleet_name = "french fleet")
+#'                                                        fleet_name = "french fleet")}
 #' @export
+#' @importFrom furdeb sql_inset avdth_position_conversion_dec
+#' @importFrom DBI dbGetQuery
+#' @importFrom dplyr select
+#' @importFrom ggplot2 map_data ggplot geom_polygon aes borders coord_map scale_x_continuous scale_y_continuous geom_point ggtitle
 avdth_setloc_fishingmode_year_month_fleet_ocean <- function(avdth_con,
                                                             year,
                                                             fleet,

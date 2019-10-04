@@ -1,7 +1,6 @@
+#' @name balbaya_catches_sp_fishingmode_year_month_fleet_ocean
 #' @title Catches by species, fishing mode, year, month, fleet and ocean (associated to a balbaya database)
 #' @description Catches by species, fishing mode, year, month, fleet and ocean (associated to a balbaya database).
-#' @name balbaya_catches_sp_fishingmode_year_month_fleet_ocean
-#' @author Mathieu Depetris, \email{mathieu.depetris@@ird.fr}
 #' @param balbaya_con Balbaya database connection object.
 #' @param year Year selected (numeric value). You can select only one year (related to output design).
 #' @param fleet Fleet(s) selected (numeric value). You can select several fleets. Check the vignette related to the referentials for more precisely on accepted values.
@@ -10,20 +9,25 @@
 #' @param fleet_name Fleet(s) name(s) (character value).
 #' @param specie Specie(s) name(s) selected. Specify specie code (on 3 letters) and add several species with the function c(). If you want to display all the species available, enter "all" in the argument. By default the function shows the 3 major tropical tunas (YFT, BET and SKJ).
 #' @param acronyme If you want to show acronym in the legend or full term. Be default TRUE.
-#' @references \url{https://github.com/OB7-IRD/fishi}
 #' @return A R list with data/informations for produce a graphic (stacked area) associated to query data specifications.
-#' @export
 #' @examples
 #' # For the argument fleet, 1 = France and 41 = Mayotte
 #' # For the argument ocean, 1 = Atlantic Ocean and 2 = Indian Ocean
 #' # For the argument fishing_mode, 1 = Floating object and 2 = Free school
 #' # By default, for 3 major tropical tunas
+#' \dontrun{
 #' tmp1 <- balbaya_catches_sp_fishingmode_year_month_fleet_ocean(balbaya_con = balbaya_connection,
 #'                                                               year = 2017,
 #'                                                               fleet = c(1, 41),
 #'                                                               ocean = c(1, 2),
 #'                                                               fishing_mode = c(1, 2)
-#'                                                               fleet_name = "french fleet")
+#'                                                               fleet_name = "french fleet")}
+#' @export
+#' @importFrom furdeb sql_inset ocean_code_to_name fishing_mode_code_to_name
+#' @importFrom  DBI dbGetQuery
+#' @importFrom dplyr filter group_by summarise ungroup mutate arrange
+#' @importFrom lubridate ymd
+#' @importFrom ggplot2 ggplot aes geom_area scale_x_date theme element_text ggtitle scale_fill_brewer xlab ylab
 balbaya_catches_sp_fishingmode_year_month_fleet_ocean <- function(balbaya_con,
                                                                   year,
                                                                   fleet,

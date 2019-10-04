@@ -27,15 +27,10 @@ Number of length sampled by year, month, fleet and ocean (associated to an AVDTH
 \examples{
 # For the argument fleet, 1 = France and 41 = Mayotte
 # For the argument ocean, 1 = Atlantic Ocean
+\dontrun{
 tmp <- avdth_nblengthsample_year_month_fleet_ocean(avdth_con = avdth_connection,
                                                    year = 2017,
                                                    fleet = c(1 , 41),
                                                    ocean = 1,
-                                                   fleet_name = "french fleet")
-}
-\references{
-\url{https://github.com/OB7-IRD/fishi}
-}
-\author{
-Mathieu Depetris, \email{mathieu.depetris@ird.fr}
+                                                   fleet_name = "french fleet")}
 }

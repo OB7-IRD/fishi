@@ -1,37 +1,40 @@
+#' @name avdth_nblengthsample_year_month_fleet_ocean_vessel
 #' @title Number of length sampled by year, month, fleet, ocean and vessel (associated to an AVDTH database)
 #' @description Number of length sampled by year, month, fleet, ocean and vessel (associated to an AVDTH database).
-#' @name avdth_nblengthsample_year_month_fleet_ocean_vessel
-#' @author Mathieu Depetris, \email{mathieu.depetris@@ird.fr}
 #' @param avdth_con AVDTH database connection object.
 #' @param year Year selected (numeric value). You can select only one year (related to output design).
 #' @param fleet Fleet(s) selected (numeric value). You can select several fleets. Check the vignette related to the referentials for more precisely on accepted values.
 #' @param ocean Ocean selected (numeric value). You can select only one ocean (related to output design). Check the vignette related to the referentials for more precisely on accepted values.
 #' @param fleet_name Fleet(s) name(s) (character value).
 #' @param percentage If you want to display values in percentages (logical type expected). By default false.
-#' @references \url{https://github.com/OB7-IRD/fishi}
 #' @return A R list with data/informations for produce a graphic (stacked barplot or stacked percent barplot) associated to query data specifications.
 #' @examples
 #' # For the argument fleet, 1 = France and 41 = Mayotte
 #' # For the argument ocean, 1 = Atlantic Ocean
+#' \dontrun{
 #' tmp <- avdth_nblengthsample_year_month_fleet_ocean(avdth_con = avdth_connection,
 #'                                                    year = 2017,
 #'                                                    fleet = c(1 , 41),
 #'                                                    ocean = 1,
-#'                                                    fleet_name = "french fleet")
+#'                                                    fleet_name = "french fleet")}
 #' # Same as before but with values in percentages
+#' \dontrun{
 #' tmp <- avdth_nblengthsample_year_month_fleet_ocean(avdth_con = avdth_connection,
 #'                                                    year = 2017,
 #'                                                    fleet = c(1 , 41),
 #'                                                    ocean = 1,
 #'                                                    fleet_name = "french fleet",
-#'                                                    percentage = F)
+#'                                                    percentage = F)}
 #' @export
+#' @importFrom furdeb sql_inset
+#' @importFrom DBI dbGetQuery
+#' @importFrom ggplot2 ggplot aes geom_bar scale_fill_brewer scale_x_discrete ggtitle xlab ylab labs scale_y_continuous
 avdth_nblengthsample_year_month_fleet_ocean_vessel <- function(avdth_con,
-                                                         year,
-                                                         fleet,
-                                                         ocean,
-                                                         fleet_name,
-                                                         percentage = F) {
+                                                               year,
+                                                               fleet,
+                                                               ocean,
+                                                               fleet_name,
+                                                               percentage = F) {
   # Arguments verification ----
   if (missing(avdth_con)) {
     stop("Missing argument \"avdth_con\".",

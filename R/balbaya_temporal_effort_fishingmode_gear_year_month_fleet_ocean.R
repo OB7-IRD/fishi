@@ -1,7 +1,6 @@
+#' @name balbaya_temporal_effort_fishingmode_gear_year_month_fleet_ocean
 #' @title Temporal variables of effort by fishing mode, gear, year, month, fleet and ocean (associated to a balbaya database)
 #' @description Temporal variables of effort by fishing mode, year, month, fleet and ocean (associated to a balbaya database).
-#' @name balbaya_temporal_effort_fishingmode_gear_year_month_fleet_ocean
-#' @author Mathieu Depetris, \email{mathieu.depetris@@ird.fr}
 #' @param balbaya_con Balbaya database connection object.
 #' @param year Year selected (numerical value). You can select only one year (related to output design).
 #' @param fleet Fleet(s) selected (numerical value(s)). You can select several fleets. Check the vignette related to the referentials for more precisely on accepted values.
@@ -12,7 +11,6 @@
 #' @param monthly If you want to display information monthly (logical value). By default TRUE
 #' @param variables List of variables that you want to display in the graphic. By default all variables availabe will display. If you want to know more about variables definitions check the section details below.
 #' @param acronyme If you want to show acronym in the legend or full term. Be default TRUE.
-#' @references \url{https://github.com/OB7-IRD/fishi}
 #' @return A R list with data/informations for produce a graphic (stacked area) associated to query data specifications.
 #' @details
 #' For now, you can display 5 temporal variables:
@@ -23,12 +21,12 @@
 #'  \item{fishing_days: }{time (in days) of vessel fishing activity. In the Atlantic Ocean a full day of activity is 12 hours by day and 13 hours for the Indian Ocean.}
 #'  \item{searching_days: }{time (in days) of vessel fishing activity (variable fishing_time) less the set duration (time required to make a catch, start when the fishes is incircled).}
 #' }
-#' @export
 #' @examples
 #' # For the argument fleet, 1 = France and 41 = Mayotte
 #' # For the argument ocean, 1 = Atlantic Ocean and 2 = Indian Ocean
 #' # For the argument fishing_mode, 1 = Floating object and 2 = Free school
 #' # For the argument gear, 1 = Purse seiner
+#' \dontrun{
 #' tmp1 <- balbaya_temporal_effort_fishingmode_gear_year_month_fleet_ocean(balbaya_con = balabay_connection,
 #'                                                                         year = c(2017, 2018),
 #'                                                                         fleet = c(1, 41),
@@ -38,7 +36,14 @@
 #'                                                                         fleet_name = "French fleet",
 #'                                                                         monthly = TRUE,
 #'                                                                         variables = c("time_at_sea", "days_at_sea", "fishing_time", "fishing_days", "searching_days"),
-#'                                                                         acronym = TRUE)
+#'                                                                         acronym = TRUE)}
+#' @export
+#' @importFrom furdeb sql_inset ocean_code_to_name fishing_mode_code_to_name gear_code_to_name
+#' @importFrom DBI dbGetQuery
+#' @importFrom dplyr rename mutate group_by summarise ungroup
+#' @importFrom lubridate ymd
+#' @importFrom stringr str_detect
+#' @importFrom ggplot2 ggplot aes geom_line scale_x_date scale_colour_discrete theme element_text ggtitle xlab ylab
 balbaya_temporal_effort_fishingmode_gear_year_month_fleet_ocean <- function(balbaya_con,
                                                                             year,
                                                                             fleet,

@@ -33,32 +33,29 @@ Catches by species, fishing mode, year, month, fleet and ocean (associated to an
 # For the argument ocean, 1 = Atlantic Ocean
 # For the argument fishing_mode, 1 = Floating object
 # By default, for 3 major tropical tunas
+\dontrun{
 tmp1 <- avdth_catches_sp_fishingmode_year_month_fleet_ocean(avdth_con = avdth_connection,
                                                             year = 2017,
                                                             fleet = c(1, 41),
                                                             ocean = 1,
                                                             fishing_mode = 1
-                                                            fleet_name = "french fleet")
+                                                            fleet_name = "french fleet")}
 # For display all the species available
+\dontrun{
 tmp2 <- avdth_catches_sp_fishingmode_year_month_fleet_ocean(avdth_con = avdth_connection,
                                                       year = 2017,
                                                       fleet = c(1, 41),
                                                       ocean = 1,
                                                       fishing_mode = 1
                                                       fleet_name = "french fleet",
-                                                      specie = "all")
+                                                      specie = "all")}
 # For specify one (or more species), here with the example of Thunnus alalunga (ALB) and Auxis rochei (BLT)
-tmp3 <- avdth_catches_sp_fishingmode_year_month_fleet_ocean(avdth_con = avdth_connection,
+\dontrun{
+#' tmp3 <- avdth_catches_sp_fishingmode_year_month_fleet_ocean(avdth_con = avdth_connection,
                                                             year = 2017,
                                                             fleet = c(1, 41),
                                                             ocean = 1,
                                                             fishing_mode = 1
                                                             fleet_name = "french fleet",
-                                                            specie = c("ALB", "BLT"))
-}
-\references{
-\url{https://github.com/OB7-IRD/fishi}
-}
-\author{
-Mathieu Depetris, \email{mathieu.depetris@ird.fr}
+                                                            specie = c("ALB", "BLT"))}
 }
