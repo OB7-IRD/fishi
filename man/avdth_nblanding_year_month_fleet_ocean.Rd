@@ -13,18 +13,18 @@ avdth_nblanding_year_month_fleet_ocean(
 )
 }
 \arguments{
-\item{avdth_con}{AVDTH database connection object.}
+\item{avdth_con}{(JDBCConnection object) AVDTH database connection object.}
 
-\item{year}{Year selected (numeric value). You can select only one year (related to output design).}
+\item{year}{(integer) Year selected. You can select only one year (related to output design).}
 
-\item{fleet}{Fleet(s) selected (numeric value). You can select several fleets. Check the vignette related to the referentials for more precisely on accepted values.}
+\item{fleet}{(integer) Fleet(s) selected. You can select several fleets. Check the vignette related to the referentials for more precisely on accepted values.}
 
-\item{ocean}{Ocean selected (numeric value). You can select only one ocean (related to output design). Check the vignette related to the referentials for more precisely on accepted values.}
+\item{ocean}{(integer) Ocean selected. You can select only one ocean (related to output design). Check the vignette related to the referentials for more precisely on accepted values.}
 
-\item{fleet_name}{Fleet(s) name(s) (character value).}
+\item{fleet_name}{(character) Fleet(s) name(s).}
 }
 \value{
-A R list with data/informations for produce a graphic (barplot) associated to query data specifications.
+A ggplot object.
 }
 \description{
 Number of landings by year, month, fleet and ocean (associated to an AVDTH database).
@@ -34,8 +34,8 @@ Number of landings by year, month, fleet and ocean (associated to an AVDTH datab
 # For the argument ocean, 1 = Atlantic Ocean
 \dontrun{
 tmp <- avdth_nblanding_year_fleet_ocean(avdth_con = avdth_connection,
-                                        year = 2017,
-                                        fleet = c(1 , 41),
-                                        ocean = 1,
+                                        year = as.integer(2017),
+                                        fleet = as.integer(c(1 , 41)),
+                                        ocean = as.integer(1),
                                         fleet_name = "french fleet")}
 }
