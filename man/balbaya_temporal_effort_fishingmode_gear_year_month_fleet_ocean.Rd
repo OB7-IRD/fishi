@@ -5,11 +5,19 @@
 \alias{balbaya_temporal_effort_fishingmode_gear_year_month_fleet_ocean}
 \title{Temporal variables of effort by fishing mode, gear, year, month, fleet and ocean (associated to a balbaya database)}
 \usage{
-
-  balbaya_temporal_effort_fishingmode_gear_year_month_fleet_ocean(balbaya_con,
-  year, fleet, ocean, fishing_mode, gear, fleet_name, monthly = TRUE,
-  variables = c("time_at_sea", "days_at_sea", "fishing_time",
-  "fishing_days", "searching_days"), acronym = TRUE)
+balbaya_temporal_effort_fishingmode_gear_year_month_fleet_ocean(
+  balbaya_con,
+  year,
+  fleet,
+  ocean,
+  fishing_mode,
+  gear,
+  fleet_name,
+  monthly = TRUE,
+  variables = c("time_at_sea", "days_at_sea", "fishing_time", "fishing_days",
+    "searching_days"),
+  acronym = TRUE
+)
 }
 \arguments{
 \item{balbaya_con}{Balbaya database connection object.}

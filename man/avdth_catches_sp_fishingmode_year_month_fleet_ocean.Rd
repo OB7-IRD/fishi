@@ -4,8 +4,15 @@
 \alias{avdth_catches_sp_fishingmode_year_month_fleet_ocean}
 \title{Catches by species, fishing mode, year, month, fleet and ocean (associated to an AVDTH database)}
 \usage{
-avdth_catches_sp_fishingmode_year_month_fleet_ocean(avdth_con, year, fleet,
-  ocean, fishing_mode, fleet_name, specie = c("BET", "YFT", "SKJ"))
+avdth_catches_sp_fishingmode_year_month_fleet_ocean(
+  avdth_con,
+  year,
+  fleet,
+  ocean,
+  fishing_mode,
+  fleet_name,
+  specie = c("BET", "YFT", "SKJ")
+)
 }
 \arguments{
 \item{avdth_con}{AVDTH database connection object.}

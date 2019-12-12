@@ -4,8 +4,13 @@
 \alias{avdth_nblanding_year_month_fleet_ocean}
 \title{Number of landings by year, month, fleet and ocean (associated to an AVDTH database)}
 \usage{
-avdth_nblanding_year_month_fleet_ocean(avdth_con, year, fleet, ocean,
-  fleet_name)
+avdth_nblanding_year_month_fleet_ocean(
+  avdth_con,
+  year,
+  fleet,
+  ocean,
+  fleet_name
+)
 }
 \arguments{
 \item{avdth_con}{AVDTH database connection object.}

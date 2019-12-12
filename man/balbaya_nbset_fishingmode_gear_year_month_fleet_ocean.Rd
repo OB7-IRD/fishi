@@ -5,9 +5,19 @@
 \alias{balbaya_nbset_fishingmode_gear_year_month_fleet_ocean}
 \title{Number of sets by fishing mode, gear, year, month, fleet and ocean (associated to a balbaya database)}
 \usage{
-balbaya_nbset_fishingmode_gear_year_month_fleet_ocean(balbaya_con, year,
-  fleet, ocean, fishing_mode, gear, fleet_name, monthly = TRUE,
-  neg_set = TRUE, pos_set = TRUE, acronym = TRUE)
+balbaya_nbset_fishingmode_gear_year_month_fleet_ocean(
+  balbaya_con,
+  year,
+  fleet,
+  ocean,
+  fishing_mode,
+  gear,
+  fleet_name,
+  monthly = TRUE,
+  neg_set = TRUE,
+  pos_set = TRUE,
+  acronym = TRUE
+)
 }
 \arguments{
 \item{balbaya_con}{Balbaya database connection object.}

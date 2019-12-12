@@ -5,9 +5,16 @@
 \alias{balbaya_catches_sp_fishingmode_year_month_fleet_ocean}
 \title{Catches by species, fishing mode, year, month, fleet and ocean (associated to a balbaya database)}
 \usage{
-balbaya_catches_sp_fishingmode_year_month_fleet_ocean(balbaya_con, year,
-  fleet, ocean, fishing_mode, fleet_name, specie = c("BET", "YFT",
-  "SKJ"), acronym = TRUE)
+balbaya_catches_sp_fishingmode_year_month_fleet_ocean(
+  balbaya_con,
+  year,
+  fleet,
+  ocean,
+  fishing_mode,
+  fleet_name,
+  specie = c("BET", "YFT", "SKJ"),
+  acronym = TRUE
+)
 }
 \arguments{
 \item{balbaya_con}{Balbaya database connection object.}

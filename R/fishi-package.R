@@ -28,8 +28,6 @@
 #' \item{\code{\link{balbaya_temporal_effort_fishingmode_gear_year_month_fleet_ocean}}}
 #' }}
 #' @section Vignettes link:
-#' \itemize{
-#' \item{\code{\link{../doc/referentials.html}}}
-#' }
+#' ongoing development
 #' @keywords internal
 "_PACKAGE"

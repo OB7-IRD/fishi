@@ -4,8 +4,14 @@
 \alias{avdth_wellsample_year_month_fleet_ocean}
 \title{Number of sampled wells regarding the total wells available by year, month, fleet and ocean (associated to an AVDTH database)}
 \usage{
-avdth_wellsample_year_month_fleet_ocean(avdth_con, year, fleet, ocean,
-  fleet_name, percentage = F)
+avdth_wellsample_year_month_fleet_ocean(
+  avdth_con,
+  year,
+  fleet,
+  ocean,
+  fleet_name,
+  percentage = F
+)
 }
 \arguments{
 \item{avdth_con}{AVDTH database connection object.}

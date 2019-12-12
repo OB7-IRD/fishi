@@ -5,8 +5,14 @@
 \alias{avdth_setloc_fishingmode_year_month_fleet_ocean}
 \title{Set location by year, month, fleet, fishing mode and ocean (associated to an AVDTH database)}
 \usage{
-avdth_setloc_fishingmode_year_month_fleet_ocean(avdth_con, year, fleet,
-  ocean, fishing_mode, fleet_name)
+avdth_setloc_fishingmode_year_month_fleet_ocean(
+  avdth_con,
+  year,
+  fleet,
+  ocean,
+  fishing_mode,
+  fleet_name
+)
 }
 \arguments{
 \item{avdth_con}{AVDTH database connection object.}

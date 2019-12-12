@@ -1,20 +1,20 @@
 #' @name avdth_nblanding_year_month_fleet_ocean
 #' @title Number of landings by year, month, fleet and ocean (associated to an AVDTH database)
 #' @description Number of landings by year, month, fleet and ocean (associated to an AVDTH database).
-#' @param avdth_con AVDTH database connection object.
-#' @param year Year selected (numeric value). You can select only one year (related to output design).
-#' @param fleet Fleet(s) selected (numeric value). You can select several fleets. Check the vignette related to the referentials for more precisely on accepted values.
-#' @param ocean Ocean selected (numeric value). You can select only one ocean (related to output design). Check the vignette related to the referentials for more precisely on accepted values.
-#' @param fleet_name Fleet(s) name(s) (character value).
-#' @return A R list with data/informations for produce a graphic (barplot) associated to query data specifications.
+#' @param avdth_con (JDBCConnection object) AVDTH database connection object.
+#' @param year (integer) Year selected. You can select only one year (related to output design).
+#' @param fleet (integer) Fleet(s) selected. You can select several fleets. Check the vignette related to the referentials for more precisely on accepted values.
+#' @param ocean (integer) Ocean selected. You can select only one ocean (related to output design). Check the vignette related to the referentials for more precisely on accepted values.
+#' @param fleet_name (character) Fleet(s) name(s).
+#' @return A ggplot object.
 #' @examples
 #' # For the argument fleet, 1 = France and 41 = Mayotte
 #' # For the argument ocean, 1 = Atlantic Ocean
 #' \dontrun{
 #' tmp <- avdth_nblanding_year_fleet_ocean(avdth_con = avdth_connection,
-#'                                         year = 2017,
-#'                                         fleet = c(1 , 41),
-#'                                         ocean = 1,
+#'                                         year = as.integer(2017),
+#'                                         fleet = as.integer(c(1 , 41)),
+#'                                         ocean = as.integer(1),
 #'                                         fleet_name = "french fleet")}
 #' @export
 #' @importFrom furdeb sql_inset
@@ -26,40 +26,18 @@ avdth_nblanding_year_month_fleet_ocean <- function (avdth_con,
                                                     fleet,
                                                     ocean,
                                                     fleet_name) {
-  # Arguments verification ----
-  if (missing(avdth_con)) {
-    stop("Missing argument \"avdth_con\".",
-         "\n",
-         "Please correct it before running the function.")
-  }
-  if (missing(year) || length(year) != 1) {
-    stop("Missing argument \"year\" or more than one value inside.",
-         "\n",
-         "Please correct it before running the function.")
-  }
-  if (missing(fleet)) {
-    stop("Missing argument \"fleet\".",
-         "\n",
-         "Please correct it before running the function.")
-  }
-  if (missing(ocean) || length(ocean) != 1) {
-    stop("Missing argument \"ocean\" or more than one value inside.",
-         "\n",
-         "Please correct it before running the function.")
-  }
-  if (missing(fleet_name) || !is.character(fleet_name)) {
-    stop("Missing argument \"fleet_name\" or not a character object.",
-         "\n",
-         "Please correct it before running the function.")
-  }
-
-  # Query importation ----
+  # arguments verification ----
+  fishi:::check_avdth_con(avdth_con)
+  fishi:::check_year(year)
+  fishi:::check_fleet(fleet)
+  fishi:::check_ocean(ocean)
+  fishi:::check_fleet_name(fleet_name)
+  # query importation ----
   avdth_nblanding_year_month_fleet_ocean_query <- paste(readLines(con = system.file("sql",
                                                                                     "avdth_nblanding_year_month_fleet_ocean.sql",
                                                                                     package = "fishi")),
                                                         collapse = "\n")
-
-  # Value(s) interpolation(s) ----
+  # value(s) interpolation(s) ----
   avdth_nblanding_year_month_fleet_ocean_query <- furdeb::sql_inset(db_type = "access",
                                                                     replacement = year,
                                                                     pattern = "year_interpolate",
@@ -72,43 +50,17 @@ avdth_nblanding_year_month_fleet_ocean <- function (avdth_con,
                                                                     replacement = ocean,
                                                                     pattern = "ocean_interpolate",
                                                                     query = avdth_nblanding_year_month_fleet_ocean_query)
-
-  # Data importation ----
+  # data importation ----
   avdth_nblanding_year_month_fleet_ocean <- DBI::dbGetQuery(avdth_con,
                                                             avdth_nblanding_year_month_fleet_ocean_query)
-
-  # Data design ----
+  # data design ----
   avdth_nblanding_year_month_fleet_ocean <- avdth_nblanding_year_month_fleet_ocean %>%
     dplyr::group_by(year_nblanding,
                     month_nblanding,
                     ocean) %>%
     dplyr::summarise(nb_landing = sum(nb_landing)) %>%
     dplyr::ungroup()
-
-  if (unique(avdth_nblanding_year_month_fleet_ocean$ocean) == 1) {
-    ocean_name <- "Atlantic Ocean"
-  } else {
-    if (unique(avdth_nblanding_year_month_fleet_ocean$ocean) == 2) {
-      ocean_name <- "Indian Ocean"
-    } else {
-      if (unique(avdth_nblanding_year_month_fleet_ocean$ocean) == 3) {
-        ocean_name <- "West Pacific Ocean"
-      } else {
-        if (unique(avdth_nblanding_year_month_fleet_ocean$ocean) == 4) {
-          ocean_name <- "East Pacific Ocean"
-        } else {
-          if (unique(avdth_nblanding_year_month_fleet_ocean$ocean) == 5) {
-            ocean_name <- "Pacific Ocean"
-          } else {
-            if (unique(avdth_nblanding_year_month_fleet_ocean$ocean) == 6) {
-              ocean_name <- "Undetermined"
-            }
-          }
-        }
-      }
-    }
-  }
-
+  ocean_name <- furdeb::ocean_code_to_name(ocean_code = unique(avdth_nblanding_year_month_fleet_ocean$ocean))[1]
   avdth_nblanding_year_month_fleet_ocean_final <- as.data.frame(x = matrix(data = c(rep(year, 12),
                                                                                     1:12,
                                                                                     rep(ocean, 12)),
@@ -123,8 +75,7 @@ avdth_nblanding_year_month_fleet_ocean <- function (avdth_con,
     dplyr::mutate(nb_landing = ifelse(is.na(nb_landing),
                                       0,
                                       nb_landing))
-
-  # Graphic design ----
+  # graphic design ----
   tmp <- ggplot2::ggplot(data = avdth_nblanding_year_month_fleet_ocean_final,
                          ggplot2::aes(x = month_nblanding,
                                       y = nb_landing)) +

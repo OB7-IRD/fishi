@@ -4,8 +4,13 @@
 \alias{avdth_nblengthsample_year_month_fleet_ocean}
 \title{Number of length sampled by year, month, fleet and ocean (associated to an AVDTH database)}
 \usage{
-avdth_nblengthsample_year_month_fleet_ocean(avdth_con, year, fleet, ocean,
-  fleet_name)
+avdth_nblengthsample_year_month_fleet_ocean(
+  avdth_con,
+  year,
+  fleet,
+  ocean,
+  fleet_name
+)
 }
 \arguments{
 \item{avdth_con}{AVDTH database connection object.}

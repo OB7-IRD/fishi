@@ -44,9 +44,7 @@ Provide statistical indicators for exploratory processes of data associated to f
 
 \section{Vignettes link}{
 
-\itemize{
-\item{\code{\link{../doc/referentials.html}}}
-}
+ongoing development
 }
 
 \seealso{
