@@ -4,11 +4,13 @@
 \alias{check_fleet}
 \title{Arugment "fleet" verification}
 \usage{
-check_fleet(fleet)
+check_fleet(fleet, several_values)
 }
 \arguments{
 \item{fleet}{(integer) Fleet identification(s)}
+
+\item{several_values}{(logical) Allow multiple values or not during checking}
 }
 \description{
-Check if the item "fleet" is provided and have a class identified as interger
+Check if the item "fleet" is provided and interger value(s)
 }

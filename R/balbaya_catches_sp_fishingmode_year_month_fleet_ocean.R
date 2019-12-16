@@ -1,15 +1,15 @@
 #' @name balbaya_catches_sp_fishingmode_year_month_fleet_ocean
 #' @title Catches by species, fishing mode, year, month, fleet and ocean (associated to a balbaya database)
 #' @description Catches by species, fishing mode, year, month, fleet and ocean (associated to a balbaya database).
-#' @param balbaya_con Balbaya database connection object.
-#' @param year Year selected (numeric value). You can select only one year (related to output design).
-#' @param fleet Fleet(s) selected (numeric value). You can select several fleets. Check the vignette related to the referentials for more precisely on accepted values.
-#' @param ocean Ocean selected (numeric value). You can select only one ocean (related to output design). Check the vignette related to the referentials for more precisely on accepted values.
-#' @param fishing_mode Type of fishing mode. Check the vignette related to the referentials for more precisely on accepted values.
-#' @param fleet_name Fleet(s) name(s) (character value).
-#' @param specie Specie(s) name(s) selected. Specify specie code (on 3 letters) and add several species with the function c(). If you want to display all the species available, enter "all" in the argument. By default the function shows the 3 major tropical tunas (YFT, BET and SKJ).
-#' @param acronyme If you want to show acronym in the legend or full term. Be default TRUE.
-#' @return A R list with data/informations for produce a graphic (stacked area) associated to query data specifications.
+#' @param balbaya_con (JDBCConnection object) Balbaya database connection object.
+#' @param year (integer) Year selected. You can select only one year (related to output design).
+#' @param fleet (integer) Fleet(s) selected. Several values accepted. Check the vignette related to the referentials for more precisely on accepted values.
+#' @param ocean (integer) Ocean(s) selected. Several values accepted. Check the vignette related to the referentials for more precisely on accepted values.
+#' @param fishing_mode (integer) Type of fishing mode. Several values accepted. Check the vignette related to the referentials for more precisely on accepted values.
+#' @param fleet_name (character) Fleet(s) name(s).
+#' @param specie (character) Specie(s) name(s) selected. Specify specie code (on 3 letters) and add several species with the function c(). If you want to display all the species available, enter "all" in the argument. By default the function shows the 3 major tropical tunas (YFT, BET and SKJ).
+#' @param acronyme Show acronym in the legend or full term. Be default TRUE.
+#' @return A ggplot object.
 #' @examples
 #' # For the argument fleet, 1 = France and 41 = Mayotte
 #' # For the argument ocean, 1 = Atlantic Ocean and 2 = Indian Ocean
@@ -24,7 +24,7 @@
 #'                                                               fleet_name = "french fleet")}
 #' @export
 #' @importFrom furdeb sql_inset ocean_code_to_name fishing_mode_code_to_name
-#' @importFrom  DBI dbGetQuery
+#' @importFrom DBI dbGetQuery
 #' @importFrom dplyr filter group_by summarise ungroup mutate arrange
 #' @importFrom lubridate ymd
 #' @importFrom ggplot2 ggplot aes geom_area scale_x_date theme element_text ggtitle scale_fill_brewer xlab ylab
@@ -36,45 +36,28 @@ balbaya_catches_sp_fishingmode_year_month_fleet_ocean <- function(balbaya_con,
                                                                   fleet_name,
                                                                   specie = c("BET", "YFT", "SKJ"),
                                                                   acronym = TRUE) {
-  # Arguments verification ----
-  if (missing(balbaya_con)) {
-    stop("Missing argument \"balbaya_con\".",
-         "\n",
-         "Please correct it before running the function.")
-  }
-  if (missing(year) || ! is.numeric(year)) {
-    stop("Missing argument \"year\" or not numercial value(s).",
-         "\n",
-         "Please correct it before running the function.")
-  }
-  if (missing(fleet) || ! is.numeric(fleet)) {
-    stop("Missing argument \"fleet\" or not numercial value(s).",
-         "\n",
-         "Please correct it before running the function.")
-  }
-  if (missing(ocean) || ! is.numeric(ocean)) {
-    stop("Missing argument \"ocean\" or not numercial value(s).",
-         "\n",
-         "Please correct it before running the function.")
-  }
-  if (missing(fishing_mode) || ! is.numeric(fishing_mode)) {
-    stop("Missing argument \"fishing_mode\" or not numercial value(s).",
-         "\n",
-         "Please correct it before running the function.")
-  }
-  if (missing(fleet_name) || ! is.character(fleet_name)) {
-    stop("Missing argument \"fleet_name\".",
-         "\n",
-         "Please correct it before running the function.")
-  }
+  # arguments verification ----
+  fishi:::check_balbaya_con(balbaya_con)
+  year <- fishi:::check_year(year,
+                             several_values = TRUE)
+  fleet <- fishi:::check_fleet(fleet,
+                               several_values = TRUE)
+  ocean <- fishi:::check_ocean(ocean,
+                               several_values = TRUE)
+  fishing_mode <- fishi:::check_fishing_mode(fishing_mode,
+                                             several_values = TRUE)
+  fishi:::check_fleet_name(fleet_name)
+  fishi:::check_specie(specie,
+                       several_values = TRUE)
+  fishi:::check_acronym(acronym)
 
-  # Query importation ----
+  # query importation ----
   balbaya_catches_sp_fishingmode_year_month_fleet_ocean_query <- paste(readLines(con = system.file("sql",
                                                                                                    "balbaya_catches_sp_fishingmode_year_month_fleet_ocean.sql",
                                                                                                    package = "fishi")),
                                                                        collapse = "\n")
 
-  # Value(s) interpolation(s) ----
+  # value(s) interpolation(s) ----
   balbaya_catches_sp_fishingmode_year_month_fleet_ocean_query <- furdeb::sql_inset(db_type = "postgresql",
                                                                                    replacement = year,
                                                                                    pattern = "year_interpolate",
@@ -92,11 +75,11 @@ balbaya_catches_sp_fishingmode_year_month_fleet_ocean <- function(balbaya_con,
                                                                                    pattern = "fishing_mode_interpolate",
                                                                                    query = balbaya_catches_sp_fishingmode_year_month_fleet_ocean_query)
 
-  # Data importation ----
+  # data importation ----
   balbaya_catches_sp_fishingmode_year_month_fleet_ocean <- DBI::dbGetQuery(balbaya_con,
                                                                            balbaya_catches_sp_fishingmode_year_month_fleet_ocean_query)
-  # Data design ----
-  # Specie(s) selection
+  # data design ----
+  # specie(s) selection
   if (length(specie) == 1 && specie == "all") {
     balbaya_catches_sp_fishingmode_year_month_fleet_ocean_final <- balbaya_catches_sp_fishingmode_year_month_fleet_ocean
   } else {
@@ -105,18 +88,14 @@ balbaya_catches_sp_fishingmode_year_month_fleet_ocean <- function(balbaya_con,
   }
 
   if (acronym == TRUE) {
-    # Ocean(s) name(s)
-    ocean_name <- furdeb::ocean_code_to_name(ocean_code = unique(balbaya_catches_sp_fishingmode_year_month_fleet_ocean_final$ocean_code))[2]
-    # Fishing mode(s) name(s)
-    fishing_mode_name <- furdeb::fishing_mode_code_to_name(fishing_mode_code = unique(balbaya_catches_sp_fishingmode_year_month_fleet_ocean_final$fishing_mode))[2]
+    ocean_name <- furdeb::ocean_code_to_name(ocean_code = unique(balbaya_catches_sp_fishingmode_year_month_fleet_ocean_final$ocean_code))[[2]]
+    fishing_mode_name <- furdeb::fishing_mode_code_to_name(fishing_mode_code = unique(balbaya_catches_sp_fishingmode_year_month_fleet_ocean_final$fishing_mode))[[2]]
     } else {
-    # Ocean(s) name(s)
-    ocean_name <- furdeb::ocean_code_to_name(ocean_code = unique(balbaya_catches_sp_fishingmode_year_month_fleet_ocean_final$ocean_code))[1]
-    # Fishing mode(s) name(s)
-    fishing_mode_name <- furdeb::fishing_mode_code_to_name(fishing_mode_code = unique(balbaya_catches_sp_fishingmode_year_month_fleet_ocean_final$fishing_mode))[1]
+    ocean_name <- furdeb::ocean_code_to_name(ocean_code = unique(balbaya_catches_sp_fishingmode_year_month_fleet_ocean_final$ocean_code))[[1]]
+    fishing_mode_name <- furdeb::fishing_mode_code_to_name(fishing_mode_code = unique(balbaya_catches_sp_fishingmode_year_month_fleet_ocean_final$fishing_mode))[[1]]
   }
 
-  # Year(s) name(s)
+  # year(s) name(s)
   if (length(year) != 1) {
     year <- sort(year)
     year_name <- paste(year, collapse = ", ")
@@ -124,7 +103,7 @@ balbaya_catches_sp_fishingmode_year_month_fleet_ocean <- function(balbaya_con,
     year_name <- year
   }
 
-  # Final deisgn
+  # final deisgn
   balbaya_catches_sp_fishingmode_year_month_fleet_ocean_final <- balbaya_catches_sp_fishingmode_year_month_fleet_ocean_final %>%
     dplyr::group_by(year_catch, month_catch, specie_name) %>%
     dplyr::summarise(catch = sum(catch)) %>%
@@ -133,7 +112,7 @@ balbaya_catches_sp_fishingmode_year_month_fleet_ocean <- function(balbaya_con,
                   year_month = lubridate::ymd(year_month)) %>%
     dplyr::arrange(year_catch, month_catch)
 
-  # Graphic design ----
+  # graphic design ----
   tmp <- ggplot2::ggplot(balbaya_catches_sp_fishingmode_year_month_fleet_ocean_final,
                          ggplot2::aes(x = year_month,
                                       y = catch,

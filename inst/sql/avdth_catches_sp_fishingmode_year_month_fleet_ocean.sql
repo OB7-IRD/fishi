@@ -3,7 +3,7 @@ SELECT
 	,YEAR(act.D_ACT) AS year_catch
 	,MONTH(act.D_ACT) AS month_catch
 	,o.C_OCEA AS ocean
-	,tb.L_TBANC4L AS fishing_mode
+	,tb.C_TBANC AS fishing_mode
 	,sp.C_ESP_3L AS specie_name
 	,sum(c.V_POIDS_CAPT) AS catch
 FROM
@@ -26,6 +26,6 @@ GROUP BY
 	,YEAR(act.D_ACT)
 	,MONTH(act.D_ACT)
 	,o.C_OCEA
-	,tb.L_TBANC4L
+	,tb.C_TBANC
 	,sp.C_ESP_3L
 ;

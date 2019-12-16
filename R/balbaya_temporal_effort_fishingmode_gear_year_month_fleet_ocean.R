@@ -1,17 +1,17 @@
 #' @name balbaya_temporal_effort_fishingmode_gear_year_month_fleet_ocean
 #' @title Temporal variables of effort by fishing mode, gear, year, month, fleet and ocean (associated to a balbaya database)
 #' @description Temporal variables of effort by fishing mode, year, month, fleet and ocean (associated to a balbaya database).
-#' @param balbaya_con Balbaya database connection object.
-#' @param year Year selected (numerical value). You can select only one year (related to output design).
-#' @param fleet Fleet(s) selected (numerical value(s)). You can select several fleets. Check the vignette related to the referentials for more precisely on accepted values.
-#' @param ocean Ocean selected (numerical value(s)). You can select only one ocean (related to output design). Check the vignette related to the referentials for more precisely on accepted values.
-#' @param fishing_mode Type of fishing mode (numerical value(s)). Check the vignette related to the referentials for more precisely on accepted values.
-#' @param gear Gear(s) name(s) (numerical value(s)).
-#' @param fleet_name Fleet(s) name(s) (character value).
-#' @param monthly If you want to display information monthly (logical value). By default TRUE
-#' @param variables List of variables that you want to display in the graphic. By default all variables availabe will display. If you want to know more about variables definitions check the section details below.
-#' @param acronyme If you want to show acronym in the legend or full term. Be default TRUE.
-#' @return A R list with data/informations for produce a graphic (stacked area) associated to query data specifications.
+#' @param balbaya_con (JDBCConnection object) Balbaya database connection object.
+#' @param year (interger) Year(s) selected.
+#' @param fleet (integer) Fleet(s) selected.
+#' @param ocean (integer) Ocean(s) selected.
+#' @param fishing_mode (integer) Type(s) of fishing mode.
+#' @param gear (integer) Gear name(s).
+#' @param fleet_name (character) Fleet name(s).
+#' @param monthly (logical) Display information monthly. By default TRUE
+#' @param effort_variable (character) List of effort variable(s) display in the graphic. By default all variables availabe will display.
+#' @param acronyme Show acronym in the legend or full term. By default TRUE.
+#' @return A ggplot object.
 #' @details
 #' For now, you can display 5 temporal variables:
 #' \itemize{
@@ -52,67 +52,32 @@ balbaya_temporal_effort_fishingmode_gear_year_month_fleet_ocean <- function(balb
                                                                             gear,
                                                                             fleet_name,
                                                                             monthly = TRUE,
-                                                                            variables = c("time_at_sea", "days_at_sea", "fishing_time", "fishing_days", "searching_days"),
+                                                                            effort_variable = c("time_at_sea", "days_at_sea", "fishing_time", "fishing_days", "searching_days"),
                                                                             acronym = TRUE) {
-  # Arguments verification ----
-  if (missing(balbaya_con)) {
-    stop("Missing argument \"balbaya_con\".",
-         "\n",
-         "Please correct it before running the function.")
-  }
-  if (missing(year) || ! is.numeric(year)) {
-    stop("Missing argument \"year\" or not numercial value(s).",
-         "\n",
-         "Please correct it before running the function.")
-  }
-  if (missing(fleet) || ! is.numeric(fleet)) {
-    stop("Missing argument \"fleet\" or not numercial value(s).",
-         "\n",
-         "Please correct it before running the function.")
-  }
-  if (missing(ocean) || ! is.numeric(ocean)) {
-    stop("Missing argument \"ocean\" or not numercial value(s).",
-         "\n",
-         "Please correct it before running the function.")
-  }
-  if (missing(fishing_mode) || ! is.numeric(fishing_mode)) {
-    stop("Missing argument \"fishing_mode\" or not numercial value(s).",
-         "\n",
-         "Please correct it before running the function.")
-  }
-  if (missing(gear) || ! is.numeric(gear)) {
-    stop("Missing argument \"gear\" or not numercial value(s).",
-         "\n",
-         "Please correct it before running the function.")
-  }
-  if (missing(fleet_name) || !is.character(fleet_name)) {
-    stop("Missing argument \"fleet_name\" or not character value.",
-         "\n",
-         "Please correct it before running the function.")
-  }
-  if (!is.logical(monthly)) {
-    stop("Missing argument \"monthly\" or not logical value.",
-         "\n",
-         "Please correct it before running the function.")
-  }
-  if (!is.character(variables)) {
-    stop("Argument \"variables\" is not character value(s).",
-         "\n",
-         "Please correct it before running the function.")
-  }
-  if (!is.logical(acronym)) {
-    stop("Missing argument \"acronym\" or not logical value.",
-         "\n",
-         "Please correct it before running the function.")
-  }
+  # arguments verification ----
+  fishi:::check_balbaya_con(balbaya_con)
+  year <- fishi:::check_year(year,
+                             several_values = TRUE)
+  fleet <- fishi:::check_fleet(fleet,
+                               several_values = TRUE)
+  ocean <- fishi:::check_ocean(ocean,
+                               several_values = TRUE)
+  fishing_mode <- fishi:::check_fishing_mode(fishing_mode,
+                                             several_values = TRUE)
+  gear <- fishi:::check_gear(gear,
+                             several_values = TRUE)
+  fishi:::check_fleet_name(fleet_name)
+  fishi:::check_monthly(monthly)
+  fishi:::check_effort_variable(effort_variable)
+  fishi:::check_acronym(acronym)
 
-  # Query importation ----
+  # query importation ----
   balbaya_temporal_effort_fishingmode_gear_year_month_fleet_ocean_query <- paste(readLines(con = system.file("sql",
                                                                                                              "balbaya_temporal_effort_fishingmode_gear_year_month_fleet_ocean.sql",
                                                                                                              package = "fishi")),
                                                                                  collapse = "\n")
 
-  # Value(s) interpolation(s) ----
+  # value(s) interpolation(s) ----
   balbaya_temporal_effort_fishingmode_gear_year_month_fleet_ocean_query <- furdeb::sql_inset(db_type = "postgresql",
                                                                                              replacement = year,
                                                                                              pattern = "year_interpolate",
@@ -134,27 +99,21 @@ balbaya_temporal_effort_fishingmode_gear_year_month_fleet_ocean <- function(balb
                                                                                              pattern = "gear_interpolate",
                                                                                              query = balbaya_temporal_effort_fishingmode_gear_year_month_fleet_ocean_query)
 
-  # Data importation ----
+  # data importation ----
   balbaya_temporal_effort_fishingmode_gear_year_month_fleet_ocean <- DBI::dbGetQuery(balbaya_con,
                                                                                      balbaya_temporal_effort_fishingmode_gear_year_month_fleet_ocean_query)
-  # Data design ----
+  # data design ----
   if (acronym == TRUE) {
-    # Ocean(s) name(s)
-    ocean_name <- furdeb::ocean_code_to_name(ocean_code = unique(balbaya_temporal_effort_fishingmode_gear_year_month_fleet_ocean$ocean_code))[2]
-    # Fishing mode(s) name(s)
-    fishing_mode_name <- furdeb::fishing_mode_code_to_name(fishing_mode_code = unique(balbaya_temporal_effort_fishingmode_gear_year_month_fleet_ocean$fishing_mode))[2]
-    # Gear(s) name(s)
-    gear_name <- furdeb::gear_code_to_name(gear_code = unique(balbaya_temporal_effort_fishingmode_gear_year_month_fleet_ocean$gear))[2]
+    ocean_name <- furdeb::ocean_code_to_name(ocean_code = unique(balbaya_temporal_effort_fishingmode_gear_year_month_fleet_ocean$ocean_code))[[2]]
+    fishing_mode_name <- furdeb::fishing_mode_code_to_name(fishing_mode_code = unique(balbaya_temporal_effort_fishingmode_gear_year_month_fleet_ocean$fishing_mode))[[2]]
+    gear_name <- furdeb::gear_code_to_name(gear_code = unique(balbaya_temporal_effort_fishingmode_gear_year_month_fleet_ocean$gear))[[2]]
   } else {
-    # Ocean(s) name(s)
-    ocean_name <- furdeb::ocean_code_to_name(ocean_code = unique(balbaya_temporal_effort_fishingmode_gear_year_month_fleet_ocean$ocean_code))[1]
-    # Fishing mode(s) name(s)
-    fishing_mode_name <- furdeb::fishing_mode_code_to_name(fishing_mode_code = unique(balbaya_temporal_effort_fishingmode_gear_year_month_fleet_ocean$fishing_mode))[1]
-    # Gear(s) name(s)
-    gear_name <- furdeb::gear_code_to_name(gear_code = unique(balbaya_temporal_effort_fishingmode_gear_year_month_fleet_ocean$gear))[1]
+    ocean_name <- furdeb::ocean_code_to_name(ocean_code = unique(balbaya_temporal_effort_fishingmode_gear_year_month_fleet_ocean$ocean_code))[[1]]
+    fishing_mode_name <- furdeb::fishing_mode_code_to_name(fishing_mode_code = unique(balbaya_temporal_effort_fishingmode_gear_year_month_fleet_ocean$fishing_mode))[[1]]
+    gear_name <- furdeb::gear_code_to_name(gear_code = unique(balbaya_temporal_effort_fishingmode_gear_year_month_fleet_ocean$gear))[[1]]
   }
 
-  # Year(s) name(s)
+  # year(s) name(s)
   if (length(year) != 1) {
     year <- sort(year)
     year_name <- paste(year, collapse = ", ")
@@ -199,33 +158,33 @@ balbaya_temporal_effort_fishingmode_gear_year_month_fleet_ocean <- function(balb
     date_scale_params <- c("months", "%Y-%m", "Year-month")
   }
 
-  balbaya_temporal_effort_fishingmode_gear_year_month_fleet_ocean <- balbaya_temporal_effort_fishingmode_gear_year_month_fleet_ocean[balbaya_temporal_effort_fishingmode_gear_year_month_fleet_ocean$effort_type %in% variables,]
+  balbaya_temporal_effort_fishingmode_gear_year_month_fleet_ocean <- balbaya_temporal_effort_fishingmode_gear_year_month_fleet_ocean[balbaya_temporal_effort_fishingmode_gear_year_month_fleet_ocean$effort_type %in% effort_variable,]
 
-  for (i in 1:length(variables)) {
-    if (stringr::str_detect(variables[i], "time")) {
-      names(variables)[i] <- paste0(toupper(substr(variables[i], 1, 1)),
+  for (i in 1:length(effort_variable)) {
+    if (stringr::str_detect(effort_variable[i], "time")) {
+      names(effort_variable)[i] <- paste0(toupper(substr(effort_variable[i], 1, 1)),
                                     gsub(pattern = "_",
                                          replacement = " ",
-                                         x = substr(variables[i], 2, nchar(variables[i]))),
+                                         x = substr(effort_variable[i], 2, nchar(effort_variable[i]))),
                                     ", hour(s)")
     } else {
-      names(variables)[i] <- paste0(toupper(substr(variables[i], 1, 1)),
+      names(effort_variable)[i] <- paste0(toupper(substr(effort_variable[i], 1, 1)),
                                     gsub(pattern = "_",
                                          replacement = " ",
-                                         x = substr(variables[i], 2, nchar(variables[i]))),
+                                         x = substr(effort_variable[i], 2, nchar(effort_variable[i]))),
                                     ", day(s)")
     }
   }
 
   for (i in 1:dim(balbaya_temporal_effort_fishingmode_gear_year_month_fleet_ocean)[1]) {
-    for (j in 1:length(variables)) {
-      if (balbaya_temporal_effort_fishingmode_gear_year_month_fleet_ocean[i, "effort_type"] == variables[j]) {
-        balbaya_temporal_effort_fishingmode_gear_year_month_fleet_ocean[i, "effort_type"] <- names(variables[j])
+    for (j in 1:length(effort_variable)) {
+      if (balbaya_temporal_effort_fishingmode_gear_year_month_fleet_ocean[i, "effort_type"] == effort_variable[j]) {
+        balbaya_temporal_effort_fishingmode_gear_year_month_fleet_ocean[i, "effort_type"] <- names(effort_variable[j])
       }
     }
   }
 
-  # Graphic design ----
+  # graphic design ----
   tmp <- ggplot2::ggplot(balbaya_temporal_effort_fishingmode_gear_year_month_fleet_ocean,
                          ggplot2::aes(x = time_scale,
                                       y = effort_value,
@@ -236,7 +195,7 @@ balbaya_temporal_effort_fishingmode_gear_year_month_fleet_ocean <- function(balb
                           date_labels = date_scale_params[2],
                           expand = c(0, 0)) +
     ggplot2::scale_colour_discrete(name = "Effort type",
-                                   breaks = names(variables)) +
+                                   breaks = names(effort_variable)) +
     ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 90, hjust = 1)) +
     ggplot2::ggtitle(label = paste0("Temporal variables of effort on ",
                                     fishing_mode_name,

@@ -7,18 +7,16 @@ FROM (SELECT
 	,IIF(h.V_LON_P > 20, 2, 1) AS ocean
 	,COUNT(*) AS nb_landing
 FROM
-	((MAREE t
+	(MAREE t
 	INNER JOIN BATEAU v ON t.C_BAT=v.C_BAT)
-	INNER JOIN PAYS co ON v.C_FLOTTE=co.C_PAYS)
-	INNER JOIN PORT h ON v.C_FLOTTE=h.C_PORT
+	INNER JOIN PAYS co ON v.C_FLOTTE=co.C_PAYS
+	INNER JOIN PORT h ON t.C_PORT_DBQ=h.C_PORT
 WHERE
-	YEAR(t.D_DBQ) = year_interpolate
-	AND v.C_FLOTTE IN fleet_interpolate
+	YEAR(t.D_DBQ) = 2017
+	AND v.C_FLOTTE IN (1, 41)
 GROUP BY
 	co.C_ISO3166_A3
 	,YEAR(t.D_DBQ)
 	,MONTH(t.D_DBQ)
 	,IIF(h.V_LON_P > 20, 2, 1))
-WHERE
-	ocean = ocean_interpolate
 ;

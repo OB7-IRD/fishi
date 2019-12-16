@@ -15,20 +15,20 @@ avdth_nblengthsample_year_month_fleet_ocean_vessel(
 )
 }
 \arguments{
-\item{avdth_con}{AVDTH database connection object.}
+\item{avdth_con}{(JDBCConnection object) AVDTH database connection object.}
 
-\item{year}{Year selected (numeric value). You can select only one year (related to output design).}
+\item{year}{(integer) Year selected. You can select only one year (related to output design).}
 
-\item{fleet}{Fleet(s) selected (numeric value). You can select several fleets. Check the vignette related to the referentials for more precisely on accepted values.}
+\item{fleet}{(integer) Fleet(s) selected. You can select several fleets. Check the vignette related to the referentials for more precisely on accepted values.}
 
-\item{ocean}{Ocean selected (numeric value). You can select only one ocean (related to output design). Check the vignette related to the referentials for more precisely on accepted values.}
+\item{ocean}{(integer) Ocean selected. You can select only one ocean (related to output design). Check the vignette related to the referentials for more precisely on accepted values.}
 
-\item{fleet_name}{Fleet(s) name(s) (character value).}
+\item{fleet_name}{(integer) Fleet(s) name(s).}
 
-\item{percentage}{If you want to display values in percentages (logical type expected). By default false.}
+\item{percentage}{(logical) If you want to display values in percentages. By default false.}
 }
 \value{
-A R list with data/informations for produce a graphic (stacked barplot or stacked percent barplot) associated to query data specifications.
+A ggplot object.
 }
 \description{
 Number of length sampled by year, month, fleet, ocean and vessel (associated to an AVDTH database).

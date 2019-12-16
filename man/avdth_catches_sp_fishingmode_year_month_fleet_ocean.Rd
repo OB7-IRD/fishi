@@ -15,22 +15,22 @@ avdth_catches_sp_fishingmode_year_month_fleet_ocean(
 )
 }
 \arguments{
-\item{avdth_con}{AVDTH database connection object.}
+\item{avdth_con}{(JDBCConnection object) AVDTH database connection object.}
 
-\item{year}{Year selected (numeric value). You can select only one year (related to output design).}
+\item{year}{(integer) Year selected. You can select only one year (related to output design).}
 
-\item{fleet}{Fleet(s) selected (numeric value). You can select several fleets. Check the vignette related to the referentials for more precisely on accepted values.}
+\item{fleet}{(integer) Fleet(s) selected. You can select several fleets. Check the vignette related to the referentials for more precisely on accepted values.}
 
-\item{ocean}{Ocean selected (numeric value). You can select only one ocean (related to output design). Check the vignette related to the referentials for more precisely on accepted values.}
+\item{ocean}{(integer) Ocean selected (numeric value). You can select only one ocean (related to output design). Check the vignette related to the referentials for more precisely on accepted values.}
 
-\item{fishing_mode}{Type of fishing mode. Check the vignette related to the referentials for more precisely on accepted values.}
+\item{fishing_mode}{(integer) Type of fishing mode. Check the vignette related to the referentials for more precisely on accepted values.}
 
-\item{fleet_name}{Fleet(s) name(s) (character value).}
+\item{fleet_name}{(character) Fleet(s) name(s).}
 
-\item{specie}{Specie(s) name(s) selected. Specify specie code (on 3 letters) and add several species with the function c(). If you want to display all the species available, enter "all" in the argument. By default the function shows the 3 major tropical tunas (YFT, BET and SKJ).}
+\item{specie}{(character) Specie(s) name(s) selected. Specify specie code (on 3 letters) and add several species with the function c(). If you want to display all the species available, enter "all" in the argument. By default the function shows the 3 major tropical tunas (YFT, BET and SKJ).}
 }
 \value{
-A R list with data/informations for produce a graphic (stacked area) associated to query data specifications.
+A ggplot object.
 }
 \description{
 Catches by species, fishing mode, year, month, fleet and ocean (associated to an AVDTH database).

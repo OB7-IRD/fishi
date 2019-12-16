@@ -20,30 +20,30 @@ balbaya_nbset_fishingmode_gear_year_month_fleet_ocean(
 )
 }
 \arguments{
-\item{balbaya_con}{Balbaya database connection object.}
+\item{balbaya_con}{(JDBCConnection object) Balbaya database connection object.}
 
-\item{year}{Year selected (numerical value). You can select only one year (related to output design).}
+\item{year}{(integer) Year(s) selected}
 
-\item{fleet}{Fleet(s) selected (numerical value(s)). You can select several fleets. Check the vignette related to the referentials for more precisely on accepted values.}
+\item{fleet}{(integer) Fleet(s) selected.}
 
-\item{ocean}{Ocean selected (numerical value(s)). You can select only one ocean (related to output design). Check the vignette related to the referentials for more precisely on accepted values.}
+\item{ocean}{(integer) Ocean(s) selected.}
 
-\item{fishing_mode}{Type of fishing mode (numerical value(s)). Check the vignette related to the referentials for more precisely on accepted values.}
+\item{fishing_mode}{(integer) Type(s) of fishing mode.}
 
-\item{gear}{Gear(s) name(s) (numerical value(s)).}
+\item{gear}{Gear name(s).}
 
-\item{fleet_name}{Fleet(s) name(s) (character value).}
+\item{fleet_name}{(character) Fleet name(s).}
 
-\item{monthly}{If you want to display information monthly (logical value). By default TRUE}
+\item{monthly}{(logical) Display information monthly. By default TRUE}
 
-\item{neg_set}{If you want to display information about number of negative set (logical value). By defaut TRUE.}
+\item{neg_set}{(logical) Display information about number of negative set. By defaut TRUE.}
 
-\item{pos_set}{If you want to display information about number of postive set (logical value). By defaut TRUE.}
+\item{pos_set}{(logical) Display information about number of postive set. By defaut TRUE.}
 
-\item{acronyme}{If you want to show acronym in the legend or full term. Be default TRUE.}
+\item{acronyme}{(logical) Show acronym in the legend or full term. Be default TRUE.}
 }
 \value{
-A R list with data/informations for produce a graphic (stacked area) associated to query data specifications.
+A ggplot object.
 }
 \description{
 Number of sets by fishing mode, year, month, fleet and ocean (associated to a balbaya database).

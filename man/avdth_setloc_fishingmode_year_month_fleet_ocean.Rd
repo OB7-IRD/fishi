@@ -15,20 +15,20 @@ avdth_setloc_fishingmode_year_month_fleet_ocean(
 )
 }
 \arguments{
-\item{avdth_con}{AVDTH database connection object.}
+\item{avdth_con}{(JDBCConnection object) AVDTH database connection object.}
 
-\item{year}{Year selected (numeric value). You can select only one year (related to output design).}
+\item{year}{(integer) Year selected. You can select only one year (related to output design).}
 
-\item{fleet}{Fleet(s) selected (numeric value). You can select several fleets. Check the vignette related to the referentials for more precisely on accepted values.}
+\item{fleet}{(integer) Fleet(s) selected. You can select several fleets. Check the vignette related to the referentials for more precisely on accepted values.}
 
-\item{ocean}{Ocean selected (numeric value). You can select only one ocean (related to output design). Check the vignette related to the referentials for more precisely on accepted values.}
+\item{ocean}{(integer) Ocean selected. You can select only one ocean (related to output design). Check the vignette related to the referentials for more precisely on accepted values.}
 
-\item{fishing_mode}{Type of fishing mode. Check the vignette related to the referentials for more precisely on accepted values.}
+\item{fishing_mode}{(integer) Type of fishing mode. Check the vignette related to the referentials for more precisely on accepted values.}
 
-\item{fleet_name}{Fleet(s) name(s) (character value).}
+\item{fleet_name}{(character) Fleet(s) name(s).}
 }
 \value{
-A R list (one list for each month of the year selected) with data/informations for produce a map associated to query data specifications.
+A ggplot object.
 }
 \description{
 Set location by year, month, fleet, fishing mode and ocean (associated to an AVDTH database).

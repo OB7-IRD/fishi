@@ -12,9 +12,9 @@
 #' # For the argument ocean, 1 = Atlantic Ocean
 #' \dontrun{
 #' tmp <- avdth_nblanding_year_fleet_ocean(avdth_con = avdth_connection,
-#'                                         year = as.integer(2017),
-#'                                         fleet = as.integer(c(1 , 41)),
-#'                                         ocean = as.integer(1),
+#'                                         year = 2017,
+#'                                         fleet = c(1 , 41),
+#'                                         ocean = 1,
 #'                                         fleet_name = "french fleet")}
 #' @export
 #' @importFrom furdeb sql_inset
@@ -28,31 +28,40 @@ avdth_nblanding_year_month_fleet_ocean <- function (avdth_con,
                                                     fleet_name) {
   # arguments verification ----
   fishi:::check_avdth_con(avdth_con)
-  fishi:::check_year(year)
-  fishi:::check_fleet(fleet)
-  fishi:::check_ocean(ocean)
+  year <- fishi:::check_year(year,
+                             several_values = FALSE)
+  fleet <- fishi:::check_fleet(fleet,
+                               several_values = TRUE)
+  ocean <- fishi:::check_ocean(ocean,
+                               several_values = FALSE)
   fishi:::check_fleet_name(fleet_name)
+
   # query importation ----
   avdth_nblanding_year_month_fleet_ocean_query <- paste(readLines(con = system.file("sql",
                                                                                     "avdth_nblanding_year_month_fleet_ocean.sql",
                                                                                     package = "fishi")),
                                                         collapse = "\n")
+
   # value(s) interpolation(s) ----
   avdth_nblanding_year_month_fleet_ocean_query <- furdeb::sql_inset(db_type = "access",
                                                                     replacement = year,
                                                                     pattern = "year_interpolate",
                                                                     query = avdth_nblanding_year_month_fleet_ocean_query)
+
   avdth_nblanding_year_month_fleet_ocean_query <- furdeb::sql_inset(db_type = "access",
                                                                     replacement = fleet,
                                                                     pattern = "fleet_interpolate",
                                                                     query = avdth_nblanding_year_month_fleet_ocean_query)
+
   avdth_nblanding_year_month_fleet_ocean_query <- furdeb::sql_inset(db_type = "access",
                                                                     replacement = ocean,
                                                                     pattern = "ocean_interpolate",
                                                                     query = avdth_nblanding_year_month_fleet_ocean_query)
+
   # data importation ----
   avdth_nblanding_year_month_fleet_ocean <- DBI::dbGetQuery(avdth_con,
                                                             avdth_nblanding_year_month_fleet_ocean_query)
+
   # data design ----
   avdth_nblanding_year_month_fleet_ocean <- avdth_nblanding_year_month_fleet_ocean %>%
     dplyr::group_by(year_nblanding,
@@ -60,7 +69,9 @@ avdth_nblanding_year_month_fleet_ocean <- function (avdth_con,
                     ocean) %>%
     dplyr::summarise(nb_landing = sum(nb_landing)) %>%
     dplyr::ungroup()
-  ocean_name <- furdeb::ocean_code_to_name(ocean_code = unique(avdth_nblanding_year_month_fleet_ocean$ocean))[1]
+
+  ocean_name <- furdeb::ocean_code_to_name(ocean_code = unique(avdth_nblanding_year_month_fleet_ocean$ocean))[[1]]
+
   avdth_nblanding_year_month_fleet_ocean_final <- as.data.frame(x = matrix(data = c(rep(year, 12),
                                                                                     1:12,
                                                                                     rep(ocean, 12)),
@@ -75,6 +86,7 @@ avdth_nblanding_year_month_fleet_ocean <- function (avdth_con,
     dplyr::mutate(nb_landing = ifelse(is.na(nb_landing),
                                       0,
                                       nb_landing))
+
   # graphic design ----
   tmp <- ggplot2::ggplot(data = avdth_nblanding_year_month_fleet_ocean_final,
                          ggplot2::aes(x = month_nblanding,

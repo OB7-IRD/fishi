@@ -1,18 +1,18 @@
 #' @name balbaya_nbset_fishingmode_gear_year_month_fleet_ocean
 #' @title Number of sets by fishing mode, gear, year, month, fleet and ocean (associated to a balbaya database)
 #' @description Number of sets by fishing mode, year, month, fleet and ocean (associated to a balbaya database).
-#' @param balbaya_con Balbaya database connection object.
-#' @param year Year selected (numerical value). You can select only one year (related to output design).
-#' @param fleet Fleet(s) selected (numerical value(s)). You can select several fleets. Check the vignette related to the referentials for more precisely on accepted values.
-#' @param ocean Ocean selected (numerical value(s)). You can select only one ocean (related to output design). Check the vignette related to the referentials for more precisely on accepted values.
-#' @param fishing_mode Type of fishing mode (numerical value(s)). Check the vignette related to the referentials for more precisely on accepted values.
-#' @param gear Gear(s) name(s) (numerical value(s)).
-#' @param fleet_name Fleet(s) name(s) (character value).
-#' @param monthly If you want to display information monthly (logical value). By default TRUE
-#' @param neg_set If you want to display information about number of negative set (logical value). By defaut TRUE.
-#' @param pos_set If you want to display information about number of postive set (logical value). By defaut TRUE.
-#' @param acronyme If you want to show acronym in the legend or full term. Be default TRUE.
-#' @return A R list with data/informations for produce a graphic (stacked area) associated to query data specifications.
+#' @param balbaya_con (JDBCConnection object) Balbaya database connection object.
+#' @param year (integer) Year(s) selected
+#' @param fleet (integer) Fleet(s) selected.
+#' @param ocean (integer) Ocean(s) selected.
+#' @param fishing_mode (integer) Type(s) of fishing mode.
+#' @param gear Gear name(s).
+#' @param fleet_name (character) Fleet name(s).
+#' @param monthly (logical) Display information monthly. By default TRUE
+#' @param neg_set (logical) Display information about number of negative set. By defaut TRUE.
+#' @param pos_set (logical) Display information about number of postive set. By defaut TRUE.
+#' @param acronyme (logical) Show acronym in the legend or full term. Be default TRUE.
+#' @return A ggplot object.
 #' @examples
 #' # For the argument fleet, 1 = France and 41 = Mayotte
 #' # For the argument ocean, 1 = Atlantic Ocean and 2 = Indian Ocean
@@ -47,70 +47,31 @@ balbaya_nbset_fishingmode_gear_year_month_fleet_ocean <- function(balbaya_con,
                                                                   neg_set = TRUE,
                                                                   pos_set = TRUE,
                                                                   acronym = TRUE) {
-  # Arguments verification ----
-  if (missing(balbaya_con)) {
-    stop("Missing argument \"balbaya_con\".",
-         "\n",
-         "Please correct it before running the function.")
-  }
-  if (missing(year) || ! is.numeric(year)) {
-    stop("Missing argument \"year\" or not numercial value(s).",
-         "\n",
-         "Please correct it before running the function.")
-  }
-  if (missing(fleet) || ! is.numeric(fleet)) {
-    stop("Missing argument \"fleet\" or not numercial value(s).",
-         "\n",
-         "Please correct it before running the function.")
-  }
-  if (missing(ocean) || ! is.numeric(ocean)) {
-    stop("Missing argument \"ocean\" or not numercial value(s).",
-         "\n",
-         "Please correct it before running the function.")
-  }
-  if (missing(fishing_mode) || ! is.numeric(fishing_mode)) {
-    stop("Missing argument \"fishing_mode\" or not numercial value(s).",
-         "\n",
-         "Please correct it before running the function.")
-  }
-  if (missing(gear) || ! is.numeric(gear)) {
-    stop("Missing argument \"gear\" or not numercial value(s).",
-         "\n",
-         "Please correct it before running the function.")
-  }
-  if (missing(fleet_name) || !is.character(fleet_name)) {
-    stop("Missing argument \"fleet_name\" or not character value.",
-         "\n",
-         "Please correct it before running the function.")
-  }
-  if (!is.logical(monthly)) {
-    stop("Argument \"monthly\" is not logical value.",
-         "\n",
-         "Please correct it before running the function.")
-  }
-  if (!is.logical(neg_set)) {
-    stop("Argument \"neg_set\" is not logical value.",
-         "\n",
-         "Please correct it before running the function.")
-  }
-  if (!is.logical(pos_set)) {
-    stop("Argument \"pos_set\" is not logical value.",
-         "\n",
-         "Please correct it before running the function.")
-  }
-  if (!is.logical(acronym)) {
-    stop("Argument \"acronym\" is not logical value.",
-         "\n",
-         "Please correct it before running the function.")
-  }
+  # arguments verification ----
+  fishi:::check_balbaya_con(balbaya_con)
+  year <- fishi:::check_year(year,
+                             several_values = TRUE)
+  fleet <- fishi:::check_fleet(fleet,
+                               several_values = TRUE)
+  ocean <- fishi:::check_ocean(ocean,
+                               several_values = TRUE)
+  fishing_mode <- fishi:::check_fishing_mode(fishing_mode,
+                                             several_values = TRUE)
+  gear <- fishi:::check_gear(gear,
+                             several_values = TRUE)
+  fishi:::check_fleet_name(fleet_name)
+  fishi:::check_monthly(monthly)
+  fishi:::check_pos_set(neg_set)
+  fishi:::check_pos_set(pos_set)
+  fishi:::check_acronym(acronym)
 
-  # Query importation ----
+  # query importation ----
   balbaya_nbset_fishingmode_gear_year_month_fleet_ocean_query <- paste(readLines(con = system.file("sql",
                                                                                                    "balbaya_nbset_fishingmode_gear_year_month_fleet_ocean.sql",
                                                                                                    package = "fishi")),
                                                                        collapse = "\n")
 
-  # Value(s) interpolation(s) ----
+  # value(s) interpolation(s) ----
   balbaya_nbset_fishingmode_gear_year_month_fleet_ocean_query <- furdeb::sql_inset(db_type = "postgresql",
                                                                                    replacement = year,
                                                                                    pattern = "year_interpolate",
@@ -132,27 +93,21 @@ balbaya_nbset_fishingmode_gear_year_month_fleet_ocean <- function(balbaya_con,
                                                                                    pattern = "gear_interpolate",
                                                                                    query = balbaya_nbset_fishingmode_gear_year_month_fleet_ocean_query)
 
-  # Data importation ----
+  # data importation ----
   balbaya_nbset_fishingmode_gear_year_month_fleet_ocean <- DBI::dbGetQuery(balbaya_con,
                                                                            balbaya_nbset_fishingmode_gear_year_month_fleet_ocean_query)
-  # Data design ----
+  # data design ----
   if (acronym == TRUE) {
-    # Ocean(s) name(s)
-    ocean_name <- furdeb::ocean_code_to_name(ocean_code = unique(balbaya_nbset_fishingmode_gear_year_month_fleet_ocean$ocean_code))[2]
-    # Fishing mode(s) name(s)
-    fishing_mode_name <- furdeb::fishing_mode_code_to_name(fishing_mode_code = unique(balbaya_nbset_fishingmode_gear_year_month_fleet_ocean$fishing_mode))[2]
-    # Gear(s) name(s)
-    gear_name <- furdeb::gear_code_to_name(gear_code = unique(balbaya_nbset_fishingmode_gear_year_month_fleet_ocean$gear))[2]
+    ocean_name <- furdeb::ocean_code_to_name(ocean_code = unique(balbaya_nbset_fishingmode_gear_year_month_fleet_ocean$ocean_code))[[2]]
+    fishing_mode_name <- furdeb::fishing_mode_code_to_name(fishing_mode_code = unique(balbaya_nbset_fishingmode_gear_year_month_fleet_ocean$fishing_mode))[[2]]
+    gear_name <- furdeb::gear_code_to_name(gear_code = unique(balbaya_nbset_fishingmode_gear_year_month_fleet_ocean$gear))[[2]]
   } else {
-    # Ocean(s) name(s)
-    ocean_name <- furdeb::ocean_code_to_name(ocean_code = unique(balbaya_nbset_fishingmode_gear_year_month_fleet_ocean$ocean_code))[1]
-    # Fishing mode(s) name(s)
-    fishing_mode_name <- furdeb::fishing_mode_code_to_name(fishing_mode_code = unique(balbaya_nbset_fishingmode_gear_year_month_fleet_ocean$fishing_mode))[1]
-    # Gear(s) name(s)
-    gear_name <- furdeb::gear_code_to_name(gear_code = unique(balbaya_nbset_fishingmode_gear_year_month_fleet_ocean$gear))[1]
+    ocean_name <- furdeb::ocean_code_to_name(ocean_code = unique(balbaya_nbset_fishingmode_gear_year_month_fleet_ocean$ocean_code))[[1]]
+    fishing_mode_name <- furdeb::fishing_mode_code_to_name(fishing_mode_code = unique(balbaya_nbset_fishingmode_gear_year_month_fleet_ocean$fishing_mode))[[1]]
+    gear_name <- furdeb::gear_code_to_name(gear_code = unique(balbaya_nbset_fishingmode_gear_year_month_fleet_ocean$gear))[[1]]
   }
 
-  # Year(s) name(s)
+  # year(s) name(s)
   if (length(year) != 1) {
     year <- sort(year)
     year_name <- paste(year, collapse = ", ")
@@ -199,7 +154,7 @@ balbaya_nbset_fishingmode_gear_year_month_fleet_ocean <- function(balbaya_con,
                                                                            set_type != "Positive sets")
   }
 
-  # Graphic design ----
+  # graphic design ----
   tmp <- ggplot2::ggplot(balbaya_nbset_fishingmode_gear_year_month_fleet_ocean,
                          ggplot2::aes(x = time_scale,
                                       y = nb_set,

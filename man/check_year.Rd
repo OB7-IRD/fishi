@@ -4,11 +4,13 @@
 \alias{check_year}
 \title{Arugment "year" verification}
 \usage{
-check_year(year)
+check_year(year, several_values)
 }
 \arguments{
-\item{year}{(integer) Year selected}
+\item{year}{(integer) Year(s) selected.}
+
+\item{several_values}{(logical) Allow multiple values or not during checking}
 }
 \description{
-Check if the item "year" is provided and have a unique value identified as class integer
+Check if the item "year" is provided and have integer value
 }

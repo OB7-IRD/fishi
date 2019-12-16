@@ -3,7 +3,7 @@ SELECT
 	,YEAR(echc.D_ACT) AS year_set
 	,MONTH(echc.D_ACT) AS month_set
 	,o.C_OCEA AS ocean
-	,tb.L_TBANC4L AS fishing_mode
+	,tb.C_TBANC AS fishing_mode
 	,echc.Q_ACT AS quadrant
 	,echc.V_LAT AS latitude
 	,echc.V_LON AS longitude
@@ -25,5 +25,5 @@ ORDER BY
 	,YEAR(echc.D_ACT)
 	,MONTH(echc.D_ACT)
 	,o.C_OCEA
-	,tb.L_TBANC4L
+	,tb.C_TBANC
 ;

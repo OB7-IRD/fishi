@@ -14,34 +14,34 @@ balbaya_temporal_effort_fishingmode_gear_year_month_fleet_ocean(
   gear,
   fleet_name,
   monthly = TRUE,
-  variables = c("time_at_sea", "days_at_sea", "fishing_time", "fishing_days",
+  effort_variable = c("time_at_sea", "days_at_sea", "fishing_time", "fishing_days",
     "searching_days"),
   acronym = TRUE
 )
 }
 \arguments{
-\item{balbaya_con}{Balbaya database connection object.}
+\item{balbaya_con}{(JDBCConnection object) Balbaya database connection object.}
 
-\item{year}{Year selected (numerical value). You can select only one year (related to output design).}
+\item{year}{(interger) Year(s) selected.}
 
-\item{fleet}{Fleet(s) selected (numerical value(s)). You can select several fleets. Check the vignette related to the referentials for more precisely on accepted values.}
+\item{fleet}{(integer) Fleet(s) selected.}
 
-\item{ocean}{Ocean selected (numerical value(s)). You can select only one ocean (related to output design). Check the vignette related to the referentials for more precisely on accepted values.}
+\item{ocean}{(integer) Ocean(s) selected.}
 
-\item{fishing_mode}{Type of fishing mode (numerical value(s)). Check the vignette related to the referentials for more precisely on accepted values.}
+\item{fishing_mode}{(integer) Type(s) of fishing mode.}
 
-\item{gear}{Gear(s) name(s) (numerical value(s)).}
+\item{gear}{(integer) Gear name(s).}
 
-\item{fleet_name}{Fleet(s) name(s) (character value).}
+\item{fleet_name}{(character) Fleet name(s).}
 
-\item{monthly}{If you want to display information monthly (logical value). By default TRUE}
+\item{monthly}{(logical) Display information monthly. By default TRUE}
 
-\item{variables}{List of variables that you want to display in the graphic. By default all variables availabe will display. If you want to know more about variables definitions check the section details below.}
+\item{variables}{(character) List of variables display in the graphic. By default all variables availabe will display.}
 
-\item{acronyme}{If you want to show acronym in the legend or full term. Be default TRUE.}
+\item{acronyme}{Show acronym in the legend or full term. By default TRUE.}
 }
 \value{
-A R list with data/informations for produce a graphic (stacked area) associated to query data specifications.
+A ggplot object.
 }
 \description{
 Temporal variables of effort by fishing mode, year, month, fleet and ocean (associated to a balbaya database).

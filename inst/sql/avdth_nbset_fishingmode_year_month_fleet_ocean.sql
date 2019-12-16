@@ -3,7 +3,7 @@ SELECT
 	,YEAR(act.D_ACT) AS year_nbset
 	,MONTH(act.D_ACT) AS month_nbset
 	,o.C_OCEA AS ocean
-	,tb.L_TBANC4L AS fishing_mode
+	,tb.C_TBANC AS fishing_mode
 	,COUNT(*) AS nb_set
 FROM
 	((((ACTIVITE act
@@ -22,5 +22,5 @@ GROUP BY
 	,MONTH(act.D_ACT)
 	,o.C_OCEA
 	,co.C_ISO3166_A3
-	,tb.L_TBANC4L
+	,tb.C_TBANC
 ;

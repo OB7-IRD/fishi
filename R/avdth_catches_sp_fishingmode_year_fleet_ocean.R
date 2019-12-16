@@ -1,14 +1,14 @@
 #' @name avdth_catches_sp_fishingmode_year_month_fleet_ocean
 #' @title Catches by species, fishing mode, year, month, fleet and ocean (associated to an AVDTH database)
 #' @description Catches by species, fishing mode, year, month, fleet and ocean (associated to an AVDTH database).
-#' @param avdth_con AVDTH database connection object.
-#' @param year Year selected (numeric value). You can select only one year (related to output design).
-#' @param fleet Fleet(s) selected (numeric value). You can select several fleets. Check the vignette related to the referentials for more precisely on accepted values.
-#' @param ocean Ocean selected (numeric value). You can select only one ocean (related to output design). Check the vignette related to the referentials for more precisely on accepted values.
-#' @param fishing_mode Type of fishing mode. Check the vignette related to the referentials for more precisely on accepted values.
-#' @param fleet_name Fleet(s) name(s) (character value).
-#' @param specie Specie(s) name(s) selected. Specify specie code (on 3 letters) and add several species with the function c(). If you want to display all the species available, enter "all" in the argument. By default the function shows the 3 major tropical tunas (YFT, BET and SKJ).
-#' @return A R list with data/informations for produce a graphic (stacked area) associated to query data specifications.
+#' @param avdth_con (JDBCConnection object) AVDTH database connection object.
+#' @param year (integer) Year selected. You can select only one year (related to output design).
+#' @param fleet (integer) Fleet(s) selected. You can select several fleets. Check the vignette related to the referentials for more precisely on accepted values.
+#' @param ocean (integer) Ocean selected (numeric value). You can select only one ocean (related to output design). Check the vignette related to the referentials for more precisely on accepted values.
+#' @param fishing_mode (integer) Type of fishing mode. Check the vignette related to the referentials for more precisely on accepted values.
+#' @param fleet_name (character) Fleet(s) name(s).
+#' @param specie (character) Specie(s) name(s) selected. Specify specie code (on 3 letters) and add several species with the function c(). If you want to display all the species available, enter "all" in the argument. By default the function shows the 3 major tropical tunas (YFT, BET and SKJ).
+#' @return A ggplot object.
 #' @examples
 #' # For the argument fleet, 1 = France and 41 = Mayotte
 #' # For the argument ocean, 1 = Atlantic Ocean
@@ -51,44 +51,27 @@ avdth_catches_sp_fishingmode_year_month_fleet_ocean <- function (avdth_con,
                                                                  fishing_mode,
                                                                  fleet_name,
                                                                  specie = c("BET", "YFT", "SKJ")) {
-  # Arguments verification ----
-  if (missing(avdth_con)) {
-    stop("Missing argument \"avdth_con\".",
-         "\n",
-         "Please correct it before running the function.")
-  }
-  if (missing(year) || length(year) != 1) {
-    stop("Missing argument \"year\" or more than one value inside.",
-         "\n",
-         "Please correct it before running the function.")
-  }
-  if (missing(fleet)) {
-    stop("Missing argument \"fleet\".",
-         "\n",
-         "Please correct it before running the function.")
-  }
-  if (missing(ocean) || length(ocean) != 1) {
-    stop("Missing argument \"ocean\" or more than one value inside.",
-         "\n",
-         "Please correct it before running the function.")
-  }
-  if (missing(fishing_mode) || length(fishing_mode) != 1) {
-    stop("Missing argument \"fishing_mode\" or more than one value inside.",
-         "\n",
-         "Please correct it before running the function.")
-  }
-  if (missing(fleet_name) || !is.character(fleet_name)) {
-    stop("Missing argument \"fleet_name\" or not a character object.",
-         "\n",
-         "Please correct it before running the function.")
-  }
+  # arguments verification ----
+  fishi:::check_avdth_con(avdth_con)
+  year <- fishi:::check_year(year,
+                             several_values = FALSE)
+  fleet <- fishi:::check_fleet(fleet,
+                               several_values = TRUE)
+  ocean <- fishi:::check_ocean(ocean,
+                               several_values = FALSE)
+  fishi:::check_fleet_name(fleet_name)
+  fishing_mode <- fishi:::check_fishing_mode(fishing_mode,
+                                             several_values = FALSE)
+  fishi:::check_specie(specie,
+                       several_values = TRUE)
 
-  # Query importation ----
+  # query importation ----
   avdth_catches_sp_fishingmode_year_month_fleet_ocean_query <- paste(readLines(con = system.file("sql",
                                                                                                  "avdth_catches_sp_fishingmode_year_month_fleet_ocean.sql",
                                                                                                  package = "fishi")),
                                                                      collapse = "\n")
-  # Value(s) interpolation(s) ----
+
+  # value(s) interpolation(s) ----
   avdth_catches_sp_fishingmode_year_month_fleet_ocean_query <- furdeb::sql_inset(db_type = "access",
                                                                                  replacement = year,
                                                                                  pattern = "year_interpolate",
@@ -105,50 +88,24 @@ avdth_catches_sp_fishingmode_year_month_fleet_ocean <- function (avdth_con,
                                                                                  replacement = fishing_mode,
                                                                                  pattern = "fishing_mode_interpolate",
                                                                                  query = avdth_catches_sp_fishingmode_year_month_fleet_ocean_query)
-  # Data importation ----
+  # data importation ----
   avdth_catches_sp_fishingmode_year_month_fleet_ocean <- DBI::dbGetQuery(avdth_con,
                                                                          avdth_catches_sp_fishingmode_year_month_fleet_ocean_query)
-  # Data design ----
-  # Species selection
+
+  # data design ----
+  # species selection
   if (length(specie) == 1 && specie == "all") {
     avdth_catches_sp_fishingmode_year_month_fleet_ocean_final <- avdth_catches_sp_fishingmode_year_month_fleet_ocean
   } else {
     avdth_catches_sp_fishingmode_year_month_fleet_ocean_final <- dplyr::filter(.data = avdth_catches_sp_fishingmode_year_month_fleet_ocean,
                                                                                specie_name %in% specie)
   }
+  # ocean name
+  ocean_name <- furdeb::ocean_code_to_name(ocean_code = unique(avdth_catches_sp_fishingmode_year_month_fleet_ocean_final$ocean))[[1]]
+  # fishing mode
+  fishing_mode <- furdeb::fishing_mode_code_to_name(fishing_mode_code = unique(avdth_catches_sp_fishingmode_year_month_fleet_ocean_final$fishing_mode))[1]
 
-  # Ocean name
-  if (unique(avdth_catches_sp_fishingmode_year_month_fleet_ocean_final$ocean) == 1) {
-    ocean_name <- "Atlantic Ocean"
-  } else {
-    if (unique(avdth_catches_sp_fishingmode_year_month_fleet_ocean_final$ocean) == 2) {
-      ocean_name <- "Indian Ocean"
-    } else {
-      if (unique(avdth_catches_sp_fishingmode_year_month_fleet_ocean_final$ocean) == 3) {
-        ocean_name <- "West Pacific Ocean"
-      } else {
-        if (unique(avdth_catches_sp_fishingmode_year_month_fleet_ocean_final$ocean) == 4) {
-          ocean_name <- "East Pacific Ocean"
-        } else {
-          if (unique(avdth_catches_sp_fishingmode_year_month_fleet_ocean_final$ocean) == 5) {
-            ocean_name <- "Pacific Ocean"
-          } else {
-            if (unique(avdth_catches_sp_fishingmode_year_month_fleet_ocean_final$ocean) == 6) {
-              ocean_name <- "Undetermined"
-            }
-          }
-        }
-      }
-    }
-  }
-  # Fishing mode
-  fishing_mode <- ifelse(unique(avdth_catches_sp_fishingmode_year_month_fleet_ocean_final$fishing_mode) == "BL",
-                         "free school",
-                         ifelse(unique(avdth_catches_sp_fishingmode_year_month_fleet_ocean_final$fishing_mode) == "BO",
-                                "floating object",
-                                "undetermined school"))
-
-  # Graphic design ----
+  # graphic design ----
   tmp <- ggplot2::ggplot(avdth_catches_sp_fishingmode_year_month_fleet_ocean_final,
                          ggplot2::aes(x = month_catch,
                                       y = catch,
@@ -167,4 +124,5 @@ avdth_catches_sp_fishingmode_year_month_fleet_ocean <- function (avdth_con,
     ggplot2::scale_fill_brewer(palette = "Paired", name = "Specie(s)") +
     ggplot2::xlab("Months") +
     ggplot2::ylab("Catches in tons")
+  return(tmp)
 }

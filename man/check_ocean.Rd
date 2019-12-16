@@ -4,11 +4,13 @@
 \alias{check_ocean}
 \title{Arugment "ocean" verification}
 \usage{
-check_ocean(ocean)
+check_ocean(ocean, several_values)
 }
 \arguments{
 \item{ocean}{(integer) Ocean identification}
+
+\item{several_values}{(logical) Allow multiple values or not during checking}
 }
 \description{
-Check if the item "ocean" is provided and have a unique value identified as class integer
+Check if the item "ocean" is provided and have integer value(s)
 }
