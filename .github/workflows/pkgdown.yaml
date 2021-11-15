@@ -21,12 +21,9 @@ jobs:
         with:
           use-public-rspm: true
       
-      - name: Install GDAL
+      - name: Install spatial dependencies
         run: |
-          sudo add-apt-repository ppa:ubuntugis/ppa && sudo apt-get update
-          sudo apt-get install gdal-bin
-          sudo apt-get install libgdal-dev
-          pip install --global-option=build_ext --global-option="-I/usr/include/gdal" GDAL==`gdal-config --version`
+          sudo apt install libudunits2-dev libgdal-dev libgeos-dev libproj-dev libfontconfig1-dev
 
       - uses: r-lib/actions/setup-r-dependencies@v1
         with:
