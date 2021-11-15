@@ -23,7 +23,7 @@ jobs:
       
       - name: install spatial dependencies
         run: |
-          apt-get -y update && apt-get install -y libudunits2-dev libgdal-dev libgeos-dev libproj-dev
+          sudo apt-get -y update && apt-get install -y libudunits2-dev libgdal-dev libgeos-dev libproj-dev
 
       - uses: r-lib/actions/setup-r-dependencies@v1
         with:
