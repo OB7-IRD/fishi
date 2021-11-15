@@ -6,47 +6,10 @@
 \alias{fishi-package}
 \title{Package FISHeries Indicators}
 \description{
-Provide statistical indicators for exploratory processes of data associated to fisheries.
+\if{html}{\figure{logo.png}{options: align='right' alt='logo' width='120'}}
+
+Exploratory and descriptive processes of data associated to fisheries.
 }
-\section{For AVDTH database}{
-
-\subsection{Catches}{
-\itemize{
-\item{\code{\link{avdth_nblanding_year_month_fleet_ocean}}}
-\item{\code{\link{avdth_catches_sp_fishingmode_year_month_fleet_ocean}}}
-\item{\code{\link{avdth_setloc_fishingmode_year_month_fleet_ocean}}}
-}}
-\subsection{Sampling}{
-\itemize{
-\item{\code{\link{avdth_wellsample_year_month_fleet_ocean}}}
-\item{\code{\link{avdth_nblengthsample_year_month_fleet_ocean}}}
-\item{\code{\link{avdth_nblengthsample_year_month_fleet_ocean_vessel}}}
-\item{\code{\link{avdth_setlocsample_fishingmode_year_month_fleet_ocean}}}
-}}
-\subsection{Effort}{
-\itemize{
-\item{\code{\link{avdth_nbset_fishingmode_year_month_fleet_ocean}}}
-}}
-}
-
-\section{For balbaya database}{
-
-\subsection{Catches}{
-\itemize{
-\item{\code{\link{balbaya_catches_sp_fishingmode_year_month_fleet_ocean}}}
-}}
-\subsection{Effort}{
-\itemize{
-\item{\code{\link{balbaya_nbset_fishingmode_gear_year_month_fleet_ocean}}}
-\item{\code{\link{balbaya_temporal_effort_fishingmode_gear_year_month_fleet_ocean}}}
-}}
-}
-
-\section{Vignettes link}{
-
-ongoing development
-}
-
 \seealso{
 Useful links:
 \itemize{
@@ -56,7 +19,7 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Ob7 - Observatory of Exploited Tropical Pelagic Ecosystems \email{ob7@ird.fr}
+\strong{Maintainer}: Ob7 - Observatory of Exploited Tropical Pelagic Ecosystems \email{ob7@ird.fr} [copyright holder]
 
 Authors:
 \itemize{

@@ -1,0 +1,13 @@
+template:
+  params:
+    bootswatch: cerulean
+
+url: https://ob7-ird.github.io/fishi
+
+authors:
+  Ob7 Observatory of Exploited Tropical Pelagic Ecosystemse:
+    href: "https://www.ob7.ird.fr/"
+    html: "<img src='man/figures/logo_obs7.png' height=24>"
+
+development:
+  mode: auto
