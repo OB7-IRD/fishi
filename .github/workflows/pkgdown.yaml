@@ -23,7 +23,7 @@ jobs:
       
       - name: install spatial dependencies
         run: |
-          sudo apt-get install gdal-bin libgdal-dev
+          conda install -c conda-forge gdal
 
       - uses: r-lib/actions/setup-r-dependencies@v1
         with:
