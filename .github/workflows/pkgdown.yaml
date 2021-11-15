@@ -23,7 +23,7 @@ jobs:
       
       - name: install spatial dependencies
         run: |
-          sudo aptitude install libgdal-dev
+          sudo brew install gdal
 
       - uses: r-lib/actions/setup-r-dependencies@v1
         with:
