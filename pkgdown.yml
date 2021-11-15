@@ -1,0 +1,9 @@
+pandoc: 2.7.3
+pkgdown: 1.6.1
+pkgdown_sha: ~
+articles: {}
+last_built: 2021-11-15T10:56Z
+urls:
+  reference: https://ob7-ird.github.io/fishi/reference
+  article: https://ob7-ird.github.io/fishi/articles
+
