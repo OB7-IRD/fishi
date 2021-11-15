@@ -9,7 +9,7 @@ name: pkgdown
 
 jobs:
   pkgdown:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
     steps:
@@ -20,10 +20,6 @@ jobs:
       - uses: r-lib/actions/setup-r@v1
         with:
           use-public-rspm: true
-      
-      - name: install spatial dependencies
-        run: |
-          conda install -c conda-forge gdal
 
       - uses: r-lib/actions/setup-r-dependencies@v1
         with:
