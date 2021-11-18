@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file and click on Knit button at the end. -->
 
-# fishi package <a href='https://ob7-ird.github.io/fishi'><img src='man/figures/logo.png' align="right" /></a>
+# fishi R package <a href='https://ob7-ird.github.io/fishi'><img src='man/figures/logo.png' align="right" /></a>
 
 <!-- badges: start -->
 
