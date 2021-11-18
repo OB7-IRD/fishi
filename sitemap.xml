@@ -4,9 +4,33 @@
     <loc>https://ob7-ird.github.io/fishi/index.html</loc>
   </url>
   <url>
+    <loc>https://ob7-ird.github.io/fishi/reference/code_manipulation.html</loc>
+  </url>
+  <url>
+    <loc>https://ob7-ird.github.io/fishi/reference/country_control.html</loc>
+  </url>
+  <url>
+    <loc>https://ob7-ird.github.io/fishi/reference/dbconnection_control.html</loc>
+  </url>
+  <url>
     <loc>https://ob7-ird.github.io/fishi/reference/fishi-package.html</loc>
   </url>
   <url>
+    <loc>https://ob7-ird.github.io/fishi/reference/ocean_control.html</loc>
+  </url>
+  <url>
+    <loc>https://ob7-ird.github.io/fishi/reference/period_control.html</loc>
+  </url>
+  <url>
     <loc>https://ob7-ird.github.io/fishi/reference/pipe.html</loc>
+  </url>
+  <url>
+    <loc>https://ob7-ird.github.io/fishi/reference/time_step_control.html</loc>
+  </url>
+  <url>
+    <loc>https://ob7-ird.github.io/fishi/reference/vessel_type.html</loc>
+  </url>
+  <url>
+    <loc>https://ob7-ird.github.io/fishi/reference/vessels_number.html</loc>
   </url>
 </urlset>

@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Package FISHeries Indicators — fishi-package • fishi</title>
+<title>Number of vessels — vessels_number • fishi</title>
 
 <!-- favicons -->
 <link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
@@ -46,9 +46,8 @@
 
 
 
-<meta property="og:title" content="Package FISHeries Indicators — fishi-package" />
-<meta property="og:description" content="
-Exploratory and descriptive processes of data associated to fisheries." />
+<meta property="og:title" content="Number of vessels — vessels_number" />
+<meta property="og:description" content="Number of vessels by country, ocean, period, time step and vessel type." />
 <meta property="og:image" content="https://ob7-ird.github.io/fishi/logo.png" />
 
 
@@ -117,50 +116,56 @@ Exploratory and descriptive processes of data associated to fisheries." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Package FISHeries Indicators</h1>
-    <small class="dont-index">Source: <a href='https://github.com/OB7-IRD/fishi/blob/master/R/fishi-package.R'><code>R/fishi-package.R</code></a></small>
-    <div class="hidden name"><code>fishi-package.Rd</code></div>
+    <h1>Number of vessels</h1>
+    <small class="dont-index">Source: <a href='https://github.com/OB7-IRD/fishi/blob/master/R/vessels_number.R'><code>R/vessels_number.R</code></a></small>
+    <div class="hidden name"><code>vessels_number.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p><img src='figures/logo.png' align='right' alt='logo' width='120' /></p>
-<p>Exploratory and descriptive processes of data associated to fisheries.</p>
+    <p>Number of vessels by country, ocean, period, time step and vessel type.</p>
     </div>
 
+    <pre class="usage"><span class='fu'>vessels_number</span><span class='op'>(</span>
+  <span class='va'>dbconnection</span>,
+  <span class='va'>countries</span>,
+  <span class='va'>oceans</span>,
+  <span class='va'>vessel_types</span>,
+  <span class='va'>period</span>,
+  <span class='va'>time_step</span>
+<span class='op'>)</span></pre>
 
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>dbconnection</th>
+      <td><p><a href='https://rdrr.io/r/base/list.html'>list</a> expected. Output of the function <a href='https://rdrr.io/pkg/furdeb/man/postgresql_dbconnection.html'>postgresql_dbconnection</a>.</p></td>
+    </tr>
+    <tr>
+      <th>countries</th>
+      <td><p><a href='https://rdrr.io/r/base/integer.html'>integer</a> expected. Countries codes identifiaction.</p></td>
+    </tr>
+    <tr>
+      <th>oceans</th>
+      <td><p><a href='https://rdrr.io/r/base/integer.html'>integer</a> expected. Oceans codes identifiaction.</p></td>
+    </tr>
+    <tr>
+      <th>vessel_types</th>
+      <td><p><a href='https://rdrr.io/r/base/integer.html'>integer</a> expected. Vessel types codes identification.</p></td>
+    </tr>
+    <tr>
+      <th>period</th>
+      <td><p><a href='https://rdrr.io/r/base/integer.html'>integer</a> expected. Period identification in year.</p></td>
+    </tr>
+    <tr>
+      <th>time_step</th>
+      <td><p><a href='https://rdrr.io/r/base/character.html'>character</a> expected. Kind of display you want in the graphic output. You can choose between "month" and "year".</p></td>
+    </tr>
+    </table>
 
-    <h2 class="hasAnchor" id="effort-indicators"><a class="anchor" href="#effort-indicators"></a>Effort indicators</h2>
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    
-
-<p></p><ul>
-<li><p><code><a href='vessels_number.html'>vessels_number</a></code></p></li>
-</ul>
-
-    <h2 class="hasAnchor" id="functions-for-output-manipulations"><a class="anchor" href="#functions-for-output-manipulations"></a>Functions for output manipulations</h2>
-
-    
-
-<ul>
-<li><p><code><a href='code_manipulation.html'>code_manipulation</a></code></p></li>
-</ul>
-
-    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
-
-    <div class='dont-index'><p>Useful links:</p><ul>
-<li><p><a href='https://github.com/OB7-IRD/fishi'>https://github.com/OB7-IRD/fishi</a></p></li>
-<li><p>Report bugs at <a href='https://github.com/OB7-IRD/fishi/issues'>https://github.com/OB7-IRD/fishi/issues</a></p></li>
-</ul>
-
-</div>
-    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
-
-    <p><strong>Maintainer</strong>: Ob7 - Observatory of Exploited Tropical Pelagic Ecosystems <a href='mailto:ob7@ird.fr'>ob7@ird.fr</a> [copyright holder]</p>
-<p>Authors:</p><ul>
-<li><p>Mathieu Depetris <a href='mailto:mathieu.depetris@ird.fr'>mathieu.depetris@ird.fr</a></p></li>
-</ul>
-
-
+    <p>The function return  ggplot R object.</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
