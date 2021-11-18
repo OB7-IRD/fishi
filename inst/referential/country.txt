@@ -1,0 +1,3 @@
+code;name;color
+1;france;#a6cee3
+41;mayotte;#1f78b4

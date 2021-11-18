@@ -14,7 +14,7 @@ knitr::opts_chunk$set(
 options(tibble.print_min = 5, tibble.print_max = 5)
 ```
 
-# fishi package <a href='https://ob7-ird.github.io/fishi'><img src='man/figures/logo.png' align="right" /></a>
+# fishi R package <a href='https://ob7-ird.github.io/fishi'><img src='man/figures/logo.png' align="right" /></a>
 
 <!-- badges: start -->
 [![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/fishi)](https://cran.r-project.org/package=fishi)
