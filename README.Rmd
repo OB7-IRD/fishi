@@ -19,7 +19,6 @@ options(tibble.print_min = 5, tibble.print_max = 5)
 <!-- badges: start -->
 [![CRAN_Status_Badge](https://www.r-pkg.org/badges/version/fishi)](https://cran.r-project.org/package=fishi)
 [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
-
 [![R-CMD-check](https://github.com/OB7-IRD/fishi/workflows/R-CMD-check/badge.svg)](https://github.com/OB7-IRD/furdeb/actions)
 <!-- badges: end -->
 

@@ -14,13 +14,13 @@ vessels_number(
 )
 }
 \arguments{
-\item{dbconnection}{{\link[base]{list}} expected. Output of the function {\link[furdeb]{postgresql_dbconnection}}.}
+\item{dbconnection}{{\link[base]{list}} or {\link[base]{character}} expected. Output of the function {\link[furdeb]{postgresql_dbconnection}} or name of a internal fishi dataset (so far "iccat_t1nc" and "iotc_t1nc" available).}
 
 \item{countries}{{\link[base]{integer}} expected. Countries codes identifiaction.}
 
 \item{oceans}{{\link[base]{integer}} expected. Oceans codes identifiaction.}
 
-\item{vessel_types}{{\link[base]{integer}} expected. Vessel types codes identification.}
+\item{vessel_types}{{\link[base]{integer}} or {\link[base]{character}} expected. Vessel types codes identification. If you select all vessel types fill "all".}
 
 \item{period}{{\link[base]{integer}} expected. Period identification in year.}
 
