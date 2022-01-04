@@ -1,10 +1,10 @@
 #' @name vessels_number
 #' @title Number of vessels
 #' @description Number of vessels by country, ocean, period, time step and vessel type.
-#' @param dbconnection {\link[base]{list}} expected. Output of the function {\link[furdeb]{postgresql_dbconnection}}.
+#' @param dbconnection {\link[base]{list}} or {\link[base]{character}} expected. Output of the function {\link[furdeb]{postgresql_dbconnection}} or name of a internal fishi dataset.
 #' @param countries {\link[base]{integer}} expected. Countries codes identifiaction.
 #' @param oceans {\link[base]{integer}} expected. Oceans codes identifiaction.
-#' @param vessel_types {\link[base]{integer}} expected. Vessel types codes identification.
+#' @param vessel_types {\link[base]{integer}}. Vessel types codes identification.
 #' @param period {\link[base]{integer}} expected. Period identification in year.
 #' @param time_step {\link[base]{character}} expected. Kind of display you want in the graphic output. You can choose between "month" and "year".
 #' @return The function return  ggplot R object.
@@ -28,6 +28,13 @@ vessels_number <- function(dbconnection,
   vessel_type_control(vessel_type = vessel_types)
   period_control(period = period)
   time_step_control(time_step = time_step)
+  # db connection manipulation ----
+  if (class(x = dbconnection) == "character") {
+    dbconnection <- load(system.file("data",
+                                     paste0(dbconnection,
+                                            ".RData"),
+                                     package = "fishi"))
+  }
   # process ----
   if (dbconnection[[1]] == "t3_prod") {
     # data import ----
