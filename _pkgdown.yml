@@ -2,7 +2,7 @@ template:
   params:
     bootswatch: cerulean
     docsearch:
-      api_key: 8504d460b1118f8915d3d7bb1d36f82b
+      api_key: 7fa7d11c16122ce8a8a447fded0608cb
       index_name: fishi
 
 url: https://ob7-ird.github.io/fishi
