@@ -2,6 +2,7 @@
 
 export("%>%")
 export(code_manipulation)
+export(size_class_tunabio)
 export(vessels_number)
 importFrom(DBI,SQL)
 importFrom(DBI,dbGetQuery)
@@ -28,4 +29,5 @@ importFrom(ggplot2,ylab)
 importFrom(lubridate,month)
 importFrom(lubridate,year)
 importFrom(magrittr,"%>%")
+importFrom(readxl,read_xlsx)
 importFrom(utils,read.table)

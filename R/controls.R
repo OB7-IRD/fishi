@@ -72,3 +72,15 @@ vessel_type_control <- function(vessel_type) {
     stop("invalid \"vessel_type\" argument.\n")
   }
 }
+
+# argument text_verification control ----
+#' @name text_verification
+#' @title Control for text argument
+#' @keywords internal
+text_verification <- function(text_to_verify) {
+  if (missing(text_to_verify)
+      || class(x = text_to_verify) != "character"
+      || length(x = text_to_verify) != 1) {
+    stop("invalid \"text_to_verify\" argument.\n")
+  }
+}

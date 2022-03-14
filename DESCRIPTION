@@ -19,6 +19,6 @@ Imports:
     dplyr (>= 1.0.7),
     ggplot2 (>= 3.3.5),
     lubridate (>= 1.8.0),
-    utils (>= 4.0.4)
+    utils
 Remotes:
     github::OB7-IRD/furdeb
