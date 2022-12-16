@@ -82,7 +82,7 @@ catch_serie <- function(data_connection,
                                       manipulation = "legend")
   #vessel
   vessel_type_legend <- fishi::code_manipulation(data = catch_serie_data$vessel_code,
-                                          referential = "vessel_simple_type",
+                                          referential = "balbaya_vessel_simple_type",
                                           manipulation = "legend")
   # 5 - Graphic design ----
   catch_serie_graphic <- ggplot2::ggplot(catch_serie_final,

@@ -48,9 +48,9 @@ kbl(specie) %>%
 The following table shows the 5 oceans and their associated colours. This table explains the coding of the major oceanic zones (1: Atlantic Ocean, 2: Indian Ocean, etc.) as described by ORSTOM and kept by CRH.
 
 ```{r Ocean - code, echo=FALSE}
-specie <- read.delim("E:/git/fishi/inst/referential/ocean.txt", sep = ";")
+ocean <- read.delim("E:/git/fishi/inst/referential/ocean.txt", sep = ";")
 
-kbl(specie) %>%
+kbl(ocean) %>%
   kable_styling(full_width = F) %>%
   row_spec(1, bold = T, color = "white", background = "#a6cee3") %>%
   row_spec(2, bold = T, color = "white", background = "#1f78b4") %>%
@@ -63,10 +63,10 @@ kbl(specie) %>%
 
 The following table shows the 5 vessel types and their associated colours. This table records the types of gear encountered in the fisheries under consideration.
 
-```{r Vessel type - code, echo=FALSE}
-specie <- read.delim("E:/git/fishi/inst/referential/vessel_simple_type.txt", sep = ";")
+```{r Balbaya vessel type - code, echo=FALSE}
+balbaya_vessel <- read.delim("E:/git/fishi/inst/referential/balbaya_vessel_simple_type.txt", sep = ";")
 
-kbl(specie) %>%
+kbl(balbaya_vessel) %>%
   kable_styling(full_width = F) %>%
   row_spec(1, bold = T, color = "white", background = "#a6cee3") %>%
   row_spec(2, bold = T, color = "white", background = "#1f78b4") %>%
@@ -75,14 +75,29 @@ kbl(specie) %>%
   row_spec(5, bold = T, color = "white", background = "#fb9a99")
 ```
 
+```{r T3 vessel type - code, echo=FALSE}
+t3_vessel <- read.delim("E:/git/fishi/inst/referential/t3_vessel_simple_type.txt", sep = ";")
+
+kbl(t3_vessel) %>%
+  kable_styling(full_width = F) %>%
+  row_spec(1, bold = T, color = "white", background = "#a6cee3") %>%
+  row_spec(2, bold = T, color = "white", background = "#1f78b4") %>%
+  row_spec(3, bold = T, color = "white", background = "#b2df8a") %>%
+  row_spec(4, bold = T, color = "white", background = "#33a02c") %>%
+  row_spec(5, bold = T, color = "white", background = "#fb9a99")%>%
+  row_spec(6, bold = T, color = "white", background = "#fdbf6f")
+```
+
+### 
+
 ### Country
 
 The following table shows the 2 countries and their associated colours. Here the code is an internal numerical code, which does not refer to any national or international list.
 
 ```{r Country - code, echo=FALSE}
-specie <- read.delim("E:/git/fishi/inst/referential/country.txt", sep = ";")
+country <- read.delim("E:/git/fishi/inst/referential/country.txt", sep = ";")
 
-kbl(specie) %>%
+kbl(country) %>%
   kable_styling(full_width = F) %>%
   row_spec(1, bold = T, color = "white", background = "#a6cee3") %>%
   row_spec(2, bold = T, color = "white", background = "#1f78b4") 

@@ -73,13 +73,13 @@ vessels_number <- function(dbconnection,
       dplyr::mutate(landing_date_final = as.factor(x = landing_date_final))
     # legend and colors design ----
     vessel_type_colors <- code_manipulation(data = vessels_number_final$vessel_type_code,
-                                            referential = "vessel_simple_type",
+                                            referential = "t3_vessel_simple_type",
                                             manipulation = "color")
     vessel_type_legend <- code_manipulation(data = vessels_number_final$vessel_type_code,
-                                            referential = "vessel_simple_type",
+                                            referential = "t3_vessel_simple_type",
                                             manipulation = "legend")
     vessel_type_modalities <- code_manipulation(data = vessels_number_final$vessel_type_code,
-                                                referential = "vessel_simple_type",
+                                                referential = "t3_vessel_simple_type",
                                                 manipulation = "modality")
     ocean_legend <- code_manipulation(data = oceans,
                                       referential = "ocean",
