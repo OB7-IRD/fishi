@@ -28,7 +28,8 @@ code_manipulation <- function(data,
       || class(x = referential) != "character"
       || any(! referential %in% c("country",
                                   "ocean",
-                                  "vessel_simple_type"))) {
+                                  "vessel_simple_type",
+                                  "specie"))) {
     stop("invalid \"referential\" argument.\n")
   }
   if (missing(x = manipulation)

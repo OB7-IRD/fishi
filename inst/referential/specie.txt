@@ -1,0 +1,12 @@
+code;name;full_name;color
+1;YFT;yellowfin tuna;#DDCC77
+2;SKJ;skipjack tuna;#CC6677
+3;BET;bigeye tuna;#88CCEE
+4;ALB;albacore tuna;#117733
+5;LTA;little tuna;#332288
+6;FRI;frigate tuna;#AA4499
+7;SHX;sharks;#661100
+8;DSC;discard tuna;#44AA99
+9;MIX;mixed species of tuna;#ff9f1c
+10;KAW;mackerel tuna;#6699CC
+18;FRZ;ray-finned bony fish;#999933

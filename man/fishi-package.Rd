@@ -6,7 +6,7 @@
 \alias{fishi-package}
 \title{Package FISHeries Indicators}
 \description{
-\if{html}{\figure{logo.png}{options: align='right' alt='logo' width='120'}}
+\if{html}{\figure{logo.png}{options: style='float: right' alt='logo' width='120'}}
 
 Exploratory and descriptive processes of data associated to fisheries.
 }
