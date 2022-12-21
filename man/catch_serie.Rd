@@ -11,6 +11,7 @@ catch_serie(
   ocean,
   country,
   vessel_type,
+  all_db = FALSE,
   time_step = "year",
   path_file = NULL
 )
@@ -27,6 +28,8 @@ catch_serie(
 \item{country}{{\link[base]{integer}} expected. Select the country : 1 France, 41 Mayotte}
 
 \item{vessel_type}{{\link[base]{integer}} expected. Select the vessel type : 1 purse seiner, 2 bait boat, 3 longliner, 4 support, 5 mix.}
+
+\item{all_db}{TRUE or FALSE expected. If TRUE then selects all the data in the balbaya database. Default = FALSE.}
 
 \item{time_step}{{\link[base]{character}} expected. Parameter used in the graphical representation. By year by default, to represent by month specify "month".}
 
