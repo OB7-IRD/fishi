@@ -6,11 +6,11 @@
 \usage{
 catch_serie(
   data_connection,
-  time_period = as.integer(c(1981:2021)),
-  specie = as.integer(c(1:3)),
-  ocean = as.integer(c(1:5)),
-  country = as.integer(c(1, 41)),
-  vessel_type = as.integer(c(1:5)),
+  time_period,
+  specie,
+  ocean,
+  country,
+  vessel_type,
   time_step = "year",
   path_file = NULL
 )
@@ -23,6 +23,8 @@ catch_serie(
 \item{specie}{{\link[base]{integer}} expected. Select the specie : 1 YFT, 2 SKJ, 3 BET, 4 ALB (cf the vignette "referentials" for more).}
 
 \item{ocean}{{\link[base]{integer}} expected. Select the ocean : 1 Atlantic, 2 Indian, 3 West Pacific, 4 East Pacific, 5 Pacific.}
+
+\item{country}{{\link[base]{integer}} expected. Select the country : 1 France, 41 Mayotte}
 
 \item{vessel_type}{{\link[base]{integer}} expected. Select the vessel type : 1 purse seiner, 2 bait boat, 3 longliner, 4 support, 5 mix.}
 

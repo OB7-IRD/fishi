@@ -5,20 +5,23 @@
 #' @param time_period {\link[base]{integer}} expected. Period identification in year, between 1981 and 2021.
 #' @param specie {\link[base]{integer}} expected. Select the specie : 1 YFT, 2 SKJ, 3 BET, 4 ALB (cf the vignette "referentials" for more).
 #' @param ocean {\link[base]{integer}} expected. Select the ocean : 1 Atlantic, 2 Indian, 3 West Pacific, 4 East Pacific, 5 Pacific.
+#' @param country {\link[base]{integer}} expected. Select the country : 1 France, 41 Mayotte
 #' @param vessel_type {\link[base]{integer}} expected. Select the vessel type : 1 purse seiner, 2 bait boat, 3 longliner, 4 support, 5 mix.
 #' @param time_step {\link[base]{character}} expected. Parameter used in the graphical representation. By year by default, to represent by month specify "month".
 #' @param path_file path to save the final graphic as a png. NULL by default.
 #' @return The function return  ggplot R object.
 #' @export
 #' @importFrom DBI dbGetQuery sqlInterpolate SQL
-#' @importFrom dplyr tibble
+#' @importFrom dplyr arrange mutate tibble rowwise
 #' @importFrom ggplot2 ggplot aes geom_bar scale_fill_manual scale_y_continuous ggtitle xlab ylab labs theme element_text ggsave
+#' @importFrom lubridate month year
+#' @importFrom furdeb configuration_file postgresql_dbconnection
 catch_serie <- function(data_connection,
-                        time_period = as.integer(c(1981:2021)),
-                        specie = as.integer(c(1:3)),
-                        ocean = as.integer(c(1:5)),
-                        country = as.integer(c(1,41)),
-                        vessel_type = as.integer(c(1:5)),
+                        time_period,
+                        specie,
+                        ocean,
+                        country,
+                        vessel_type,
                         time_step = "year",
                         path_file = NULL){
   # 1 - Arguments verification ----
@@ -92,7 +95,7 @@ catch_serie <- function(data_connection,
     ggplot2::geom_bar(stat = "identity") +
     ggplot2::scale_fill_manual(values = specie_type_color,
                                labels = specie_type_modality) +
-    ggplot2::labs(title= paste0("Evolution of the total catch of the species per year (",
+    ggplot2::labs(title = paste0("Evolution of the total catch of the species per year (",
                                 specie_type_legend,
                                 ifelse(test = length(x = time_period) != 1,
                                        yes = ") through the years ",
@@ -109,7 +112,7 @@ catch_serie <- function(data_connection,
                                            yes = "Countries : ",
                                            no = "Country : "),
                                     country_legend),
-                  x="", y="Total of catches (in t)",
+                  x = "", y = "Total of catches (in t)",
                   fill = paste0(ifelse(test = length(x = specie) != 1,
                                        yes = "Species",
                                        no = "Specie"))
