@@ -28,7 +28,6 @@ catch_serie <- function(data_connection,
                         path_file = NULL){
   # 1 - Arguments verification ----
   time_step <- tolower(time_step) #to remove potential capital letters from the argument
-
   #ALL
   if (all_db == TRUE){
     time_period = as.integer(c(1981:2021))
