@@ -89,10 +89,12 @@ catch_map <- function(data_connection,
                                                  referential = "balbaya_vessel_simple_type",
                                                  manipulation = "legend")
   # 5 - Graphic design ----
-  map <- ggplot2::ggplot() +
+  map <- catch_map_final %>%
+    dplyr::arrange(catch) %>%
+    ggplot2::ggplot() +
     ggplot2::geom_sf(data = world_boundaries) +
-    ggspatial::coord_sf(xlim=c(-23,77),ylim=c(-20,11))  +
-    ggplot2::geom_point(data = catch_map_final, ggplot2::aes(x = lon, y = lat, color=specie_name)) +
+    ggspatial::coord_sf(xlim=c(-40,100),ylim=c(-30,20))  +
+    ggplot2::geom_point(data = catch_map_final, ggplot2::aes(x = lon, y = lat, color=specie_name, size = catch), alpha=0.9) +
     ggspatial::annotation_scale(location = "bl", line_width = .5) +
     ggspatial::annotation_north_arrow(location = "tl", height = grid::unit(1.2, "cm"), width = grid::unit(1.5, "cm"),
                                       style = ggspatial::north_arrow_fancy_orienteering()) +

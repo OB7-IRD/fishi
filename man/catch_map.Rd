@@ -20,13 +20,13 @@ catch_map(
 
 \item{time_period}{{\link[base]{integer}} expected. Period identification in year, between 1981 and 2021.}
 
-\item{specie}{{\link[base]{integer}} expected. Select the specie : 1 YFT, 2 SKJ, 3 BET, 4 ALB (cf the vignette "referentials" for more).}
+\item{specie}{{\link[base]{integer}} expected. Specie codes identification.}
 
-\item{ocean}{{\link[base]{integer}} expected. Select the ocean : 1 Atlantic, 2 Indian, 3 West Pacific, 4 East Pacific, 5 Pacific.}
+\item{ocean}{{\link[base]{integer}} expected. Ocean codes identification.}
 
-\item{country}{{\link[base]{integer}} expected. Select the country : 1 France, 41 Mayotte}
+\item{country}{{\link[base]{integer}} expected. Country codes identification.}
 
-\item{vessel_type}{{\link[base]{integer}} expected. Select the vessel type : 1 purse seiner, 2 bait boat, 3 longliner, 4 support, 5 mix.}
+\item{vessel_type}{{\link[base]{integer}} expected. Vessel type codes identification.}
 
 \item{all_db}{TRUE or FALSE expected. If TRUE then selects all the data in the balbaya database. Default = FALSE.}
 
