@@ -14,8 +14,8 @@ FROM
 	JOIN public.harbour h ON (t.landingharbour = h.topiaid)
 	JOIN public.ocean o ON (h.ocean = o.topiaid)
 WHERE
-	EXTRACT (YEAR FROM t.landingdate) IN (?period)
-	AND o.code IN (?oceans)
-	AND c.code IN (?countries)
-	AND vst.code IN (?vessel_types)
+	EXTRACT (YEAR FROM t.landingdate) IN (?time_period)
+	AND o.code IN (?ocean)
+	AND c.code IN (?country)
+	AND vst.code IN (?vessel_type)
 ;
