@@ -3,12 +3,12 @@
 #' @description The purpose of the catch_serie function is to graphically represent the evolution of catches over time by a barplot. It depends on several arguments: the period of time, the species, the oceans, the countries and the types of vessels previously selected by the user. The representation can be done by year or by month depending on the wished result.
 #' @param data_connection {\link[base]{list}} expected. Output of the function {\link[furdeb]{postgresql_dbconnection}}, which must be done before using the catch_serie function.
 #' @param time_period {\link[base]{integer}} expected. Period identification in year, between 1981 and 2021.
-#' @param specie {\link[base]{integer}} expected. Select the specie : 1 YFT, 2 SKJ, 3 BET, 4 ALB (cf the vignette "referentials" for more).
-#' @param ocean {\link[base]{integer}} expected. Select the ocean : 1 Atlantic, 2 Indian, 3 West Pacific, 4 East Pacific, 5 Pacific.
-#' @param country {\link[base]{integer}} expected. Select the country : 1 France, 41 Mayotte
-#' @param vessel_type {\link[base]{integer}} expected. Select the vessel type : 1 purse seiner, 2 bait boat, 3 longliner, 4 support, 5 mix.
+#' @param specie {\link[base]{integer}} expected. Specie codes identification.
+#' @param ocean {\link[base]{integer}} expected. Ocean codes identification.
+#' @param country {\link[base]{integer}} expected. Country codes identification.
+#' @param vessel_type {\link[base]{integer}} expected. Vessel type codes identification.
 #' @param all_db TRUE or FALSE expected. If TRUE then selects all the data in the balbaya database. Default = FALSE.
-#' @param time_step {\link[base]{character}} expected. Parameter used in the graphical representation. By year by default, to represent by month specify "month".
+#' @param time_step {\link[base]{character}} expected. Kind of display you want in the graphic output. You can choose between "month" and "year".
 #' @param path_file path to save the final graphic as a png. NULL by default.
 #' @return The function return  ggplot R object.
 #' @export

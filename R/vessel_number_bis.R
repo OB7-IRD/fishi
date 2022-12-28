@@ -2,10 +2,10 @@
 #' @title Number of vessel
 #' @description Number of vessel by country, ocean, period, time step and vessel type.
 #' @param data_connection {\link[base]{list}} expected. Output of the function {\link[furdeb]{postgresql_dbconnection}} or name of a internal fishi dataset.
-#' @param country {\link[base]{integer}} expected. Country codes identification.
-#' @param ocean {\link[base]{integer}} expected. Ocean codes identification.
-#' @param vessel_type {\link[base]{integer}}. Vessel type codes identification.
 #' @param time_period {\link[base]{integer}} expected. Period identification in year.
+#' @param ocean {\link[base]{integer}} expected. Ocean codes identification.
+#' @param country {\link[base]{integer}} expected. Country codes identification.
+#' @param vessel_type {\link[base]{integer}}. Vessel type codes identification.
 #' @param time_step {\link[base]{character}} expected. Kind of display you want in the graphic output. You can choose between "month" and "year".
 #' @return The function return  ggplot R object.
 #' @export
