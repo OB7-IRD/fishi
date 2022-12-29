@@ -14,11 +14,11 @@
 #' @importFrom lubridate year month
 #' @importFrom ggplot2 ggplot aes geom_bar scale_fill_manual scale_y_continuous ggtitle xlab ylab labs theme element_text
 vessel_number_bis <- function(data_connection,
-                          time_period,
-                          ocean,
-                          country,
-                          vessel_type,
-                          time_step = "year") {
+                              time_period,
+                              ocean,
+                              country,
+                              vessel_type,
+                              time_step = "year") {
   # global variables assignement ----
   activity_date <- vessel_type_code <- activity_date_final <- vessel_code <- NULL
   # db connection manipulation ----
@@ -45,34 +45,34 @@ vessel_number_bis <- function(data_connection,
          " - Indicator not developed yet for this \"data_connection\" argument.\n",
          sep = "")
   }
-    #if (data_connection[[1]] == "t3_prod") {
-    #   # data import ----
-    #   vessel_number_sql <- paste(readLines(con = system.file("sql",
-    #                                                           "t3_vessel_number.sql",
-    #                                                           package = "fishi")),
-    #                               collapse = "\n")
-    #   vessel_number_sql_final <- DBI::sqlInterpolate(conn = data_connection[[2]],
-    #                                                   sql = vessel_number_sql,
-    #                                                   countries = DBI::SQL(paste0(paste0(country,
-    #                                                                                      collapse = ", "))),
-    #                                                   oceans = DBI::SQL(paste0(paste0(ocean,
-    #                                                                                   collapse = ", "))),
-    #                                                   period = DBI::SQL(paste0(paste0(time_period,
-    #                                                                                   collapse = ", "))),
-    #                                                   vessel_types = DBI::SQL(paste0(paste0(vessel_type,
-    #                                                                                         collapse = ", "))))
-    #   vessel_number_data <- dplyr::tibble(DBI::dbGetQuery(conn = data_connection[[2]],
-    #                                                        statement = vessel_number_sql_final))
+  #if (data_connection[[1]] == "t3_prod") {
+  #   # data import ----
+  #   vessel_number_sql <- paste(readLines(con = system.file("sql",
+  #                                                           "t3_vessel_number.sql",
+  #                                                           package = "fishi")),
+  #                               collapse = "\n")
+  #   vessel_number_sql_final <- DBI::sqlInterpolate(conn = data_connection[[2]],
+  #                                                   sql = vessel_number_sql,
+  #                                                   countries = DBI::SQL(paste0(paste0(country,
+  #                                                                                      collapse = ", "))),
+  #                                                   oceans = DBI::SQL(paste0(paste0(ocean,
+  #                                                                                   collapse = ", "))),
+  #                                                   period = DBI::SQL(paste0(paste0(time_period,
+  #                                                                                   collapse = ", "))),
+  #                                                   vessel_types = DBI::SQL(paste0(paste0(vessel_type,
+  #                                                                                         collapse = ", "))))
+  #   vessel_number_data <- dplyr::tibble(DBI::dbGetQuery(conn = data_connection[[2]],
+  #                                                        statement = vessel_number_sql_final))
 
   # data design ----
   vessel_number_final <- vessel_number_data %>%
     dplyr::rowwise() %>%
     dplyr::mutate(activity_date_final = ifelse(test = time_step == "month" | time_step == "months",
-                                              yes = paste(lubridate::year(x = activity_date),
-                                                          sprintf(fmt = "%02.0f",
-                                                                  lubridate::month(x = activity_date)),
-                                                          sep = "-"),
-                                              no = lubridate::year(x = activity_date)),
+                                               yes = paste(lubridate::year(x = activity_date),
+                                                           sprintf(fmt = "%02.0f",
+                                                                   lubridate::month(x = activity_date)),
+                                                           sep = "-"),
+                                               no = lubridate::year(x = activity_date)),
                   vessel_type_code = as.factor(x = vessel_type_code)) %>%
     dplyr::group_by(activity_date_final,
                     vessel_type_code) %>%
@@ -85,14 +85,14 @@ vessel_number_bis <- function(data_connection,
     dplyr::mutate(activity_date_final = as.factor(x = activity_date_final))
   # legend and colors design ----
   vessel_type_color <- code_manipulation(data = vessel_number_final$vessel_type_code,
-                                          referential = "t3_vessel_simple_type",
-                                          manipulation = "color")
+                                         referential = "t3_vessel_simple_type",
+                                         manipulation = "color")
   vessel_type_legend <- code_manipulation(data = vessel_number_final$vessel_type_code,
                                           referential = "t3_vessel_simple_type",
                                           manipulation = "legend")
   vessel_type_modality <- code_manipulation(data = vessel_number_final$vessel_type_code,
-                                              referential = "t3_vessel_simple_type",
-                                              manipulation = "modality")
+                                            referential = "t3_vessel_simple_type",
+                                            manipulation = "modality")
   ocean_legend <- code_manipulation(data = ocean,
                                     referential = "ocean",
                                     manipulation = "legend")
@@ -100,14 +100,13 @@ vessel_number_bis <- function(data_connection,
                                       referential = "country",
                                       manipulation = "legend")
   sum_vessel_number <- vessel_number_final %>%
-     dplyr::group_by(activity_date_final) %>%
-     dplyr::summarise(sum_vessel_number = sum(vessel_number),
-                      .groups = "drop")
+    dplyr::group_by(activity_date_final) %>%
+    dplyr::summarise(sum_vessel_number = sum(vessel_number),
+                     .groups = "drop")
   # graphic design ----
-  vessel_number_graphic <- ggplot2::ggplot(vessel_number_final,
-                                           mapping = ggplot2::aes(fill = vessel_type_code,
-                                                                  y = vessel_number,
-                                                                  x = activity_date_final)) +
+  vessel_number_graphic <- ggplot2::ggplot(mapping = ggplot2::aes(fill = vessel_number_final$vessel_type_code,
+                                                                  y = vessel_number_final$vessel_number,
+                                                                  x = vessel_number_final$activity_date_final)) +
     ggplot2::geom_bar(stat = "identity") +
     ggplot2::scale_fill_manual(values = vessel_type_color,
                                labels = vessel_type_modality) +
