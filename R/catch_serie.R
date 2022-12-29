@@ -74,7 +74,6 @@ catch_serie <- function(data_connection,
                                                no = lubridate::year(x = activity_date))) %>%
     dplyr::arrange(activity_date_final) %>%
     dplyr::mutate(activity_date_final = as.factor(x = activity_date_final))
-
   # 4 - Legend design ----
   #Specie
   specie_type_legend <- fishi::code_manipulation(data = catch_serie_data$specie_code,
