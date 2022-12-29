@@ -99,10 +99,9 @@ catch_serie <- function(data_connection,
                                                  referential = "balbaya_vessel_simple_type",
                                                  manipulation = "legend")
   # 5 - Graphic design ----
-  catch_serie_graphic <- ggplot2::ggplot(catch_serie_final,
-                                         mapping = ggplot2::aes(fill = as.factor(specie_code),
-                                                                y = catch,
-                                                                x = activity_date_final)) +
+  catch_serie_graphic <- ggplot2::ggplot(mapping = ggplot2::aes(fill = as.factor(catch_serie_final$specie_code),
+                                                                y = catch_serie_final$catch,
+                                                                x = catch_serie_final$activity_date_final)) +
     ggplot2::geom_bar(stat = "identity") +
     ggplot2::scale_fill_manual(values = specie_type_color,
                                labels = specie_type_modality) +
