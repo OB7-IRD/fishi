@@ -21,7 +21,8 @@ Imports:
     ggspatial (>= 1.1.7),
     lubridate (>= 1.8.0),
     rnaturalearth (>= 0.1.0), 
-    utils (>= 4.0.4)
+    utils (>= 4.0.4),
+    viridis (>= 0.6.2)
 Remotes:
     github::OB7-IRD/furdeb
 Suggests: 
