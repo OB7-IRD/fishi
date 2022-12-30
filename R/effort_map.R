@@ -76,20 +76,20 @@ effort_map <- function(data_connection,
     ggplot2::geom_sf(data = world_boundaries) +
     ggspatial::coord_sf(xlim=c(-40,100),ylim=c(-30,20))  +
     ggplot2::geom_bin2d(ggplot2::aes(x=effort_map_final$lon, y=effort_map_final$lat), bins=100) +
-    ggplot2::theme_void() +
+    #ggplot2::theme_void() +
     ggplot2::xlim(-40,100) +
     ggplot2::ylim(-30, 20) +
     viridis::scale_fill_viridis(
       option ="B",
       trans = "log",
       breaks = c(10,20,50,100,1000, 2000, 3000, 4000),
-      name = "Effort de pêche (t)",
+      name = "Effort de peche (t)",
       guide = ggplot2::guide_legend( keyheight = grid::unit(2.5, units = "mm"), keywidth = grid::unit(10, units = "mm"), label.position = "bottom", title.position = "top", nrow=1)
     )  +
-    ggspatial::annotation_scale(location = "bl", line_width = .5) +
+    #ggspatial::annotation_scale(location = "bl", line_width = .5) +
     ggspatial::annotation_north_arrow(location = "tl", height = grid::unit(1.2, "cm"), width = grid::unit(1.5, "cm"),
                                       style = ggspatial::north_arrow_fancy_orienteering()) +
-    ggplot2::labs(title = paste0("Map of effort distribution"),
+    ggplot2::labs(title = "Map of effort distribution",
                   subtitle = paste0(ifelse(test = length(x = ocean) != 1,
                                            yes = "Oceans : ",
                                            no = "Ocean : "),
@@ -98,17 +98,19 @@ effort_map <- function(data_connection,
                                            yes = "Vessel types : ",
                                            no = "Vessel type : "),
                                     vessel_type_legend, "\n",
-                                    ifelse(test = length(x = "country") != 1,
+                                    ifelse(test = length(x = country) != 1,
                                            yes = "Countries : ",
                                            no = "Country : "),
-                                    country_legend)) +
+                                    country_legend, "\n",
+                                    ifelse(test = length(x = time_period) != 1,
+                                           yes =  paste0("Years : ", min(time_period), " to ", max(time_period)),
+                                           no = paste0("Year : ", time_period)))) +
     ggplot2::theme(
-      legend.position = c(0.8, 0.09),
+      legend.position = "bottom",
       legend.title = ggplot2::element_text(color="black", size=8),
-      text = ggplot2::element_text(color = "#22211d"),
-      plot.title = ggplot2::element_text(size= 13, hjust=0.1, color = "#4e4d47", margin = ggplot2::margin(b = -0.1, t = 0.4, l = 2, unit = "cm")),
-    )
+      text = ggplot2::element_text(color = "#22211d", size = 8)) +
+    ggplot2::xlab("") + ggplot2::ylab("")
   # 6 - Export ----
-  if (!is.null(x = path_file)) {ggplot2::ggsave(paste0(path_file,"/catch_map.png"), width = 20, height = 20, units = "cm")}
+  if (!is.null(x = path_file)) {ggplot2::ggsave(paste0(path_file,"/effort_map.png"), width = 22, height = 9.3, units = "cm")}
   return(map)
 }

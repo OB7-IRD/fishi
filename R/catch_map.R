@@ -94,8 +94,7 @@ catch_map <- function(data_connection,
     ggplot2::ggplot() +
     ggplot2::geom_sf(data = world_boundaries) +
     ggspatial::coord_sf(xlim=c(-40,100),ylim=c(-30,20))  +
-    ggplot2::geom_point(ggplot2::aes(x = catch_map_final$lon, y = catch_map_final$lat, color=catch_map_final$specie_name, size = catch_map_final$catch), alpha=0.9) +
-    ggspatial::annotation_scale(location = "bl", line_width = .5) +
+    ggplot2::geom_point(data = catch_map_final, ggplot2::aes(x = lon, y = lat, color=specie_name, size = catch), alpha=0.9) +
     ggspatial::annotation_north_arrow(location = "tl", height = grid::unit(1.2, "cm"), width = grid::unit(1.5, "cm"),
                                       style = ggspatial::north_arrow_fancy_orienteering()) +
     ggplot2::labs(title = paste0("Map of catch distribution (",
@@ -114,8 +113,12 @@ catch_map <- function(data_connection,
                                     ifelse(test = length(x = "country") != 1,
                                            yes = "Countries : ",
                                            no = "Country : "),
-                                    country_legend))
+                                    country_legend, "\n",
+                                    ifelse(test = length(x = time_period) != 1,
+                                           yes =  paste0("Years : ", min(time_period), " to ", max(time_period)),
+                                           no = paste0("Year : ", time_period)))) +
+    ggplot2::xlab("") + ggplot2::ylab("")
   # 6 - Export ----
-  if (!is.null(x = path_file)) {ggplot2::ggsave(paste0(path_file,"/catch_map.png"), width = 20, height = 20, units = "cm")}
+  if (!is.null(x = path_file)) {ggplot2::ggsave(paste0(path_file,"/catch_map.png"), width = 22, height = 9.3, units = "cm")}
   return(map)
 }
