@@ -11,8 +11,8 @@
 #' @export
 #' @importFrom DBI dbGetQuery sqlInterpolate SQL
 #' @importFrom dplyr arrange mutate tibble rowwise
-#' @importFrom ggplot2 ggplot aes geom_bar scale_fill_manual scale_y_continuous ggtitle xlab ylab labs theme element_text ggsave geom_sf margin
-#' @importFrom lubridate month year
+#' @importFrom ggplot2 ggplot aes xlab ylab labs theme element_text ggsave geom_sf geom_bin2d xlim ylim guide_legend
+#' @importFrom lubridate year
 #' @importFrom furdeb configuration_file postgresql_dbconnection
 #' @importFrom rnaturalearth ne_countries
 #' @importFrom ggspatial annotation_scale annotation_north_arrow
@@ -23,7 +23,9 @@ effort_map <- function(data_connection,
                        ocean,
                        country,
                        vessel_type,
-                       path_file = NULL){
+                       path_file = NULL) {
+  # 0 - Global variables assignement ----
+  activity_date <- lon <- lat <- NULL
   # 1 - Arguments verification ----
   # 2 - Data extraction ----
   if (data_connection[[1]] == "balbaya") {
@@ -32,16 +34,16 @@ effort_map <- function(data_connection,
                                                         package = "fishi")),
                             collapse = "\n")
     effort_map_sql_final <- DBI::sqlInterpolate(conn = data_connection[[2]],
-                                                sql = effort_map_sql,
+                                                sql  = effort_map_sql,
                                                 time_period = DBI::SQL(paste(time_period,
                                                                              collapse = ", ")),
-                                                ocean = DBI::SQL(paste(ocean,
-                                                                       collapse = ", ")),
+                                                ocean       = DBI::SQL(paste(ocean,
+                                                                             collapse = ", ")),
                                                 vessel_type = DBI::SQL(paste(vessel_type,
                                                                              collapse = ", ")),
-                                                country = DBI::SQL(paste(country,
-                                                                         collapse = ", ")))
-    effort_map_data <- dplyr::tibble(DBI::dbGetQuery(conn = data_connection[[2]],
+                                                country     = DBI::SQL(paste(country,
+                                                                             collapse = ", ")))
+    effort_map_data <- dplyr::tibble(DBI::dbGetQuery(conn      = data_connection[[2]],
                                                      statement = effort_map_sql_final))
   } else {
     stop(format(x = Sys.time(),
@@ -57,60 +59,81 @@ effort_map <- function(data_connection,
     dplyr::arrange(year) %>%
     dplyr::mutate(year = as.factor(x = year))
   #world_boundaries
-  world_boundaries <- rnaturalearth::ne_countries(returnclass = "sf", scale ="medium")
+  world_boundaries <- rnaturalearth::ne_countries(returnclass = "sf",
+                                                  scale       = "medium")
   # 4 - Legend design ----
   #Ocean
-  ocean_legend <- code_manipulation(data = effort_map_data$ocean_code,
-                                           referential = "ocean",
-                                           manipulation = "legend")
+  ocean_legend <- code_manipulation(data         = effort_map_data$ocean_code,
+                                    referential  = "ocean",
+                                    manipulation = "legend")
   #country
-  country_legend <- code_manipulation(data = effort_map_data$country_code,
-                                             referential = "country",
-                                             manipulation = "legend")
+  country_legend <- code_manipulation(data         = effort_map_data$country_code,
+                                      referential  = "country",
+                                      manipulation = "legend")
   #vessel
-  vessel_type_legend <- code_manipulation(data = effort_map_data$vessel_code,
-                                                 referential = "balbaya_vessel_simple_type",
-                                                 manipulation = "legend")
+  vessel_type_legend <- code_manipulation(data         = effort_map_data$vessel_code,
+                                          referential  = "balbaya_vessel_simple_type",
+                                          manipulation = "legend")
   # 5 - Graphic design ----
   map <- ggplot2::ggplot() +
     ggplot2::geom_sf(data = world_boundaries) +
-    ggspatial::coord_sf(xlim=c(-40,100),ylim=c(-30,20))  +
-    ggplot2::geom_bin2d(ggplot2::aes(x=effort_map_final$lon, y=effort_map_final$lat), bins=100) +
+    ggspatial::coord_sf(xlim = c(-40, 100),
+                        ylim = c(-30, 20))  +
+    ggplot2::geom_bin2d(data = effort_map_final,
+                        ggplot2::aes(x = lon,
+                                     y = lat),
+                        bins = 100) +
     #ggplot2::theme_void() +
-    ggplot2::xlim(-40,100) +
+    ggplot2::xlim(-40, 100) +
     ggplot2::ylim(-30, 20) +
     viridis::scale_fill_viridis(
-      option ="B",
-      trans = "log",
-      breaks = c(10,20,50,100,1000, 2000, 3000, 4000),
-      name = "Effort de peche (t)",
-      guide = ggplot2::guide_legend( keyheight = grid::unit(2.5, units = "mm"), keywidth = grid::unit(10, units = "mm"), label.position = "bottom", title.position = "top", nrow=1)
-    )  +
-    #ggspatial::annotation_scale(location = "bl", line_width = .5) +
-    ggspatial::annotation_north_arrow(location = "tl", height = grid::unit(1.2, "cm"), width = grid::unit(1.5, "cm"),
-                                      style = ggspatial::north_arrow_fancy_orienteering()) +
+      option = "B",
+      trans  = "log",
+      breaks = c(10, 20, 50, 100, 1000, 2000, 3000, 4000),
+      name   = "Effort de peche (t)",
+      guide  = ggplot2::guide_legend(keyheight     = grid::unit(2.5, units = "mm"),
+                                     keywidth       = grid::unit(10, units = "mm"),
+                                     label.position = "bottom",
+                                     title.position = "top",
+                                     nrow           = 1))  +
+    ggspatial::annotation_north_arrow(location = "tl",
+                                      height   = grid::unit(1.2, "cm"),
+                                      width    = grid::unit(1.5, "cm"),
+                                      style    = ggspatial::north_arrow_fancy_orienteering()) +
     ggplot2::labs(title = "Map of effort distribution",
                   subtitle = paste0(ifelse(test = length(x = ocean) != 1,
-                                           yes = "Oceans : ",
-                                           no = "Ocean : "),
+                                           yes  = "Oceans : ",
+                                           no   = "Ocean : "),
                                     ocean_legend, "\n",
                                     ifelse(test = length(x = vessel_type) != 1,
-                                           yes = "Vessel types : ",
-                                           no = "Vessel type : "),
+                                           yes  = "Vessel types : ",
+                                           no  = "Vessel type : "),
                                     vessel_type_legend, "\n",
                                     ifelse(test = length(x = country) != 1,
-                                           yes = "Countries : ",
-                                           no = "Country : "),
+                                           yes  = "Countries : ",
+                                           no   = "Country : "),
                                     country_legend, "\n",
                                     ifelse(test = length(x = time_period) != 1,
-                                           yes =  paste0("Years : ", min(time_period), " to ", max(time_period)),
-                                           no = paste0("Year : ", time_period)))) +
+                                           yes  =  paste0("Years : ",
+                                                          min(time_period),
+                                                          " to ",
+                                                          max(time_period)),
+                                           no  = paste0("Year : ",
+                                                        time_period)))) +
     ggplot2::theme(
       legend.position = "bottom",
-      legend.title = ggplot2::element_text(color="black", size=8),
-      text = ggplot2::element_text(color = "#22211d", size = 8)) +
-    ggplot2::xlab("") + ggplot2::ylab("")
+      legend.title    = ggplot2::element_text(color = "black",
+                                              size  = 8),
+      text            = ggplot2::element_text(color = "#22211d",
+                                              size  = 8)) +
+    ggplot2::xlab("") +
+    ggplot2::ylab("")
   # 6 - Export ----
-  if (!is.null(x = path_file)) {ggplot2::ggsave(paste0(path_file,"/effort_map.png"), width = 22, height = 9.3, units = "cm")}
+  if (!is.null(x = path_file)) {
+    ggplot2::ggsave(paste0(path_file, "/effort_map.png"),
+                    width = 22,
+                    height = 9.3,
+                    units = "cm")
+  }
   return(map)
 }

@@ -13,11 +13,11 @@
 #' @export
 #' @importFrom DBI dbGetQuery sqlInterpolate SQL
 #' @importFrom dplyr arrange mutate tibble rowwise
-#' @importFrom ggplot2 ggplot aes geom_bar scale_fill_manual scale_y_continuous ggtitle xlab ylab labs theme element_text ggsave geom_sf
-#' @importFrom lubridate month year
+#' @importFrom ggplot2 ggplot aes xlab ylab labs ggsave geom_sf geom_point
+#' @importFrom lubridate year
 #' @importFrom furdeb configuration_file postgresql_dbconnection
 #' @importFrom rnaturalearth ne_countries
-#' @importFrom ggspatial annotation_scale annotation_north_arrow
+#' @importFrom ggspatial annotation_north_arrow coord_sf north_arrow_fancy_orienteering
 #' @importFrom grid unit
 catch_map <- function(data_connection,
                       time_period,
@@ -26,15 +26,17 @@ catch_map <- function(data_connection,
                       country,
                       vessel_type,
                       all_db = FALSE,
-                      path_file = NULL){
+                      path_file = NULL) {
+  # 0 - Global variables assignement ----
+  activity_date <- catch <- lon <- lat <- specie_name <-  NULL
   # 1 - Arguments verification ----
   #ALL
-  if (all_db == TRUE){
-    time_period = as.integer(c(1981:2021))
-    specie = as.integer(c(1:3))
-    ocean = as.integer(c(1:5))
-    country = as.integer(c(1,41))
-    vessel_type = as.integer(c(1:5))
+  if (all_db == TRUE) {
+    time_period <- as.integer(c(1981:2021))
+    specie      <- as.integer(c(1:3))
+    ocean       <- as.integer(c(1:5))
+    country     <- as.integer(c(1, 41))
+    vessel_type <- as.integer(c(1:5))
   }
   # 2 - Data extraction ----
   if (data_connection[[1]] == "balbaya") {
@@ -43,18 +45,18 @@ catch_map <- function(data_connection,
                                                        package = "fishi")),
                            collapse = "\n")
     catch_map_sql_final <- DBI::sqlInterpolate(conn = data_connection[[2]],
-                                               sql = catch_map_sql,
+                                               sql  = catch_map_sql,
                                                time_period = DBI::SQL(paste(time_period,
                                                                             collapse = ", ")),
-                                               specie = DBI::SQL(paste(specie,
-                                                                       collapse = ", ")),
-                                               ocean = DBI::SQL(paste(ocean,
-                                                                      collapse = ", ")),
+                                               specie      = DBI::SQL(paste(specie,
+                                                                            collapse = ", ")),
+                                               ocean       = DBI::SQL(paste(ocean,
+                                                                            collapse = ", ")),
                                                vessel_type = DBI::SQL(paste(vessel_type,
                                                                             collapse = ", ")),
-                                               country = DBI::SQL(paste(country,
-                                                                        collapse = ", ")))
-    catch_map_data <- dplyr::tibble(DBI::dbGetQuery(conn = data_connection[[2]],
+                                               country     = DBI::SQL(paste(country,
+                                                                            collapse = ", ")))
+    catch_map_data <- dplyr::tibble(DBI::dbGetQuery(conn      = data_connection[[2]],
                                                     statement = catch_map_sql_final))
   } else {
     stop(format(x = Sys.time(),
@@ -70,55 +72,75 @@ catch_map <- function(data_connection,
     dplyr::arrange(year) %>%
     dplyr::mutate(year = as.factor(x = year))
   #world_boundaries
-  world_boundaries <- rnaturalearth::ne_countries(returnclass = "sf", scale ="medium")
+  world_boundaries <- rnaturalearth::ne_countries(returnclass = "sf",
+                                                  scale       = "medium")
   # 4 - Legend design ----
   #Specie
-  specie_type_legend <- fishi::code_manipulation(data = catch_map_data$specie_code,
-                                                 referential = "specie",
-                                                 manipulation = "legend")
+  specie_type_legend <- code_manipulation(data         = catch_map_data$specie_code,
+                                          referential  = "specie",
+                                          manipulation = "legend")
   #Ocean
-  ocean_legend <- fishi::code_manipulation(data = catch_map_data$ocean_code,
-                                           referential = "ocean",
-                                           manipulation = "legend")
+  ocean_legend <- code_manipulation(data         = catch_map_data$ocean_code,
+                                    referential  = "ocean",
+                                    manipulation = "legend")
   #country
-  country_legend <- fishi::code_manipulation(data = catch_map_data$country_code,
-                                             referential = "country",
-                                             manipulation = "legend")
+  country_legend <- code_manipulation(data         = catch_map_data$country_code,
+                                      referential  = "country",
+                                      manipulation = "legend")
   #vessel
-  vessel_type_legend <- fishi::code_manipulation(data = catch_map_data$vessel_code,
-                                                 referential = "balbaya_vessel_simple_type",
-                                                 manipulation = "legend")
+  vessel_type_legend <- code_manipulation(data         = catch_map_data$vessel_code,
+                                          referential  = "balbaya_vessel_simple_type",
+                                          manipulation = "legend")
   # 5 - Graphic design ----
   map <- catch_map_final %>%
     dplyr::arrange(catch) %>%
     ggplot2::ggplot() +
     ggplot2::geom_sf(data = world_boundaries) +
-    ggspatial::coord_sf(xlim=c(-40,100),ylim=c(-30,20))  +
-    ggplot2::geom_point(data = catch_map_final, ggplot2::aes(x = lon, y = lat, color=specie_name, size = catch), alpha=0.9) +
-    ggspatial::annotation_north_arrow(location = "tl", height = grid::unit(1.2, "cm"), width = grid::unit(1.5, "cm"),
-                                      style = ggspatial::north_arrow_fancy_orienteering()) +
+    ggspatial::coord_sf(xlim = c(-40, 100),
+                        ylim = c(-30, 20))  +
+    ggplot2::geom_point(data = catch_map_final,
+                        ggplot2::aes(x     = lon,
+                                     y     = lat,
+                                     color = specie_name,
+                                     size  = catch),
+                        alpha = 0.9) +
+    ggspatial::annotation_north_arrow(location = "tl",
+                                      height   = grid::unit(1.2, "cm"),
+                                      width    = grid::unit(1.5, "cm"),
+                                      style    = ggspatial::north_arrow_fancy_orienteering()) +
     ggplot2::labs(title = paste0("Map of catch distribution (",
                                  specie_type_legend,
                                  ifelse(test = length(x = time_period) != 1,
-                                        yes = ")",
-                                        no = ")")),
+                                        yes  = ")",
+                                        no   = ")")),
                   subtitle = paste0(ifelse(test = length(x = ocean) != 1,
-                                           yes = "Oceans : ",
-                                           no = "Ocean : "),
+                                           yes  = "Oceans : ",
+                                           no   = "Ocean : "),
                                     ocean_legend, "\n",
                                     ifelse(test = length(x = vessel_type) != 1,
-                                           yes = "Vessel types : ",
-                                           no = "Vessel type : "),
+                                           yes  = "Vessel types : ",
+                                           no   = "Vessel type : "),
                                     vessel_type_legend, "\n",
                                     ifelse(test = length(x = "country") != 1,
-                                           yes = "Countries : ",
-                                           no = "Country : "),
+                                           yes  = "Countries : ",
+                                           no   = "Country : "),
                                     country_legend, "\n",
                                     ifelse(test = length(x = time_period) != 1,
-                                           yes =  paste0("Years : ", min(time_period), " to ", max(time_period)),
-                                           no = paste0("Year : ", time_period)))) +
-    ggplot2::xlab("") + ggplot2::ylab("")
+                                           yes  =  paste0("Years : ",
+                                                          min(time_period),
+                                                          " to ",
+                                                          max(time_period)),
+                                           no  = paste0("Year : ",
+                                                        time_period)))) +
+    ggplot2::xlab("") +
+    ggplot2::ylab("") +
+    ggplot2::labs(color = ifelse(test = length(x = specie) != 1,
+                                 yes  = "Species names",
+                                 no   = "Specie name"),
+                  size  = "Catch")
   # 6 - Export ----
-  if (!is.null(x = path_file)) {ggplot2::ggsave(paste0(path_file,"/catch_map.png"), width = 22, height = 9.3, units = "cm")}
+  if (!is.null(x = path_file)) {
+    ggplot2::ggsave(paste0(path_file, "/catch_map.png"), width = 22, height = 9.3, units = "cm")
+  }
   return(map)
 }

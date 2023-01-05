@@ -11,16 +11,17 @@
 #' @export
 #' @importFrom DBI dbGetQuery sqlInterpolate SQL
 #' @importFrom dplyr arrange mutate tibble rowwise
-#' @importFrom ggplot2 ggplot aes geom_bar scale_fill_manual scale_y_continuous ggtitle xlab ylab labs theme element_text ggsave geom_sf margin
+#' @importFrom ggplot2 ggplot aes geom_bar labs theme element_text ggsave
 #' @importFrom lubridate month year
 #' @importFrom furdeb configuration_file postgresql_dbconnection
-#' @importFrom grid unit
 effort_serie <- function(data_connection,
                          time_period,
                          ocean,
                          country,
                          vessel_type,
-                         path_file = NULL){
+                         path_file = NULL) {
+  # 0 - Global variables assignement ----
+  activity_date <- activity_date_final <- time_step <- ocean_name <- catch <- NULL
   # 1 - Arguments verification ----
   # 2 - Data extraction ----
   if (data_connection[[1]] == "balbaya") {
@@ -29,16 +30,16 @@ effort_serie <- function(data_connection,
                                                           package = "fishi")),
                               collapse = "\n")
     effort_serie_sql_final <- DBI::sqlInterpolate(conn = data_connection[[2]],
-                                                  sql = effort_serie_sql,
+                                                  sql  = effort_serie_sql,
                                                   time_period = DBI::SQL(paste(time_period,
                                                                                collapse = ", ")),
-                                                  ocean = DBI::SQL(paste(ocean,
-                                                                         collapse = ", ")),
+                                                  ocean       = DBI::SQL(paste(ocean,
+                                                                               collapse = ", ")),
                                                   vessel_type = DBI::SQL(paste(vessel_type,
                                                                                collapse = ", ")),
-                                                  country = DBI::SQL(paste(country,
-                                                                           collapse = ", ")))
-    effort_serie_data <- dplyr::tibble(DBI::dbGetQuery(conn = data_connection[[2]],
+                                                  country     = DBI::SQL(paste(country,
+                                                                               collapse = ", ")))
+    effort_serie_data <- dplyr::tibble(DBI::dbGetQuery(conn      = data_connection[[2]],
                                                        statement = effort_serie_sql_final))
   } else {
     stop(format(x = Sys.time(),
@@ -60,44 +61,53 @@ effort_serie <- function(data_connection,
     dplyr::mutate(activity_date_final = as.factor(x = activity_date_final))
   # 4 - Legend design ----
   #Ocean
-  ocean_legend <- code_manipulation(data = effort_serie_data$ocean_code,
-                                    referential = "ocean",
+  ocean_legend <- code_manipulation(data         = effort_serie_data$ocean_code,
+                                    referential  = "ocean",
                                     manipulation = "legend")
   #country
-  country_legend <- code_manipulation(data = effort_serie_data$country_code,
-                                      referential = "country",
+  country_legend <- code_manipulation(data         = effort_serie_data$country_code,
+                                      referential  = "country",
                                       manipulation = "legend")
   #vessel
-  vessel_type_legend <- code_manipulation(data = effort_serie_data$vessel_code,
-                                          referential = "balbaya_vessel_simple_type",
+  vessel_type_legend <- code_manipulation(data         = effort_serie_data$vessel_code,
+                                          referential  = "balbaya_vessel_simple_type",
                                           manipulation = "legend")
   # 5 - Graphic design ----
-  effort_serie_graphic <- ggplot2::ggplot(mapping = ggplot2::aes(fill = effort_serie_final$ocean_name,
-                                                                 y = effort_serie_final$catch,
-                                                                 x = effort_serie_final$activity_date_final)) +
+  effort_serie_graphic <- ggplot2::ggplot(data    = effort_serie_final,
+                                          mapping = ggplot2::aes(fill = ocean_name,
+                                                                 y    = catch,
+                                                                 x    = activity_date_final)) +
     ggplot2::geom_bar(stat = "identity") +
     ggplot2::labs(title = paste0("Evolution of the effort",
                                  ifelse(test = length(x = time_period) != 1,
-                                        yes = " through the years ",
-                                        no = " through the year ")),
+                                        yes  = " through the years ",
+                                        no   = " through the year ")),
                   subtitle = paste0(ifelse(test = length(x = ocean) != 1,
-                                           yes = "Oceans : ",
-                                           no = "Ocean : "),
+                                           yes  = "Oceans : ",
+                                           no   = "Ocean : "),
                                     ocean_legend, "\n",
                                     ifelse(test = length(x = vessel_type) != 1,
-                                           yes = "Vessel types : ",
-                                           no = "Vessel type : "),
+                                           yes  = "Vessel types : ",
+                                           no   = "Vessel type : "),
                                     vessel_type_legend, "\n",
                                     ifelse(test = length(x = "country") != 1,
-                                           yes = "Countries : ",
-                                           no = "Country : "),
+                                           yes  = "Countries : ",
+                                           no   = "Country : "),
                                     country_legend),
-                  x = "", y = "Total of catches (in t)")+
+                  x = "",
+                  y = "Total of catches (in t)") +
     ggplot2::labs(fill = ifelse(test = length(x = vessel_type) != 1,
-                                yes = " Oceans names",
-                                no = " Ocean name")) +
-    ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 90, vjust = 0.5, hjust=1))
+                                yes  = " Oceans names",
+                                no   = " Ocean name")) +
+    ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 90,
+                                                       vjust = 0.5,
+                                                       hjust = 1))
   # 6 - Export ----
-  if (!is.null(x = path_file)) {ggplot2::ggsave(paste0(path_file,"/effort_serie.png"), width = 22, height = 9.3, units = "cm")}
+  if (!is.null(x = path_file)) {
+    ggplot2::ggsave(paste0(path_file, "/effort_serie.png"),
+                    width = 22,
+                    height = 9.3,
+                    units = "cm")
+  }
   return(effort_serie_graphic)
 }
