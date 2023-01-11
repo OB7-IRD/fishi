@@ -7,7 +7,6 @@
 #' @param ocean {\link[base]{integer}} expected. Ocean codes identification.
 #' @param country {\link[base]{integer}} expected. Country codes identification.
 #' @param vessel_type {\link[base]{integer}} expected. Vessel type codes identification.
-#' @param all_db TRUE or FALSE expected. If TRUE then selects all the data in the balbaya database. Default = FALSE.
 #' @param time_step {\link[base]{character}} expected. Kind of display you want in the graphic output. You can choose between "month" and "year".
 #' @param path_file path to save the final graphic as a png. NULL by default.
 #' @return The function return  ggplot R object.
@@ -23,25 +22,73 @@ catch_serie <- function(data_connection,
                         ocean,
                         country,
                         vessel_type,
-                        all_db = FALSE,
                         time_step = "year",
                         path_file = NULL) {
   # 0 - Global variables assignement ----
-  activity_date <- activity_date_final <- specie_code <- catch <- NULL
+  activity_date <- NULL
+  activity_date_final <- NULL
+  specie_code <- NULL
+  catch <- NULL
   # 1 - Arguments verification ----
-  time_step <- tolower(time_step) #to remove potential capital letters from the argument
-  #ALL
-  if (all_db == TRUE) {
-    time_period <- as.integer(c(1981:2021))
-    specie      <- as.integer(c(1:3))
-    ocean       <- as.integer(c(1:5))
-    country     <- as.integer(c(1, 41))
-    vessel_type <- as.integer(c(1:5))
+  if (codama::r_type_checking(r_object = data_connection,
+                              type = "list",
+                              length = 2L,
+                              output = "logical") != TRUE) {
+    codama::r_type_checking(r_object = data_connection,
+                            type = "list",
+                            length = 2L,
+                            output = "message")
+  }
+  if (codama::r_type_checking(r_object = time_period,
+                              type = "integer",
+                              output = "logical") != TRUE) {
+    codama::r_type_checking(r_object = time_period,
+                            type = "integer",
+                            output = "message")
+  }
+  if (codama::r_type_checking(r_object = specie,
+                              type = "integer",
+                              output = "logical") != TRUE) {
+    codama::r_type_checking(r_object = specie,
+                            type = "integer",
+                            output = "message")
+  }
+  if (codama::r_type_checking(r_object = ocean,
+                              type = "integer",
+                              output = "logical") != TRUE) {
+    codama::r_type_checking(r_object = ocean,
+                            type = "integer",
+                            output = "message")
+  }
+  if (codama::r_type_checking(r_object = vessel_type,
+                              type = "integer",
+                              output = "logical") != TRUE) {
+    codama::r_type_checking(r_object = vessel_type,
+                            type = "integer",
+                            output = "message")
+  }
+  if (codama::r_type_checking(r_object = time_step,
+                              type = "character",
+                              output = "logical") != TRUE) {
+    codama::r_type_checking(r_object = time_step,
+                            type = "character",
+                            length = 1L,
+                            allowed_values = c("month",
+                                               "year"),
+                            output = "message")
+  }
+  if (! is.null(x = path_file) && codama::r_type_checking(r_object = path_file,
+                                                          type = "character",
+                                                          output = "logical") != TRUE) {
+    codama::r_type_checking(r_object = path_file,
+                            type = "character",
+                            length = 1L,
+                            output = "message")
   }
   # 2 - Data extraction ----
   if (data_connection[[1]] == "balbaya") {
     catch_serie_sql <- paste(readLines(con = system.file("sql",
-                                                         "balbaya_catch_serie_all.sql",
+                                                         "balbaya_catch_serie.sql",
                                                          package = "fishi")),
                              collapse = "\n")
     catch_serie_sql_final <- DBI::sqlInterpolate(conn = data_connection[[2]],

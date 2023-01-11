@@ -20,11 +20,12 @@ Imports:
     ggplot2 (>= 3.3.5),
     ggspatial (>= 1.1.7),
     lubridate (>= 1.8.0),
-    rnaturalearth (>= 0.1.0), 
-    utils (>= 4.0.4),
-    viridis (>= 0.6.2)
-Remotes:
-    github::OB7-IRD/furdeb
+    rnaturalearth (>= 0.1.0),
+    utils,
+    codama (>= 0.9.0)
+Remotes: 
+    github::OB7-IRD/furdeb,
+    github::OB7-IRD/codama
 Suggests: 
     knitr,
     rmarkdown

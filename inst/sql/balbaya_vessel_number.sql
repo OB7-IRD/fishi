@@ -2,7 +2,7 @@ SELECT
 	o.c_ocea::numeric as ocean_code
 	,o.l_ocea::text as ocean_name
 	,a.d_act::date as activity_date
-	,e2.c_engin::numeric as vessel_code
+	,a.c_bat::numeric as vessel_code
 	,e2.c_engin::numeric as vessel_type_code
 	,e2.l_engin::text as vessel_type_name
 FROM 

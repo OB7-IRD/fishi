@@ -11,7 +11,6 @@ catch_map(
   ocean,
   country,
   vessel_type,
-  all_db = FALSE,
   path_file = NULL
 )
 }
@@ -27,8 +26,6 @@ catch_map(
 \item{country}{{\link[base]{integer}} expected. Country codes identification.}
 
 \item{vessel_type}{{\link[base]{integer}} expected. Vessel type codes identification.}
-
-\item{all_db}{TRUE or FALSE expected. If TRUE then selects all the data in the balbaya database. Default = FALSE.}
 
 \item{path_file}{path to save the final graphic as a png. NULL by default.}
 }

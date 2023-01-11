@@ -1,4 +1,4 @@
-#' @name vessel_number_bis
+#' @name vessel_number
 #' @title Number of vessel
 #' @description Number of vessel by country, ocean, period, time step and vessel type.
 #' @param data_connection {\link[base]{list}} expected. Output of the function {\link[furdeb]{postgresql_dbconnection}} or name of a internal fishi dataset.
@@ -13,17 +13,61 @@
 #' @importFrom dplyr tibble rowwise mutate group_by summarise arrange n_distinct
 #' @importFrom lubridate year month
 #' @importFrom ggplot2 ggplot aes geom_bar scale_fill_manual scale_y_continuous ggtitle xlab ylab labs theme element_text
-vessel_number_bis <- function(data_connection,
-                              time_period,
-                              ocean,
-                              country,
-                              vessel_type,
-                              time_step = "year") {
-  # global variables assignement ----
-  activity_date <- vessel_type_code <- activity_date_final <- vessel_code <- vessel_number <- NULL
-  # db connection manipulation ----
+vessel_number <- function(data_connection,
+                          time_period,
+                          ocean,
+                          country,
+                          vessel_type,
+                          time_step = "year") {
+  # 0 - Global variables assignement ----
+  activity_date <- NULL
+  vessel_type_code <- NULL
+  activity_date_final <- NULL
+  vessel_code <- NULL
+  vessel_number <- NULL
+  # 1 - Arguments verification ----
+  if (codama::r_type_checking(r_object = data_connection,
+                              type = "list",
+                              length = 2L,
+                              output = "logical") != TRUE) {
+    codama::r_type_checking(r_object = data_connection,
+                            type = "list",
+                            length = 2L,
+                            output = "message")
+  }
+  if (codama::r_type_checking(r_object = time_period,
+                              type = "integer",
+                              output = "logical") != TRUE) {
+    codama::r_type_checking(r_object = time_period,
+                            type = "integer",
+                            output = "message")
+  }
+  if (codama::r_type_checking(r_object = ocean,
+                              type = "integer",
+                              output = "logical") != TRUE) {
+    codama::r_type_checking(r_object = ocean,
+                            type = "integer",
+                            output = "message")
+  }
+  if (codama::r_type_checking(r_object = vessel_type,
+                              type = "integer",
+                              output = "logical") != TRUE) {
+    codama::r_type_checking(r_object = vessel_type,
+                            type = "integer",
+                            output = "message")
+  }
+  if (codama::r_type_checking(r_object = time_step,
+                              type = "character",
+                              output = "logical") != TRUE) {
+    codama::r_type_checking(r_object = time_step,
+                            type = "character",
+                            length = 1L,
+                            allowed_values = c("month",
+                                               "year"),
+                            output = "message")
+  }
+  # 2 - Data extraction ----
   if (data_connection[[1]] == "t3_prod") {
-    # data import ----
     vessel_number_sql <- paste(readLines(con = system.file("sql",
                                                            "t3_vessel_number.sql",
                                                            package = "fishi")),
@@ -63,7 +107,7 @@ vessel_number_bis <- function(data_connection,
          " - Indicator not developed yet for this \"data_connection\" argument.\n",
          sep = "")
   }
-  # data design ----
+  # 3 - Data design ----
   vessel_number_final <- vessel_number_data %>%
     dplyr::rowwise() %>%
     dplyr::mutate(activity_date_final = ifelse(test = time_step == "month" | time_step == "months",
@@ -80,15 +124,15 @@ vessel_number_bis <- function(data_connection,
     dplyr::arrange(activity_date_final,
                    vessel_type_code) %>%
     dplyr::mutate(activity_date_final = as.factor(x = activity_date_final))
-  # legend and colors design ----
+  # 4 - Legend design ----
   vessel_type_color <- code_manipulation(data         = vessel_number_final$vessel_type_code,
-                                         referential  = "balbaya_vessel_simple_type",
+                                         referential  = "vessel_simple_type",
                                          manipulation = "color")
   vessel_type_legend <- code_manipulation(data         = vessel_number_final$vessel_type_code,
-                                          referential  = "balbaya_vessel_simple_type",
+                                          referential  = "vessel_simple_type",
                                           manipulation = "legend")
   vessel_type_modality <- code_manipulation(data         = vessel_number_final$vessel_type_code,
-                                            referential  = "balbaya_vessel_simple_type",
+                                            referential  = "vessel_simple_type",
                                             manipulation = "modality")
   ocean_legend <- code_manipulation(data           = ocean,
                                     referential    = "ocean",
@@ -100,7 +144,7 @@ vessel_number_bis <- function(data_connection,
     dplyr::group_by(activity_date_final) %>%
     dplyr::summarise(sum_vessel_number = sum(vessel_number),
                      .groups           = "drop")
-  # graphic design ----
+  # 5 - Graphic design ----
   vessel_number_graphic <- ggplot2::ggplot(data = vessel_number_final,
                                            mapping = ggplot2::aes(fill = vessel_type_code,
                                                                   y    = vessel_number,
