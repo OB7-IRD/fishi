@@ -15,7 +15,6 @@
 #' @importFrom dplyr arrange mutate tibble rowwise
 #' @importFrom ggplot2 aes element_text geom_bar ggplot ggsave labs scale_fill_manual theme
 #' @importFrom lubridate month year
-#' @importFrom furdeb configuration_file postgresql_dbconnection
 catch_serie <- function(data_connection,
                         time_period,
                         specie,
@@ -144,7 +143,7 @@ catch_serie <- function(data_connection,
                                       manipulation = "legend")
   #vessel
   vessel_type_legend <- code_manipulation(data         = catch_serie_data$vessel_code,
-                                          referential  = "balbaya_vessel_simple_type",
+                                          referential  = "vessel_simple_type",
                                           manipulation = "legend")
   # 5 - Graphic design ----
   catch_serie_graphic <- ggplot2::ggplot(data    = catch_serie_final,

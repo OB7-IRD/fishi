@@ -14,7 +14,6 @@
 #' @importFrom dplyr arrange mutate tibble rowwise
 #' @importFrom ggplot2 ggplot aes xlab ylab labs ggsave geom_sf geom_point
 #' @importFrom lubridate year
-#' @importFrom furdeb configuration_file postgresql_dbconnection
 #' @importFrom rnaturalearth ne_countries
 #' @importFrom ggspatial annotation_north_arrow coord_sf north_arrow_fancy_orienteering
 #' @importFrom grid unit
@@ -31,7 +30,6 @@ catch_map <- function(data_connection,
   lon <- NULL
   lat <- NULL
   specie_name <- NULL
-  time_step <-  NULL
   # 1 - Arguments verification ----
   if (codama::r_type_checking(r_object = data_connection,
                               type = "list",
@@ -68,16 +66,6 @@ catch_map <- function(data_connection,
                               output = "logical") != TRUE) {
     codama::r_type_checking(r_object = vessel_type,
                             type = "integer",
-                            output = "message")
-  }
-  if (codama::r_type_checking(r_object = time_step,
-                              type = "character",
-                              output = "logical") != TRUE) {
-    codama::r_type_checking(r_object = time_step,
-                            type = "character",
-                            length = 1L,
-                            allowed_values = c("month",
-                                               "year"),
                             output = "message")
   }
   if (! is.null(x = path_file) && codama::r_type_checking(r_object = path_file,
@@ -139,7 +127,7 @@ catch_map <- function(data_connection,
                                       manipulation = "legend")
   #vessel
   vessel_type_legend <- code_manipulation(data         = catch_map_data$vessel_code,
-                                          referential  = "balbaya_vessel_simple_type",
+                                          referential  = "vessel_simple_type",
                                           manipulation = "legend")
   # 5 - Graphic design ----
   map <- catch_map_final %>%

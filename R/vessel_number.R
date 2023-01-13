@@ -154,7 +154,7 @@ vessel_number <- function(data_connection,
                                labels = vessel_type_modality) +
     ggplot2::scale_y_continuous(breaks = seq(0, max(sum_vessel_number$sum_vessel_number), 1),
                                 expand = c(0.02, 0)) +
-    ggplot2::ggtitle(label = paste0("Number of vessel (",
+    ggplot2::ggtitle(label = paste0("Number of vessels (",
                                     country_legend,
                                     ", ",
                                     ocean_legend,
@@ -168,7 +168,7 @@ vessel_number <- function(data_connection,
                                            no   = " vessel type"),
                                     ")")) +
     ggplot2::xlab("") +
-    ggplot2::ylab("Number of vessel") +
+    ggplot2::ylab("Number of vessels") +
     ggplot2::labs(fill = ifelse(test = length(x = vessel_type) != 1,
                                 yes  = " Vessel types",
                                 no   = " Vessel type")) +
