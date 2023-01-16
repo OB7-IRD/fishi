@@ -13,6 +13,12 @@
     <loc>https://ob7-ird.github.io/fishi/index.html</loc>
   </url>
   <url>
+    <loc>https://ob7-ird.github.io/fishi/reference/catch_map.html</loc>
+  </url>
+  <url>
+    <loc>https://ob7-ird.github.io/fishi/reference/catch_serie.html</loc>
+  </url>
+  <url>
     <loc>https://ob7-ird.github.io/fishi/reference/code_manipulation.html</loc>
   </url>
   <url>
@@ -40,9 +46,9 @@
     <loc>https://ob7-ird.github.io/fishi/reference/time_step_control.html</loc>
   </url>
   <url>
-    <loc>https://ob7-ird.github.io/fishi/reference/vessel_type.html</loc>
+    <loc>https://ob7-ird.github.io/fishi/reference/vessel_number.html</loc>
   </url>
   <url>
-    <loc>https://ob7-ird.github.io/fishi/reference/vessels_number.html</loc>
+    <loc>https://ob7-ird.github.io/fishi/reference/vessel_type.html</loc>
   </url>
 </urlset>
