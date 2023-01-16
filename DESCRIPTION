@@ -3,7 +3,8 @@ Type: Package
 Title: Package Fisheries Indicators
 Version: 0.9.0
 Authors@R: c(person("Ob7 -", "Observatory of Exploited Tropical Pelagic Ecosystems", email = "ob7@ird.fr", role = c("cre", "cph")),
-    person("Mathieu", "Depetris", email = "mathieu.depetris@ird.fr", role = c("aut")))
+    person("Mathieu", "Depetris", email = "mathieu.depetris@ird.fr", role = c("aut")),
+    person("Clara", "Lerebourg", email = "clara.lerebourg@ird.fr", role = c("aut")))
 Description: Exploratory and descriptive processes of data associated to fisheries.
 Depends: R (>= 4.0.0)
 License: GPL-3 + file LICENSE

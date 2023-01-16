@@ -24,6 +24,7 @@ Useful links:
 Authors:
 \itemize{
   \item Mathieu Depetris \email{mathieu.depetris@ird.fr}
+  \item Clara Lerebourg \email{clara.lerebourg@ird.fr}
 }
 
 }
