@@ -149,7 +149,7 @@ vessel_number <- function(data_connection,
                                            mapping = ggplot2::aes(fill = vessel_type_code,
                                                                   y    = vessel_number,
                                                                   x    = activity_date_final)) +
-    ggplot2::geom_bar(stat = "identity") +
+    ggplot2::geom_bar(stat = "identity", position = "dodge") +
     ggplot2::scale_fill_manual(values = vessel_type_color,
                                labels = vessel_type_modality) +
     ggplot2::scale_y_continuous(breaks = seq(0, max(sum_vessel_number$sum_vessel_number), 1),
