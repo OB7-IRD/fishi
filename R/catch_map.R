@@ -30,7 +30,7 @@ catch_map <- function(data_connection,
   catch <- NULL
   lon <- NULL
   lat <- NULL
-  specie_name <- NULL
+  specie_code <- NULL
   # 1 - Arguments verification ----
   if (codama::r_type_checking(r_object = data_connection,
                               type = "list",
@@ -131,6 +131,12 @@ catch_map <- function(data_connection,
   }
   # 4 - Legend design ----
   #Specie
+  specie_type_color <- code_manipulation(data         = catch_map_final$specie_code,
+                                         referential  = "specie",
+                                         manipulation = "color")
+  specie_type_modality <- code_manipulation(data         = catch_map_final$specie_code,
+                                            referential  = "specie",
+                                            manipulation = "modality")
   specie_type_legend <- code_manipulation(data         = catch_map_final$specie_code,
                                           referential  = "specie",
                                           manipulation = "legend")
@@ -147,18 +153,17 @@ catch_map <- function(data_connection,
                                           referential  = "vessel_simple_type",
                                           manipulation = "legend")
   # 5 - Graphic design ----
-  map <- catch_map_final %>%
-    dplyr::arrange(catch) %>%
-    ggplot2::ggplot() +
+  map <- ggplot2::ggplot() +
     ggplot2::geom_sf(data = world_boundaries) +
     ggspatial::coord_sf(xlim = c(-40, 100),
                         ylim = c(-30, 20))  +
     ggplot2::geom_point(data = catch_map_final,
                         ggplot2::aes(x     = lon,
                                      y     = lat,
-                                     color = specie_name,
-                                     size  = catch),
-                        alpha = 0.9) +
+                                     color = as.factor(specie_code),
+                                     size  = catch)) +
+    ggplot2::scale_color_manual(values = specie_type_color,
+                                labels = specie_type_modality) +
     ggspatial::annotation_north_arrow(location = "tl",
                                       height   = grid::unit(1.2, "cm"),
                                       width    = grid::unit(1.5, "cm"),
@@ -190,7 +195,7 @@ catch_map <- function(data_connection,
     ggplot2::xlab("") +
     ggplot2::ylab("") +
     ggplot2::labs(color = ifelse(test = length(x = specie) != 1,
-                                 yes  = "Species names",
+                                 yes  = "Species name",
                                  no   = "Specie name"),
                   size  = "Catch")
   # 6 - Export ----
