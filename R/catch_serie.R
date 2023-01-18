@@ -15,6 +15,7 @@
 #' @importFrom dplyr arrange mutate tibble rowwise
 #' @importFrom ggplot2 aes element_text geom_bar ggplot ggsave labs scale_fill_manual theme
 #' @importFrom lubridate month year
+#' @importFrom forcats fct_count
 catch_serie <- function(data_connection,
                         time_period,
                         specie,
@@ -122,27 +123,44 @@ catch_serie <- function(data_connection,
                                                no = lubridate::year(x = activity_date))) %>%
     dplyr::arrange(activity_date_final) %>%
     dplyr::mutate(activity_date_final = as.factor(x = activity_date_final))
+  #Other
+  if (length(x = specie) > 5) {
+    #Déterminer le nombre d'espèces à mettre dans la catégorie Autres
+    nb_spc <- length(x = specie) - 5
+    #Déteminer les espèces ayant le moins de capture
+    cpt_spc <- forcats::fct_count(catch_serie_final$specie_name)
+    cpt_spc$f <- as.character(cpt_spc$f)
+    cpt_spc <- cpt_spc[order(cpt_spc$n), ]
+    slc_spc <- cpt_spc[c(1:nb_spc), ]
+    name_spc <- slc_spc$f
+
+    #Regrouper les X espèces dans la catégorie Autres
+    for (i in seq_along(name_spc)) {
+      catch_serie_final["specie_name"][catch_serie_final["specie_name"] == name_spc[i]] <- "Other"
+    }
+    catch_serie_final$specie_code[catch_serie_final$specie_name == "Other"] <- 100
+  }
   # 4 - Legend design ----
   #Specie
-  specie_type_legend <- code_manipulation(data         = catch_serie_data$specie_code,
+  specie_type_legend <- code_manipulation(data         = catch_serie_final$specie_code,
                                           referential  = "specie",
                                           manipulation = "legend")
-  specie_type_color <- code_manipulation(data         = catch_serie_data$specie_code,
+  specie_type_color <- code_manipulation(data         = catch_serie_final$specie_code,
                                          referential  = "specie",
                                          manipulation = "color")
-  specie_type_modality <- code_manipulation(data         = catch_serie_data$specie_code,
+  specie_type_modality <- code_manipulation(data         = catch_serie_final$specie_code,
                                             referential  = "specie",
                                             manipulation = "modality")
   #Ocean
-  ocean_legend <- code_manipulation(data         = catch_serie_data$ocean_code,
+  ocean_legend <- code_manipulation(data         = catch_serie_final$ocean_code,
                                     referential  = "ocean",
                                     manipulation = "legend")
   #country
-  country_legend <- code_manipulation(data         = catch_serie_data$country_code,
+  country_legend <- code_manipulation(data         = catch_serie_final$country_code,
                                       referential  = "country",
                                       manipulation = "legend")
   #vessel
-  vessel_type_legend <- code_manipulation(data         = catch_serie_data$vessel_code,
+  vessel_type_legend <- code_manipulation(data         = catch_serie_final$vessel_code,
                                           referential  = "vessel_simple_type",
                                           manipulation = "legend")
   # 5 - Graphic design ----

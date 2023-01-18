@@ -17,6 +17,7 @@
 #' @importFrom rnaturalearth ne_countries
 #' @importFrom ggspatial annotation_north_arrow coord_sf north_arrow_fancy_orienteering
 #' @importFrom grid unit
+#' @importFrom forcats fct_count
 catch_map <- function(data_connection,
                       time_period,
                       specie,
@@ -112,21 +113,37 @@ catch_map <- function(data_connection,
   #world_boundaries
   world_boundaries <- rnaturalearth::ne_countries(returnclass = "sf",
                                                   scale       = "medium")
+  #Other
+  if (length(x = specie) > 5) {
+    #Déterminer le nombre d'espèces à mettre dans la catégorie Autres
+    nb_spc <-  length(x = specie) - 5
+    #Déteminer les espèces ayant le moins de capture
+    cpt_spc <- forcats::fct_count(catch_map_final$specie_name)
+    cpt_spc$f <- as.character(cpt_spc$f)
+    cpt_spc <- cpt_spc[order(cpt_spc$n), ]
+    slc_spc <- cpt_spc[c(1:nb_spc), ]
+    name_spc <- slc_spc$f
+    #Regrouper les X espèces dans la catégorie Autres
+    for (i in seq_along(name_spc)) {
+      catch_map_final["specie_name"][catch_map_final["specie_name"] == name_spc[i]] <- "Other"
+    }
+    catch_map_final$specie_code[catch_map_final$specie_name == "Other"] <- 100
+  }
   # 4 - Legend design ----
   #Specie
-  specie_type_legend <- code_manipulation(data         = catch_map_data$specie_code,
+  specie_type_legend <- code_manipulation(data         = catch_map_final$specie_code,
                                           referential  = "specie",
                                           manipulation = "legend")
   #Ocean
-  ocean_legend <- code_manipulation(data         = catch_map_data$ocean_code,
+  ocean_legend <- code_manipulation(data         = catch_map_final$ocean_code,
                                     referential  = "ocean",
                                     manipulation = "legend")
   #country
-  country_legend <- code_manipulation(data         = catch_map_data$country_code,
+  country_legend <- code_manipulation(data         = catch_map_final$country_code,
                                       referential  = "country",
                                       manipulation = "legend")
   #vessel
-  vessel_type_legend <- code_manipulation(data         = catch_map_data$vessel_code,
+  vessel_type_legend <- code_manipulation(data         = catch_map_final$vessel_code,
                                           referential  = "vessel_simple_type",
                                           manipulation = "legend")
   # 5 - Graphic design ----

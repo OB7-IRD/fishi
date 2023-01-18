@@ -10,3 +10,4 @@ code;name;full_name;color
 9;MIX;Mixed species of tuna;#ff9f1c
 10;KAW;Mackerel tuna;#6699CC
 18;FRZ;Ray-finned bony fish;#999933
+100;Other;Other;#8d99ae

@@ -19,6 +19,7 @@ Imports:
     ggspatial (>= 1.1.7),
     lubridate (>= 1.8.0),
     rnaturalearth (>= 0.1.0),
+    forcats (>= 0.5.2),
     utils
 URL: https://github.com/OB7-IRD/fishi
 BugReports: https://github.com/OB7-IRD/fishi/issues
