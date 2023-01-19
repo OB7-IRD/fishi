@@ -13,6 +13,7 @@
 #' @importFrom dplyr tibble rowwise mutate group_by summarise arrange n_distinct
 #' @importFrom lubridate year month
 #' @importFrom ggplot2 ggplot aes geom_bar scale_fill_manual scale_y_continuous ggtitle xlab ylab labs theme element_text
+#' @importFrom codama r_type_checking
 vessel_number <- function(data_connection,
                           time_period,
                           ocean,
@@ -30,41 +31,41 @@ vessel_number <- function(data_connection,
                               type = "list",
                               length = 2L,
                               output = "logical") != TRUE) {
-    codama::r_type_checking(r_object = data_connection,
-                            type = "list",
-                            length = 2L,
-                            output = "message")
+    return(codama::r_type_checking(r_object = data_connection,
+                                   type = "list",
+                                   length = 2L,
+                                   output = "message"))
   }
   if (codama::r_type_checking(r_object = time_period,
                               type = "integer",
                               output = "logical") != TRUE) {
-    codama::r_type_checking(r_object = time_period,
-                            type = "integer",
-                            output = "message")
+    return(codama::r_type_checking(r_object = time_period,
+                                   type = "integer",
+                                   output = "message"))
   }
   if (codama::r_type_checking(r_object = ocean,
                               type = "integer",
                               output = "logical") != TRUE) {
-    codama::r_type_checking(r_object = ocean,
-                            type = "integer",
-                            output = "message")
+    return(codama::r_type_checking(r_object = ocean,
+                                   type = "integer",
+                                   output = "message"))
   }
   if (codama::r_type_checking(r_object = vessel_type,
                               type = "integer",
                               output = "logical") != TRUE) {
-    codama::r_type_checking(r_object = vessel_type,
-                            type = "integer",
-                            output = "message")
+    return(codama::r_type_checking(r_object = vessel_type,
+                                   type = "integer",
+                                   output = "message"))
   }
   if (codama::r_type_checking(r_object = time_step,
                               type = "character",
                               output = "logical") != TRUE) {
-    codama::r_type_checking(r_object = time_step,
-                            type = "character",
-                            length = 1L,
-                            allowed_values = c("month",
-                                               "year"),
-                            output = "message")
+    return(codama::r_type_checking(r_object = time_step,
+                                   type = "character",
+                                   length = 1L,
+                                   allowed_values = c("month",
+                                                      "year"),
+                                   output = "message"))
   }
   # 2 - Data extraction ----
   if (data_connection[[1]] == "t3_prod") {

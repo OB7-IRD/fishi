@@ -25,5 +25,6 @@ So far, referential available are:
  \item{country: }{code, name and color of countries}
  \item{ocean: }{code, name and color of oceans}
  \item{vessel_simple_type: }{code, name and color of simplified vessel type}
+ \item{specie: }{code, name and color of species}
 }
 }

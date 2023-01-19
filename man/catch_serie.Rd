@@ -30,10 +30,10 @@ catch_serie(
 
 \item{time_step}{{\link[base]{character}} expected. Kind of display you want in the graphic output. You can choose between "month" and "year".}
 
-\item{path_file}{path to save the final graphic as a png. NULL by default.}
+\item{path_file}{{\link[base]{character}} expected. NULL by default. Path to save the final graphic as a png.}
 }
 \value{
-The function return  ggplot R object.
+The function return ggplot R object.
 }
 \description{
 The purpose of the catch_serie function is to graphically represent the evolution of catches over time by a barplot. It depends on several arguments: the period of time, the species, the oceans, the countries and the types of vessels previously selected by the user. The representation can be done by year or by month depending on the wished result.

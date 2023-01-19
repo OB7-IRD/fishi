@@ -8,14 +8,15 @@
 #' @param country {\link[base]{integer}} expected. Country codes identification.
 #' @param vessel_type {\link[base]{integer}} expected. Vessel type codes identification.
 #' @param time_step {\link[base]{character}} expected. Kind of display you want in the graphic output. You can choose between "month" and "year".
-#' @param path_file path to save the final graphic as a png. NULL by default.
-#' @return The function return  ggplot R object.
+#' @param path_file {\link[base]{character}} expected. NULL by default. Path to save the final graphic as a png.
+#' @return The function return ggplot R object.
 #' @export
 #' @importFrom DBI dbGetQuery sqlInterpolate SQL
 #' @importFrom dplyr arrange mutate tibble rowwise
 #' @importFrom ggplot2 aes element_text geom_bar ggplot ggsave labs scale_fill_manual theme
 #' @importFrom lubridate month year
 #' @importFrom forcats fct_count
+#' @importFrom codama r_type_checking
 catch_serie <- function(data_connection,
                         time_period,
                         specie,
@@ -34,56 +35,56 @@ catch_serie <- function(data_connection,
                               type = "list",
                               length = 2L,
                               output = "logical") != TRUE) {
-    codama::r_type_checking(r_object = data_connection,
-                            type = "list",
-                            length = 2L,
-                            output = "message")
+    return(codama::r_type_checking(r_object = data_connection,
+                                   type = "list",
+                                   length = 2L,
+                                   output = "message"))
   }
   if (codama::r_type_checking(r_object = time_period,
                               type = "integer",
                               output = "logical") != TRUE) {
-    codama::r_type_checking(r_object = time_period,
-                            type = "integer",
-                            output = "message")
+    return(codama::r_type_checking(r_object = time_period,
+                                   type = "integer",
+                                   output = "message"))
   }
   if (codama::r_type_checking(r_object = specie,
                               type = "integer",
                               output = "logical") != TRUE) {
-    codama::r_type_checking(r_object = specie,
-                            type = "integer",
-                            output = "message")
+    return(codama::r_type_checking(r_object = specie,
+                                   type = "integer",
+                                   output = "message"))
   }
   if (codama::r_type_checking(r_object = ocean,
                               type = "integer",
                               output = "logical") != TRUE) {
-    codama::r_type_checking(r_object = ocean,
-                            type = "integer",
-                            output = "message")
+    return(codama::r_type_checking(r_object = ocean,
+                                   type = "integer",
+                                   output = "message"))
   }
   if (codama::r_type_checking(r_object = vessel_type,
                               type = "integer",
                               output = "logical") != TRUE) {
-    codama::r_type_checking(r_object = vessel_type,
-                            type = "integer",
-                            output = "message")
+    return(codama::r_type_checking(r_object = vessel_type,
+                                   type = "integer",
+                                   output = "message"))
   }
   if (codama::r_type_checking(r_object = time_step,
                               type = "character",
                               output = "logical") != TRUE) {
-    codama::r_type_checking(r_object = time_step,
-                            type = "character",
-                            length = 1L,
-                            allowed_values = c("month",
-                                               "year"),
-                            output = "message")
+    return(codama::r_type_checking(r_object = time_step,
+                                   type = "character",
+                                   length = 1L,
+                                   allowed_values = c("month",
+                                                      "year"),
+                                   output = "message"))
   }
   if (! is.null(x = path_file) && codama::r_type_checking(r_object = path_file,
                                                           type = "character",
                                                           output = "logical") != TRUE) {
-    codama::r_type_checking(r_object = path_file,
-                            type = "character",
-                            length = 1L,
-                            output = "message")
+    return(codama::r_type_checking(r_object = path_file,
+                                   type = "character",
+                                   length = 1L,
+                                   output = "message"))
   }
   # 2 - Data extraction ----
   if (data_connection[[1]] == "balbaya") {
@@ -125,16 +126,12 @@ catch_serie <- function(data_connection,
     dplyr::mutate(activity_date_final = as.factor(x = activity_date_final))
   #Other
   if (length(x = specie) > 5) {
-    #Déterminer le nombre d'espèces à mettre dans la catégorie Autres
-    nb_spc <- length(x = specie) - 5
-    #Déteminer les espèces ayant le moins de capture
-    cpt_spc <- forcats::fct_count(catch_serie_final$specie_name)
-    cpt_spc$f <- as.character(cpt_spc$f)
-    cpt_spc <- cpt_spc[order(cpt_spc$n), ]
-    slc_spc <- cpt_spc[c(1:nb_spc), ]
+    number_specie <-  length(x = specie) - 5
+    capture_specie <- forcats::fct_count(catch_serie_final$specie_name)
+    capture_specie$f <- as.character(x = capture_specie$f)
+    capture_specie <- capture_specie[order(capture_specie$n), ]
+    slc_spc <- capture_specie[c(1:number_specie), ]
     name_spc <- slc_spc$f
-
-    #Regrouper les X espèces dans la catégorie Autres
     for (i in seq_along(name_spc)) {
       catch_serie_final["specie_name"][catch_serie_final["specie_name"] == name_spc[i]] <- "Other"
     }

@@ -18,6 +18,7 @@
 #' @importFrom ggspatial annotation_north_arrow coord_sf north_arrow_fancy_orienteering
 #' @importFrom grid unit
 #' @importFrom forcats fct_count
+#' @importFrom codama r_type_checking
 catch_map <- function(data_connection,
                       time_period,
                       specie,
@@ -36,46 +37,46 @@ catch_map <- function(data_connection,
                               type = "list",
                               length = 2L,
                               output = "logical") != TRUE) {
-    codama::r_type_checking(r_object = data_connection,
-                            type = "list",
-                            length = 2L,
-                            output = "message")
+    return(codama::r_type_checking(r_object = data_connection,
+                                   type = "list",
+                                   length = 2L,
+                                   output = "message"))
   }
   if (codama::r_type_checking(r_object = time_period,
                               type = "integer",
                               output = "logical") != TRUE) {
-    codama::r_type_checking(r_object = time_period,
-                            type = "integer",
-                            output = "message")
+    return(codama::r_type_checking(r_object = time_period,
+                                   type = "integer",
+                                   output = "message"))
   }
   if (codama::r_type_checking(r_object = specie,
                               type = "integer",
                               output = "logical") != TRUE) {
-    codama::r_type_checking(r_object = specie,
-                            type = "integer",
-                            output = "message")
+    return(codama::r_type_checking(r_object = specie,
+                                   type = "integer",
+                                   output = "message"))
   }
   if (codama::r_type_checking(r_object = ocean,
                               type = "integer",
                               output = "logical") != TRUE) {
-    codama::r_type_checking(r_object = ocean,
-                            type = "integer",
-                            output = "message")
+    return(codama::r_type_checking(r_object = ocean,
+                                   type = "integer",
+                                   output = "message"))
   }
   if (codama::r_type_checking(r_object = vessel_type,
                               type = "integer",
                               output = "logical") != TRUE) {
-    codama::r_type_checking(r_object = vessel_type,
-                            type = "integer",
-                            output = "message")
+    return(codama::r_type_checking(r_object = vessel_type,
+                                   type = "integer",
+                                   output = "message"))
   }
   if (! is.null(x = path_file) && codama::r_type_checking(r_object = path_file,
                                                           type = "character",
                                                           output = "logical") != TRUE) {
-    codama::r_type_checking(r_object = path_file,
-                            type = "character",
-                            length = 1L,
-                            output = "message")
+    return(codama::r_type_checking(r_object = path_file,
+                                   type = "character",
+                                   length = 1L,
+                                   output = "message"))
   }
   # 2 - Data extraction ----
   if (data_connection[[1]] == "balbaya") {
@@ -115,15 +116,12 @@ catch_map <- function(data_connection,
                                                   scale       = "medium")
   #Other
   if (length(x = specie) > 5) {
-    #Déterminer le nombre d'espèces à mettre dans la catégorie Autres
-    nb_spc <-  length(x = specie) - 5
-    #Déteminer les espèces ayant le moins de capture
-    cpt_spc <- forcats::fct_count(catch_map_final$specie_name)
-    cpt_spc$f <- as.character(cpt_spc$f)
-    cpt_spc <- cpt_spc[order(cpt_spc$n), ]
-    slc_spc <- cpt_spc[c(1:nb_spc), ]
+    number_specie <-  length(x = specie) - 5
+    capture_specie <- forcats::fct_count(catch_map_final$specie_name)
+    capture_specie$f <- as.character(x = capture_specie$f)
+    capture_specie <- capture_specie[order(capture_specie$n), ]
+    slc_spc <- capture_specie[c(1:number_specie), ]
     name_spc <- slc_spc$f
-    #Regrouper les X espèces dans la catégorie Autres
     for (i in seq_along(name_spc)) {
       catch_map_final["specie_name"][catch_map_final["specie_name"] == name_spc[i]] <- "Other"
     }

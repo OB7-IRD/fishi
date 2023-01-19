@@ -20,10 +20,9 @@ Imports:
     lubridate (>= 1.8.0),
     rnaturalearth (>= 0.1.0),
     forcats (>= 0.5.2),
+    codama (>= 0.9.0),
     utils
 URL: https://github.com/OB7-IRD/fishi
 BugReports: https://github.com/OB7-IRD/fishi/issues
-Suggests: 
-    codama (>= 0.9.0)
 Remotes:
     github::OB7-IRD/codama

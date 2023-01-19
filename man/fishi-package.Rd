@@ -4,7 +4,7 @@
 \name{fishi-package}
 \alias{fishi}
 \alias{fishi-package}
-\title{Package FISHeries Indicators}
+\title{FISHeries Indicators}
 \description{
 \if{html}{\figure{logo.png}{options: style='float: right' alt='logo' width='120'}}
 
