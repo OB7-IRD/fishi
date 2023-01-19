@@ -7,8 +7,8 @@ SELECT
 	,c.v_poids_capt::numeric as catch
 	,e.c_esp_3l::text as specie_name
 	,e.c_esp::numeric as specie_code
-	,e2.l_engin::text as vessel_name
-	,e2.c_engin::numeric as vessel_code
+	,e2.l_engin::text as vessel_type_name
+	,e2.c_engin::numeric as vessel_type_code
 	,p.c_pav_b::numeric as country_code
 	,p.c_pays_fao::text as country_name
 FROM 

@@ -147,7 +147,7 @@ catch_map <- function(data_connection,
                                       referential  = "country",
                                       manipulation = "legend")
   #vessel
-  vessel_type_legend <- code_manipulation(data         = catch_map_final$vessel_code,
+  vessel_type_legend <- code_manipulation(data         = catch_map_final$vessel_type_code,
                                           referential  = "vessel_simple_type",
                                           manipulation = "legend")
   # 5 - Graphic design ----

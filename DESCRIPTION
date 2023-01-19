@@ -25,4 +25,4 @@ Imports:
 URL: https://github.com/OB7-IRD/fishi
 BugReports: https://github.com/OB7-IRD/fishi/issues
 Remotes:
-    github::OB7-IRD/codama
+    OB7-IRD/codama
