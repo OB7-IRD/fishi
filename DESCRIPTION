@@ -3,22 +3,26 @@ Type: Package
 Title: Package Fisheries Indicators
 Version: 0.9.0
 Authors@R: c(person("Ob7 -", "Observatory of Exploited Tropical Pelagic Ecosystems", email = "ob7@ird.fr", role = c("cre", "cph")),
-    person("Mathieu", "Depetris", email = "mathieu.depetris@ird.fr", role = c("aut")))
+    person("Mathieu", "Depetris", email = "mathieu.depetris@ird.fr", role = c("aut")),
+    person("Clara", "Lerebourg", email = "clara.lerebourg@ird.fr", role = c("aut")))
 Description: Exploratory and descriptive processes of data associated to fisheries.
 Depends: R (>= 4.0.0)
 License: GPL-3 + file LICENSE
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.1.2
-URL: https://github.com/OB7-IRD/fishi
-BugReports: https://github.com/OB7-IRD/fishi/issues
+RoxygenNote: 7.2.1
 Imports: 
     magrittr,
-    furdeb (>= 0.9.0),
     DBI (>= 1.1.1),
-    dplyr (>= 1.0.7),
+    dplyr (>= 1.0.10),
     ggplot2 (>= 3.3.5),
+    ggspatial (>= 1.1.7),
     lubridate (>= 1.8.0),
-    utils (>= 4.0.4)
+    rnaturalearth (>= 0.1.0),
+    forcats (>= 0.5.2),
+    codama (>= 0.9.0),
+    utils
+URL: https://github.com/OB7-IRD/fishi
+BugReports: https://github.com/OB7-IRD/fishi/issues
 Remotes:
-    github::OB7-IRD/furdeb
+    OB7-IRD/codama

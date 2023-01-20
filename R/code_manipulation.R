@@ -11,34 +11,54 @@
 #'  \item{country: }{code, name and color of countries}
 #'  \item{ocean: }{code, name and color of oceans}
 #'  \item{vessel_simple_type: }{code, name and color of simplified vessel type}
+#'  \item{specie: }{code, name and color of species}
 #' }
 #' @export
 #' @importFrom dplyr tibble arrange inner_join last
 #' @importFrom utils read.table
+#' @importFrom codama r_type_checking
 code_manipulation <- function(data,
                               referential,
                               manipulation) {
-  # global variables assignement ----
+  # 0 - global variables assignement ----
   code <- NULL
-  # arguments verifications ----
+  # 1 - arguments verifications ----
   if (missing(x = data)) {
     stop("invalid \"data\" argument.\n")
   }
-  if (missing(x = referential)
-      || class(x = referential) != "character"
-      || any(! referential %in% c("country",
-                                  "ocean",
-                                  "vessel_simple_type"))) {
-    stop("invalid \"referential\" argument.\n")
+  if (codama::r_type_checking(r_object = referential,
+                              type = "character",
+                              length = 1L,
+                              allowed_values = c("country",
+                                                 "ocean",
+                                                 "vessel_simple_type",
+                                                 "specie"),
+                              output = "logical") != TRUE) {
+    return(codama::r_type_checking(r_object = referential,
+                                   type = "character",
+                                   length = 1L,
+                                   allowed_values = c("country",
+                                                      "ocean",
+                                                      "vessel_simple_type",
+                                                      "specie"),
+                                   output = "message"))
   }
-  if (missing(x = manipulation)
-      || class(x = manipulation) != "character"
-      || any(! manipulation %in% c("legend",
-                                   "modality",
-                                   "color"))) {
-    stop("invalid \"referential\" argument.\n")
+  if (codama::r_type_checking(r_object = manipulation,
+                              type = "character",
+                              length = 1L,
+                              allowed_values = c("legend",
+                                                 "modality",
+                                                 "color"),
+                              output = "logical") != TRUE) {
+    return(codama::r_type_checking(r_object = referential,
+                                   type = "manipulation",
+                                   length = 1L,
+                                   allowed_values = c("legend",
+                                                      "modality",
+                                                      "color"),
+                                   output = "message"))
   }
-  # process ----
+  # 3 - process ----
   referential_data <- dplyr::tibble(utils::read.table(file = system.file("referential",
                                                                          paste0(referential,
                                                                                 ".txt"),
