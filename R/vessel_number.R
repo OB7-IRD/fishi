@@ -1,7 +1,7 @@
 #' @name vessel_number
 #' @title Number of vessel
-#' @description Number of vessel by country, ocean, period, time step and vessel type.
-#' @param data_connection {\link[base]{list}} expected. Output of the function {\link[furdeb]{postgresql_dbconnection}} or name of a internal fishi dataset.
+#' @description vessel_number() graphically represents the number of vessel by country, ocean, period, time step and vessel type.
+#' @param data_connection {\link[base]{list}} expected. Output of the function {\link[furdeb]{postgresql_dbconnection}}, which must be done before using the catch_serie function.
 #' @param time_period {\link[base]{integer}} expected. Period identification in year.
 #' @param ocean {\link[base]{integer}} expected. Ocean codes identification.
 #' @param country {\link[base]{integer}} expected. Country codes identification.

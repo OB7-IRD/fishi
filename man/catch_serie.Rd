@@ -18,7 +18,7 @@ catch_serie(
 \arguments{
 \item{data_connection}{{\link[base]{list}} expected. Output of the function {\link[furdeb]{postgresql_dbconnection}}, which must be done before using the catch_serie function.}
 
-\item{time_period}{{\link[base]{integer}} expected. Period identification in year, between 1981 and 2021.}
+\item{time_period}{{\link[base]{integer}} expected. Period identification in year.}
 
 \item{specie}{{\link[base]{integer}} expected. Specie codes identification.}
 
@@ -36,5 +36,5 @@ catch_serie(
 The function return ggplot R object.
 }
 \description{
-The purpose of the catch_serie function is to graphically represent the evolution of catches over time by a barplot. It depends on several arguments: the period of time, the species, the oceans, the countries and the types of vessels previously selected by the user. The representation can be done by year or by month depending on the wished result.
+catch_serie() graphically represents the distribution of catches by specie, country, ocean, period, time step and vessel type.
 }

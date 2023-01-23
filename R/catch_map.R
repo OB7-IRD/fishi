@@ -1,8 +1,8 @@
 #' @name catch_map
 #' @title Catch map
-#' @description The purpose of the catch_map function is to graphically represent the distribution of catches. It depends on several arguments: the period of time, the species, the oceans, the countries and the types of vessels previously selected by the user.
+#' @description catch_map() graphically represents the distribution of catches on a map by specie, country, ocean, period, time step and vessel type.
 #' @param data_connection {\link[base]{list}} expected. Output of the function {\link[furdeb]{postgresql_dbconnection}}, which must be done before using the catch_serie function.
-#' @param time_period {\link[base]{integer}} expected. Period identification in year, between 1981 and 2021.
+#' @param time_period {\link[base]{integer}} expected. Period identification in year.
 #' @param specie {\link[base]{integer}} expected. Specie codes identification.
 #' @param ocean {\link[base]{integer}} expected. Ocean codes identification.
 #' @param country {\link[base]{integer}} expected. Country codes identification.
