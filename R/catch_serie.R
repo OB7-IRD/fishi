@@ -1,8 +1,8 @@
 #' @name catch_serie
 #' @title Catch serie
-#' @description The purpose of the catch_serie function is to graphically represent the evolution of catches over time by a barplot. It depends on several arguments: the period of time, the species, the oceans, the countries and the types of vessels previously selected by the user. The representation can be done by year or by month depending on the wished result.
+#' @description catch_serie() graphically represents the distribution of catches by specie, country, ocean, period, time step and vessel type.
 #' @param data_connection {\link[base]{list}} expected. Output of the function {\link[furdeb]{postgresql_dbconnection}}, which must be done before using the catch_serie function.
-#' @param time_period {\link[base]{integer}} expected. Period identification in year, between 1981 and 2021.
+#' @param time_period {\link[base]{integer}} expected. Period identification in year.
 #' @param specie {\link[base]{integer}} expected. Specie codes identification.
 #' @param ocean {\link[base]{integer}} expected. Ocean codes identification.
 #' @param country {\link[base]{integer}} expected. Country codes identification.
@@ -130,10 +130,10 @@ catch_serie <- function(data_connection,
     capture_specie <- forcats::fct_count(catch_serie_final$specie_name)
     capture_specie$f <- as.character(x = capture_specie$f)
     capture_specie <- capture_specie[order(capture_specie$n), ]
-    slc_spc <- capture_specie[c(1:number_specie), ]
-    name_spc <- slc_spc$f
-    for (i in seq_along(name_spc)) {
-      catch_serie_final["specie_name"][catch_serie_final["specie_name"] == name_spc[i]] <- "Other"
+    selection_specie <- capture_specie[c(1:number_specie), ]
+    name_specie <- selection_specie$f
+    for (number_name in seq_along(name_specie)) {
+      catch_serie_final["specie_name"][catch_serie_final["specie_name"] == name_specie[number_name]] <- "Other"
     }
     catch_serie_final$specie_code[catch_serie_final$specie_name == "Other"] <- 100
   }

@@ -17,7 +17,7 @@ catch_map(
 \arguments{
 \item{data_connection}{{\link[base]{list}} expected. Output of the function {\link[furdeb]{postgresql_dbconnection}}, which must be done before using the catch_serie function.}
 
-\item{time_period}{{\link[base]{integer}} expected. Period identification in year, between 1981 and 2021.}
+\item{time_period}{{\link[base]{integer}} expected. Period identification in year.}
 
 \item{specie}{{\link[base]{integer}} expected. Specie codes identification.}
 
@@ -33,5 +33,5 @@ catch_map(
 The function return  ggplot R map.
 }
 \description{
-The purpose of the catch_map function is to graphically represent the distribution of catches. It depends on several arguments: the period of time, the species, the oceans, the countries and the types of vessels previously selected by the user.
+catch_map() graphically represents the distribution of catches on a map by specie, country, ocean, period, time step and vessel type.
 }

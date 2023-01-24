@@ -14,7 +14,7 @@ vessel_number(
 )
 }
 \arguments{
-\item{data_connection}{{\link[base]{list}} expected. Output of the function {\link[furdeb]{postgresql_dbconnection}} or name of a internal fishi dataset.}
+\item{data_connection}{{\link[base]{list}} expected. Output of the function {\link[furdeb]{postgresql_dbconnection}}, which must be done before using the catch_serie function.}
 
 \item{time_period}{{\link[base]{integer}} expected. Period identification in year.}
 
@@ -30,5 +30,5 @@ vessel_number(
 The function return  ggplot R object.
 }
 \description{
-Number of vessel by country, ocean, period, time step and vessel type.
+vessel_number() graphically represents the number of vessel by country, ocean, period, time step and vessel type.
 }
