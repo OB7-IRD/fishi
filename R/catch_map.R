@@ -117,15 +117,15 @@ catch_map <- function(data_connection,
   #Other
   if (length(x = specie) > 5) {
     number_specie <-  length(x = specie) - 5
-    capture_specie <- forcats::fct_count(catch_map_final$specie_name)
+    capture_specie <- forcats::fct_count(catch_serie_final$specie_name)
     capture_specie$f <- as.character(x = capture_specie$f)
     capture_specie <- capture_specie[order(capture_specie$n), ]
-    slc_spc <- capture_specie[c(1:number_specie), ]
-    name_spc <- slc_spc$f
-    for (i in seq_along(name_spc)) {
-      catch_map_final["specie_name"][catch_map_final["specie_name"] == name_spc[i]] <- "Other"
+    selection_specie <- capture_specie[c(1:number_specie), ]
+    name_specie <- selection_specie$f
+    for (number_name in seq_along(name_specie)) {
+      catch_serie_final["specie_name"][catch_serie_final["specie_name"] == name_specie[number_name]] <- "Other"
     }
-    catch_map_final$specie_code[catch_map_final$specie_name == "Other"] <- 100
+    catch_serie_final$specie_code[catch_serie_final$specie_name == "Other"] <- 100
   }
   # 4 - Legend design ----
   #Specie
@@ -193,7 +193,7 @@ catch_map <- function(data_connection,
     ggplot2::xlab("") +
     ggplot2::ylab("") +
     ggplot2::labs(color = ifelse(test = length(x = specie) != 1,
-                                 yes  = "Species name",
+                                 yes  = "Specie names",
                                  no   = "Specie name"),
                   size  = "Catch")
   # 6 - Export ----

@@ -130,10 +130,10 @@ catch_serie <- function(data_connection,
     capture_specie <- forcats::fct_count(catch_serie_final$specie_name)
     capture_specie$f <- as.character(x = capture_specie$f)
     capture_specie <- capture_specie[order(capture_specie$n), ]
-    slc_spc <- capture_specie[c(1:number_specie), ]
-    name_spc <- slc_spc$f
-    for (i in seq_along(name_spc)) {
-      catch_serie_final["specie_name"][catch_serie_final["specie_name"] == name_spc[i]] <- "Other"
+    selection_specie <- capture_specie[c(1:number_specie), ]
+    name_specie <- selection_specie$f
+    for (number_name in seq_along(name_specie)) {
+      catch_serie_final["specie_name"][catch_serie_final["specie_name"] == name_specie[number_name]] <- "Other"
     }
     catch_serie_final$specie_code[catch_serie_final$specie_name == "Other"] <- 100
   }
