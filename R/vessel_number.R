@@ -12,7 +12,7 @@
 #' @importFrom DBI sqlInterpolate SQL dbGetQuery
 #' @importFrom dplyr tibble rowwise mutate group_by summarise arrange n_distinct
 #' @importFrom lubridate year month
-#' @importFrom ggplot2 ggplot aes geom_bar scale_fill_manual scale_y_continuous ggtitle xlab ylab labs theme element_text
+#' @importFrom ggplot2 ggplot aes geom_bar scale_fill_manual scale_y_continuous labs theme element_text
 #' @importFrom codama r_type_checking
 vessel_number <- function(data_connection,
                           time_period,
@@ -155,24 +155,24 @@ vessel_number <- function(data_connection,
                                labels = vessel_type_modality) +
     ggplot2::scale_y_continuous(breaks = seq(0, max(sum_vessel_number$sum_vessel_number), 1),
                                 expand = c(0.02, 0)) +
-    ggplot2::ggtitle(label = paste0("Number of vessels (",
-                                    country_legend,
-                                    ", ",
-                                    ocean_legend,
-                                    ifelse(test = length(x = ocean) != 1,
-                                           yes  = " oceans",
-                                           no   = " ocean"),
-                                    " and ",
-                                    vessel_type_legend,
-                                    ifelse(test = length(x = vessel_type) != 1,
-                                           yes  = " vessel types",
-                                           no   = " vessel type"),
-                                    ")")) +
-    ggplot2::xlab("") +
-    ggplot2::ylab("Number of vessels") +
-    ggplot2::labs(fill = ifelse(test = length(x = vessel_type) != 1,
-                                yes  = " Vessel types",
-                                no   = " Vessel type")) +
-    ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 90))
-  return(vessel_number_graphic)
+    ggplot2::labs(title = paste0("Number of vessels (",
+                                 vessel_type_legend,
+                                 " )"),
+                  subtitle = paste0(ifelse(test = length(x = ocean) != 1,
+                                           yes  = "Oceans : ",
+                                           no   = "Ocean : "),
+                                    ocean_legend, "\n",
+                                    ifelse(test = length(x = "country") != 1,
+                                           yes  = "Countries : ",
+                                           no   = "Country : "),
+                                    country_legend),
+                  x = "",
+                  y = "Number of vessels",
+                  fill = ifelse(test = length(x = vessel_type) != 1,
+                                       yes  = " Vessel types",
+                                       no   = " Vessel type")) +
+    ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 90,
+                                                       vjust = 0.5,
+                                                       hjust = 1))
+return(vessel_number_graphic)
 }
