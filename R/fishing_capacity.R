@@ -1,4 +1,17 @@
-
+#' @name fishing_capacity
+#' @title Fishing capacity
+#' @description Fishing capacity of the French purse seine fishing fleet in the Atlantic Ocean. Annual changes in the number of purse seiners by tonnage categories (barplots) and total carrying capacity (dashed line with circles).
+#' @param data_connection {\link[base]{list}} expected. Output of the function {\link[furdeb]{postgresql_dbconnection}}, which must be done before using the catch_serie function.
+#' @param time_period {\link[base]{integer}} expected. Period identification in year.
+#' @param country {\link[base]{integer}} expected. Country codes identification.
+#' @param vessel_type {\link[base]{integer}} expected. Vessel type codes identification.
+#' @return The function return ggplot R plot.
+#' @export
+#' @importFrom DBI dbGetQuery sqlInterpolate SQL
+#' @importFrom dplyr mutate tibble group_by summarise n_distinct
+#' @importFrom lubridate year
+#' @importFrom RColorBrewer brewer.pal
+#' @importFrom codama r_type_checking
 fishing_capacity <- function(data_connection,
                              time_period,
                              country = as.integer(x = c(1,41)),
