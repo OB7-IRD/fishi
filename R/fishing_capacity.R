@@ -14,7 +14,7 @@
 #' @importFrom codama r_type_checking
 fishing_capacity <- function(data_connection,
                              time_period,
-                             country = as.integer(x = c(1,41)),
+                             country,
                              vessel_type = as.integer(x = c(4,5,6))
 ) {
   # 0 - Global variables assignement ----
