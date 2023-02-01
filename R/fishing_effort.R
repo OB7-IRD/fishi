@@ -9,10 +9,8 @@
 #' @return The function return ggplot R plot.
 #' @export
 #' @importFrom DBI dbGetQuery sqlInterpolate SQL
-#' @importFrom dplyr mutate tibble group_by summarise n_distinct
+#' @importFrom dplyr mutate tibble group_by summarise
 #' @importFrom lubridate year
-#' @importFrom RColorBrewer brewer.pal
-#' @importFrom codama r_type_checking
 fishing_effort <- function(data_connection,
                            time_period,
                            country = as.integer (x = 1),
@@ -101,7 +99,7 @@ fishing_effort <- function(data_connection,
   # 4 - Legend design ----
   # 5 - Graphic design ----
   par(mar=c(4,4.7,4.1,1.5))
-  plot(years,
+  plot(table_effort$activity_year,
        table_effort$fishing_days/1000,
        type ="b",
        xlab = "",
@@ -122,7 +120,7 @@ fishing_effort <- function(data_connection,
                     max(table_effort$activity_year),
                     by = 2),
        cex.axis = 1.3)
-  lines(years,
+  lines(table_effort$activity_year,
         table_effort$searching_days/1000,
         type = "b",
         lty = 2,
