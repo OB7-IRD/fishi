@@ -10,7 +10,10 @@
 #' @importFrom DBI dbGetQuery sqlInterpolate SQL
 #' @importFrom dplyr mutate tibble group_by summarise n_distinct
 #' @importFrom lubridate year
-fishing_activity <- function(
+fishing_activity <- function(data_connection,
+                             time_period,
+                             country,
+                             vessel_type = as.integer(x = c(1))
 ) {
   # 0 - Global variables assignement ----
   # 1 - Arguments verification ----
