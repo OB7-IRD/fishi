@@ -1,7 +1,7 @@
 		select
-			ocean.l_ocea as ocean
-			,ocean.c_ocea::numeric as ocean_code
-			,bateau.c_typ_b::text as vessel_type
+			ocean.l_ocea as ocean_name
+			,ocean.c_ocea::numeric as ocean_id
+			,bateau.c_typ_b::text as vessel_type_id
 			,pavillon.l_pav_b as fleet
 			,pavillon.l_pav_b as flag
 			,activite.c_bat
@@ -13,7 +13,7 @@
 			,activite.c_tban
 			,activite.v_tmer 
 			,activite.v_tpec 
-			,activite.v_dur_cal 
+			,activite.v_dur_cal
 		FROM 
 			public.activite
 			JOIN public.ocean on (activite.c_ocea  = ocean.c_ocea)

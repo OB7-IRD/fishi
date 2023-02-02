@@ -3,9 +3,9 @@
 		,activite.v_nb_calees
 		,activite.v_nb_calee_pos
 		,activite.c_tban
-		,activite.c_ocea  
-		,activite.c_engin 
-		,bateau.c_pav_b 
+		,activite.c_ocea as ocean_id
+		,activite.c_engin as vessel_type_id
+		,bateau.c_pav_b as country_id
 	FROM 
 		public.activite
 		join public.bateau on (activite.c_bat = bateau.c_bat)

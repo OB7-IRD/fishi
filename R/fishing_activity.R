@@ -1,7 +1,7 @@
 #' @name fishing_activity
 #' @title Fishing activity
 #' @description Fishing operations. Annual number of fishing sets in the French purse seine fishery on FOB- associated and free-swimming tuna schools.
-#' @param data_connection {\link[base]{list}} expected. Output of the function {\link[furdeb]{postgresql_dbconnection}}, which must be done before using the catch_serie function.
+#' @param data_connection {\link[base]{list}} expected. Output of the function {\link[furdeb]{postgresql_dbconnection}}, which must be done before using the fishing_activity function.
 #' @param time_period {\link[base]{integer}} expected. Period identification in year.
 #' @param country {\link[base]{integer}} expected. Country codes identification.
 #' @param vessel_type {\link[base]{integer}} expected. Vessel type codes identification.
@@ -18,7 +18,6 @@ fishing_activity <- function(data_connection,
   # 0 - Global variables assignement ----
   # 1 - Arguments verification ----
   # 2 - Data extraction ----
-  table_sets <- dbGetQuery(con_balbaya,"SELECT * FROM fra.atlantic_ps_number_sets_by_fishing_mode ;")
   if (data_connection[[1]] == "balbaya") {
     fishing_activity_sql <- paste(readLines(con = system.file("sql",
                                                               "balbaya_fishing_activity.sql",

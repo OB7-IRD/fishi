@@ -1,7 +1,7 @@
 #' @name vessel_number
 #' @title Number of vessel
 #' @description vessel_number() graphically represents the number of vessel by country, ocean, period, time step and vessel type.
-#' @param data_connection {\link[base]{list}} expected. Output of the function {\link[furdeb]{postgresql_dbconnection}}, which must be done before using the catch_serie function.
+#' @param data_connection {\link[base]{list}} expected. Output of the function {\link[furdeb]{postgresql_dbconnection}}, which must be done before using the vessel_number function.
 #' @param time_period {\link[base]{integer}} expected. Period identification in year.
 #' @param ocean {\link[base]{integer}} expected. Ocean codes identification.
 #' @param country {\link[base]{integer}} expected. Country codes identification.
@@ -22,9 +22,9 @@ vessel_number <- function(data_connection,
                           time_step = "year") {
   # 0 - Global variables assignement ----
   activity_date <- NULL
-  vessel_type_code <- NULL
+  vessel_type_id <- NULL
   activity_date_final <- NULL
-  vessel_code <- NULL
+  vessel_id <- NULL
   vessel_number <- NULL
   # 1 - Arguments verification ----
   if (codama::r_type_checking(r_object = data_connection,
@@ -117,22 +117,22 @@ vessel_number <- function(data_connection,
                                                                    lubridate::month(x = activity_date)),
                                                            sep = "-"),
                                                no = lubridate::year(x = activity_date)),
-                  vessel_type_code = as.factor(x = vessel_type_code)) %>%
+                  vessel_type_id = as.factor(x = vessel_type_id)) %>%
     dplyr::group_by(activity_date_final,
-                    vessel_type_code) %>%
-    dplyr::summarise(vessel_number = dplyr::n_distinct(vessel_code),
+                    vessel_type_id) %>%
+    dplyr::summarise(vessel_number = dplyr::n_distinct(vessel_id),
                      .groups       = "drop") %>%
     dplyr::arrange(activity_date_final,
-                   vessel_type_code) %>%
+                   vessel_type_id) %>%
     dplyr::mutate(activity_date_final = as.factor(x = activity_date_final))
   # 4 - Legend design ----
-  vessel_type_color <- code_manipulation(data         = vessel_number_final$vessel_type_code,
+  vessel_type_color <- code_manipulation(data         = vessel_number_final$vessel_type_id,
                                          referential  = "vessel_simple_type",
                                          manipulation = "color")
-  vessel_type_legend <- code_manipulation(data         = vessel_number_final$vessel_type_code,
+  vessel_type_legend <- code_manipulation(data         = vessel_number_final$vessel_type_id,
                                           referential  = "vessel_simple_type",
                                           manipulation = "legend")
-  vessel_type_modality <- code_manipulation(data         = vessel_number_final$vessel_type_code,
+  vessel_type_modality <- code_manipulation(data         = vessel_number_final$vessel_type_id,
                                             referential  = "vessel_simple_type",
                                             manipulation = "modality")
   ocean_legend <- code_manipulation(data           = ocean,
@@ -147,7 +147,7 @@ vessel_number <- function(data_connection,
                      .groups           = "drop")
   # 5 - Graphic design ----
   vessel_number_graphic <- ggplot2::ggplot(data = vessel_number_final,
-                                           mapping = ggplot2::aes(fill = vessel_type_code,
+                                           mapping = ggplot2::aes(fill = vessel_type_id,
                                                                   y    = vessel_number,
                                                                   x    = activity_date_final)) +
     ggplot2::geom_bar(stat = "identity", position = "dodge") +

@@ -2,8 +2,8 @@ select
 	a.d_act::date as activity_date
 	,b.c_quille
 	,b.v_ct_m3::numeric as catch
-	,b.c_typ_b::numeric as vessel_type_code
-	,b.c_pav_b::numeric as country_code
+	,b.c_typ_b::numeric as vessel_type_id
+	,b.c_pav_b::numeric as country_id
 from
 	public.activite a
 	join public.bateau b on (a.c_bat = b.c_bat)

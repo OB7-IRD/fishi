@@ -28,7 +28,7 @@ catch_serie <- function(data_connection,
   # 0 - Global variables assignement ----
   activity_date <- NULL
   activity_date_final <- NULL
-  specie_code <- NULL
+  specie_id <- NULL
   catch <- NULL
   # 1 - Arguments verification ----
   if (codama::r_type_checking(r_object = data_connection,
@@ -135,34 +135,34 @@ catch_serie <- function(data_connection,
     for (number_name in seq_along(name_specie)) {
       catch_serie_final["specie_name"][catch_serie_final["specie_name"] == name_specie[number_name]] <- "Other"
     }
-    catch_serie_final$specie_code[catch_serie_final$specie_name == "Other"] <- 100
+    catch_serie_final$specie_id[catch_serie_final$specie_name == "Other"] <- 100
   }
   # 4 - Legend design ----
   #Specie
-  specie_type_legend <- code_manipulation(data         = catch_serie_final$specie_code,
+  specie_type_legend <- code_manipulation(data         = catch_serie_final$specie_id,
                                           referential  = "specie",
                                           manipulation = "legend")
-  specie_type_color <- code_manipulation(data         = catch_serie_final$specie_code,
+  specie_type_color <- code_manipulation(data         = catch_serie_final$specie_id,
                                          referential  = "specie",
                                          manipulation = "color")
-  specie_type_modality <- code_manipulation(data         = catch_serie_final$specie_code,
+  specie_type_modality <- code_manipulation(data         = catch_serie_final$specie_id,
                                             referential  = "specie",
                                             manipulation = "modality")
   #Ocean
-  ocean_legend <- code_manipulation(data         = catch_serie_final$ocean_code,
+  ocean_legend <- code_manipulation(data         = catch_serie_final$ocean_id,
                                     referential  = "ocean",
                                     manipulation = "legend")
   #country
-  country_legend <- code_manipulation(data         = catch_serie_final$country_code,
+  country_legend <- code_manipulation(data         = catch_serie_final$country_id,
                                       referential  = "country",
                                       manipulation = "legend")
   #vessel
-  vessel_type_legend <- code_manipulation(data         = catch_serie_final$vessel_type_code,
+  vessel_type_legend <- code_manipulation(data         = catch_serie_final$vessel_type_id,
                                           referential  = "vessel_simple_type",
                                           manipulation = "legend")
   # 5 - Graphic design ----
   catch_serie_graphic <- ggplot2::ggplot(data    = catch_serie_final,
-                                         mapping = ggplot2::aes(fill = as.factor(specie_code),
+                                         mapping = ggplot2::aes(fill = as.factor(specie_id),
                                                                 y    = catch,
                                                                 x    = activity_date_final)) +
     ggplot2::geom_bar(stat = "identity") +

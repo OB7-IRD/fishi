@@ -1,7 +1,7 @@
 #' @name fishing_effort
 #' @title Fishing effort
 #' @description Changes in nominal effort over time. Annual total number of fishing and searching days for the French purse seine fishing fleet in the Atlantic Ocean.
-#' @param data_connection {\link[base]{list}} expected. Output of the function {\link[furdeb]{postgresql_dbconnection}}, which must be done before using the catch_serie function.
+#' @param data_connection {\link[base]{list}} expected. Output of the function {\link[furdeb]{postgresql_dbconnection}}, which must be done before using the fishing_effort function.
 #' @param time_period {\link[base]{integer}} expected. Period identification in year.
 #' @param country {\link[base]{integer}} expected. Country codes identification.
 #' @param vessel_type {\link[base]{integer}} expected. Vessel type codes identification.
@@ -50,9 +50,9 @@ fishing_effort <- function(data_connection,
                   landing_year = lubridate::year(x = landing_date))
   #Adding columns by condition (vtmer, vtpec, ndurcal, nbdays)
   fishing_effort_t2 <- fishing_effort_t1 %>%
-    dplyr::group_by(ocean_code,
+    dplyr::group_by(ocean_id,
                     fleet,
-                    vessel_type,
+                    vessel_type_id,
                     flag,
                     c_bat,
                     l_bat,
@@ -66,10 +66,10 @@ fishing_effort <- function(data_connection,
                      .groups = "drop")
   #Group rows by conditions
   fishing_effort_t2 <- fishing_effort_t2 %>%
-    dplyr::group_by(ocean_code,
+    dplyr::group_by(ocean_id,
                     fleet,
                     flag,
-                    vessel_type,
+                    vessel_type_id,
                     activity_year,
                     v_tmer,
                     v_tpec,
@@ -79,13 +79,13 @@ fishing_effort <- function(data_connection,
   fishing_effort_t3 <- fishing_effort_t2 %>%
     dplyr::group_by(activity_year) %>%
     dplyr::summarise("days_at_sea" = round(sum(v_tmer /24, na.rm = TRUE)),
-                     "fishing_days" = ifelse(test = ocean_code == 1,
+                     "fishing_days" = ifelse(test = ocean_id == 1,
                                              yes = round(sum(v_tpec /12, na.rm = TRUE)),
                                              no = round(sum(v_tpec /13, na.rm = TRUE))),
-                     "set_duration_in_days" = ifelse(test = ocean_code == 1,
+                     "set_duration_in_days" = ifelse(test = ocean_id == 1,
                                                      yes = round(sum(v_dur_cal /12, na.rm = TRUE)),
                                                      no = round(sum(v_dur_cal /13, na.rm = TRUE))),
-                     "searching_days" = ifelse(test = ocean_code == 1,
+                     "searching_days" = ifelse(test = ocean_id == 1,
                                                yes = round(sum((v_tpec - v_dur_cal) /12, na.rm = TRUE)),
                                                no = round(sum((v_tpec - v_dur_cal) /13, na.rm = TRUE))),
                      .groups = "drop")

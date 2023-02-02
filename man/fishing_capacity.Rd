@@ -7,12 +7,12 @@
 fishing_capacity(
   data_connection,
   time_period,
-  country,
+  country = as.integer(x = 1),
   vessel_type = as.integer(x = c(4, 5, 6))
 )
 }
 \arguments{
-\item{data_connection}{{\link[base]{list}} expected. Output of the function {\link[furdeb]{postgresql_dbconnection}}, which must be done before using the catch_serie function.}
+\item{data_connection}{{\link[base]{list}} expected. Output of the function {\link[furdeb]{postgresql_dbconnection}}, which must be done before using the fishing_capacity function.}
 
 \item{time_period}{{\link[base]{integer}} expected. Period identification in year.}
 
