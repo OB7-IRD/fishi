@@ -18,6 +18,12 @@ fishing_capacity <- function(data_connection,
                              vessel_type = as.integer(x = c(4,5,6))
 ) {
   # 0 - Global variables assignement ----
+  ocean <- NULL
+  c_quille <- NULL
+  catch <- NULL
+  tons <- NULL
+  tons_month <- NULL
+  cc <- NULL
   # 1 - Arguments verification ----
   # 2 - Data extraction ----
   if (data_connection[[1]] == "balbaya") {

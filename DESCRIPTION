@@ -21,6 +21,7 @@ Imports:
     rnaturalearth (>= 0.1.0),
     forcats (>= 0.5.2),
     codama (>= 0.9.0),
+    RColorBrewer (>= 1.1.3),
     utils
 URL: https://github.com/OB7-IRD/fishi
 BugReports: https://github.com/OB7-IRD/fishi/issues

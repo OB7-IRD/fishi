@@ -16,6 +16,13 @@ fishing_activity <- function(data_connection,
                              vessel_type = as.integer(x = c(1))
 ) {
   # 0 - Global variables assignement ----
+  ocean <- NULL
+  activity_date <- NULL
+  v_nb_calees <- NULL
+  v_nb_calee_pos <- NULL
+  c_tban <- NULL
+  l_total <- NULL
+  a_total <- NULL
   # 1 - Arguments verification ----
   # 2 - Data extraction ----
   if (data_connection[[1]] == "balbaya") {

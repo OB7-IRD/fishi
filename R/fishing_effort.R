@@ -18,6 +18,19 @@ fishing_effort <- function(data_connection,
                            ocean = as.integer (x = 1)
 ) {
   # 0 - Global variables assignement ----
+  activity_date <- NULL
+  landing_date <- NULL
+  ocean_id <- NULL
+  fleet <- NULL
+  vessel_type_id <- NULL
+  flag <- NULL
+  c_bat <- NULL
+  l_bat <- NULL
+  port <- NULL
+  activity_year <- NULL
+  v_tmer <- NULL
+  v_tpec <- NULL
+  v_dur_cal <- NULL
   # 1 - Arguments verification ----
   # 2 - Data extraction ----
   if (data_connection[[1]] == "balbaya") {
