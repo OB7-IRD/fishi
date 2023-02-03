@@ -22,6 +22,7 @@ Imports:
     forcats (>= 0.5.2),
     codama (>= 0.9.0),
     RColorBrewer (>= 1.1.3),
+    plotrix (>= 3.8.2),
     utils
 URL: https://github.com/OB7-IRD/fishi
 BugReports: https://github.com/OB7-IRD/fishi/issues

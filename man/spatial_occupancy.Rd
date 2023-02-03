@@ -27,5 +27,5 @@ spatial_occupancy(
 The function return ggplot R plot.
 }
 \description{
-x
+Changes in the spatial extent of the fishery over time. Annual number of 1-degree squares explored by each vessel of the French purse seine fishing fleet.
 }
