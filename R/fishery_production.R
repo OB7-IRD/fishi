@@ -16,7 +16,7 @@ fishery_production <- function(data_connection,
                                time_period,
                                country = as.integer(x = c(1,41)),
                                vessel_type = as.integer(x = 1),
-                               fishing_type
+                               fishing_type = "TOTAL"
 ) {
   # 0 - Global variables assignement ----
   ocean <- NULL
