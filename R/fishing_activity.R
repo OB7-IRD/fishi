@@ -10,6 +10,7 @@
 #' @importFrom DBI dbGetQuery sqlInterpolate SQL
 #' @importFrom dplyr mutate tibble group_by summarise n_distinct
 #' @importFrom lubridate year
+#' @importFrom graphics axis lines abline legend barplot mtext
 fishing_activity <- function(data_connection,
                              time_period,
                              country,
@@ -82,23 +83,23 @@ fishing_activity <- function(data_connection,
     dplyr::mutate("%_log" = l_total/a_total )
   # 4 - Legend design ----
   # 5 - Graphic design ----
-  par(mar=c(5,4,4,4))
+  graphics::par(mar=c(5,4,4,4))
   set <- as.matrix(table_sets[,c(5,
                                  8)])
-  fig.sets <- barplot(t(set),
+  fig.sets <- graphics::barplot(t(set),
                       beside = F,
                       ylab = "Number of sets",
                       ylim = c(0, max(set) * 1.6),
                       cex.axis = 1.3,
                       cex.lab = 1.3,
                       xaxt = "n")
-  axis(1,
+  graphics::axis(1,
        at = fig.sets,
        tick = T,
        labels = table_sets$year,
        line=.8,
        cex.axis = 1.3)
-  legend("topleft",
+  graphics::legend("topleft",
          legend = c("FOB-associated schools",
                     "Free swimming schools"),
          col = c("black",
@@ -106,7 +107,7 @@ fishing_activity <- function(data_connection,
          bty = "n",
          fill = c("black",
                   "lightgrey"))
-  par(new=T)
+  graphics::par(new=T)
   plot(fig.sets,
        table_sets$`%_log`,
        type = "b",
@@ -121,10 +122,10 @@ fishing_activity <- function(data_connection,
        ylim = c(0,
                 100),
        yaxs="i")
-  abline(h = 50,
+  graphics::abline(h = 50,
          col = "darkgrey",
          lwd = 1.3)
-  axis(4,
+  graphics::axis(4,
        at = seq(0,
                 100,
                 20),
@@ -134,7 +135,7 @@ fishing_activity <- function(data_connection,
        cex.axis = 1.3,
        cex.lab = 1.3,
        yaxs = "i")
-  mtext("% FOB-associated sets",
+  graphics::mtext("% FOB-associated sets",
         side = 4,
         line = 2,
         cex = 1.3)

@@ -12,6 +12,7 @@
 #' @importFrom lubridate year
 #' @importFrom RColorBrewer brewer.pal
 #' @importFrom codama r_type_checking
+#' @importFrom graphics axis lines abline legend barplot mtext
 fishing_capacity <- function(data_connection,
                              time_period,
                              country= as.integer(x = 1),
@@ -24,6 +25,7 @@ fishing_capacity <- function(data_connection,
   tons <- NULL
   tons_month <- NULL
   cc <- NULL
+  activity_date <- NULL
   # 1 - Arguments verification ----
   # 2 - Data extraction ----
   if (data_connection[[1]] == "balbaya") {
@@ -84,8 +86,8 @@ fishing_capacity <- function(data_connection,
 
   # 4 - Legend design ----
   # 5 - Graphic design ----
-  par(mar=c(5.1,4.1,4.1,4.1))
-  barvessels <- barplot(t(fishing_capacity_data[,2:6]),
+  graphics::par(mar=c(5.1,4.1,4.1,4.1))
+  barvessels <- graphics::barplot(t(fishing_capacity_data[,2:6]),
                         xlab = "",
                         ylab = "Number of vessels",
                         cex.axis = 1.4,
@@ -100,14 +102,14 @@ fishing_capacity <- function(data_connection,
                         xlim = c(0,
                                  37.6))
 
-  axis(1,
+  graphics::axis(1,
        at = barvessels,
        tick = TRUE,
        labels = seq(min(fishing_capacity_data$year),
                     max(fishing_capacity_data$year),
                     by = 1),
        cex.axis = 1.4)
-  legend("topright",
+  graphics::legend("topright",
          legend = c("50-400 t",
                     "401-600 t",
                     "601-800 t",
@@ -117,7 +119,7 @@ fishing_capacity <- function(data_connection,
          bty ="n",
          fill = RColorBrewer::brewer.pal(5,"Greys"),
          cex = 1.3)
-  par(new=T)
+  graphics::par(new=T)
   plot(barvessels,
        fishing_capacity_data$CC/1000,
        type = "b",
@@ -132,7 +134,7 @@ fishing_capacity <- function(data_connection,
        ylim = c(0, max(fishing_capacity_data$CC/1000)*1.1),
        yaxs = "i",
        xlim = c(0, 37.6))
-  axis(4,
+  graphics::axis(4,
        at = seq(0,
                 20,
                 5),
@@ -142,7 +144,7 @@ fishing_capacity <- function(data_connection,
        cex.axis = 1.4,
        cex.lab = 1.4,
        yaxs = "i")
-  mtext(expression(paste("Carrying capacity (x1000 ", m^3,")",
+  graphics::mtext(expression(paste("Carrying capacity (x1000 ", m^3,")",
                          sep = "")),
         side = 4,
         line = 2.6,

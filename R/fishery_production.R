@@ -30,6 +30,7 @@ fishery_production <- function(data_connection,
   BET <- NULL
   ALB <- NULL
   OTH <- NULL
+  DSC <- NULL
   TOTAL_WITH_DSC <- NULL
   TOTAL <- NULL
   # 1 - Arguments verification ----

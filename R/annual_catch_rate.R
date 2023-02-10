@@ -5,6 +5,7 @@
 #' @param time_period {\link[base]{integer}} expected. Period identification in year.
 #' @param country {\link[base]{integer}} expected. Country codes identification.
 #' @param vessel_type {\link[base]{integer}} expected. Vessel type codes identification.
+#' @param ocean {\link[base]{integer}} expected. Ocean codes identification.
 #' @param time_serie {\link[base]{character}} expected. FOB or FSC.
 #' @return The function return ggplot R plot.
 #' @export
@@ -12,6 +13,7 @@
 #' @importFrom dplyr mutate tibble group_by summarise case_when
 #' @importFrom lubridate year
 #' @importFrom plotrix stackpoly
+#' @importFrom graphics axis lines abline legend
 annual_catch_rate <- function(data_connection,
                                time_period,
                                country = as.integer(x = 1),
@@ -20,7 +22,15 @@ annual_catch_rate <- function(data_connection,
                                time_serie
 ) {
   # 0 - Global variables assignement ----
-
+  activity_date <- NULL
+  v_tpec <- NULL
+  v_dur_cal <- NULL
+  yft <- NULL
+  t_recherche <- NULL
+  skj <- NULL
+  bet <- NULL
+  alb <- NULL
+  total <- NULL
   # 1 - Arguments verification ----
   # 2 - Data extraction ----
   if (data_connection[[1]] == "balbaya") {
@@ -147,7 +157,7 @@ annual_catch_rate <- function(data_connection,
          xaxt = "n",
          pch = 22,
          bg = "grey")
-    axis(1,
+    graphics::axis(1,
          at = seq(min(table_cpue_fad$year),
                   max(table_cpue_fad$year),
                   by = 2),
@@ -156,27 +166,27 @@ annual_catch_rate <- function(data_connection,
                       max(table_cpue_fad$year),
                       by = 2),
          cex.axis = 1.3)
-    lines(table_cpue_fad$year,
+    graphics::lines(table_cpue_fad$year,
           table_cpue_fad$SKJ,
           type = "b",
           lty = 1,
           pch = 23)
-    lines(table_cpue_fad$year,
+    graphics::lines(table_cpue_fad$year,
           table_cpue_fad$BET,
           type = "b",
           lty = 1,
           pch = 24)
-    lines(table_cpue_fad$year,
+    graphics::lines(table_cpue_fad$year,
           table_cpue_fad$TOTAL,
           type = "b",
           lty = 1,
           pch = 19)
-    abline(h = seq(5,
+    graphics::abline(h = seq(5,
                    35,
                    5),
            col = "lightgrey",
            lty = 2)
-    legend("topleft",
+    graphics::legend("topleft",
            legend = c("Total",
                       "Skipjack",
                       "Yellowfin",
@@ -216,7 +226,7 @@ annual_catch_rate <- function(data_connection,
          pch = 22,
          xaxt = "n",
          bg = "grey")
-    axis(1,
+    graphics::axis(1,
          at = seq(min(table_cpue_fsc$year),
                   max(table_cpue_fsc$year),
                   by = 2),

@@ -24,6 +24,7 @@ spatial_occupancy <- function(data_connection,
   v_nb_calee_pos <- NULL
   v_tpec <- NULL
   t_pec <- NULL
+  sumvtpec <- NULL
   # 1 - Arguments verification ----
   # 2 - Data extraction ----
   if (data_connection[[1]] == "balbaya") {

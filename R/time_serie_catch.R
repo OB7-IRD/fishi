@@ -5,6 +5,7 @@
 #' @param time_period {\link[base]{integer}} expected. Period identification in year.
 #' @param country {\link[base]{integer}} expected. Country codes identification.
 #' @param vessel_type {\link[base]{integer}} expected. Vessel type codes identification.
+#' @param ocean {\link[base]{integer}} expected. Ocean codes identification.
 #' @param time_serie {\link[base]{character}} expected. set_fob, set_fsc, catch_fob, catch_fsc
 #' @return The function return ggplot R plot.
 #' @export
@@ -12,6 +13,7 @@
 #' @importFrom dplyr mutate tibble group_by summarise case_when
 #' @importFrom lubridate year
 #' @importFrom plotrix stackpoly
+#' @importFrom graphics par
 time_serie_catch <- function(data_connection,
                                time_period,
                                country = as.integer(x = 1),
@@ -20,6 +22,22 @@ time_serie_catch <- function(data_connection,
                                time_serie
 ) {
   # 0 - Global variables assignement ----
+  activity_date <- NULL
+  v_tpec <- NULL
+  v_dur_cal <- NULL
+  yft <- NULL
+  t_recherche <- NULL
+  skj <- NULL
+  bet <- NULL
+  alb <- NULL
+  total <- NULL
+  c_tban <- NULL
+  v_nb_calee_pos <- NULL
+  v_nb_calees <- NULL
+  sets_per_day_all <- NULL
+  sets_per_day_fad <- NULL
+  sets_per_day_fsc <- NULL
+  nb_sets_pos <- NULL
   # 1 - Arguments verification ----
   # 2 - Data extraction ----
   if (data_connection[[1]] == "balbaya") {
@@ -166,7 +184,7 @@ time_serie_catch <- function(data_connection,
                      ALB = (alb/nb_sets_pos),
                      TOTAL = (total/nb_sets_pos))
   # 5 - Graphic design ----
-  par(mar=c(4,4.7,4.1,1.5))
+  graphics::par(mar=c(4,4.7,4.1,1.5))
   if (time_serie == "set_fob") {
     plot(table_cpue_set_per_day$year,
          table_cpue_set_per_day$sets_per_day_fad,

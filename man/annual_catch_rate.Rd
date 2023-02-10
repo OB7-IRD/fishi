@@ -22,6 +22,8 @@ annual_catch_rate(
 
 \item{vessel_type}{{\link[base]{integer}} expected. Vessel type codes identification.}
 
+\item{ocean}{{\link[base]{integer}} expected. Ocean codes identification.}
+
 \item{time_serie}{{\link[base]{character}} expected. FOB or FSC.}
 }
 \value{
