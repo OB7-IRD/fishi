@@ -7,8 +7,9 @@
 fishing_activity(
   data_connection,
   time_period,
-  country,
-  vessel_type = as.integer(x = c(1))
+  country = as.integer(x = 1),
+  vessel_type = as.integer(x = 1),
+  ocean = as.integer(x = 1)
 )
 }
 \arguments{
