@@ -7,9 +7,10 @@
 fishery_production(
   data_connection,
   time_period,
-  country = as.integer(x = c(1, 41)),
-  vessel_type = as.integer(x = 1),
-  fishing_type = "TOTAL"
+  fishing_type = "TOTAL",
+  country = as.integer(x = 1),
+  ocean = as.integer(x = 1),
+  vessel_type = as.integer(x = 1)
 )
 }
 \arguments{
@@ -17,11 +18,11 @@ fishery_production(
 
 \item{time_period}{{\link[base]{integer}} expected. Period identification in year.}
 
+\item{fishing_type}{{\link[base]{character}} expected. FSC, FOB or TOTAL.}
+
 \item{country}{{\link[base]{integer}} expected. Country codes identification.}
 
 \item{vessel_type}{{\link[base]{integer}} expected. Vessel type codes identification.}
-
-\item{fishing_type}{{\link[base]{character}} expected. FSC, FOB or TOTAL.}
 }
 \value{
 The function return ggplot R plot.
