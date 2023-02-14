@@ -1,26 +1,25 @@
-#' @name time_serie_catch
-#' @title Time serie catch
+#' @name catch_per_searching_day
+#' @title Catch per searching day
 #' @description Annual number of sets per searching day and catch per positive set on FOB-associated and free-swimming schools for the French purse seine fishing fleet in the Atlantic Ocean
-#' @param data_connection {\link[base]{list}} expected. Output of the function {\link[furdeb]{postgresql_dbconnection}}, which must be done before using the time_serie_catch() function.
+#' @param data_connection {\link[base]{list}} expected. Output of the function {\link[furdeb]{postgresql_dbconnection}}, which must be done before using the catch_per_searching_day() function.
 #' @param time_period {\link[base]{integer}} expected. Period identification in year.
 #' @param country {\link[base]{integer}} expected. Country codes identification.
 #' @param vessel_type {\link[base]{integer}} expected. Vessel type codes identification.
 #' @param ocean {\link[base]{integer}} expected. Ocean codes identification.
-#' @param time_serie {\link[base]{character}} expected. set_fob, set_fsc, catch_fob, catch_fsc
+#' @param fishing_type {\link[base]{character}} expected. FOB and FSC.
 #' @return The function return ggplot R plot.
 #' @export
 #' @importFrom DBI dbGetQuery sqlInterpolate SQL
 #' @importFrom dplyr mutate tibble group_by summarise case_when
 #' @importFrom lubridate year
 #' @importFrom plotrix stackpoly
-#' @importFrom graphics par
-time_serie_catch <- function(data_connection,
+#' @importFrom graphics par plot axis lines abline legend
+catch_per_searching_day <- function(data_connection,
                                time_period,
                                country = as.integer(x = 1),
                                vessel_type = as.integer(x = 1),
-                               ocean = 1,
-                               time_serie
-) {
+                               ocean = as.integer(x = 1),
+                               fishing_type) {
   # 0 - Global variables assignement ----
   activity_date <- NULL
   v_tpec <- NULL
@@ -81,64 +80,31 @@ time_serie_catch <- function(data_connection,
                                                                                   collapse = ", ")))
   time_serie_catch_nb_set_data <- dplyr::tibble(DBI::dbGetQuery(conn      = data_connection[[2]],
                                                                 statement = time_serie_catch_nb_set_sql_final))
-  # 3.a - Data design for "Number of sets per searching days"----
-  time_serie_catch_nb_set_data <-  time_serie_catch_nb_set_data %>%
-    dplyr::mutate(year = lubridate::year(x = activity_date))
-  t1 <- time_serie_catch_nb_set_data %>%
-    dplyr::group_by(year,
-                    c_tban) %>%
-    dplyr::summarise(nb_sets_pos = sum(v_nb_calee_pos, na.rm = TRUE),
-                     nb_sets = sum(v_nb_calees, na.rm = TRUE),
-                     .groups = "drop")
-
-  t2 <- time_serie_catch_nb_set_data %>%
-    dplyr::group_by(year) %>%
-    dplyr::summarise(t_peche = sum(v_tpec, na.rm = TRUE),
-                     t_recherche = sum(v_tpec - v_dur_cal, na.rm = TRUE),
-                     .groups = "drop")
-
-  table_cpue_set_per_day <- merge(t1, t2, by = "year")
-
-  table_cpue_set_per_day <- table_cpue_set_per_day %>%
-    dplyr::group_by(year) %>%
-    dplyr::summarise(sets_per_day_all = dplyr::case_when(c_tban == 1 | c_tban == 2 | c_tban == 3 ~ nb_sets / (t_recherche /12),
-                                                         T ~ 0),
-                     sets_per_day_fad = dplyr::case_when(c_tban == 1 ~ nb_sets / (t_recherche /12),
-                                                         T ~ 0),
-                     sets_per_day_fsc = dplyr::case_when(c_tban %in% c(2:3) ~ nb_sets / (t_recherche /12),
-                                                         T ~ 0),
-                     .groups = "drop")
-
-  table_cpue_set_per_day <- table_cpue_set_per_day %>%
-    dplyr::group_by(year) %>%
-    dplyr::summarise(sets_per_day_all = sum(sets_per_day_all, na.rm = TRUE),
-                     sets_per_day_fad = sum(sets_per_day_fad, na.rm = TRUE),
-                     sets_per_day_fsc = sum(sets_per_day_fsc, na.rm = TRUE),
-                     .groups = "drop")
-  # 3.b - Data design for "Catch (t) per positive set"----
-  #add year
+  # 3 - Data design ----
   time_serie_catch_nb_set_data <-  time_serie_catch_nb_set_data %>%
     dplyr::mutate(year = lubridate::year(x = activity_date))
   #FOB
-  #Creation of t0 database from time_serie_catch_nb_set_data
+  # Creation of t0 database from time_serie_catch_nb_set_data
+  # Add columns nb_sets_pos and nb_sets
   t0 <- time_serie_catch_nb_set_data %>%
     dplyr::filter(c_tban == 1) %>%
     dplyr::group_by(year) %>%
     dplyr::summarise(nb_sets_pos = sum(v_nb_calee_pos, na.rm = TRUE),
                      nb_sets = sum(v_nb_calees, na.rm = TRUE),
                      .groups = "drop")
-  #Creation of t1 database from time_serie_catch_data
+  # Creation of t1 database from time_serie_catch_data
+  # Add columns species from fob school (c_tban 1)
   t1 <- time_serie_catch_data %>%
     dplyr::group_by(year) %>%
-    dplyr::summarise(yft = sum(dplyr::case_when(c_tban == 1 & c_esp == 1 ~ v_poids_capt, #OK
+    dplyr::summarise(yft = sum(dplyr::case_when(c_tban == 1 & c_esp == 1 ~ v_poids_capt,
                                                 T ~ 0), na.rm =TRUE),
-                     skj = sum(dplyr::case_when(c_tban == 1 & c_esp == 2 ~ v_poids_capt, #OK
+                     skj = sum(dplyr::case_when(c_tban == 1 & c_esp == 2 ~ v_poids_capt,
                                                 T ~ 0), na.rm =TRUE),
-                     bet = sum(dplyr::case_when(c_tban == 1 & c_esp == 3 ~ v_poids_capt, #OK
+                     bet = sum(dplyr::case_when(c_tban == 1 & c_esp == 3 ~ v_poids_capt,
                                                 T ~ 0), na.rm =TRUE),
-                     alb = sum(dplyr::case_when(c_tban == 1 & c_esp == 4 ~ v_poids_capt, #OK
+                     alb = sum(dplyr::case_when(c_tban == 1 & c_esp == 4 ~ v_poids_capt,
                                                 T ~ 0), na.rm =TRUE),
-                     total = sum(dplyr::case_when(c_tban == 1 ~ v_poids_capt, #OK
+                     total = sum(dplyr::case_when(c_tban == 1 ~ v_poids_capt,
                                                   T ~ 0), na.rm =TRUE),
                      .groups = "drop")
   #merge t0 and t1
@@ -153,6 +119,7 @@ time_serie_catch <- function(data_connection,
                      TOTAL = (total/nb_sets_pos))
   #FSC
   #Creation of t2 database from time_serie_catch_nb_set_data
+  # Add columns nb_sets_pos and nb_sets
   t2 <- time_serie_catch_nb_set_data %>%
     dplyr::filter(c_tban == 2 | c_tban == 3) %>%
     dplyr::group_by(year) %>%
@@ -160,6 +127,7 @@ time_serie_catch <- function(data_connection,
                      nb_sets = sum(v_nb_calees, na.rm = TRUE),
                      .groups = "drop")
   #Creation of t1 database from time_serie_catch_data
+  # Add columns species from fsc school (c_tban 2 et 3)
   t3 <- time_serie_catch_data %>%
     dplyr::group_by(year) %>%
     dplyr::summarise(yft = sum(dplyr::case_when(c_tban %in% c(2,3) & c_esp == 1 ~ v_poids_capt,
@@ -185,62 +153,8 @@ time_serie_catch <- function(data_connection,
                      TOTAL = (total/nb_sets_pos))
   # 5 - Graphic design ----
   graphics::par(mar=c(4,4.7,4.1,1.5))
-  if (time_serie == "set_fob") {
-    plot(table_cpue_set_per_day$year,
-         table_cpue_set_per_day$sets_per_day_fad,
-         type = "b",
-         xlab = "",
-         ylab = "Number of sets per searching day",
-         cex.axis = 1.4,
-         cex.lab = 1.4,
-         main = "",
-         ylim = c(0,1),
-         las = 1,
-         xaxt = "n",
-         pch = 19)
-    axis(1,
-         at = seq(min(table_cpue_set_per_day$year),
-                  max(table_cpue_set_per_day$year),
-                  by = 2),
-         tick = TRUE,
-         labels = seq(min(table_cpue_set_per_day$year),
-                      max(table_cpue_set_per_day$year),
-                      by = 2),
-         cex.axis = 1.3)
-    abline(h = seq(.2,
-                   1,
-                   .2),
-           lty = 2,
-           col = "lightgrey")
-    legend("topleft",
-           legend = "(FOB)",
-           bty = "n",
-           cex = 2)
-  } else if (time_serie == "set_fsc") {
-    plot(table_cpue_set_per_day$year,
-         table_cpue_set_per_day$sets_per_day_fsc,
-         type = "b",
-         xlab = "",
-         ylab = "Number of sets per searching day",
-         cex.axis = 1.4,
-         cex.lab = 1.4,
-         main = "",
-         ylim = c(0,1),
-         las = 1,
-         xaxt = "n",
-         pch = 19)
-    axis(1,at=seq(min(table_cpue_set_per_day$year),max(table_cpue_set_per_day$year),by=2),tick=TRUE,labels=seq(min(table_cpue_set_per_day$year),max(table_cpue_set_per_day$year),by=2),cex.axis=1.3)
-    legend("topright",
-           legend = "(FSC)",
-           bty = "n",
-           cex = 2)
-    abline(h = seq(.2,
-                   1,
-                   .2),
-           lty = 2,
-           col = "lightgrey")
-  } else if (time_serie == "catch_fob") {
-    plot(table_cpue_fad_set$year,
+ if (fishing_type == "FOB") {
+   graphics::plot(table_cpue_fad_set$year,
          table_cpue_fad_set$YFT,
          type = "b",
          xlab = "",
@@ -254,7 +168,7 @@ time_serie_catch <- function(data_connection,
          xaxt = "n",
          pch = 22,
          bg = "grey")
-    axis(1,
+   graphics::axis(1,
          at = seq(min(table_cpue_fad_set$year),
                   max(table_cpue_fad_set$year),
                   by = 2),
@@ -262,27 +176,27 @@ time_serie_catch <- function(data_connection,
          labels = seq(min(table_cpue_fad_set$year),
                       max(table_cpue_fad_set$year), by = 2),
          cex.axis = 1.3)
-    lines(table_cpue_fad_set$year,
+   graphics::lines(table_cpue_fad_set$year,
           table_cpue_fad_set$SKJ,
           type = "b",
           lty = 1,
           pch = 23)
-    lines(table_cpue_fad_set$year,
+   graphics::lines(table_cpue_fad_set$year,
           table_cpue_fad_set$BET,
           type = "b",
           lty = 1,
           pch = 24)
-    lines(table_cpue_fad_set$year,
+   graphics::lines(table_cpue_fad_set$year,
           table_cpue_fad_set$TOTAL,
           type = "b",
           lty = 1,
           pch = 19)
-    abline(h = seq(10,
+   graphics::abline(h = seq(10,
                    50,
                    10),
            lty = 2,
            col = "lightgrey")
-    legend("topright",
+   graphics::legend("topright",
            legend = c("Total",
                       "Skipjack",
                       "Yellowfin",
@@ -301,12 +215,12 @@ time_serie_catch <- function(data_connection,
                      "grey",
                      "white"),
            cex = 1.3)
-    legend("topleft",
+   graphics::legend("topleft",
            legend="(FOB)",
            bty = "n",
            cex = 2)
-  }else if (time_serie == "catch_fsc") {
-    plot(table_cpue_fsc_set$year,
+  } else if (fishing_type == "FSC") {
+    graphics::plot(table_cpue_fsc_set$year,
          table_cpue_fsc_set$YFT,
          type = "b",
          xlab = "",
@@ -320,7 +234,7 @@ time_serie_catch <- function(data_connection,
          xaxt = "n",
          pch = 22,
          bg = "grey")
-    axis(1,
+    graphics::axis(1,
          at = seq(min(table_cpue_fsc_set$year),
                   max(table_cpue_fsc_set$year),
                   by = 2),
@@ -329,27 +243,27 @@ time_serie_catch <- function(data_connection,
                       max(table_cpue_fsc_set$year),
                       by = 2),
          cex.axis = 1.3)
-    lines(table_cpue_fsc_set$year,
+    graphics::lines(table_cpue_fsc_set$year,
           table_cpue_fsc_set$SKJ,
           type = "b",
           lty = 1,
           pch = 23)
-    lines(table_cpue_fsc_set$year,
+    graphics::lines(table_cpue_fsc_set$year,
           table_cpue_fsc_set$BET,
           type = "b",
           lty = 1,
           pch = 24)
-    lines(table_cpue_fsc_set$year,
+    graphics::lines(table_cpue_fsc_set$year,
           table_cpue_fsc_set$TOTAL,
           type = "b",
           lty = 1,
           pch = 19)
-    abline(h=seq(10,
+    graphics::abline(h=seq(10,
                  50,
                  10),
            lty = 2,
            col = "lightgrey")
-    legend("topleft",
+    graphics::legend("topleft",
            legend = c("Total",
                       "Skipjack",
                       "Yellowfin",
@@ -368,7 +282,7 @@ time_serie_catch <- function(data_connection,
                      "grey",
                      "white"),
            cex = 1.3)
-    legend("topright",
+    graphics::legend("topright",
            legend="(FSC)",
            bty = "n",
            cex = 2)

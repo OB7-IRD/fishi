@@ -13,9 +13,9 @@
 #' @importFrom lubridate year
 fishing_effort <- function(data_connection,
                            time_period,
-                           country = as.integer (x = 1),
-                           vessel_type = as.integer(x = c(4,5,6)),
-                           ocean = as.integer (x = 1)
+                           country = as.integer(x = 1),
+                           vessel_type = as.integer(x = c(4, 5, 6)),
+                           ocean = as.integer(x = 1)
 ) {
   # 0 - Global variables assignement ----
   activity_date <- NULL
@@ -38,7 +38,13 @@ fishing_effort <- function(data_connection,
                                                             "balbaya_fishing_effort.sql",
                                                             package = "fishi")),
                                 collapse = "\n")
-    fishing_effort_sql_final <- DBI::sqlInterpolate(conn = data_connection[[2]],
+  } else {
+    stop(format(x = Sys.time(),
+                format = "%Y-%m-%d %H:%M:%S"),
+         " - Indicator not developed yet for this \"data_connection\" argument.\n",
+         sep = "")
+  }
+  fishing_effort_sql_final <- DBI::sqlInterpolate(conn = data_connection[[2]],
                                                     sql  = fishing_effort_sql,
                                                     time_period = DBI::SQL(paste(time_period,
                                                                                  collapse = ", ")),
@@ -48,15 +54,10 @@ fishing_effort <- function(data_connection,
                                                                                  collapse = ", ")),
                                                     ocean = DBI::SQL(paste(ocean,
                                                                            collapse = ", ")))
-    fishing_effort_data <- dplyr::tibble(DBI::dbGetQuery(conn      = data_connection[[2]],
-                                                         statement = fishing_effort_sql_final))
-  } else {
-    stop(format(x = Sys.time(),
-                format = "%Y-%m-%d %H:%M:%S"),
-         " - Indicator not developed yet for this \"data_connection\" argument.\n",
-         sep = "")
-  }
+  fishing_effort_data <- dplyr::tibble(DBI::dbGetQuery(conn      = data_connection[[2]],
+                                                       statement = fishing_effort_sql_final))
   # 3 - Data design ----
+
   #Adding columns years
   fishing_effort_t1 <- fishing_effort_data %>%
     dplyr::mutate(activity_year = lubridate::year(x = activity_date),
@@ -91,36 +92,36 @@ fishing_effort <- function(data_connection,
   #Adding columns by years (daysatsea, fishingdays, ...)
   fishing_effort_t3 <- fishing_effort_t2 %>%
     dplyr::group_by(activity_year) %>%
-    dplyr::summarise("days_at_sea" = round(sum(v_tmer /24, na.rm = TRUE)),
+    dplyr::summarise("days_at_sea" = round(sum(v_tmer / 24, na.rm = TRUE)),
                      "fishing_days" = ifelse(test = ocean_id == 1,
-                                             yes = round(sum(v_tpec /12, na.rm = TRUE)),
-                                             no = round(sum(v_tpec /13, na.rm = TRUE))),
+                                             yes = round(sum(v_tpec / 12, na.rm = TRUE)),
+                                             no = round(sum(v_tpec / 13, na.rm = TRUE))),
                      "set_duration_in_days" = ifelse(test = ocean_id == 1,
-                                                     yes = round(sum(v_dur_cal /12, na.rm = TRUE)),
-                                                     no = round(sum(v_dur_cal /13, na.rm = TRUE))),
+                                                     yes = round(sum(v_dur_cal / 12, na.rm = TRUE)),
+                                                     no = round(sum(v_dur_cal / 13, na.rm = TRUE))),
                      "searching_days" = ifelse(test = ocean_id == 1,
-                                               yes = round(sum((v_tpec - v_dur_cal) /12, na.rm = TRUE)),
-                                               no = round(sum((v_tpec - v_dur_cal) /13, na.rm = TRUE))),
+                                               yes = round(sum((v_tpec - v_dur_cal) / 12, na.rm = TRUE)),
+                                               no = round(sum((v_tpec - v_dur_cal) / 13, na.rm = TRUE))),
                      .groups = "drop")
 
   #remove duplicates
-  table_effort <- unique(fishing_effort_t3[,c("activity_year",
+  table_effort <- unique(fishing_effort_t3[, c("activity_year",
                          "days_at_sea",
-                         "set_duration_in_days",
                          "fishing_days",
+                         "set_duration_in_days",
                          "searching_days")])
   # 4 - Legend design ----
   # 5 - Graphic design ----
-  par(mar=c(4,4.7,4.1,1.5))
+  par(mar = c(4, 4.7, 4.1, 1.5))
   plot(table_effort$activity_year,
-       table_effort$fishing_days/1000,
-       type ="b",
+       table_effort$fishing_days / 1000,
+       type = "b",
        xlab = "",
        ylab = "Activity duration (x1000 days)",
        cex.axis = 1.4,
        cex.lab = 1.4,
        main = "",
-       ylim = c(0,max(table_effort$fishing_days*1.1,na.rm=T)/1000),
+       ylim = c(0, max(table_effort$fishing_days * 1.1, na.rm = TRUE) / 1000),
        las = 1,
        pch = 18,
        xaxt = "n")
@@ -134,16 +135,16 @@ fishing_effort <- function(data_connection,
                     by = 2),
        cex.axis = 1.3)
   lines(table_effort$activity_year,
-        table_effort$searching_days/1000,
+        table_effort$searching_days / 1000,
         type = "b",
         lty = 2,
         pch = 4)
   legend("topleft",
          legend = c("Fishing",
                     "Searching"),
-         pch = c(18,4),
+         pch = c(18, 4),
          bty = "n",
-         lty = c(1,2),
+         lty = c(1, 2),
          cex = 1.3)
   abline(h = seq(1,
                  5,
@@ -173,4 +174,3 @@ fishing_effort <- function(data_connection,
   #   ggplot2::ylim(0,5) +
   #   ggplot2::theme_classic()
 }
-
