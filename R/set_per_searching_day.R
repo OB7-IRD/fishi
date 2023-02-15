@@ -91,7 +91,7 @@ set_per_searching_day <- function(data_connection,
                      sets_per_day_fsc = sum(sets_per_day_fsc, na.rm = TRUE),
                      .groups = "drop")
   # 5 - Graphic design ----
-  graphics::par(mar=c(4,4.7,4.1,1.5))
+  graphics::par(mar = c(4, 4.7, 4.1, 1.5))
   if (fishing_type == "FOB") {
     plot(table_cpue_set_per_day$year,
          table_cpue_set_per_day$sets_per_day_fad,
@@ -101,7 +101,7 @@ set_per_searching_day <- function(data_connection,
          cex.axis = 1.4,
          cex.lab = 1.4,
          main = "",
-         ylim = c(0,1),
+         ylim = c(0, 1),
          las = 1,
          xaxt = "n",
          pch = 19)
@@ -132,7 +132,7 @@ set_per_searching_day <- function(data_connection,
          cex.axis = 1.4,
          cex.lab = 1.4,
          main = "",
-         ylim = c(0,1),
+         ylim = c(0, 1),
          las = 1,
          xaxt = "n",
          pch = 19)

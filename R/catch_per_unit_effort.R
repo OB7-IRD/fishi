@@ -98,15 +98,15 @@ catch_per_unit_effort <- function(data_connection,
                                               T ~ 0), na.rm = TRUE),
                      .groups = "drop")
   #merge t0 and t1
-  table_cpue_fad <- merge(t0,t1, by = "year")
+  table_cpue_fad <- merge(t0, t1, by = "year")
   #final table
   table_cpue_fad <- table_cpue_fad %>%
     dplyr::summarise(year = year,
-                     YFT = (yft/ (t_recherche /12)),
-                     SKJ = (skj/(t_recherche /12)),
-                     BET = (bet/(t_recherche /12)),
-                     ALB = (alb/(t_recherche /12)),
-                     TOTAL = (total/(t_recherche /12)))
+                     YFT = (yft / (t_recherche / 12)),
+                     SKJ = (skj / (t_recherche / 12)),
+                     BET = (bet / (t_recherche / 12)),
+                     ALB = (alb / (t_recherche / 12)),
+                     TOTAL = (total / (t_recherche / 12)))
   # 3.b - Data design for FSC----
   #Creation of t2 database from annual_catch_rate_data
   t2 <- annual_catch_rate_nb_set_data %>%
@@ -129,24 +129,26 @@ catch_per_unit_effort <- function(data_connection,
                                                   T ~ 0), na.rm = TRUE),
                      .groups = "drop")
   #merge t2 and t3
-  table_cpue_fsc <- merge(t2,t3, by = "year")
+  table_cpue_fsc <- merge(t2, t3, by = "year")
   #final table
   table_cpue_fsc <- table_cpue_fsc %>%
     dplyr::summarise(year = year,
-                     YFT = (yft/ (t_recherche /12)),
-                     SKJ = (skj/(t_recherche /12)),
-                     BET = (bet/(t_recherche /12)),
-                     ALB = (alb/(t_recherche /12)),
-                     TOTAL = (total/(t_recherche /12)))
+                     YFT = (yft / (t_recherche / 12)),
+                     SKJ = (skj / (t_recherche / 12)),
+                     BET = (bet / (t_recherche / 12)),
+                     ALB = (alb / (t_recherche / 12)),
+                     TOTAL = (total / (t_recherche / 12)))
   # 5 - Graphic design ----
-  par(mar=c(4,4.7,4.1,1.5))
+  par(mar = c(4, 4.7, 4.1, 1.5))
   if (fishing_type == "FOB") {
     plot(table_cpue_fad$year,
          table_cpue_fad$YFT,
          type = "b",
          xlab = "",
          ylab = expression(paste("Catch per unit effort (t ",
-                                 d^{-1},
+                                 d^ {
+                                   -1
+                                   },
                                  ")")),
          cex.axis = 1.4,
          cex.lab = 1.4,
@@ -206,7 +208,7 @@ catch_per_unit_effort <- function(data_connection,
                      "white"),
            cex = 1.3)
     legend("topright",
-           legend="(FOB)",
+           legend = "(FOB)",
            bty = "n",
            cex = 2)
   } else if (fishing_type == "FSC") {
@@ -215,7 +217,9 @@ catch_per_unit_effort <- function(data_connection,
          type = "b",
          xlab = "",
          ylab = expression(paste("Catch per unit effort (t ",
-                                 d^{-1},
+                                 d^{
+                                   -1
+                                   },
                                  ")")),
          cex.axis = 1.4,
          cex.lab = 1.4,
@@ -260,7 +264,7 @@ catch_per_unit_effort <- function(data_connection,
                       "Yellowfin",
                       "Skipjack",
                       "Bigeye"),
-           pch=c(19,
+           pch = c(19,
                  22,
                  23,
                  24),
