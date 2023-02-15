@@ -20,6 +20,8 @@ fishing_capacity(
 \item{country}{{\link[base]{integer}} expected. Country codes identification.}
 
 \item{vessel_type}{{\link[base]{integer}} expected. Vessel type codes identification.}
+
+\item{ocean}{{\link[base]{integer}} expected. Ocean codes identification.}
 }
 \value{
 The function return ggplot R plot.

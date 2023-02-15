@@ -4,6 +4,7 @@
 #' @param data_connection {\link[base]{list}} expected. Output of the function {\link[furdeb]{postgresql_dbconnection}}, which must be done before using the fishery_production function.
 #' @param time_period {\link[base]{integer}} expected. Period identification in year.
 #' @param country {\link[base]{integer}} expected. Country codes identification.
+#' @param ocean {\link[base]{integer}} expected. Ocean codes identification.
 #' @param vessel_type {\link[base]{integer}} expected. Vessel type codes identification.
 #' @param fishing_type  {\link[base]{character}} expected. FSC, FOB or TOTAL.
 #' @return The function return ggplot R plot.

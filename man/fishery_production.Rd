@@ -22,6 +22,8 @@ fishery_production(
 
 \item{country}{{\link[base]{integer}} expected. Country codes identification.}
 
+\item{ocean}{{\link[base]{integer}} expected. Ocean codes identification.}
+
 \item{vessel_type}{{\link[base]{integer}} expected. Vessel type codes identification.}
 }
 \value{
