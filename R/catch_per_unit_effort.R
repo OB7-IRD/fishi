@@ -1,12 +1,12 @@
-#' @name annual_catch_rate
-#' @title Annual catch rate
+#' @name catch_per_unit_effort
+#' @title Catch per unit effort
 #' @description Annual catch rates (in t per searching day) of the French purse seine fishing fleet on FOB- associated and free-swimming tuna schools (FSC) in the Atlantic Ocean.
-#' @param data_connection {\link[base]{list}} expected. Output of the function {\link[furdeb]{postgresql_dbconnection}}, which must be done before using the annual_catch_rate() function.
+#' @param data_connection {\link[base]{list}} expected. Output of the function {\link[furdeb]{postgresql_dbconnection}}, which must be done before using the catch_per_unit_effort() function.
 #' @param time_period {\link[base]{integer}} expected. Period identification in year.
 #' @param country {\link[base]{integer}} expected. Country codes identification.
 #' @param vessel_type {\link[base]{integer}} expected. Vessel type codes identification.
 #' @param ocean {\link[base]{integer}} expected. Ocean codes identification.
-#' @param time_serie {\link[base]{character}} expected. FOB or FSC.
+#' @param fishing_type {\link[base]{character}} expected. FOB or FSC.
 #' @return The function return ggplot R plot.
 #' @export
 #' @importFrom DBI dbGetQuery sqlInterpolate SQL
@@ -14,12 +14,12 @@
 #' @importFrom lubridate year
 #' @importFrom plotrix stackpoly
 #' @importFrom graphics axis lines abline legend
-annual_catch_rate <- function(data_connection,
+catch_per_unit_effort <- function(data_connection,
                                time_period,
                                country = as.integer(x = 1),
                                vessel_type = as.integer(x = 1),
                                ocean = 1,
-                               time_serie
+                               fishing_type
 ) {
   # 0 - Global variables assignement ----
   activity_date <- NULL
@@ -140,7 +140,7 @@ annual_catch_rate <- function(data_connection,
                      TOTAL = (total/(t_recherche /12)))
   # 5 - Graphic design ----
   par(mar=c(4,4.7,4.1,1.5))
-  if (time_serie == "FOB") {
+  if (fishing_type == "FOB") {
     plot(table_cpue_fad$year,
          table_cpue_fad$YFT,
          type = "b",
@@ -209,7 +209,7 @@ annual_catch_rate <- function(data_connection,
            legend="(FOB)",
            bty = "n",
            cex = 2)
-  } else if (time_serie == "FSC") {
+  } else if (fishing_type == "FSC") {
     plot(table_cpue_fsc$year,
          table_cpue_fsc$YFT,
          type = "b",
