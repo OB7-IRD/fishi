@@ -14,7 +14,7 @@
 #' @importFrom lubridate year
 #' @importFrom plotrix stackpoly
 #' @importFrom graphics axis lines abline legend
-#' @importFrom mapdata map
+#' @importFrom maps map
 map_catch_fad_previous <- function(data_connection,
                                    time_period,
                                    country = as.integer(x = 1),
@@ -27,7 +27,7 @@ map_catch_fad_previous <- function(data_connection,
   # 2 - Data extraction ----
   if (data_connection[[1]] == "balbaya") {
     map_catch_fad_previous_sql <- paste(readLines(con = system.file("sql",
-                                                                    "balbaya_map_catch_fad_previous.sql",
+                                                                    "balbaya_map_catch_previous.sql",
                                                                     package = "fishi")),
                                         collapse = "\n")
   } else {
@@ -95,23 +95,11 @@ map_catch_fad_previous <- function(data_connection,
   }
 
   # 5 - Graphic design ----
-
-  #ggplot
-
-  world_boundaries <- rnaturalearth::ne_countries(returnclass = "sf",
-                                                  scale       = "medium")
-  ggplot2::ggplot() +
-    ggplot2::geom_sf(data = world_boundaries) +
-    ggspatial::coord_sf(xlim = c(-40, 15),
-                        ylim = c(-25, 25))
-
-  #https://guangchuangyu.github.io/2016/12/scatterpie-for-plotting-pies-on-ggplot/
-
   # plot
   lat <- quad2pos(as.numeric(datafile$cwp11_act+5*1e6))$y
   long <- quad2pos(as.numeric(datafile$cwp11_act+5*1e6))$x
 
-  map.ao <- map(database = "worldHires",
+  map.ao <- maps::map(database = "worldHires",
                       main = "",
                       resolution = 0.1,
                       add = F,
@@ -157,7 +145,6 @@ map_catch_fad_previous <- function(data_connection,
                          "firebrick2",
                          "cornflowerblue"))
   }
-
   angles <- plotrix::floating.pie(-20,
                          -12.5,
                          c(1, 1, 1),
