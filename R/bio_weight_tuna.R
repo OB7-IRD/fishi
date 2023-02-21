@@ -33,7 +33,7 @@ bio_weight_tuna <- function(data_connection,
   # Data extraction
   if (data_connection[[1]] == "sardara") {
     bio_weight_tuna_sql <- paste(readLines(con = system.file("sql",
-                                                             "sardara_major_tuna_catch_size.sql",
+                                                             "sardara_bio_tuna.sql",
                                                              package = "fishi")),
                                  collapse = "\n")
   } else {

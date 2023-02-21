@@ -4,12 +4,21 @@
 \alias{bio_size_tuna}
 \title{Bio size tuna}
 \usage{
-bio_size_tuna(data_connection, report_year)
+bio_size_tuna(
+  data_connection,
+  report_year,
+  country = as.integer(x = 1),
+  ocean = as.integer(x = 1)
+)
 }
 \arguments{
 \item{data_connection}{{\link[base]{list}} expected. Output of the function {\link[furdeb]{postgresql_dbconnection}}, which must be done before using the bio_size_tuna() function.}
 
 \item{report_year}{{\link[base]{integer}} expected. Year of the statistical report.}
+
+\item{country}{{\link[base]{integer}} expected. Country codes identification.}
+
+\item{ocean}{{\link[base]{integer}} expected. Ocean codes identification.}
 }
 \value{
 The function return ggplot R plot.
