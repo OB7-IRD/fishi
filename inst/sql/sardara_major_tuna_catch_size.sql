@@ -16,10 +16,12 @@ from
 						   mensur.v_pas_cl = cl_taille.v_pas_cl)
 	join public.temps on (temps.id_date = mensur.id_date)
 where
-	mensur.c_ocean = 1::numeric
-	and mensur.c_pav = 1::numeric
-	and mensur.c_pecherie = 1::numeric
+--	mensur.c_ocean = 1::numeric
+--	mensur.c_pav = 1::numeric
+	mensur.c_pecherie = 1::numeric
 	and mensur.c_type_mens = 1::numeric
 	and mensur.c_g_engin = 2::numeric
 	and temps.an IN (?time_period)
+	and mensur.c_ocean in (?ocean)
+	and mensur.c_pav in (?country)
 ;

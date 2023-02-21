@@ -2,6 +2,7 @@
 
 export("%>%")
 export(bio_size_tuna)
+export(bio_weight_tuna)
 export(catch_map)
 export(catch_per_searching_day)
 export(catch_per_unit_effort)
