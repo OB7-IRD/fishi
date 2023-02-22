@@ -28,6 +28,43 @@ fishing_capacity <- function(data_connection,
   activity_date <- NULL
   c_quille_nb_months <- NULL
   # 1 - Arguments verification ----
+  if (codama::r_type_checking(r_object = data_connection,
+                              type = "list",
+                              length = 2L,
+                              output = "logical") != TRUE) {
+    return(codama::r_type_checking(r_object = data_connection,
+                                   type = "list",
+                                   length = 2L,
+                                   output = "message"))
+  }
+  if (codama::r_type_checking(r_object = time_period,
+                              type = "integer",
+                              output = "logical") != TRUE) {
+    return(codama::r_type_checking(r_object = time_period,
+                                   type = "integer",
+                                   output = "message"))
+  }
+  if (codama::r_type_checking(r_object = ocean,
+                              type = "integer",
+                              output = "logical") != TRUE) {
+    return(codama::r_type_checking(r_object = ocean,
+                                   type = "integer",
+                                   output = "message"))
+  }
+  if (codama::r_type_checking(r_object = country,
+                              type = "integer",
+                              output = "logical") != TRUE) {
+    return(codama::r_type_checking(r_object = country,
+                                   type = "integer",
+                                   output = "message"))
+  }
+  if (codama::r_type_checking(r_object = vessel_type,
+                              type = "integer",
+                              output = "logical") != TRUE) {
+    return(codama::r_type_checking(r_object = vessel_type,
+                                   type = "integer",
+                                   output = "message"))
+  }
   # 2 - Data extraction ----
   if (data_connection[[1]] == "balbaya") {
     fishing_capacity_sql <- paste(readLines(con = system.file("sql",

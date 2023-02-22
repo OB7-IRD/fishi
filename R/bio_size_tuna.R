@@ -26,6 +26,36 @@ bio_size_tuna <- function(data_connection,
   numbers_total <- NULL
   numbers <- NULL
   # 1 - Arguments verification ----
+  if (codama::r_type_checking(r_object = data_connection,
+                              type = "list",
+                              length = 2L,
+                              output = "logical") != TRUE) {
+    return(codama::r_type_checking(r_object = data_connection,
+                                   type = "list",
+                                   length = 2L,
+                                   output = "message"))
+  }
+  if (codama::r_type_checking(r_object = report_year,
+                              type = "integer",
+                              output = "logical") != TRUE) {
+    return(codama::r_type_checking(r_object = report_year,
+                                   type = "integer",
+                                   output = "message"))
+  }
+  if (codama::r_type_checking(r_object = country,
+                              type = "integer",
+                              output = "logical") != TRUE) {
+    return(codama::r_type_checking(r_object = country,
+                                   type = "integer",
+                                   output = "message"))
+  }
+  if (codama::r_type_checking(r_object = ocean,
+                              type = "integer",
+                              output = "logical") != TRUE) {
+    return(codama::r_type_checking(r_object = ocean,
+                                   type = "integer",
+                                   output = "message"))
+  }
   # 2 - Data extraction ----
   # Report_year
   five_previous <- c((report_year - 1):(report_year - 5))
@@ -42,7 +72,7 @@ bio_size_tuna <- function(data_connection,
          " - Indicator not developed yet for this \"data_connection\" argument.\n",
          sep = "")
   }
-  bio_size_tuna_sql_final <- DBI::sqlInterpolate(conn        = sardara_con[[2]],
+  bio_size_tuna_sql_final <- DBI::sqlInterpolate(conn        = data_connection[[2]],
                                                  sql         = bio_size_tuna_sql,
                                                  time_period = DBI::SQL(paste(time_period,
                                                                               collapse = ", ")),
@@ -50,10 +80,10 @@ bio_size_tuna <- function(data_connection,
                                                                               collapse = ", ")),
                                                  ocean       = DBI::SQL(paste(ocean,
                                                                               collapse = ", ")))
-  bio_size_tuna_sql_data <- dplyr::tibble(DBI::dbGetQuery(conn      = sardara_con[[2]],
+  bio_size_tuna_sql_data <- dplyr::tibble(DBI::dbGetQuery(conn      = data_connection[[2]],
                                                           statement = bio_size_tuna_sql_final))
   # 3.a - Data design for SKJ ----
-  # LOG
+  # Dataframe - Mode : LOG, Year : Report year
   t0 <- bio_size_tuna_sql_data %>%
     dplyr::filter(c_esp == 2,
                   c_banc == 1,
@@ -66,7 +96,7 @@ bio_size_tuna <- function(data_connection,
     dplyr::group_by(cl) %>%
     dplyr::summarise(LOG_CURRENT_YEAR = numbers / numbers_total * 100,
                      .groups = "drop")
-
+  # Dataframe - Mode : LOG, Year : Five previous
   t1 <- bio_size_tuna_sql_data %>%
     dplyr::filter(c_esp == 2,
                   c_banc == 1,
@@ -79,8 +109,7 @@ bio_size_tuna <- function(data_connection,
     dplyr::group_by(cl) %>%
     dplyr::summarise(LOG_AVG_5_YEARS = numbers / numbers_total * 100,
                      .groups = "drop")
-
-  # FREE
+  # Dataframe - Mode : FREE, Year : Report year
   t2 <- bio_size_tuna_sql_data %>%
     dplyr::filter(c_esp == 2,
                   c_banc %in% c(2, 3, 9),
@@ -93,7 +122,7 @@ bio_size_tuna <- function(data_connection,
     dplyr::group_by(cl) %>%
     dplyr::summarise(FREE_CURRENT_YEAR = numbers / numbers_total * 100,
                      .groups = "drop")
-
+  # Dataframe - Mode : FREE, Year : Five previous
   t3 <- bio_size_tuna_sql_data %>%
     dplyr::filter(c_esp == 2,
                   c_banc %in% c(2, 3, 9),
@@ -106,8 +135,7 @@ bio_size_tuna <- function(data_connection,
     dplyr::group_by(cl) %>%
     dplyr::summarise(FREE_AVG_5_YEARS = numbers / numbers_total * 100,
                      .groups = "drop")
-
-  # ALL
+  # Dataframe - Mode : ALL, Year : Report year
   t4 <- bio_size_tuna_sql_data %>%
     dplyr::filter(c_esp == 2,
                   an %in% report_year) %>%
@@ -119,7 +147,7 @@ bio_size_tuna <- function(data_connection,
     dplyr::group_by(cl) %>%
     dplyr::summarise(ALL_CURRENT_YEAR = numbers / numbers_total * 100,
                      .groups = "drop")
-
+  # Dataframe - Mode : ALL, Year : Five previous
   t5 <- bio_size_tuna_sql_data %>%
     dplyr::filter(c_esp == 2,
                   an %in% five_previous) %>%
@@ -131,15 +159,14 @@ bio_size_tuna <- function(data_connection,
     dplyr::group_by(cl) %>%
     dplyr::summarise(ALL_AVG_5_YEARS = numbers / numbers_total * 100,
                      .groups = "drop")
-
-  table.size.skj.n <- merge(t0, t1, by = "cl")
-  table.size.skj.n <- merge(table.size.skj.n, t2, by = "cl")
-  table.size.skj.n <- merge(table.size.skj.n, t3, by = "cl")
-  table.size.skj.n <- merge(table.size.skj.n, t4, by = "cl")
-  table.size.skj.n <- merge(table.size.skj.n, t5, by = "cl")
-
+  # Merge
+  table_size_skj_n <- merge(t0, t1, by = "cl")
+  table_size_skj_n <- merge(table_size_skj_n, t2, by = "cl")
+  table_size_skj_n <- merge(table_size_skj_n, t3, by = "cl")
+  table_size_skj_n <- merge(table_size_skj_n, t4, by = "cl")
+  table_size_skj_n <- merge(table_size_skj_n, t5, by = "cl")
   # 3.b - Data design for BET ----
-  # LOG
+  # Dataframe - Mode : LOG, Year : Report year
   t0 <- bio_size_tuna_sql_data %>%
     dplyr::filter(c_esp == 3,
                   c_banc == 1,
@@ -152,7 +179,7 @@ bio_size_tuna <- function(data_connection,
     dplyr::group_by(cl) %>%
     dplyr::summarise(LOG_CURRENT_YEAR = numbers / numbers_total * 100,
                      .groups = "drop")
-
+  # Dataframe - Mode : LOG, Year : Previous years
   t1 <- bio_size_tuna_sql_data %>%
     dplyr::filter(c_esp == 3,
                   c_banc == 1,
@@ -165,8 +192,7 @@ bio_size_tuna <- function(data_connection,
     dplyr::group_by(cl) %>%
     dplyr::summarise(LOG_AVG_5_YEARS = numbers / numbers_total * 100,
                      .groups = "drop")
-
-  # FREE
+  # Dataframe - Mode : FREE, Year : Report year
   t2 <- bio_size_tuna_sql_data %>%
     dplyr::filter(c_esp == 3,
                   c_banc %in% c(2, 3, 9),
@@ -179,7 +205,7 @@ bio_size_tuna <- function(data_connection,
     dplyr::group_by(cl) %>%
     dplyr::summarise(FREE_CURRENT_YEAR = numbers / numbers_total * 100,
                      .groups = "drop")
-
+  # Dataframe - Mode : FREE, Year : Previous years
   t3 <- bio_size_tuna_sql_data %>%
     dplyr::filter(c_esp == 3,
                   c_banc %in% c(2, 3, 9),
@@ -192,8 +218,7 @@ bio_size_tuna <- function(data_connection,
     dplyr::group_by(cl) %>%
     dplyr::summarise(FREE_AVG_5_YEARS = numbers / numbers_total * 100,
                      .groups = "drop")
-
-  # ALL
+  # Dataframe - Mode : ALL, Year : Report year
   t4 <- bio_size_tuna_sql_data %>%
     dplyr::filter(c_esp == 3,
                   an %in% report_year) %>%
@@ -205,7 +230,7 @@ bio_size_tuna <- function(data_connection,
     dplyr::group_by(cl) %>%
     dplyr::summarise(ALL_CURRENT_YEAR = numbers / numbers_total * 100,
                      .groups = "drop")
-
+  # Dataframe - Mode : ALL, Year : Previous years
   t5 <- bio_size_tuna_sql_data %>%
     dplyr::filter(c_esp == 3,
                   an %in% five_previous) %>%
@@ -217,15 +242,14 @@ bio_size_tuna <- function(data_connection,
     dplyr::group_by(cl) %>%
     dplyr::summarise(ALL_AVG_5_YEARS = numbers / numbers_total * 100,
                      .groups = "drop")
-
-  table.size.bet.n <- merge(t0, t1, by = "cl")
-  table.size.bet.n <- merge(table.size.bet.n, t2, by = "cl")
-  table.size.bet.n <- merge(table.size.bet.n, t3, by = "cl")
-  table.size.bet.n <- merge(table.size.bet.n, t4, by = "cl")
-  table.size.bet.n <- merge(table.size.bet.n, t5, by = "cl")
-
+  # Merge
+  table_size_bet_n <- merge(t0, t1, by = "cl")
+  table_size_bet_n <- merge(table_size_bet_n, t2, by = "cl")
+  table_size_bet_n <- merge(table_size_bet_n, t3, by = "cl")
+  table_size_bet_n <- merge(table_size_bet_n, t4, by = "cl")
+  table_size_bet_n <- merge(table_size_bet_n, t5, by = "cl")
   # 3.c - Data design for YFT ----
-  # LOG
+  # Dataframe - Mode : LOG, Year : Report year
   t0 <- bio_size_tuna_sql_data %>%
     dplyr::filter(c_esp == 1,
                   c_banc == 1,
@@ -238,7 +262,7 @@ bio_size_tuna <- function(data_connection,
     dplyr::group_by(cl) %>%
     dplyr::summarise(LOG_CURRENT_YEAR = numbers / numbers_total * 100,
                      .groups = "drop")
-
+  # Dataframe - Mode : LOG, Year : Previous years
   t1 <- bio_size_tuna_sql_data %>%
     dplyr::filter(c_esp == 1,
                   c_banc == 1,
@@ -251,8 +275,7 @@ bio_size_tuna <- function(data_connection,
     dplyr::group_by(cl) %>%
     dplyr::summarise(LOG_AVG_5_YEARS = numbers / numbers_total * 100,
                      .groups = "drop")
-
-  # FREE
+  # Dataframe - Mode : FREE, Year : Report year
   t2 <- bio_size_tuna_sql_data %>%
     dplyr::filter(c_esp == 1,
                   c_banc %in% c(2, 3, 9),
@@ -265,7 +288,7 @@ bio_size_tuna <- function(data_connection,
     dplyr::group_by(cl) %>%
     dplyr::summarise(FREE_CURRENT_YEAR = numbers / numbers_total * 100,
                      .groups = "drop")
-
+  # Dataframe - Mode : FREE, Year : Previous years
   t3 <- bio_size_tuna_sql_data %>%
     dplyr::filter(c_esp == 1,
                   c_banc %in% c(2, 3, 9),
@@ -278,8 +301,7 @@ bio_size_tuna <- function(data_connection,
     dplyr::group_by(cl) %>%
     dplyr::summarise(FREE_AVG_5_YEARS = numbers / numbers_total * 100,
                      .groups = "drop")
-
-  # ALL
+  # Dataframe - Mode : ALL, Year : Report year
   t4 <- bio_size_tuna_sql_data %>%
     dplyr::filter(c_esp == 1,
                   an %in% report_year) %>%
@@ -291,7 +313,7 @@ bio_size_tuna <- function(data_connection,
     dplyr::group_by(cl) %>%
     dplyr::summarise(ALL_CURRENT_YEAR = numbers / numbers_total * 100,
                      .groups = "drop")
-
+  # Dataframe - Mode : ALL, Year : Previous years
   t5 <- bio_size_tuna_sql_data %>%
     dplyr::filter(c_esp == 1,
                   an %in% five_previous) %>%
@@ -303,30 +325,31 @@ bio_size_tuna <- function(data_connection,
     dplyr::group_by(cl) %>%
     dplyr::summarise(ALL_AVG_5_YEARS = numbers / numbers_total * 100,
                      .groups = "drop")
-
-  table.size.yft.n <- merge(t0, t1, by = "cl")
-  table.size.yft.n <- merge(table.size.yft.n, t2, by = "cl")
-  table.size.yft.n <- merge(table.size.yft.n, t3, by = "cl")
-  table.size.yft.n <- merge(table.size.yft.n, t4, by = "cl")
-  table.size.yft.n <- merge(table.size.yft.n, t5, by = "cl")
+  # Merge
+  table_size_yft_n <- merge(t0, t1, by = "cl")
+  table_size_yft_n <- merge(table_size_yft_n, t2, by = "cl")
+  table_size_yft_n <- merge(table_size_yft_n, t3, by = "cl")
+  table_size_yft_n <- merge(table_size_yft_n, t4, by = "cl")
+  table_size_yft_n <- merge(table_size_yft_n, t5, by = "cl")
   # 4 - Graphic design ----
-  size.plot.f <- function(species, mode, data.type) {
-    table <- get(paste("table.size.",
+  # Function that read the 3 dataframe and print it in a plot
+  size_plot_f <- function(species, mode, data_type) {
+    table <- get(paste("table_size_",
                        species,
-                       ".",
-                       data.type,
+                       "_",
+                       data_type,
                        sep = ""))
-    column1 <- get(paste("table.size.",
+    column1 <- get(paste("table_size_",
                          species,
-                         ".",
-                         data.type,
+                         "_",
+                         data_type,
                          sep = ""))[[paste(mode,
                                            "_CURRENT_YEAR",
                                            sep = "")]]
-    column2 <- get(paste("table.size.",
+    column2 <- get(paste("table_size_",
                          species,
-                         ".",
-                         data.type,
+                         "_",
+                         data_type,
                          sep = ""))[[paste(mode,
                                            "_AVG_5_YEARS",
                                            sep = "")]]
@@ -370,21 +393,21 @@ bio_size_tuna <- function(data_connection,
   }
 
   ylabel <- "Percentage"
-  indic.species <- c("yft", "bet", "skj")
-  indic.mode <- c("LOG", "FREE", "ALL")
+  indic_species <- c("yft", "bet", "skj")
+  indic_mode <- c("LOG", "FREE", "ALL")
   title1 <- c("YFT", "", "", "BET", "", "", "SKJ", "", "")
   compteur <- 0
-  mtext.mode <- c("FOB", "FSC", "ALL", "", "", "", "", "", "")
+  mtext_mode <- c("FOB", "FSC", "ALL", "", "", "", "", "", "")
   par(mfcol = c(3, 3),
       mar = c(4, 4, 2, 2),
       oma = c(0, 2.5, 2.5, 0))
 
-  for (i in (1:length(indic.species))){
-    for (j in (1:length(indic.mode))){
+  for (i in (1:length(indic_species))){
+    for (j in (1:length(indic_mode))){
       compteur <- compteur + 1
       title2 <- title1[compteur]
-      size.plot.f(indic.species[i], indic.mode[j], "n")
-      text <- mtext.mode[compteur]
+      size_plot_f(indic_species[i], indic_mode[j], "n")
+      text <- mtext_mode[compteur]
       mtext(text, side = 2, outer = FALSE, line = 4.5, cex = 1.6)
       mtext(title2, side = 3, outer = FALSE, line = 1.5, cex = 1.6)
     }

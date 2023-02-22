@@ -19,7 +19,7 @@ map_catch_previous <- function(data_connection,
                                time_period,
                                country = as.integer(x = 1),
                                vessel_type = as.integer(x = 1),
-                               ocean = 1,
+                               ocean = as.integer(x = 1),
                                fishing_type = "ALL"
 ) {
   # 0 - Global variables assignement ----
@@ -31,8 +31,45 @@ map_catch_previous <- function(data_connection,
   c_tban <- NULL
   cwp11_act <- NULL
   v_poids_capt <- NULL
-
+  wrld_simpl <- NULL
   # 1 - Arguments verification ----
+  if (codama::r_type_checking(r_object = data_connection,
+                              type = "list",
+                              length = 2L,
+                              output = "logical") != TRUE) {
+    return(codama::r_type_checking(r_object = data_connection,
+                                   type = "list",
+                                   length = 2L,
+                                   output = "message"))
+  }
+  if (codama::r_type_checking(r_object = time_period,
+                              type = "integer",
+                              output = "logical") != TRUE) {
+    return(codama::r_type_checking(r_object = time_period,
+                                   type = "integer",
+                                   output = "message"))
+  }
+  if (codama::r_type_checking(r_object = country,
+                              type = "integer",
+                              output = "logical") != TRUE) {
+    return(codama::r_type_checking(r_object = country,
+                                   type = "integer",
+                                   output = "message"))
+  }
+  if (codama::r_type_checking(r_object = ocean,
+                              type = "integer",
+                              output = "logical") != TRUE) {
+    return(codama::r_type_checking(r_object = ocean,
+                                   type = "integer",
+                                   output = "message"))
+  }
+  if (codama::r_type_checking(r_object = vessel_type,
+                              type = "integer",
+                              output = "logical") != TRUE) {
+    return(codama::r_type_checking(r_object = vessel_type,
+                                   type = "integer",
+                                   output = "message"))
+  }
   # 2 - Data extraction ----
   if (data_connection[[1]] == "balbaya") {
     map_catch_previous_sql <- paste(readLines(con = system.file("sql",
@@ -156,11 +193,11 @@ map_catch_previous <- function(data_connection,
             border = 0)
   graphics::axis(1,
                  at = seq(-40, 15, 5),
-                 labels = c("40°W", "35°W", "30°W", "25°W", "20°W", "15°W", "10°W", "5°W", "0", "5°E", "10°E", "15°E"),
+                 labels = c("40W", "35W", "30W", "25W", "20W", "15W", "10W", "5W", "0", "5E", "10E", "15E"),
                  tick = TRUE)
   graphics::axis(2,
                  at = seq(-25, 25, 5),
-                 labels = c("25°S", "20°S", "15°S", "10°S", "5°S", "0", "5°N", "10°N", "15°N", "20°N", "25°N"),
+                 labels = c("25S", "20S", "15S", "10S", "5S", "0", "5N", "10N", "15N", "20N", "25N"),
                  las = 1,
                  tick = TRUE)
   graphics::axis(3,

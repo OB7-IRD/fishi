@@ -7,7 +7,7 @@
 fishery_production(
   data_connection,
   time_period,
-  fishing_type = "TOTAL",
+  fishing_type = "ALL",
   country = as.integer(x = 1),
   ocean = as.integer(x = 1),
   vessel_type = as.integer(x = 1)
@@ -18,7 +18,7 @@ fishery_production(
 
 \item{time_period}{{\link[base]{integer}} expected. Period identification in year.}
 
-\item{fishing_type}{{\link[base]{character}} expected. FSC, FOB or TOTAL.}
+\item{fishing_type}{{\link[base]{character}} expected. FSC, FOB or ALL.}
 
 \item{country}{{\link[base]{integer}} expected. Country codes identification.}
 

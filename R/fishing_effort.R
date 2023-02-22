@@ -32,6 +32,43 @@ fishing_effort <- function(data_connection,
   v_tpec <- NULL
   v_dur_cal <- NULL
   # 1 - Arguments verification ----
+  if (codama::r_type_checking(r_object = data_connection,
+                              type = "list",
+                              length = 2L,
+                              output = "logical") != TRUE) {
+    return(codama::r_type_checking(r_object = data_connection,
+                                   type = "list",
+                                   length = 2L,
+                                   output = "message"))
+  }
+  if (codama::r_type_checking(r_object = time_period,
+                              type = "integer",
+                              output = "logical") != TRUE) {
+    return(codama::r_type_checking(r_object = time_period,
+                                   type = "integer",
+                                   output = "message"))
+  }
+  if (codama::r_type_checking(r_object = ocean,
+                              type = "integer",
+                              output = "logical") != TRUE) {
+    return(codama::r_type_checking(r_object = ocean,
+                                   type = "integer",
+                                   output = "message"))
+  }
+  if (codama::r_type_checking(r_object = country,
+                              type = "integer",
+                              output = "logical") != TRUE) {
+    return(codama::r_type_checking(r_object = country,
+                                   type = "integer",
+                                   output = "message"))
+  }
+  if (codama::r_type_checking(r_object = vessel_type,
+                              type = "integer",
+                              output = "logical") != TRUE) {
+    return(codama::r_type_checking(r_object = vessel_type,
+                                   type = "integer",
+                                   output = "message"))
+  }
   # 2 - Data extraction ----
   if (data_connection[[1]] == "balbaya") {
     fishing_effort_sql <- paste(readLines(con = system.file("sql",
@@ -60,8 +97,7 @@ fishing_effort <- function(data_connection,
 
   #Adding columns years
   fishing_effort_t1 <- fishing_effort_data %>%
-    dplyr::mutate(activity_year = lubridate::year(x = activity_date),
-                  landing_year = lubridate::year(x = landing_date))
+    dplyr::mutate(activity_year = lubridate::year(x = activity_date))
   #Adding columns by condition (vtmer, vtpec, ndurcal, nbdays)
   fishing_effort_t2 <- fishing_effort_t1 %>%
     dplyr::group_by(ocean_id,

@@ -13,12 +13,12 @@
 #' @importFrom dplyr mutate tibble group_by summarise case_when
 #' @importFrom lubridate year
 #' @importFrom plotrix stackpoly
-#' @importFrom graphics axis lines abline legend
+#' @importFrom graphics axis lines abline legend plot
 catch_per_unit_effort <- function(data_connection,
                                time_period,
                                country = as.integer(x = 1),
                                vessel_type = as.integer(x = 1),
-                               ocean = 1,
+                               ocean = as.integer(x = 1),
                                fishing_type
 ) {
   # 0 - Global variables assignement ----
@@ -32,6 +32,50 @@ catch_per_unit_effort <- function(data_connection,
   alb <- NULL
   total <- NULL
   # 1 - Arguments verification ----
+  if (codama::r_type_checking(r_object = data_connection,
+                              type = "list",
+                              length = 2L,
+                              output = "logical") != TRUE) {
+    return(codama::r_type_checking(r_object = data_connection,
+                                   type = "list",
+                                   length = 2L,
+                                   output = "message"))
+  }
+  if (codama::r_type_checking(r_object = time_period,
+                              type = "integer",
+                              output = "logical") != TRUE) {
+    return(codama::r_type_checking(r_object = time_period,
+                                   type = "integer",
+                                   output = "message"))
+  }
+  if (codama::r_type_checking(r_object = ocean,
+                              type = "integer",
+                              output = "logical") != TRUE) {
+    return(codama::r_type_checking(r_object = ocean,
+                                   type = "integer",
+                                   output = "message"))
+  }
+  if (codama::r_type_checking(r_object = country,
+                              type = "integer",
+                              output = "logical") != TRUE) {
+    return(codama::r_type_checking(r_object = country,
+                                   type = "integer",
+                                   output = "message"))
+  }
+  if (codama::r_type_checking(r_object = vessel_type,
+                              type = "integer",
+                              output = "logical") != TRUE) {
+    return(codama::r_type_checking(r_object = vessel_type,
+                                   type = "integer",
+                                   output = "message"))
+  }
+  if (codama::r_type_checking(r_object = fishing_type,
+                              type = "character",
+                              output = "logical") != TRUE) {
+    return(codama::r_type_checking(r_object = fishing_type,
+                                   type = "character",
+                                   output = "message"))
+  }
   # 2 - Data extraction ----
   if (data_connection[[1]] == "balbaya") {
     annual_catch_rate_sql <- paste(readLines(con = system.file("sql",
@@ -138,10 +182,10 @@ catch_per_unit_effort <- function(data_connection,
                      BET = (bet / (t_recherche / 12)),
                      ALB = (alb / (t_recherche / 12)),
                      TOTAL = (total / (t_recherche / 12)))
-  # 5 - Graphic design ----
+  # 4 - Graphic design ----
   par(mar = c(4, 4.7, 4.1, 1.5))
   if (fishing_type == "FOB") {
-    plot(table_cpue_fad$year,
+    graphics::plot(table_cpue_fad$year,
          table_cpue_fad$YFT,
          type = "b",
          xlab = "",
@@ -207,12 +251,12 @@ catch_per_unit_effort <- function(data_connection,
                      "grey",
                      "white"),
            cex = 1.3)
-    legend("topright",
+    graphics::legend("topright",
            legend = "(FOB)",
            bty = "n",
            cex = 2)
   } else if (fishing_type == "FSC") {
-    plot(table_cpue_fsc$year,
+    graphics::plot(table_cpue_fsc$year,
          table_cpue_fsc$YFT,
          type = "b",
          xlab = "",
@@ -239,27 +283,27 @@ catch_per_unit_effort <- function(data_connection,
                       max(table_cpue_fsc$year),
                       by = 2),
          cex.axis = 1.3)
-    lines(table_cpue_fsc$year,
+    graphics::lines(table_cpue_fsc$year,
           table_cpue_fsc$SKJ,
           type = "b",
           lty = 1,
           pch = 23)
-    lines(table_cpue_fsc$year,
+    graphics::lines(table_cpue_fsc$year,
           table_cpue_fsc$BET,
           type = "b",
           lty = 1,
           pch = 24)
-    lines(table_cpue_fsc$year,
+    graphics::lines(table_cpue_fsc$year,
           table_cpue_fsc$TOTAL,
           type = "b",
           lty = 1,
           pch = 19)
-    abline(h = seq(5,
+    graphics::abline(h = seq(5,
                    25,
                    5),
            col = "lightgrey",
            lty = 2)
-    legend("topleft",
+    graphics::legend("topleft",
            legend = c("Total",
                       "Yellowfin",
                       "Skipjack",
@@ -278,7 +322,7 @@ catch_per_unit_effort <- function(data_connection,
                      "white",
                      "white"),
            cex = 1.3)
-    legend("topright",
+    graphics::legend("topright",
            legend = "(FSC)",
            bty = "n",
            cex = 2)

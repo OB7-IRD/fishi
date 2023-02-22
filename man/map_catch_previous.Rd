@@ -9,7 +9,7 @@ map_catch_previous(
   time_period,
   country = as.integer(x = 1),
   vessel_type = as.integer(x = 1),
-  ocean = 1,
+  ocean = as.integer(x = 1),
   fishing_type = "ALL"
 )
 }

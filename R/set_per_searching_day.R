@@ -13,13 +13,13 @@
 #' @importFrom dplyr mutate tibble group_by summarise case_when
 #' @importFrom lubridate year
 #' @importFrom plotrix stackpoly
-#' @importFrom graphics par
+#' @importFrom  graphics axis lines abline legend plot
 set_per_searching_day <- function(data_connection,
-                             time_period,
-                             country = as.integer(x = 1),
-                             vessel_type = as.integer(x = 1),
-                             ocean = 1,
-                             fishing_type) {
+                                  time_period,
+                                  country = as.integer(x = 1),
+                                  vessel_type = as.integer(x = 1),
+                                  ocean = as.integer(x = 1),
+                                  fishing_type) {
   # 0 - Global variables assignement ----
   activity_date <- NULL
   v_tpec <- NULL
@@ -31,6 +31,50 @@ set_per_searching_day <- function(data_connection,
   sets_per_day_fad <- NULL
   sets_per_day_fsc <- NULL
   # 1 - Arguments verification ----
+  if (codama::r_type_checking(r_object = data_connection,
+                              type = "list",
+                              length = 2L,
+                              output = "logical") != TRUE) {
+    return(codama::r_type_checking(r_object = data_connection,
+                                   type = "list",
+                                   length = 2L,
+                                   output = "message"))
+  }
+  if (codama::r_type_checking(r_object = time_period,
+                              type = "integer",
+                              output = "logical") != TRUE) {
+    return(codama::r_type_checking(r_object = time_period,
+                                   type = "integer",
+                                   output = "message"))
+  }
+  if (codama::r_type_checking(r_object = ocean,
+                              type = "integer",
+                              output = "logical") != TRUE) {
+    return(codama::r_type_checking(r_object = ocean,
+                                   type = "integer",
+                                   output = "message"))
+  }
+  if (codama::r_type_checking(r_object = country,
+                              type = "integer",
+                              output = "logical") != TRUE) {
+    return(codama::r_type_checking(r_object = country,
+                                   type = "integer",
+                                   output = "message"))
+  }
+  if (codama::r_type_checking(r_object = vessel_type,
+                              type = "integer",
+                              output = "logical") != TRUE) {
+    return(codama::r_type_checking(r_object = vessel_type,
+                                   type = "integer",
+                                   output = "message"))
+  }
+  if (codama::r_type_checking(r_object = fishing_type,
+                              type = "character",
+                              output = "logical") != TRUE) {
+    return(codama::r_type_checking(r_object = fishing_type,
+                                   type = "character",
+                                   output = "message"))
+  }
   # 2 - Data extraction ----
   if (data_connection[[1]] == "balbaya") {
     time_serie_catch_nb_set_sql <- paste(readLines(con = system.file("sql",
@@ -93,7 +137,7 @@ set_per_searching_day <- function(data_connection,
   # 5 - Graphic design ----
   graphics::par(mar = c(4, 4.7, 4.1, 1.5))
   if (fishing_type == "FOB") {
-    plot(table_cpue_set_per_day$year,
+    graphics::plot(table_cpue_set_per_day$year,
          table_cpue_set_per_day$sets_per_day_fad,
          type = "b",
          xlab = "",
@@ -105,7 +149,7 @@ set_per_searching_day <- function(data_connection,
          las = 1,
          xaxt = "n",
          pch = 19)
-    axis(1,
+    graphics::axis(1,
          at = seq(min(table_cpue_set_per_day$year),
                   max(table_cpue_set_per_day$year),
                   by = 2),
@@ -114,17 +158,17 @@ set_per_searching_day <- function(data_connection,
                       max(table_cpue_set_per_day$year),
                       by = 2),
          cex.axis = 1.3)
-    abline(h = seq(.2,
+    graphics::abline(h = seq(.2,
                    1,
                    .2),
            lty = 2,
            col = "lightgrey")
-    legend("topleft",
+    graphics::legend("topleft",
            legend = "(FOB)",
            bty = "n",
            cex = 2)
   } else if (fishing_type == "FSC") {
-    plot(table_cpue_set_per_day$year,
+    graphics::plot(table_cpue_set_per_day$year,
          table_cpue_set_per_day$sets_per_day_fsc,
          type = "b",
          xlab = "",
@@ -136,7 +180,7 @@ set_per_searching_day <- function(data_connection,
          las = 1,
          xaxt = "n",
          pch = 19)
-    axis(1,
+    graphics::axis(1,
          at = seq(min(table_cpue_set_per_day$year),
                   max(table_cpue_set_per_day$year),
                   by = 2),
@@ -145,12 +189,12 @@ set_per_searching_day <- function(data_connection,
                       max(table_cpue_set_per_day$year),
                       by = 2),
          cex.axis = 1.3)
-    abline(h = seq(.2,
+    graphics::abline(h = seq(.2,
                    1,
                    .2),
            lty = 2,
            col = "lightgrey")
-    legend("topleft",
+    graphics::legend("topleft",
            legend = "(FSC)",
            bty = "n",
            cex = 2)

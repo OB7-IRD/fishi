@@ -9,7 +9,7 @@ catch_per_unit_effort(
   time_period,
   country = as.integer(x = 1),
   vessel_type = as.integer(x = 1),
-  ocean = 1,
+  ocean = as.integer(x = 1),
   fishing_type
 )
 }

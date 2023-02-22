@@ -16,16 +16,44 @@
 bio_weight_tuna <- function(data_connection,
                             report_year,
                             country = as.integer(x = 1),
-                            ocean = as.integer(x =1)) {
+                            ocean = as.integer(x = 1)) {
   # 0 - Global variables assignement ----
   c_esp <- NULL
   c_banc <- NULL
   an <- NULL
   v_mensur <- NULL
   cl <- NULL
-  numbers_total <- NULL
-  numbers <- NULL
   # 1 - Arguments verification ----
+  if (codama::r_type_checking(r_object = data_connection,
+                              type = "list",
+                              length = 2L,
+                              output = "logical") != TRUE) {
+    return(codama::r_type_checking(r_object = data_connection,
+                                   type = "list",
+                                   length = 2L,
+                                   output = "message"))
+  }
+  if (codama::r_type_checking(r_object = report_year,
+                              type = "integer",
+                              output = "logical") != TRUE) {
+    return(codama::r_type_checking(r_object = report_year,
+                                   type = "integer",
+                                   output = "message"))
+  }
+  if (codama::r_type_checking(r_object = country,
+                              type = "integer",
+                              output = "logical") != TRUE) {
+    return(codama::r_type_checking(r_object = country,
+                                   type = "integer",
+                                   output = "message"))
+  }
+  if (codama::r_type_checking(r_object = ocean,
+                              type = "integer",
+                              output = "logical") != TRUE) {
+    return(codama::r_type_checking(r_object = ocean,
+                                   type = "integer",
+                                   output = "message"))
+  }
   # 2 - Data extraction ----
   # Report_year
   five_previous <- c((report_year - 1):(report_year - 5))
@@ -42,7 +70,7 @@ bio_weight_tuna <- function(data_connection,
          " - Indicator not developed yet for this \"data_connection\" argument.\n",
          sep = "")
   }
-  bio_weight_tuna_sql_final <- DBI::sqlInterpolate(conn        = sardara_con[[2]],
+  bio_weight_tuna_sql_final <- DBI::sqlInterpolate(conn        = data_connection[[2]],
                                                    sql         = bio_weight_tuna_sql,
                                                    time_period = DBI::SQL(paste(time_period,
                                                                                 collapse = ", ")),
@@ -50,188 +78,188 @@ bio_weight_tuna <- function(data_connection,
                                                                                 collapse = ", ")),
                                                    ocean       = DBI::SQL(paste(ocean,
                                                                                 collapse = ", ")))
-  bio_weight_tuna_sql_data <- dplyr::tibble(DBI::dbGetQuery(conn      = sardara_con[[2]],
+  bio_weight_tuna_sql_data <- dplyr::tibble(DBI::dbGetQuery(conn      = data_connection[[2]],
                                                             statement = bio_weight_tuna_sql_final))
   # 3.a - Data design for SKJ ----
-  # LOG
+  # Dataframe - Mode : LOG, Year : Report year
   t0 <- bio_weight_tuna_sql_data %>%
     dplyr::filter(c_esp == 2,
                   c_banc == 1,
                   an %in% report_year) %>%
     dplyr::group_by(cl) %>%
-    dplyr::summarise(LOG_CURRENT_YEAR = (unique(0.000015849 *(cl + 0.5)^3.046) * sum(v_mensur, na.rm = TRUE)) / 1000,
+    dplyr::summarise(LOG_CURRENT_YEAR = (unique(0.000015849 * (cl + 0.5)^3.046) * sum(v_mensur, na.rm = TRUE)) / 1000,
                      .groups = "drop")
-
+  # Dataframe - Mode : LOG, Year : Previous years
   t1 <- bio_weight_tuna_sql_data %>%
     dplyr::filter(c_esp == 2,
                   c_banc == 1,
                   an %in% five_previous) %>%
     dplyr::group_by(cl) %>%
-    dplyr::summarise(LOG_AVG_5_YEARS = (unique(0.000015849 *(cl + 0.5)^3.046) * sum(v_mensur /5, na.rm = TRUE)) / 1000,
+    dplyr::summarise(LOG_AVG_5_YEARS = (unique(0.000015849 * (cl + 0.5)^3.046) * sum(v_mensur / 5, na.rm = TRUE)) / 1000,
                      .groups = "drop")
-  # FREE
+  # Dataframe - Mode : FREE, Year : Report year
   t2 <- bio_weight_tuna_sql_data %>%
     dplyr::filter(c_esp == 2,
                   c_banc %in% c(2, 3, 9),
                   an %in% report_year) %>%
     dplyr::group_by(cl) %>%
-    dplyr::summarise(FREE_CURRENT_YEAR = (unique(0.000015849 *(cl + 0.5)^3.046) * sum(v_mensur, na.rm = TRUE)) / 1000,
+    dplyr::summarise(FREE_CURRENT_YEAR = (unique(0.000015849 * (cl + 0.5)^3.046) * sum(v_mensur, na.rm = TRUE)) / 1000,
                      .groups = "drop")
-
+  # Dataframe - Mode : FREE, Year : Previous years
   t3 <- bio_weight_tuna_sql_data %>%
     dplyr::filter(c_esp == 2,
                   c_banc %in% c(2, 3, 9),
                   an %in% five_previous) %>%
     dplyr::group_by(cl) %>%
-    dplyr::summarise(FREE_AVG_5_YEARS = (unique(0.000015849 *(cl + 0.5)^3.046) * sum(v_mensur /5, na.rm = TRUE)) / 1000,
+    dplyr::summarise(FREE_AVG_5_YEARS = (unique(0.000015849 * (cl + 0.5)^3.046) * sum(v_mensur / 5, na.rm = TRUE)) / 1000,
                      .groups = "drop")
-  # ALL
+  # Dataframe - Mode : ALL, Year : Report year
   t4 <- bio_weight_tuna_sql_data %>%
     dplyr::filter(c_esp == 2,
                   an %in% report_year) %>%
     dplyr::group_by(cl) %>%
-    dplyr::summarise(ALL_CURRENT_YEAR = (unique(0.000015849 *(cl + 0.5)^3.046) * sum(v_mensur, na.rm = TRUE)) / 1000,
+    dplyr::summarise(ALL_CURRENT_YEAR = (unique(0.000015849 * (cl + 0.5)^3.046) * sum(v_mensur, na.rm = TRUE)) / 1000,
                      .groups = "drop")
-
+  # Dataframe - Mode : ALL, Year : Previous years
   t5 <- bio_weight_tuna_sql_data %>%
     dplyr::filter(c_esp == 2,
                   an %in% five_previous) %>%
     dplyr::group_by(cl) %>%
-    dplyr::summarise(ALL_AVG_5_YEARS = (unique(0.000015849 *(cl + 0.5)^3.046) * sum(v_mensur /5, na.rm = TRUE)) / 1000,
+    dplyr::summarise(ALL_AVG_5_YEARS = (unique(0.000015849 * (cl + 0.5)^3.046) * sum(v_mensur / 5, na.rm = TRUE)) / 1000,
                      .groups = "drop")
   # Merge
-  table.weight.skj.w <- merge(t0, t1, by = "cl")
-  table.weight.skj.w <- merge(table.weight.skj.w, t2, by = "cl")
-  table.weight.skj.w <- merge(table.weight.skj.w, t3, by = "cl")
-  table.weight.skj.w <- merge(table.weight.skj.w, t4, by = "cl")
-  table.weight.skj.w <- merge(table.weight.skj.w, t5, by = "cl")
+  table_weight_skj_w <- merge(t0, t1, by = "cl")
+  table_weight_skj_w <- merge(table_weight_skj_w, t2, by = "cl")
+  table_weight_skj_w <- merge(table_weight_skj_w, t3, by = "cl")
+  table_weight_skj_w <- merge(table_weight_skj_w, t4, by = "cl")
+  table_weight_skj_w <- merge(table_weight_skj_w, t5, by = "cl")
 
   # 3.b - Data design for BET ----
-  # LOG
+  # Dataframe - Mode : LOG, Year : Report year
   t0 <- bio_weight_tuna_sql_data %>%
     dplyr::filter(c_esp == 3,
                   c_banc == 1,
                   an == report_year) %>%
     dplyr::group_by(cl) %>%
-    dplyr::summarise(LOG_CURRENT_YEAR = (unique(0.000015849 *(cl + 1)^3.046) * sum(v_mensur, na.rm = TRUE)) / 1000,
+    dplyr::summarise(LOG_CURRENT_YEAR = (unique(0.000015849 * (cl + 1)^3.046) * sum(v_mensur, na.rm = TRUE)) / 1000,
                      .groups = "drop")
-
+  # Dataframe - Mode : LOG, Year : Previous years
   t1 <- bio_weight_tuna_sql_data %>%
     dplyr::filter(c_esp == 3,
                   c_banc == 1,
                   an %in% five_previous) %>%
     dplyr::group_by(cl) %>%
-    dplyr::summarise(LOG_AVG_5_YEARS = (unique(0.000015849 *(cl + 1)^3.046) * sum(v_mensur /5, na.rm = TRUE)) / 1000,
+    dplyr::summarise(LOG_AVG_5_YEARS = (unique(0.000015849 * (cl + 1)^3.046) * sum(v_mensur / 5, na.rm = TRUE)) / 1000,
                      .groups = "drop")
-  # FREE
+  # Dataframe - Mode : FREE, Year : Report year
   t2 <- bio_weight_tuna_sql_data %>%
     dplyr::filter(c_esp == 3,
                   c_banc %in% c(2, 3, 9),
                   an == report_year) %>%
     dplyr::group_by(cl) %>%
-    dplyr::summarise(FREE_CURRENT_YEAR = (unique(0.000015849 *(cl + 1)^3.046) * sum(v_mensur, na.rm = TRUE)) / 1000,
+    dplyr::summarise(FREE_CURRENT_YEAR = (unique(0.000015849 * (cl + 1)^3.046) * sum(v_mensur, na.rm = TRUE)) / 1000,
                      .groups = "drop")
-
+  # Dataframe - Mode : FREE, Year : Previous years
   t3 <- bio_weight_tuna_sql_data %>%
     dplyr::filter(c_esp == 3,
                   c_banc %in% c(2, 3, 9),
                   an %in% five_previous) %>%
     dplyr::group_by(cl) %>%
-    dplyr::summarise(FREE_AVG_5_YEARS = (unique(0.000015849 *(cl + 1)^3.046) * sum(v_mensur /5, na.rm = TRUE)) / 1000,
+    dplyr::summarise(FREE_AVG_5_YEARS = (unique(0.000015849 * (cl + 1)^3.046) * sum(v_mensur / 5, na.rm = TRUE)) / 1000,
                      .groups = "drop")
-  # ALL
+  # Dataframe - Mode : ALL, Year : Report year
   t4 <- bio_weight_tuna_sql_data %>%
     dplyr::filter(c_esp == 3,
                   an == report_year) %>%
     dplyr::group_by(cl) %>%
-    dplyr::summarise(ALL_CURRENT_YEAR = (unique(0.000015849 *(cl + 1)^3.046) * sum(v_mensur, na.rm = TRUE)) / 1000,
+    dplyr::summarise(ALL_CURRENT_YEAR = (unique(0.000015849 * (cl + 1)^3.046) * sum(v_mensur, na.rm = TRUE)) / 1000,
                      .groups = "drop")
-
+  # Dataframe - Mode : ALL, Year : Previous yearss
   t5 <- bio_weight_tuna_sql_data %>%
     dplyr::filter(c_esp == 3,
                   an %in% five_previous) %>%
     dplyr::group_by(cl) %>%
-    dplyr::summarise(ALL_AVG_5_YEARS = (unique(0.000015849 *(cl + 1)^3.046) * sum(v_mensur /5, na.rm = TRUE)) / 1000,
+    dplyr::summarise(ALL_AVG_5_YEARS = (unique(0.000015849 * (cl + 1)^3.046) * sum(v_mensur / 5, na.rm = TRUE)) / 1000,
                      .groups = "drop")
-
-  table.weight.bet.w <- merge(t0, t1, by = "cl")
-  table.weight.bet.w <- merge(table.weight.bet.w, t2, by = "cl")
-  table.weight.bet.w <- merge(table.weight.bet.w, t3, by = "cl")
-  table.weight.bet.w <- merge(table.weight.bet.w, t4, by = "cl")
-  table.weight.bet.w <- merge(table.weight.bet.w, t5, by = "cl")
-
+  # Merge
+  table_weight_bet_w <- merge(t0, t1, by = "cl")
+  table_weight_bet_w <- merge(table_weight_bet_w, t2, by = "cl")
+  table_weight_bet_w <- merge(table_weight_bet_w, t3, by = "cl")
+  table_weight_bet_w <- merge(table_weight_bet_w, t4, by = "cl")
+  table_weight_bet_w <- merge(table_weight_bet_w, t5, by = "cl")
   # 3.c - Data design for YFT ----
-  # LOG
+  # Dataframe - Mode : LOG, Year : Report year
   t0 <- bio_weight_tuna_sql_data %>%
     dplyr::filter(c_esp == 1,
                   c_banc == 1,
                   an == report_year) %>%
     dplyr::group_by(cl) %>%
-    dplyr::summarise(LOG_CURRENT_YEAR = (unique(0.000015849 *(cl + 1)^3.046) * sum(v_mensur, na.rm = TRUE)) / 1000,
+    dplyr::summarise(LOG_CURRENT_YEAR = (unique(0.000015849 * (cl + 1)^3.046) * sum(v_mensur, na.rm = TRUE)) / 1000,
                      .groups = "drop")
-
+  # Dataframe - Mode : LOG, Year : Previous years
   t1 <- bio_weight_tuna_sql_data %>%
     dplyr::filter(c_esp == 1,
                   c_banc == 1,
                   an %in% five_previous) %>%
     dplyr::group_by(cl) %>%
-    dplyr::summarise(LOG_AVG_5_YEARS = (unique(0.000015849 *(cl + 1)^3.046) * sum(v_mensur /5, na.rm = TRUE)) / 1000,
+    dplyr::summarise(LOG_AVG_5_YEARS = (unique(0.000015849 * (cl + 1)^3.046) * sum(v_mensur / 5, na.rm = TRUE)) / 1000,
                      .groups = "drop")
-  # FREE
+  # Dataframe - Mode : FREE, Year : Report year
   t2 <- bio_weight_tuna_sql_data %>%
     dplyr::filter(c_esp == 1,
                   c_banc %in% c(2, 3, 9),
                   an == report_year) %>%
     dplyr::group_by(cl) %>%
-    dplyr::summarise(FREE_CURRENT_YEAR = (unique(0.000015849 *(cl + 1)^3.046) * sum(v_mensur, na.rm = TRUE)) / 1000,
+    dplyr::summarise(FREE_CURRENT_YEAR = (unique(0.000015849 * (cl + 1)^3.046) * sum(v_mensur, na.rm = TRUE)) / 1000,
                      .groups = "drop")
-
+  # Dataframe - Mode : FREE, Year : Previous years
   t3 <- bio_weight_tuna_sql_data %>%
     dplyr::filter(c_esp == 1,
                   c_banc %in% c(2, 3, 9),
                   an %in% five_previous) %>%
     dplyr::group_by(cl) %>%
-    dplyr::summarise(FREE_AVG_5_YEARS = (unique(0.000015849 *(cl + 1)^3.046) * sum(v_mensur /5, na.rm = TRUE)) / 1000,
+    dplyr::summarise(FREE_AVG_5_YEARS = (unique(0.000015849 * (cl + 1)^3.046) * sum(v_mensur / 5, na.rm = TRUE)) / 1000,
                      .groups = "drop")
-  # ALL
+  # Dataframe - Mode : ALL, Year : Report year
   t4 <- bio_weight_tuna_sql_data %>%
     dplyr::filter(c_esp == 1,
                   an == report_year) %>%
     dplyr::group_by(cl) %>%
-    dplyr::summarise(ALL_CURRENT_YEAR = (unique(0.000015849 *(cl + 1)^3.046) * sum(v_mensur, na.rm = TRUE)) / 1000,
+    dplyr::summarise(ALL_CURRENT_YEAR = (unique(0.000015849 * (cl + 1)^3.046) * sum(v_mensur, na.rm = TRUE)) / 1000,
                      .groups = "drop")
-
+  # Dataframe - Mode : ALL, Year : Previous years
   t5 <- bio_weight_tuna_sql_data %>%
     dplyr::filter(c_esp == 1,
                   an %in% five_previous) %>%
     dplyr::group_by(cl) %>%
-    dplyr::summarise(ALL_AVG_5_YEARS = (unique(0.000015849 *(cl + 1)^3.046) * sum(v_mensur /5, na.rm = TRUE)) / 1000,
+    dplyr::summarise(ALL_AVG_5_YEARS = (unique(0.000015849 * (cl + 1)^3.046) * sum(v_mensur / 5, na.rm = TRUE)) / 1000,
                      .groups = "drop")
+  # Merge
+  table_weight_yft_w <- merge(t0, t1, by = "cl")
+  table_weight_yft_w <- merge(table_weight_yft_w, t2, by = "cl")
+  table_weight_yft_w <- merge(table_weight_yft_w, t3, by = "cl")
+  table_weight_yft_w <- merge(table_weight_yft_w, t4, by = "cl")
+  table_weight_yft_w <- merge(table_weight_yft_w, t5, by = "cl")
 
-  table.weight.yft.w <- merge(t0, t1, by = "cl")
-  table.weight.yft.w <- merge(table.weight.yft.w, t2, by = "cl")
-  table.weight.yft.w <- merge(table.weight.yft.w, t3, by = "cl")
-  table.weight.yft.w <- merge(table.weight.yft.w, t4, by = "cl")
-  table.weight.yft.w <- merge(table.weight.yft.w, t5, by = "cl")
-
-  # 5 - Graphic design ----
-  weight.plot.f <- function(species, mode, data.type) {
-    table <- get(paste("table.weight.",
+  # 4 - Graphic design ----
+  # Function that read the 3 dataframe and print it in a plot
+  weight_plot_f <- function(species, mode, data_type) {
+    table <- get(paste("table_weight_",
                        species,
-                       ".",
-                       data.type,
+                       "_",
+                       data_type,
                        sep = ""))
-    column1 <- get(paste("table.weight.",
+    column1 <- get(paste("table_weight_",
                          species,
-                         ".",
-                         data.type,
+                         "_",
+                         data_type,
                          sep = ""))[[paste(mode,
                                            "_CURRENT_YEAR",
                                            sep = "")]]
-    column2 <- get(paste("table.weight.",
+    column2 <- get(paste("table_weight_",
                          species,
-                         ".",
-                         data.type,
+                         "_",
+                         data_type,
                          sep = ""))[[paste(mode,
                                            "_AVG_5_YEARS",
                                            sep = "")]]
@@ -275,19 +303,19 @@ bio_weight_tuna <- function(data_connection,
   }
 
   ylabel = "Biomass (t)"
-  indic.species <- c("yft", "bet", "skj")
-  indic.mode <- c("LOG", "FREE", "ALL")
+  indic_species <- c("yft", "bet", "skj")
+  indic_mode <- c("LOG", "FREE", "ALL")
   title1 <- c("YFT", "", "", "BET", "", "", "SKJ", "", "")
   compteur <- 0
-  mtext.mode <- c("FOB", "FSC", "ALL", "", "", "", "", "", "")
+  mtext_mode <- c("FOB", "FSC", "ALL", "", "", "", "", "", "")
   par(mfcol = c(3, 3), mar = c(4, 4, 2, 2), oma = c(0, 2.5, 2.5, 0))
 
-  for (i in (1:length(indic.species))){
-    for (j in (1:length(indic.mode))){
+  for (i in (1:length(indic_species))){
+    for (j in (1:length(indic_mode))){
       compteur <- compteur + 1
       title2 <- title1[compteur]
-      weight.plot.f(indic.species[i], indic.mode[j], "w")
-      text <- mtext.mode[compteur]
+      weight_plot_f(indic_species[i], indic_mode[j], "w")
+      text <- mtext_mode[compteur]
       mtext(text, side = 2, outer = FALSE, line = 4.5, cex = 1.6)
       mtext(title2, side = 3, outer = FALSE, line = 1.5, cex = 1.6)
     }
