@@ -9,7 +9,7 @@ spatial_occupancy(
   time_period,
   country = as.integer(x = c(1, 41)),
   ocean = as.integer(x = c(1)),
-  vessel_type = as.integer(x = c(4, 5, 6))
+  vessel_type = as.integer(x = 1)
 )
 }
 \arguments{

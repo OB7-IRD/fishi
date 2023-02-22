@@ -8,7 +8,7 @@ fishing_effort(
   data_connection,
   time_period,
   country = as.integer(x = 1),
-  vessel_type = as.integer(x = c(4, 5, 6)),
+  vessel_type = as.integer(x = 1),
   ocean = as.integer(x = 1)
 )
 }

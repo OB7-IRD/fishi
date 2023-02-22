@@ -16,7 +16,7 @@ spatial_occupancy <- function(data_connection,
                               time_period,
                               country = as.integer(x = c(1, 41)),
                               ocean = as.integer(x = c(1)),
-                              vessel_type = as.integer(x = c(4, 5, 6))
+                              vessel_type = as.integer(x = 1)
 ) {
   # 0 - Global variables assignement ----
   activity_date <- NULL

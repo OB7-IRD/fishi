@@ -14,7 +14,7 @@
 fishing_effort <- function(data_connection,
                            time_period,
                            country = as.integer(x = 1),
-                           vessel_type = as.integer(x = c(4, 5, 6)),
+                           vessel_type = as.integer(x = 1),
                            ocean = as.integer(x = 1)
 ) {
   # 0 - Global variables assignement ----
@@ -94,7 +94,6 @@ fishing_effort <- function(data_connection,
   fishing_effort_data <- dplyr::tibble(DBI::dbGetQuery(conn      = data_connection[[2]],
                                                        statement = fishing_effort_sql_final))
   # 3 - Data design ----
-
   #Adding columns years
   fishing_effort_t1 <- fishing_effort_data %>%
     dplyr::mutate(activity_year = lubridate::year(x = activity_date))
