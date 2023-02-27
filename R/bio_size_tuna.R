@@ -11,7 +11,7 @@
 #' @importFrom dplyr tibble group_by summarise case_when filter mutate
 #' @importFrom lubridate year
 #' @importFrom plotrix floating.pie pie.labels
-#' @importFrom graphics axis lines abline legend text
+#' @importFrom graphics axis lines abline legend mtext
 #' @importFrom maps map
 bio_size_tuna <- function(data_connection,
                           report_year,
@@ -360,7 +360,7 @@ bio_size_tuna <- function(data_connection,
       x.max <- 160
     }
 
-    plot(table$cl,
+    graphics::plot(table$cl,
          column1,
          cex.axis = 1.3,
          cex.lab = 1.3,
@@ -373,12 +373,12 @@ bio_size_tuna <- function(data_connection,
          xlim = c(20, x.max),
          ylim = (c(0, max(column1, column2) * 1.1)),
          lwd = 1.2)
-    lines(table$cl,
+    graphics::lines(table$cl,
           column2,
           lty = "dashed",
           col = "black",
           lwd = 1.2)
-    legend("topright",
+    graphics::legend("topright",
            legend = c(report_year,
                       paste(report_year - 5,
                             "-",
@@ -408,8 +408,8 @@ bio_size_tuna <- function(data_connection,
       title2 <- title1[compteur]
       size_plot_f(indic_species[i], indic_mode[j], "n")
       text <- mtext_mode[compteur]
-      mtext(text, side = 2, outer = FALSE, line = 4.5, cex = 1.6)
-      mtext(title2, side = 3, outer = FALSE, line = 1.5, cex = 1.6)
+      graphics::mtext(text, side = 2, outer = FALSE, line = 4.5, cex = 1.6)
+      graphics::mtext(title2, side = 3, outer = FALSE, line = 1.5, cex = 1.6)
     }
   }
 }

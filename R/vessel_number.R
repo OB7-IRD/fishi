@@ -75,13 +75,13 @@ vessel_number <- function(data_connection,
                                collapse = "\n")
     vessel_number_sql_final <- DBI::sqlInterpolate(conn = data_connection[[2]],
                                                    sql  = vessel_number_sql,
-                                                   countries    = DBI::SQL(paste0(paste0(country,
+                                                   country   = DBI::SQL(paste0(paste0(country,
                                                                                          collapse = ", "))),
-                                                   oceans       = DBI::SQL(paste0(paste0(ocean,
+                                                   ocean       = DBI::SQL(paste0(paste0(ocean,
                                                                                          collapse = ", "))),
-                                                   period       = DBI::SQL(paste0(paste0(time_period,
+                                                   time_period       = DBI::SQL(paste0(paste0(time_period,
                                                                                          collapse = ", "))),
-                                                   vessel_types = DBI::SQL(paste0(paste0(vessel_type,
+                                                   vessel_type = DBI::SQL(paste0(paste0(vessel_type,
                                                                                          collapse = ", "))))
     vessel_number_data <- dplyr::tibble(DBI::dbGetQuery(conn = data_connection[[2]],
                                                         statement = vessel_number_sql_final))

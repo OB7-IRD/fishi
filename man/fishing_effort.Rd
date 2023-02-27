@@ -9,7 +9,8 @@ fishing_effort(
   time_period,
   country = as.integer(x = 1),
   vessel_type = as.integer(x = 1),
-  ocean = as.integer(x = 1)
+  ocean = as.integer(x = 1),
+  graph_type = "plot"
 )
 }
 \arguments{
@@ -22,6 +23,8 @@ fishing_effort(
 \item{vessel_type}{{\link[base]{integer}} expected. Vessel type codes identification.}
 
 \item{ocean}{{\link[base]{integer}} expected. Ocean codes identification.}
+
+\item{graph_type}{{\link[base]{character}} expected. plot or plotly. Plot by default.}
 }
 \value{
 The function return ggplot R plot.

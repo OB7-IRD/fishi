@@ -6,17 +6,21 @@
 #' @param country {\link[base]{integer}} expected. Country codes identification.
 #' @param ocean {\link[base]{integer}} expected. Ocean codes identification.
 #' @param vessel_type {\link[base]{integer}} expected. Vessel type codes identification.
+#' @param graph_type {\link[base]{character}} expected. plot or plotly. Plot by default.
 #' @return The function return ggplot R plot.
 #' @export
 #' @importFrom DBI dbGetQuery sqlInterpolate SQL
 #' @importFrom dplyr mutate tibble group_by summarise n_distinct filter
 #' @importFrom lubridate year
 #' @importFrom graphics par plot axis lines abline legend
+#' @importFrom ggplot2 ggplot aes geom_line scale_color_manual geom_point scale_x_continuous labs ylim theme_bw geom_hline
+#' @importFrom plotly ggplotly
 spatial_occupancy <- function(data_connection,
                               time_period,
-                              country = as.integer(x = c(1, 41)),
-                              ocean = as.integer(x = c(1)),
-                              vessel_type = as.integer(x = 1)
+                              country = as.integer(x = 1),
+                              ocean = as.integer(x = 1),
+                              vessel_type = as.integer(x = 1),
+                              graph_type = "plot"
 ) {
   # 0 - Global variables assignement ----
   activity_date <- NULL
@@ -26,6 +30,10 @@ spatial_occupancy <- function(data_connection,
   v_tpec <- NULL
   t_pec <- NULL
   sumvtpec <- NULL
+  TOTAL <- NULL
+  `Catch > 0` <- NULL
+  `Effort > 1 d` <- NULL
+  `#sets` <- NULL
   # 1 - Arguments verification ----
   if (codama::r_type_checking(r_object = data_connection,
                               type = "list",
@@ -134,62 +142,105 @@ spatial_occupancy <- function(data_connection,
   table_occ <- merge(table_occ, t4, by = "year")
   table_occ[is.na(table_occ)] <- 0
   # 4 - Graphic design ----
-  graphics::par(mar = c(5, 4.7, 4.1, 1.5))
-  graphics::plot(table_occ$year,
-       table_occ$TOTAL,
-       type = "b",
-       xlab = "",
-       ylab = "Spatial occupancy",
-       cex.axis = 1.4,
-       cex.lab = 1.4,
-       main = "",
-       ylim = c(0,
-                max(table_occ$TOTAL,
-                    na.rm = TRUE) * 1.05),
-       pch = 18,
-       xaxt = "n")
-  graphics::axis(1,
-       at = seq(min(table_occ$year),
-                max(table_occ$year),
-                by = 2),
-       tick = TRUE,
-       labels = seq(min(table_occ$year),
-                    max(table_occ$year),
-                    by = 2),
-       cex.axis = 1.3)
-  graphics::lines(table_occ$year,
-        table_occ[, 3],
-        type = "b",
-        lty = 2,
-        pch = 4)
-  graphics::lines(table_occ$year,
-        table_occ[, 4],
-        type = "b",
-        lty = 2,
-        pch = 15)
-  graphics::lines(table_occ$year,
-        table_occ[, 5],
-        type = "b",
-        lty = 2,
-        pch = 17)
-  graphics::legend("topright",
-         legend = c("Total",
-                    "With # sets > 1",
-                    "With catch > 0",
-                    "With effort > 1 d"),
-         pch = c(18,
-                 4,
-                 15,
-                 17),
-         bty = "n",
-         lty = c(1,
-                 2,
-                 2,
-                 2),
-         cex = 1.3)
-  graphics::abline(h = seq(100,
-                 400,
-                 100),
-         lty = 2,
-         col = "lightgrey")
+  if (graph_type == "plot") {
+    graphics::par(mar = c(5, 4.7, 4.1, 1.5))
+    graphics::plot(table_occ$year,
+                   table_occ$TOTAL,
+                   type = "b",
+                   xlab = "",
+                   ylab = "Spatial occupancy",
+                   cex.axis = 1.4,
+                   cex.lab = 1.4,
+                   main = "",
+                   ylim = c(0,
+                            max(table_occ$TOTAL,
+                                na.rm = TRUE) * 1.05),
+                   pch = 18,
+                   xaxt = "n")
+    graphics::axis(1,
+                   at = seq(min(table_occ$year),
+                            max(table_occ$year),
+                            by = 2),
+                   tick = TRUE,
+                   labels = seq(min(table_occ$year),
+                                max(table_occ$year),
+                                by = 2),
+                   cex.axis = 1.3)
+    graphics::lines(table_occ$year,
+                    table_occ[, 3],
+                    type = "b",
+                    lty = 2,
+                    pch = 4)
+    graphics::lines(table_occ$year,
+                    table_occ[, 4],
+                    type = "b",
+                    lty = 2,
+                    pch = 15)
+    graphics::lines(table_occ$year,
+                    table_occ[, 5],
+                    type = "b",
+                    lty = 2,
+                    pch = 17)
+    graphics::legend("topright",
+                     legend = c("Total",
+                                "With # sets > 1",
+                                "With catch > 0",
+                                "With effort > 1 d"),
+                     pch = c(18,
+                             4,
+                             15,
+                             17),
+                     bty = "n",
+                     lty = c(1,
+                             2,
+                             2,
+                             2),
+                     cex = 1.3)
+    graphics::abline(h = seq(100,
+                             400,
+                             100),
+                     lty = 2,
+                     col = "lightgrey")
+  } else if (graph_type == "plotly") {
+    ggplot_table_occ <- ggplot2::ggplot(data = table_occ) +
+      ggplot2::geom_line(ggplot2::aes(x = year,
+                                      y = TOTAL)) +
+      ggplot2::geom_line(ggplot2::aes(x = year,
+                                      y = `Catch > 0`),
+                         linetype="dashed") +
+      ggplot2::geom_line(ggplot2::aes(x = year,
+                                      y = `Effort > 1 d`),
+                         linetype="dashed") +
+      ggplot2::geom_line(ggplot2::aes(x = year,
+                                      y = `#sets`),
+                         linetype="dashed") +
+      ggplot2::scale_color_manual(values = c("black", "black","black","black")) +
+      ggplot2::geom_point(ggplot2::aes(x = year,
+                                       y = TOTAL,
+                                       color = "Total")) +
+      ggplot2::geom_point(ggplot2::aes(x = year,
+                                       y = `Catch > 0`,
+                                       color = "With catch > 0"),
+                          shape = 15, size = 2) +
+      ggplot2::geom_point(ggplot2::aes(x = year,
+                                       y = `Effort > 1 d`,
+                                       color = "With Effort > 1 d"),
+                          shape = 17, size = 2) +
+      ggplot2::geom_point(ggplot2::aes(x = year,
+                                       y = `#sets`,
+                                       color = "With #sets > 1"),
+                          shape = 4, size = 2) +
+      ggplot2::scale_x_continuous(breaks = c(1991, 1995, 2000, 2005, 2010, 2015, 2020, 2025)) +
+
+      ggplot2::labs(x = "",
+                    y = "Spatial occupancy") +
+      ggplot2::ylim(0,500) +
+      ggplot2::theme_bw() +
+      ggplot2::geom_hline(yintercept = c(100,200,300,400,500),
+                          linetype = "dashed",
+                          color = "lightgrey",
+                          size = 0.3) +
+      ggplot2::labs(colour = "")
+    plotly::ggplotly(ggplot_table_occ)
+  }
 }

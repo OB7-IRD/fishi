@@ -7,19 +7,24 @@
 #' @param ocean {\link[base]{integer}} expected. Ocean codes identification.
 #' @param vessel_type {\link[base]{integer}} expected. Vessel type codes identification.
 #' @param fishing_type  {\link[base]{character}} expected. FSC, FOB or ALL.
+#' @param graph_type {\link[base]{character}} expected. plot or plotly. Plot by default.
 #' @return The function return ggplot R plot.
 #' @export
 #' @importFrom DBI dbGetQuery sqlInterpolate SQL
 #' @importFrom dplyr mutate tibble group_by summarise case_when
 #' @importFrom lubridate year
 #' @importFrom plotrix stackpoly
-#' @importFrom graphics axis lines abline legend text
+#' @importFrom ggplot2 ggplot aes geom_line scale_color_manual geom_point scale_x_continuous labs ylim theme_bw geom_hline
+#' @importFrom plotly ggplotly
+#' @importFrom graphics par plot axis lines abline legend
+#' @importFrom tidyr pivot_longer
 fishery_production <- function(data_connection,
                                time_period,
                                fishing_type = "ALL",
                                country = as.integer(x = 1),
                                ocean = as.integer(x = 1),
-                               vessel_type = as.integer(x = 1)) {
+                               vessel_type = as.integer(x = 1),
+                               graph_type = "plot") {
   # 0 - Global variables assignement ----
   activity_date <- NULL
   v_poids_capt <- NULL
@@ -37,6 +42,8 @@ fishery_production <- function(data_connection,
   dsc <- NULL
   TOTAL_WITH_dsc <- NULL
   TOTAL <- NULL
+  count <- NULL
+  specie <- NULL
   # 1 - Arguments verification ----
   if (codama::r_type_checking(r_object = data_connection,
                               type = "list",
@@ -183,53 +190,74 @@ fishery_production <- function(data_connection,
                        .groups = "drop")
   }
   # 4 - Graphic design ----
-  graphics::par(cex.axis = 1.4,
-      cex.lab = 1.4,
-      las = 1)
-  plotrix::stackpoly(x = matrix(table_catch_all$year,
-                                nrow = length(table_catch_all$year),
-                                ncol = 3),
-                     y = table_catch_all[, c("yft", "skj", "bet")] / 1000,
-                     stack = TRUE,
-                     cex.axis = 1.3,
-                     cex.lab = 1.3,
-                     xlab = "",
-                     ylab = "Catch (x1000 t)",
-                     las = 1,
-                     main = "",
-                     axis4 = FALSE,
-                     col = c("khaki1",
-                           "firebrick2",
-                           "cornflowerblue"),
-                     cex = 1.3,
-                     las = 1,
-                     ylim = c(0,
-                              max((table_catch_all$TOTAL * 1.02) / 1000,
-                                  na.rm = TRUE)))
-  graphics::abline(h = seq(20,
-                 100,
-                 20),
-         col = "lightgrey",
-         lty = 2)
-  graphics::legend("topright",
-         legend = c("bet",
-                    "skj",
-                    "yft"),
-         bty = "n",
-         fill = c("khaki1",
-                 "firebrick2",
-                 "cornflowerblue"),
-         cex = 1.3)
-  if (fishing_type == "FSC") {
-    graphics::legend("topleft",
-           bty = "n",
-           legend = "(FSC)",
-           cex = 1.3)
-  } else if (fishing_type == "FOB") {
-    graphics::legend("topleft",
-           bty = "n",
-           legend = "(FOB)",
-           cex = 1.3)
-  }
+  if (graph_type == "plot") {
+    graphics::par(cex.axis = 1.4,
+                  cex.lab = 1.4,
+                  las = 1)
+    plotrix::stackpoly(x = matrix(table_catch_all$year,
+                                  nrow = length(table_catch_all$year),
+                                  ncol = 3),
+                       y = table_catch_all[, c("yft", "skj", "bet")] / 1000,
+                       stack = TRUE,
+                       cex.axis = 1.3,
+                       cex.lab = 1.3,
+                       xlab = "",
+                       ylab = "Catch (x1000 t)",
+                       las = 1,
+                       main = "",
+                       axis4 = FALSE,
+                       col = c("khaki1",
+                               "firebrick2",
+                               "cornflowerblue"),
+                       cex = 1.3,
+                       las = 1,
+                       ylim = c(0,
+                                max((table_catch_all$TOTAL * 1.02) / 1000,
+                                    na.rm = TRUE)))
+    graphics::abline(h = seq(20,
+                             100,
+                             20),
+                     col = "lightgrey",
+                     lty = 2)
+    graphics::legend("topright",
+                     legend = c("bet",
+                                "skj",
+                                "yft"),
+                     bty = "n",
+                     fill = c("khaki1",
+                              "firebrick2",
+                              "cornflowerblue"),
+                     cex = 1.3)
+    if (fishing_type == "FSC") {
+      graphics::legend("topleft",
+                       bty = "n",
+                       legend = "(FSC)",
+                       cex = 1.3)
+    } else if (fishing_type == "FOB") {
+      graphics::legend("topleft",
+                       bty = "n",
+                       legend = "(FOB)",
+                       cex = 1.3)
+    }
+  } else if (graph_type == "plotly") {
+    data_pivot <- tidyr::pivot_longer(table_catch_all,
+                                      cols = c(2:4),
+                                      names_to = "specie",
+                                      values_to = "count")
 
+    ggplot_table_catch <- ggplot2::ggplot(data_pivot, ggplot2::aes(x= year, y= count, fill= specie)) +
+      ggplot2::geom_area() +
+      ggplot2::scale_fill_manual(values = c("cornflowerblue","firebrick2","khaki1")) +
+      ggplot2::scale_y_continuous(name = "Catch (x1000 t)") +
+      ggplot2::scale_x_continuous(name = "", breaks = c(1991, 1995, 2000, 2005, 2010, 2015, 2020, 2025)) +
+      ggplot2::theme_bw() +
+      ggplot2::labs(fill = "")
+
+    if (fishing_type == "FSC") {
+      ggplot_table_catch <- ggplot_table_catch + ggplot2::ggtitle("FSC")
+    } else if (fishing_type == "FOB") {
+      ggplot_table_catch <- ggplot_table_catch + ggplot2::ggtitle("FOB")
+    }
+    plotly::ggplotly(ggplot_table_catch)
+  }
 }

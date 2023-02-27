@@ -6,16 +6,21 @@
 #' @param country {\link[base]{integer}} expected. Country codes identification.
 #' @param vessel_type {\link[base]{integer}} expected. Vessel type codes identification.
 #' @param ocean {\link[base]{integer}} expected. Ocean codes identification.
+#' @param graph_type {\link[base]{character}} expected. plot or plotly. Plot by default.
 #' @return The function return ggplot R plot.
 #' @export
 #' @importFrom DBI dbGetQuery sqlInterpolate SQL
 #' @importFrom dplyr mutate tibble group_by summarise
 #' @importFrom lubridate year
+#' @importFrom ggplot2 ggplot aes geom_line scale_color_manual geom_point scale_x_continuous labs ylim theme_bw geom_hline
+#' @importFrom plotly ggplotly
+#' @importFrom graphics par plot axis lines abline legend
 fishing_effort <- function(data_connection,
                            time_period,
                            country = as.integer(x = 1),
                            vessel_type = as.integer(x = 1),
-                           ocean = as.integer(x = 1)
+                           ocean = as.integer(x = 1),
+                           graph_type = "plot"
 ) {
   # 0 - Global variables assignement ----
   activity_date <- NULL
@@ -27,10 +32,12 @@ fishing_effort <- function(data_connection,
   c_bat <- NULL
   l_bat <- NULL
   port <- NULL
-  activity_year <- NULL
+  year <- NULL
   v_tmer <- NULL
   v_tpec <- NULL
   v_dur_cal <- NULL
+  fishing_days <- NULL
+  searching_days <- NULL
   # 1 - Arguments verification ----
   if (codama::r_type_checking(r_object = data_connection,
                               type = "list",
@@ -82,21 +89,21 @@ fishing_effort <- function(data_connection,
          sep = "")
   }
   fishing_effort_sql_final <- DBI::sqlInterpolate(conn = data_connection[[2]],
-                                                    sql  = fishing_effort_sql,
-                                                    time_period = DBI::SQL(paste(time_period,
-                                                                                 collapse = ", ")),
-                                                    country     = DBI::SQL(paste(country,
-                                                                                 collapse = ", ")),
-                                                    vessel_type = DBI::SQL(paste(vessel_type,
-                                                                                 collapse = ", ")),
-                                                    ocean = DBI::SQL(paste(ocean,
-                                                                           collapse = ", ")))
+                                                  sql  = fishing_effort_sql,
+                                                  time_period = DBI::SQL(paste(time_period,
+                                                                               collapse = ", ")),
+                                                  country     = DBI::SQL(paste(country,
+                                                                               collapse = ", ")),
+                                                  vessel_type = DBI::SQL(paste(vessel_type,
+                                                                               collapse = ", ")),
+                                                  ocean = DBI::SQL(paste(ocean,
+                                                                         collapse = ", ")))
   fishing_effort_data <- dplyr::tibble(DBI::dbGetQuery(conn      = data_connection[[2]],
                                                        statement = fishing_effort_sql_final))
   # 3 - Data design ----
   #Adding columns years
   fishing_effort_t1 <- fishing_effort_data %>%
-    dplyr::mutate(activity_year = lubridate::year(x = activity_date))
+    dplyr::mutate(year = lubridate::year(x = activity_date))
   #Adding columns by condition (vtmer, vtpec, ndurcal, nbdays)
   fishing_effort_t2 <- fishing_effort_t1 %>%
     dplyr::group_by(ocean_id,
@@ -107,7 +114,7 @@ fishing_effort <- function(data_connection,
                     l_bat,
                     port,
                     landing_date,
-                    activity_year) %>%
+                    year) %>%
     dplyr::summarise("v_tmer" = sum(v_tmer, na.rm = TRUE),
                      "v_tpec" = sum(v_tpec, na.rm = TRUE),
                      "v_dur_cal" = sum(v_dur_cal, na.rm = TRUE),
@@ -119,14 +126,14 @@ fishing_effort <- function(data_connection,
                     fleet,
                     flag,
                     vessel_type_id,
-                    activity_year,
+                    year,
                     v_tmer,
                     v_tpec,
                     v_dur_cal) %>%
     dplyr::summarise(.groups = "drop")
   #Adding columns by years (daysatsea, fishingdays, ...)
   fishing_effort_t3 <- fishing_effort_t2 %>%
-    dplyr::group_by(activity_year) %>%
+    dplyr::group_by(year) %>%
     dplyr::summarise("days_at_sea" = round(sum(v_tmer / 24, na.rm = TRUE)),
                      "fishing_days" = ifelse(test = ocean_id == 1,
                                              yes = round(sum(v_tpec / 12, na.rm = TRUE)),
@@ -140,72 +147,80 @@ fishing_effort <- function(data_connection,
                      .groups = "drop")
 
   #remove duplicates
-  table_effort <- unique(fishing_effort_t3[, c("activity_year",
-                         "days_at_sea",
-                         "fishing_days",
-                         "set_duration_in_days",
-                         "searching_days")])
+  table_effort <- unique(fishing_effort_t3[, c("year",
+                                               "days_at_sea",
+                                               "fishing_days",
+                                               "set_duration_in_days",
+                                               "searching_days")])
   # 4 - Legend design ----
   # 5 - Graphic design ----
-  par(mar = c(4, 4.7, 4.1, 1.5))
-  plot(table_effort$activity_year,
-       table_effort$fishing_days / 1000,
-       type = "b",
-       xlab = "",
-       ylab = "Activity duration (x1000 days)",
-       cex.axis = 1.4,
-       cex.lab = 1.4,
-       main = "",
-       ylim = c(0, max(table_effort$fishing_days * 1.1, na.rm = TRUE) / 1000),
-       las = 1,
-       pch = 18,
-       xaxt = "n")
-  axis(1,
-       at = seq(min(table_effort$activity_year),
-                max(table_effort$activity_year),
-                by = 2),
-       tick = TRUE,
-       labels = seq(min(table_effort$activity_year),
-                    max(table_effort$activity_year),
-                    by = 2),
-       cex.axis = 1.3)
-  lines(table_effort$activity_year,
-        table_effort$searching_days / 1000,
-        type = "b",
-        lty = 2,
-        pch = 4)
-  legend("topleft",
-         legend = c("Fishing",
-                    "Searching"),
-         pch = c(18, 4),
-         bty = "n",
-         lty = c(1, 2),
-         cex = 1.3)
-  abline(h = seq(1,
-                 5,
-                 1),
-         lty = 2,
-         col = "lightgrey")
+  if (graph_type == "plot") {
+    par(mar = c(4, 4.7, 4.1, 1.5))
+    plot(table_effort$year,
+         table_effort$fishing_days / 1000,
+         type = "b",
+         xlab = "",
+         ylab = "Activity duration (x1000 days)",
+         cex.axis = 1.4,
+         cex.lab = 1.4,
+         main = "",
+         ylim = c(0, max(table_effort$fishing_days * 1.1, na.rm = TRUE) / 1000),
+         las = 1,
+         pch = 18,
+         xaxt = "n")
+    axis(1,
+         at = seq(min(table_effort$year),
+                  max(table_effort$year),
+                  by = 2),
+         tick = TRUE,
+         labels = seq(min(table_effort$year),
+                      max(table_effort$year),
+                      by = 2),
+         cex.axis = 1.3)
+    lines(table_effort$year,
+          table_effort$searching_days / 1000,
+          type = "b",
+          lty = 2,
+          pch = 4)
+    legend("topleft",
+           legend = c("Fishing",
+                      "Searching"),
+           pch = c(18, 4),
+           bty = "n",
+           lty = c(1, 2),
+           cex = 1.3)
+    abline(h = seq(1,
+                   5,
+                   1),
+           lty = 2,
+           col = "lightgrey")
+  } else if (graph_type == "plotly") {
+    ggplot_table_effort <- ggplot2::ggplot(data = table_effort) +
+      ggplot2::geom_line(ggplot2::aes(x = year,
+                                      y = fishing_days/1000,
+                                      color = "Fishing")) +
+      ggplot2::geom_line(ggplot2::aes(x = year,
+                                      y = searching_days/1000,
+                                      color = "Searching"),
+                         linetype="dashed") +
+      ggplot2::scale_color_manual(values = c("black", "grey")) +
+      ggplot2::geom_point(ggplot2::aes(x = year,
+                                       y = fishing_days/1000)) +
+      ggplot2::geom_point(ggplot2::aes(x = year,
+                                       y = searching_days/1000),
+                          shape = 4) +
+      ggplot2::scale_x_continuous(breaks = c(1991, 1995, 2000, 2005, 2010, 2015, 2020, 2025)) +
 
-  ## GGPLOT ##
-  # ggplot2::ggplot(data = table_effort) +
-  #   ggplot2::geom_line(mapping = ggplot2::aes(x = activity_year,
-  #                                             y = fishing_days/1000),
-  #                      color = "black") +
-  #   ggplot2::geom_point(mapping = ggplot2::aes(x = activity_year,
-  #                                              y = fishing_days/1000)) +
-  #   ggplot2::geom_line(mapping = ggplot2::aes(x = activity_year,
-  #                                             y = searching_days/1000),
-  #                      color = "grey",
-  #                      linetype="dashed") +
-  #   ggplot2::geom_point(mapping = ggplot2::aes(x = activity_year,
-  #                                              y = searching_days/1000),
-  #                       color = "grey",
-  #                       shape=4) +
-  #   ggplot2::scale_x_continuous(breaks = c(1991, 1995, 2000, 2005, 2010, 2015, 2020, 2025)) +
-  #   ggplot2::scale_color_manual() +
-  #   ggplot2::labs(x = "",
-  #                 y = "Activity duration (x1000 days)") +
-  #   ggplot2::ylim(0,5) +
-  #   ggplot2::theme_classic()
+      ggplot2::labs(x = "",
+                    y = "Activity duration (x1000 days)") +
+      ggplot2::ylim(0,5) +
+      ggplot2::theme_bw() +
+      #ggplot2::theme(panel.background = element_rect(fill = "white", colour = "black", linewidth = 1)) +
+      ggplot2::geom_hline(yintercept = c(1:5),
+                          linetype = "dashed",
+                          color = "lightgrey",
+                          size = 0.3) +
+      ggplot2::labs(colour = "")
+    plotly::ggplotly(ggplot_table_effort)
+  }
 }

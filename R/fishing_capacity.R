@@ -6,6 +6,7 @@
 #' @param country {\link[base]{integer}} expected. Country codes identification.
 #' @param vessel_type {\link[base]{integer}} expected. Vessel type codes identification.
 #' @param ocean {\link[base]{integer}} expected. Ocean codes identification.
+#' @param graph_type {\link[base]{character}} expected. plot or plotly. Plot by default.
 #' @return The function return ggplot R plot.
 #' @export
 #' @importFrom DBI dbGetQuery sqlInterpolate SQL
@@ -13,12 +14,16 @@
 #' @importFrom lubridate year
 #' @importFrom RColorBrewer brewer.pal
 #' @importFrom codama r_type_checking
-#' @importFrom graphics axis lines abline legend barplot mtext
+#' @importFrom graphics par plot axis lines abline legend
+#' @importFrom ggplot2 ggplot aes geom_line scale_color_manual geom_point scale_x_continuous labs ylim theme_bw geom_hline
+#' @importFrom plotly ggplotly
+#' @importFrom tidyr pivot_longer
 fishing_capacity <- function(data_connection,
                              time_period,
                              country = as.integer(x = 1),
                              vessel_type = as.integer(x = 1),
-                             ocean = as.integer(x = 1)) {
+                             ocean = as.integer(x = 1),
+                             graph_type = "plot") {
   # 0 - Global variables assignement ----
   c_quille <- NULL
   catch <- NULL
@@ -27,6 +32,9 @@ fishing_capacity <- function(data_connection,
   cc <- NULL
   activity_date <- NULL
   c_quille_nb_months <- NULL
+  nb_vessels <- NULL
+  type <- NULL
+  CC <- NULL
   # 1 - Arguments verification ----
   if (codama::r_type_checking(r_object = data_connection,
                               type = "list",
@@ -124,66 +132,109 @@ fishing_capacity <- function(data_connection,
                      "CC" = sum(cc, na.rm = TRUE),
                      .groups = "drop")
   # 4 - Graphic design ----
-  graphics::par(mar = c(5.1, 4.1, 4.1, 4.1))
-  barvessels <- graphics::barplot(t(fishing_capacity_data[, 2:6]),
-                        xlab = "",
-                        ylab = "Number of vessels",
-                        cex.axis = 1.4,
-                        cex.lab = 1.4,
-                        main = "",
-                        ylim = c(0,
-                                 max(fishing_capacity_data$Nb_vessels * 1.1)),
-                        las = 1,
-                        xaxt = "n",
-                        col = RColorBrewer::brewer.pal(5,
-                                                       "Greys"),
-                        xlim = c(0,
-                                 37.6))
-  graphics::axis(1,
-       at = barvessels,
-       tick = TRUE,
-       labels = seq(min(fishing_capacity_data$year),
-                    max(fishing_capacity_data$year),
-                    by = 1),
-       cex.axis = 1.4)
-  graphics::legend("topright",
-         legend = c("50-400 t",
-                    "401-600 t",
-                    "601-800 t",
-                    "801-1200 t",
-                    "1201-2000 t"),
-         ncol = 2,
-         bty = "n",
-         fill = RColorBrewer::brewer.pal(5, "Greys"),
-         cex = 1.3)
-  graphics::par(new = TRUE)
-  plot(barvessels,
-       fishing_capacity_data$CC / 1000,
-       type = "b",
-       col = "black",
-       lwd = 2,
-       lty = 2,
-       xaxt = "n",
-       yaxt = "n",
-       pch = 16,
-       xlab = "",
-       ylab = "",
-       ylim = c(0, max(fishing_capacity_data$CC / 1000) * 1.1),
-       yaxs = "i",
-       xlim = c(0, 37.6))
-  graphics::axis(4,
-       at = seq(0,
-                20,
-                5),
-       tick = TRUE,
-       labels = TRUE,
-       las = 1,
-       cex.axis = 1.4,
-       cex.lab = 1.4,
-       yaxs = "i")
-  graphics::mtext(expression(paste("Carrying capacity (x1000 ", m^3, ")",
-                         sep = "")),
-        side = 4,
-        line = 2.6,
-        cex = 1.3)
+  if (graph_type == "plot") {
+    graphics::par(mar = c(5.1, 4.1, 4.1, 4.1))
+    barvessels <- graphics::barplot(t(fishing_capacity_data[, 2:6]),
+                                    xlab = "",
+                                    ylab = "Number of vessels",
+                                    cex.axis = 1.4,
+                                    cex.lab = 1.4,
+                                    main = "",
+                                    ylim = c(0,
+                                             max(fishing_capacity_data$Nb_vessels * 1.1)),
+                                    las = 1,
+                                    xaxt = "n",
+                                    col = RColorBrewer::brewer.pal(5,
+                                                                   "Greys"),
+                                    xlim = c(0,
+                                             37.6))
+    graphics::axis(1,
+                   at = barvessels,
+                   tick = TRUE,
+                   labels = seq(min(fishing_capacity_data$year),
+                                max(fishing_capacity_data$year),
+                                by = 1),
+                   cex.axis = 1.4)
+    graphics::legend("topright",
+                     legend = c("50-400 t",
+                                "401-600 t",
+                                "601-800 t",
+                                "801-1200 t",
+                                "1201-2000 t"),
+                     ncol = 2,
+                     bty = "n",
+                     fill = RColorBrewer::brewer.pal(5, "Greys"),
+                     cex = 1.3)
+    graphics::par(new = TRUE)
+    plot(barvessels,
+         fishing_capacity_data$CC / 1000,
+         type = "b",
+         col = "black",
+         lwd = 2,
+         lty = 2,
+         xaxt = "n",
+         yaxt = "n",
+         pch = 16,
+         xlab = "",
+         ylab = "",
+         ylim = c(0, max(fishing_capacity_data$CC / 1000) * 1.1),
+         yaxs = "i",
+         xlim = c(0, 37.6))
+    graphics::axis(4,
+                   at = seq(0,
+                            20,
+                            5),
+                   tick = TRUE,
+                   labels = TRUE,
+                   las = 1,
+                   cex.axis = 1.4,
+                   cex.lab = 1.4,
+                   yaxs = "i")
+    graphics::mtext(expression(paste("Carrying capacity (x1000 ", m^3, ")",
+                                     sep = "")),
+                    side = 4,
+                    line = 2.6,
+                    cex = 1.3)
+  } else if (graph_type == "plotly") {
+      data_pivot <- fishing_capacity_data %>%
+        dplyr::rename("50" = "50-400",
+                      "401" = "401-600",
+                      "601" = "601-800",
+                      "801" = "801-1200",
+                      "1201" = "1201-2000",
+                      "2000" = "> 2000")
+
+      data_pivot <- tidyr::pivot_longer(data_pivot,
+                                        cols = c(2:6),
+                                        names_to = "type",
+                                        values_to = "nb_vessels")
+      data_pivot$type <- as.factor(data_pivot$type)
+
+
+      ggplot_table_capacity <- ggplot2::ggplot(data = data_pivot) +
+        ggplot2::geom_bar(mapping = ggplot2::aes(x = year,
+                                                 y = nb_vessels,
+                                                 fill = factor(type,
+                                                               levels=c("1201",
+                                                                        "801",
+                                                                        "601",
+                                                                        "401",
+                                                                        "50"))),
+                          stat = "identity",
+                          color = "black") +
+        ggplot2::scale_fill_manual(values = c("black","grey26","grey54","grey70", "grey90"),
+                                   labels = c("1201-2000 t", "801-1200 t", "601-800 t", "401-600 t", "50-400 t")) +
+        ggplot2::geom_line(ggplot2::aes(x = year,
+                                        y = CC / 1000 * 1.8)) +
+        ggplot2::geom_point(data = data_pivot,
+                            ggplot2::aes(x = year,
+                                         y = CC / 1000 * 1.8)) +
+        ggplot2::scale_y_continuous(name = "Number of vessels", sec.axis = ggplot2::sec_axis(trans = ~. / 1.6, name = "Carrying capacity (x1000m^3)")) +
+        ggplot2::scale_x_continuous(name = "", breaks = c(1991, 1995, 2000, 2005, 2010, 2015, 2020, 2025)) +
+        ggplot2::theme_bw() +
+        ggplot2::labs(fill = "")
+
+      plotly::ggplotly(ggplot_table_capacity)
+  }
+
 }

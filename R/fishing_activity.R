@@ -6,17 +6,22 @@
 #' @param country {\link[base]{integer}} expected. Country codes identification.
 #' @param vessel_type {\link[base]{integer}} expected. Vessel type codes identification.
 #' @param ocean {\link[base]{integer}} expected. Ocean codes identification.
+#' @param graph_type {\link[base]{character}} expected. plot or plotly. Plot by default.
 #' @return The function return ggplot R plot.
 #' @export
 #' @importFrom DBI dbGetQuery sqlInterpolate SQL
 #' @importFrom dplyr mutate tibble group_by summarise n_distinct
 #' @importFrom lubridate year
-#' @importFrom graphics axis lines abline legend barplot mtext
+#' @importFrom graphics par plot axis lines abline legend
+#' @importFrom ggplot2 ggplot aes geom_line scale_color_manual geom_point scale_x_continuous labs ylim theme_bw geom_hline
+#' @importFrom plotly ggplotly
+#' @importFrom tidyr pivot_longer
 fishing_activity <- function(data_connection,
                              time_period,
                              country = as.integer(x = 1),
                              vessel_type = as.integer(x = 1),
-                             ocean = as.integer(x = 1)) {
+                             ocean = as.integer(x = 1),
+                             graph_type = "plot") {
   # 0 - Global variables assignement ----
   activity_date <- NULL
   v_nb_calees <- NULL
@@ -24,6 +29,10 @@ fishing_activity <- function(data_connection,
   c_tban <- NULL
   l_total <- NULL
   a_total <- NULL
+  f_total <- NULL
+  nb_sets <- NULL
+  type <- NULL
+  `%_log` <- NULL
   # 1 - Arguments verification ----
   if (codama::r_type_checking(r_object = data_connection,
                               type = "list",
@@ -119,60 +128,92 @@ fishing_activity <- function(data_connection,
   table_sets <- table_sets %>%
     dplyr::mutate("%_log" = l_total / a_total * 100)
   # 4 - Graphic design ----
-  graphics::par(mar = c(5, 4, 4, 4))
-  set <- as.matrix(table_sets[, c(5,
-                                 8)])
-  fig.sets <- graphics::barplot(t(set),
-                      beside = FALSE,
-                      ylab = "Number of sets",
-                      ylim = c(0, max(set) * 1.6),
-                      cex.axis = 1.3,
-                      cex.lab = 1.3,
-                      xaxt = "n")
-  graphics::axis(1,
-       at = fig.sets,
-       tick = TRUE,
-       labels = table_sets$year,
-       line = .8,
-       cex.axis = 1.3)
-  graphics::legend("topleft",
-         legend = c("FOB-associated schools",
-                    "Free swimming schools"),
-         col = c("black",
-                 "lightgrey"),
-         bty = "n",
-         fill = c("black",
-                  "lightgrey"))
-  graphics::par(new = TRUE)
-  plot(fig.sets,
-       table_sets$`%_log`,
-       type = "b",
-       col = "black",
-       lwd = 2,
-       lty = 1,
-       xaxt = "n",
-       yaxt = "n",
-       pch = 16,
-       xlab = "",
-       ylab = "",
-       ylim = c(0,
-                100),
-       yaxs = "i")
-  graphics::abline(h = 50,
-         col = "darkgrey",
-         lwd = 1.3)
-  graphics::axis(4,
-       at = seq(0,
-                100,
-                20),
-       tick = TRUE,
-       labels = TRUE,
-       las = 0,
-       cex.axis = 1.3,
-       cex.lab = 1.3,
-       yaxs = "i")
-  graphics::mtext("% FOB-associated sets",
-        side = 4,
-        line = 2,
-        cex = 1.3)
+  if (graph_type == "plot") {
+    graphics::par(mar = c(5, 4, 4, 4))
+    set <- as.matrix(table_sets[, c(5,
+                                    8)])
+    fig.sets <- graphics::barplot(t(set),
+                                  beside = FALSE,
+                                  ylab = "Number of sets",
+                                  ylim = c(0, max(set) * 1.6),
+                                  cex.axis = 1.3,
+                                  cex.lab = 1.3,
+                                  xaxt = "n")
+    graphics::axis(1,
+                   at = fig.sets,
+                   tick = TRUE,
+                   labels = table_sets$year,
+                   line = .8,
+                   cex.axis = 1.3)
+    graphics::legend("topleft",
+                     legend = c("FOB-associated schools",
+                                "Free swimming schools"),
+                     col = c("black",
+                             "lightgrey"),
+                     bty = "n",
+                     fill = c("black",
+                              "lightgrey"))
+    graphics::par(new = TRUE)
+    plot(fig.sets,
+         table_sets$`%_log`,
+         type = "b",
+         col = "black",
+         lwd = 2,
+         lty = 1,
+         xaxt = "n",
+         yaxt = "n",
+         pch = 16,
+         xlab = "",
+         ylab = "",
+         ylim = c(0,
+                  100),
+         yaxs = "i")
+    graphics::abline(h = 50,
+                     col = "darkgrey",
+                     lwd = 1.3)
+    graphics::axis(4,
+                   at = seq(0,
+                            100,
+                            20),
+                   tick = TRUE,
+                   labels = TRUE,
+                   las = 0,
+                   cex.axis = 1.3,
+                   cex.lab = 1.3,
+                   yaxs = "i")
+    graphics::mtext("% FOB-associated sets",
+                    side = 4,
+                    line = 2,
+                    cex = 1.3)
+  } else if (graph_type == "plotly") {
+    set <- as.matrix(table_sets[, c(1, 5, 8, 11)])
+    t_set <- as.data.frame(set)
+    t_set <- t_set %>%
+      dplyr::rename(`Free swimming schools` = l_total,
+             `FOB-associated schools` = f_total)
+    t_set_pivot <- tidyr::pivot_longer(t_set,
+                                       cols = c(2:3),
+                                       names_to = "type",
+                                       values_to = "nb_sets")
+    ggplot_set <- ggplot2::ggplot() +
+      ggplot2::geom_bar(data = t_set_pivot,
+                        mapping = ggplot2::aes(x = year,
+                                               y = nb_sets,
+                                               fill = type),
+                        stat = "identity",
+                        colour="black") +
+      ggplot2::geom_line(data = t_set,
+                         ggplot2::aes(x = year,
+                                      y = `%_log` / 0.025)) +
+      ggplot2::scale_fill_manual(values = c("grey95", "grey26")) +
+      ggplot2::geom_point(data = table_sets,
+                          ggplot2::aes(x = year,
+                                       y = `%_log` / 0.025)) +
+      ggplot2::scale_y_continuous(name = "Number of sets", sec.axis = ggplot2::sec_axis(trans = ~. * 0.025, name = "% FOB-associated sets")) +
+      ggplot2::scale_x_continuous(name = "", breaks = c(1991, 1995, 2000, 2005, 2010, 2015, 2020, 2025)) +
+      ggplot2::theme_bw() +
+      ggplot2::labs(fill = "")
+    plotly::ggplotly(ggplot_set)
+  }
+
 }

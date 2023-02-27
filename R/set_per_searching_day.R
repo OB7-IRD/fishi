@@ -7,19 +7,23 @@
 #' @param vessel_type {\link[base]{integer}} expected. Vessel type codes identification.
 #' @param ocean {\link[base]{integer}} expected. Ocean codes identification.
 #' @param fishing_type {\link[base]{character}} expected. FOB and FSC.
+#' @param graph_type {\link[base]{character}} expected. plot or plotly. Plot by default.
 #' @return The function return ggplot R plot.
 #' @export
 #' @importFrom DBI dbGetQuery sqlInterpolate SQL
 #' @importFrom dplyr mutate tibble group_by summarise case_when
 #' @importFrom lubridate year
 #' @importFrom plotrix stackpoly
-#' @importFrom  graphics axis lines abline legend plot
+#' @importFrom ggplot2 ggplot aes geom_line scale_color_manual geom_point scale_x_continuous labs ylim theme_bw geom_hline
+#' @importFrom plotly ggplotly
+#' @importFrom graphics par plot axis lines abline legend
 set_per_searching_day <- function(data_connection,
                                   time_period,
                                   country = as.integer(x = 1),
                                   vessel_type = as.integer(x = 1),
                                   ocean = as.integer(x = 1),
-                                  fishing_type) {
+                                  fishing_type,
+                                  graph_type = "plot") {
   # 0 - Global variables assignement ----
   activity_date <- NULL
   v_tpec <- NULL
@@ -137,67 +141,105 @@ set_per_searching_day <- function(data_connection,
   # 5 - Graphic design ----
   graphics::par(mar = c(4, 4.7, 4.1, 1.5))
   if (fishing_type == "FOB") {
-    graphics::plot(table_cpue_set_per_day$year,
-         table_cpue_set_per_day$sets_per_day_fad,
-         type = "b",
-         xlab = "",
-         ylab = "Number of sets per searching day",
-         cex.axis = 1.4,
-         cex.lab = 1.4,
-         main = "",
-         ylim = c(0, 1),
-         las = 1,
-         xaxt = "n",
-         pch = 19)
-    graphics::axis(1,
-         at = seq(min(table_cpue_set_per_day$year),
-                  max(table_cpue_set_per_day$year),
-                  by = 2),
-         tick = TRUE,
-         labels = seq(min(table_cpue_set_per_day$year),
-                      max(table_cpue_set_per_day$year),
-                      by = 2),
-         cex.axis = 1.3)
-    graphics::abline(h = seq(.2,
-                   1,
-                   .2),
-           lty = 2,
-           col = "lightgrey")
-    graphics::legend("topleft",
-           legend = "(FOB)",
-           bty = "n",
-           cex = 2)
-  } else if (fishing_type == "FSC") {
-    graphics::plot(table_cpue_set_per_day$year,
-         table_cpue_set_per_day$sets_per_day_fsc,
-         type = "b",
-         xlab = "",
-         ylab = "Number of sets per searching day",
-         cex.axis = 1.4,
-         cex.lab = 1.4,
-         main = "",
-         ylim = c(0, 1),
-         las = 1,
-         xaxt = "n",
-         pch = 19)
-    graphics::axis(1,
-         at = seq(min(table_cpue_set_per_day$year),
-                  max(table_cpue_set_per_day$year),
-                  by = 2),
-         tick = TRUE,
-         labels = seq(min(table_cpue_set_per_day$year),
-                      max(table_cpue_set_per_day$year),
-                      by = 2),
-         cex.axis = 1.3)
-    graphics::abline(h = seq(.2,
-                   1,
-                   .2),
-           lty = 2,
-           col = "lightgrey")
-    graphics::legend("topleft",
-           legend = "(FSC)",
-           bty = "n",
-           cex = 2)
-  }
+    if (graph_type == "plot") {
+      graphics::plot(table_cpue_set_per_day$year,
+                     table_cpue_set_per_day$sets_per_day_fad,
+                     type = "b",
+                     xlab = "",
+                     ylab = "Number of sets per searching day",
+                     cex.axis = 1.4,
+                     cex.lab = 1.4,
+                     main = "",
+                     ylim = c(0, 1),
+                     las = 1,
+                     xaxt = "n",
+                     pch = 19)
+      graphics::axis(1,
+                     at = seq(min(table_cpue_set_per_day$year),
+                              max(table_cpue_set_per_day$year),
+                              by = 2),
+                     tick = TRUE,
+                     labels = seq(min(table_cpue_set_per_day$year),
+                                  max(table_cpue_set_per_day$year),
+                                  by = 2),
+                     cex.axis = 1.3)
+      graphics::abline(h = seq(.2,
+                               1,
+                               .2),
+                       lty = 2,
+                       col = "lightgrey")
+      graphics::legend("topleft",
+                       legend = "(FOB)",
+                       bty = "n",
+                       cex = 2)
+    } else if (graph_type == "plotly") {
+      ggplot_table_cpue <- ggplot2::ggplot(data = table_cpue_set_per_day) +
+        ggplot2::geom_line(ggplot2::aes(x = year,
+                                        y = sets_per_day_fad),
+                           color = "black") +
+        ggplot2::scale_x_continuous(breaks = c(1991, 1995, 2000, 2005, 2010, 2015, 2020, 2025)) +
+        ggplot2::geom_point(ggplot2::aes(x = year,
+                                         y = sets_per_day_fad),
+                            shape = 16, size = 2) +
 
+        ggplot2::labs(x = "",
+                      y = "Number of sets per searching day") +
+        ggplot2::ylim(0, 1) +
+        ggplot2::theme_bw() +
+        ggplot2::labs(colour = "") +
+        ggplot2::ggtitle("FOB")
+      plotly::ggplotly(ggplot_table_cpue)
+    }
+
+  } else if (fishing_type == "FSC") {
+    if (graph_type == "plot") {
+      graphics::plot(table_cpue_set_per_day$year,
+                     table_cpue_set_per_day$sets_per_day_fsc,
+                     type = "b",
+                     xlab = "",
+                     ylab = "Number of sets per searching day",
+                     cex.axis = 1.4,
+                     cex.lab = 1.4,
+                     main = "",
+                     ylim = c(0, 1),
+                     las = 1,
+                     xaxt = "n",
+                     pch = 19)
+      graphics::axis(1,
+                     at = seq(min(table_cpue_set_per_day$year),
+                              max(table_cpue_set_per_day$year),
+                              by = 2),
+                     tick = TRUE,
+                     labels = seq(min(table_cpue_set_per_day$year),
+                                  max(table_cpue_set_per_day$year),
+                                  by = 2),
+                     cex.axis = 1.3)
+      graphics::abline(h = seq(.2,
+                               1,
+                               .2),
+                       lty = 2,
+                       col = "lightgrey")
+      graphics::legend("topleft",
+                       legend = "(FSC)",
+                       bty = "n",
+                       cex = 2)
+    } else if (graph_type == "plotly") {
+      ggplot_table_cpue <- ggplot2::ggplot(data = table_cpue_set_per_day) +
+        ggplot2::geom_line(ggplot2::aes(x = year,
+                                        y = sets_per_day_fsc),
+                           color = "black") +
+        ggplot2::scale_x_continuous(breaks = c(1991, 1995, 2000, 2005, 2010, 2015, 2020, 2025)) +
+        ggplot2::geom_point(ggplot2::aes(x = year,
+                                         y = sets_per_day_fsc),
+                            shape = 16, size = 2) +
+
+        ggplot2::labs(x = "",
+                      y = "Number of sets per searching day") +
+        ggplot2::ylim(0, 1) +
+        ggplot2::theme_bw() +
+        ggplot2::labs(colour = "") +
+        ggplot2::ggtitle("FSC")
+      plotly::ggplotly(ggplot_table_cpue)
+    }
+  }
 }

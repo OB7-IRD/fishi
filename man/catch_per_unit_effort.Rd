@@ -10,7 +10,8 @@ catch_per_unit_effort(
   country = as.integer(x = 1),
   vessel_type = as.integer(x = 1),
   ocean = as.integer(x = 1),
-  fishing_type
+  fishing_type,
+  graph_type = "plot"
 )
 }
 \arguments{
@@ -25,6 +26,8 @@ catch_per_unit_effort(
 \item{ocean}{{\link[base]{integer}} expected. Ocean codes identification.}
 
 \item{fishing_type}{{\link[base]{character}} expected. FOB or FSC.}
+
+\item{graph_type}{{\link[base]{character}} expected. plot or plotly. Plot by default.}
 }
 \value{
 The function return ggplot R plot.

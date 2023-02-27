@@ -7,19 +7,23 @@
 #' @param vessel_type {\link[base]{integer}} expected. Vessel type codes identification.
 #' @param ocean {\link[base]{integer}} expected. Ocean codes identification.
 #' @param fishing_type {\link[base]{character}} expected. FOB and FSC.
+#' @param graph_type {\link[base]{character}} expected. plot or plotly. Plot by default.
 #' @return The function return ggplot R plot.
 #' @export
 #' @importFrom DBI dbGetQuery sqlInterpolate SQL
 #' @importFrom dplyr mutate tibble group_by summarise case_when
 #' @importFrom lubridate year
 #' @importFrom plotrix stackpoly
+#' @importFrom ggplot2 ggplot aes geom_line scale_color_manual geom_point scale_x_continuous labs ylim theme_bw geom_hline
+#' @importFrom plotly ggplotly
 #' @importFrom graphics par plot axis lines abline legend
 catch_per_searching_day <- function(data_connection,
                                time_period,
                                country = as.integer(x = 1),
                                vessel_type = as.integer(x = 1),
                                ocean = as.integer(x = 1),
-                               fishing_type) {
+                               fishing_type,
+                               graph_type = "plot") {
   # 0 - Global variables assignement ----
   activity_date <- NULL
   yft <- NULL
@@ -194,11 +198,11 @@ catch_per_searching_day <- function(data_connection,
   #final table
   table_cpue_fad_set <- table_cpue_fad_set %>%
     dplyr::summarise(year = year,
-                     YFT = (yft / nb_sets_pos),
-                     SKJ = (skj / nb_sets_pos),
-                     BET = (bet / nb_sets_pos),
+                     yft = (yft / nb_sets_pos),
+                     skj = (skj / nb_sets_pos),
+                     bet = (bet / nb_sets_pos),
                      ALB = (alb / nb_sets_pos),
-                     TOTAL = (total / nb_sets_pos))
+                     total = (total / nb_sets_pos))
   #FSC
   #Creation of t2 database from time_serie_catch_nb_set_data
   # Add columns nb_sets_pos and nb_sets
@@ -228,146 +232,222 @@ catch_per_searching_day <- function(data_connection,
   #final table
   table_cpue_fsc_set <- table_cpue_fsc_set %>%
     dplyr::summarise(year = year,
-                     YFT = (yft / nb_sets_pos),
-                     SKJ = (skj / nb_sets_pos),
-                     BET = (bet / nb_sets_pos),
+                     yft = (yft / nb_sets_pos),
+                     skj = (skj / nb_sets_pos),
+                     bet = (bet / nb_sets_pos),
                      ALB = (alb / nb_sets_pos),
-                     TOTAL = (total / nb_sets_pos))
+                     total = (total / nb_sets_pos))
   # 4 - Graphic design ----
   graphics::par(mar = c(4, 4.7, 4.1, 1.5))
- if (fishing_type == "FOB") {
-   graphics::plot(table_cpue_fad_set$year,
-         table_cpue_fad_set$YFT,
-         type = "b",
-         xlab = "",
-         ylab = "Catch (t) per positive set",
-         cex.axis = 1.4,
-         cex.lab = 1.4,
-         main = "",
-         ylim = c(0,
-                  max(table_cpue_fad_set$TOTAL) * 1.05),
-         las = 1,
-         xaxt = "n",
-         pch = 22,
-         bg = "grey")
-   graphics::axis(1,
-         at = seq(min(table_cpue_fad_set$year),
-                  max(table_cpue_fad_set$year),
-                  by = 2),
-         tick = TRUE,
-         labels = seq(min(table_cpue_fad_set$year),
-                      max(table_cpue_fad_set$year), by = 2),
-         cex.axis = 1.3)
-   graphics::lines(table_cpue_fad_set$year,
-          table_cpue_fad_set$SKJ,
-          type = "b",
-          lty = 1,
-          pch = 23)
-   graphics::lines(table_cpue_fad_set$year,
-          table_cpue_fad_set$BET,
-          type = "b",
-          lty = 1,
-          pch = 24)
-   graphics::lines(table_cpue_fad_set$year,
-          table_cpue_fad_set$TOTAL,
-          type = "b",
-          lty = 1,
-          pch = 19)
-   graphics::abline(h = seq(10,
-                   50,
-                   10),
-           lty = 2,
-           col = "lightgrey")
-   graphics::legend("topright",
-           legend = c("Total",
-                      "Skipjack",
-                      "Yellowfin",
-                      "Bigeye"),
-           pch = c(19,
-                   23,
-                   22,
-                   24),
-           bty = "n",
-           lty = c(1,
-                   1,
-                   1,
-                   1),
-           pt.bg = c("black",
-                     "white",
-                     "grey",
-                     "white"),
-           cex = 1.3)
-   graphics::legend("topleft",
-           legend = "(FOB)",
-           bty = "n",
-           cex = 2)
+  if (fishing_type == "FOB") {
+    if (graph_type == "plot") {
+      graphics::plot(table_cpue_fad_set$year,
+                     table_cpue_fad_set$yft,
+                     type = "b",
+                     xlab = "",
+                     ylab = "Catch (t) per positive set",
+                     cex.axis = 1.4,
+                     cex.lab = 1.4,
+                     main = "",
+                     ylim = c(0,
+                              max(table_cpue_fad_set$total) * 1.05),
+                     las = 1,
+                     xaxt = "n",
+                     pch = 22,
+                     bg = "grey")
+      graphics::axis(1,
+                     at = seq(min(table_cpue_fad_set$year),
+                              max(table_cpue_fad_set$year),
+                              by = 2),
+                     tick = TRUE,
+                     labels = seq(min(table_cpue_fad_set$year),
+                                  max(table_cpue_fad_set$year), by = 2),
+                     cex.axis = 1.3)
+      graphics::lines(table_cpue_fad_set$year,
+                      table_cpue_fad_set$skj,
+                      type = "b",
+                      lty = 1,
+                      pch = 23)
+      graphics::lines(table_cpue_fad_set$year,
+                      table_cpue_fad_set$bet,
+                      type = "b",
+                      lty = 1,
+                      pch = 24)
+      graphics::lines(table_cpue_fad_set$year,
+                      table_cpue_fad_set$total,
+                      type = "b",
+                      lty = 1,
+                      pch = 19)
+      graphics::abline(h = seq(10,
+                               50,
+                               10),
+                       lty = 2,
+                       col = "lightgrey")
+      graphics::legend("topright",
+                       legend = c("total",
+                                  "Skipjack",
+                                  "Yellowfin",
+                                  "Bigeye"),
+                       pch = c(19,
+                               23,
+                               22,
+                               24),
+                       bty = "n",
+                       lty = c(1,
+                               1,
+                               1,
+                               1),
+                       pt.bg = c("black",
+                                 "white",
+                                 "grey",
+                                 "white"),
+                       cex = 1.3)
+      graphics::legend("topleft",
+                       legend = "(FOB)",
+                       bty = "n",
+                       cex = 2)
+    } else if (graph_type == "plotly") {
+      ggplot_table_cpue <- ggplot2::ggplot(data = table_cpue_fad_set) +
+        ggplot2::geom_line(ggplot2::aes(x = year,
+                                        y = yft)) +
+        ggplot2::geom_line(ggplot2::aes(x = year,
+                                        y = skj)) +
+        ggplot2::geom_line(ggplot2::aes(x = year,
+                                        y = bet)) +
+        ggplot2::geom_line(ggplot2::aes(x = year,
+                                          y = total)) +
+        ggplot2::scale_color_manual(values = c("black", "black","black","black")) +
+        ggplot2::geom_point(ggplot2::aes(x = year,
+                                         y = yft,
+                                         color = "Yellowfin"),
+                            shape = 15, size = 2) +
+        ggplot2::geom_point(ggplot2::aes(x = year,
+                                         y = skj,
+                                         color = "Skipjack"),
+                            shape = 5, size = 2) +
+        ggplot2::geom_point(ggplot2::aes(x = year,
+                                         y = bet,
+                                         color = "Bigeye"),
+                            shape = 2, size = 2) +
+        ggplot2::geom_point(ggplot2::aes(x = year,
+                                         y = total,
+                                         color = "total"),
+                            shape = 16, size = 2) +
+        ggplot2::scale_x_continuous(breaks = c(1991, 1995, 2000, 2005, 2010, 2015, 2020, 2025)) +
+
+        ggplot2::labs(x = "",
+                      y = "Catch (t) per positive set") +
+        ggplot2::ylim(0,35) +
+        ggplot2::theme_bw() +
+        ggplot2::labs(colour = "") +
+        ggplot2::ggtitle("FOB")
+      plotly::ggplotly(ggplot_table_cpue)
+    }
   } else if (fishing_type == "FSC") {
-    graphics::plot(table_cpue_fsc_set$year,
-         table_cpue_fsc_set$YFT,
-         type = "b",
-         xlab = "",
-         ylab = "Catch (t) per positive set",
-         cex.axis = 1.4,
-         cex.lab = 1.4,
-         main = "",
-         ylim = c(0,
-                  max(table_cpue_fsc_set$TOTAL) * 1.05),
-         las = 1,
-         xaxt = "n",
-         pch = 22,
-         bg = "grey")
-    graphics::axis(1,
-         at = seq(min(table_cpue_fsc_set$year),
-                  max(table_cpue_fsc_set$year),
-                  by = 2),
-         tick = TRUE,
-         labels = seq(min(table_cpue_fsc_set$year),
-                      max(table_cpue_fsc_set$year),
-                      by = 2),
-         cex.axis = 1.3)
-    graphics::lines(table_cpue_fsc_set$year,
-          table_cpue_fsc_set$SKJ,
-          type = "b",
-          lty = 1,
-          pch = 23)
-    graphics::lines(table_cpue_fsc_set$year,
-          table_cpue_fsc_set$BET,
-          type = "b",
-          lty = 1,
-          pch = 24)
-    graphics::lines(table_cpue_fsc_set$year,
-          table_cpue_fsc_set$TOTAL,
-          type = "b",
-          lty = 1,
-          pch = 19)
-    graphics::abline(h = seq(10,
-                 50,
-                 10),
-           lty = 2,
-           col = "lightgrey")
-    graphics::legend("topleft",
-           legend = c("Total",
-                      "Skipjack",
-                      "Yellowfin",
-                      "Bigeye"),
-           pch = c(19,
-                   23,
-                   22,
-                   24),
-           bty = "n",
-           lty = c(1,
-                   1,
-                   1,
-                   1),
-           pt.bg = c("black",
-                     "white",
-                     "grey",
-                     "white"),
-           cex = 1.3)
-    graphics::legend("topright",
-           legend = "(FSC)",
-           bty = "n",
-           cex = 2)
+    if (graph_type == "plot") {
+      graphics::plot(table_cpue_fsc_set$year,
+                     table_cpue_fsc_set$yft,
+                     type = "b",
+                     xlab = "",
+                     ylab = "Catch (t) per positive set",
+                     cex.axis = 1.4,
+                     cex.lab = 1.4,
+                     main = "",
+                     ylim = c(0,
+                              max(table_cpue_fsc_set$total) * 1.05),
+                     las = 1,
+                     xaxt = "n",
+                     pch = 22,
+                     bg = "grey")
+      graphics::axis(1,
+                     at = seq(min(table_cpue_fsc_set$year),
+                              max(table_cpue_fsc_set$year),
+                              by = 2),
+                     tick = TRUE,
+                     labels = seq(min(table_cpue_fsc_set$year),
+                                  max(table_cpue_fsc_set$year),
+                                  by = 2),
+                     cex.axis = 1.3)
+      graphics::lines(table_cpue_fsc_set$year,
+                      table_cpue_fsc_set$skj,
+                      type = "b",
+                      lty = 1,
+                      pch = 23)
+      graphics::lines(table_cpue_fsc_set$year,
+                      table_cpue_fsc_set$bet,
+                      type = "b",
+                      lty = 1,
+                      pch = 24)
+      graphics::lines(table_cpue_fsc_set$year,
+                      table_cpue_fsc_set$total,
+                      type = "b",
+                      lty = 1,
+                      pch = 19)
+      graphics::abline(h = seq(10,
+                               50,
+                               10),
+                       lty = 2,
+                       col = "lightgrey")
+      graphics::legend("topleft",
+                       legend = c("total",
+                                  "Skipjack",
+                                  "Yellowfin",
+                                  "Bigeye"),
+                       pch = c(19,
+                               23,
+                               22,
+                               24),
+                       bty = "n",
+                       lty = c(1,
+                               1,
+                               1,
+                               1),
+                       pt.bg = c("black",
+                                 "white",
+                                 "grey",
+                                 "white"),
+                       cex = 1.3)
+      graphics::legend("topright",
+                       legend = "(FSC)",
+                       bty = "n",
+                       cex = 2)
+    } else if (graph_type == "plotly") {
+      ggplot_table_cpue <- ggplot2::ggplot(data = table_cpue_fsc_set) +
+        ggplot2::geom_line(ggplot2::aes(x = year,
+                                        y = yft)) +
+        ggplot2::geom_line(ggplot2::aes(x = year,
+                                        y = skj)) +
+        ggplot2::geom_line(ggplot2::aes(x = year,
+                                        y = bet)) +
+        ggplot2::geom_line(ggplot2::aes(x = year,
+                                        y = total)) +
+        ggplot2::scale_color_manual(values = c("black", "black","black","black")) +
+        ggplot2::geom_point(ggplot2::aes(x = year,
+                                         y = yft,
+                                         color = "Yellowfin"),
+                            shape = 15, size = 2) +
+        ggplot2::geom_point(ggplot2::aes(x = year,
+                                         y = skj,
+                                         color = "Skipjack"),
+                            shape = 5, size = 2) +
+        ggplot2::geom_point(ggplot2::aes(x = year,
+                                         y = bet,
+                                         color = "Bigeye"),
+                            shape = 2, size = 2) +
+        ggplot2::geom_point(ggplot2::aes(x = year,
+                                         y = total,
+                                         color = "total"),
+                            shape = 16, size = 2) +
+        ggplot2::scale_x_continuous(breaks = c(1991, 1995, 2000, 2005, 2010, 2015, 2020, 2025)) +
+
+        ggplot2::labs(x = "",
+                      y = "Catch (t) per positive set") +
+        ggplot2::ylim(0,35) +
+        ggplot2::theme_bw() +
+        ggplot2::labs(colour = "") +
+        ggplot2::ggtitle("FSC")
+      plotly::ggplotly(ggplot_table_cpue)
+    }
   }
 
 }
