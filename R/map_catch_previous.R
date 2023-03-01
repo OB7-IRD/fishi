@@ -7,20 +7,25 @@
 #' @param vessel_type {\link[base]{integer}} expected. Vessel type codes identification.
 #' @param ocean {\link[base]{integer}} expected. Ocean codes identification.
 #' @param fishing_type {\link[base]{character}} expected. FOB, FSC or ALL. ALL by default.
+#' @param graph_type {\link[base]{character}} expected. plot or plotly. Plot by default.
 #' @return The function return ggplot R plot.
 #' @export
 #' @importFrom DBI dbGetQuery sqlInterpolate SQL
 #' @importFrom dplyr tibble group_by summarise case_when filter
 #' @importFrom lubridate year
 #' @importFrom plotrix floating.pie pie.labels
-#' @importFrom graphics axis lines abline legend text
 #' @importFrom maps map
+#' @importFrom ggplot2 ggplot aes geom_line scale_color_manual geom_point scale_x_continuous labs ylim theme_bw geom_hline
+#' @importFrom plotly ggplotly
+#' @importFrom graphics par plot axis lines abline legend
+#' @importFrom scatterpie geom_scatterpie
 map_catch_previous <- function(data_connection,
                                time_period,
                                country = as.integer(x = 1),
                                vessel_type = as.integer(x = 1),
                                ocean = as.integer(x = 1),
-                               fishing_type = "ALL"
+                               fishing_type = "ALL",
+                               graph_type = "plot"
 ) {
   # 0 - Global variables assignement ----
   n_act <- NULL
@@ -32,6 +37,7 @@ map_catch_previous <- function(data_connection,
   cwp11_act <- NULL
   v_poids_capt <- NULL
   wrld_simpl <- NULL
+  radius <- NULL
   # 1 - Arguments verification ----
   if (codama::r_type_checking(r_object = data_connection,
                               type = "list",
@@ -153,6 +159,14 @@ map_catch_previous <- function(data_connection,
 
   datafile[datafile == 0] <-1e-8
   # 4 - Legend design ----
+  #country
+  country_legend <- code_manipulation(data         = map_catch_previous_sql_final$country_id,
+                                      referential  = "country",
+                                      manipulation = "legend")
+  #vessel
+  vessel_type_legend <- code_manipulation(data         = map_catch_previous_sql_final$vessel_type_id,
+                                          referential  = "vessel_simple_type",
+                                          manipulation = "legend")
   # Define fuction quad2pos
   quad2pos <- function(id) {
     latsiz <- c(5, 10, 10, 20, 1, 5)
@@ -174,78 +188,109 @@ map_catch_previous <- function(data_connection,
   }
 
   # 5 - Graphic design ----
-  # plot
-  lat <- quad2pos(as.numeric(datafile$cwp11_act + 5 * 1e6))$y
-  long <- quad2pos(as.numeric(datafile$cwp11_act + 5 * 1e6))$x
+  if (graph_type == "plot") {
+    lat <- quad2pos(as.numeric(datafile$cwp11_act + 5 * 1e6))$y
+    long <- quad2pos(as.numeric(datafile$cwp11_act + 5 * 1e6))$x
 
-  load(file = system.file("wrld_simpl.RData",
-                          package = "fishi"))
-  maps::map(wrld_simpl,
-            main = "",
-            resolution = 0.1,
-            add = FALSE,
-            col = "lightgrey",
-            fill = TRUE,
-            xlim = c(-40, 15),
-            ylim = c(-25, 25),
-            xaxs = "i",
-            mar = c(4, 4.1, 3, 2),
-            border = 0)
-  graphics::axis(1,
-                 at = seq(-40, 15, 5),
-                 labels = c("40W", "35W", "30W", "25W", "20W", "15W", "10W", "5W", "0", "5E", "10E", "15E"),
-                 tick = TRUE)
-  graphics::axis(2,
-                 at = seq(-25, 25, 5),
-                 labels = c("25S", "20S", "15S", "10S", "5S", "0", "5N", "10N", "15N", "20N", "25N"),
-                 las = 1,
-                 tick = TRUE)
-  graphics::axis(3,
-                 labels = FALSE,
-                 at = seq(-40, 15, 5))
-  graphics::axis(4,
-                 labels = FALSE,
-                 at = seq(-25, 25, 5))
-  graphics::abline(v = seq(-30, 30, 10),
-                   col = "darkgrey",
-                   lty = 3)
-  graphics::abline(h = seq(-30, 30, 10),
-                   col = "darkgrey",
-                   lty = 3)
+    load(file = system.file("wrld_simpl.RData",
+                            package = "fishi"))
+    maps::map(wrld_simpl,
+              main = "",
+              resolution = 0.1,
+              add = FALSE,
+              col = "lightgrey",
+              fill = TRUE,
+              xlim = c(-40, 15),
+              ylim = c(-25, 25),
+              xaxs = "i",
+              mar = c(4, 4.1, 3, 2),
+              border = 0)
+    graphics::axis(1,
+                   at = seq(-40, 15, 5),
+                   labels = c("40W", "35W", "30W", "25W", "20W", "15W", "10W", "5W", "0", "5E", "10E", "15E"),
+                   tick = TRUE)
+    graphics::axis(2,
+                   at = seq(-25, 25, 5),
+                   labels = c("25S", "20S", "15S", "10S", "5S", "0", "5N", "10N", "15N", "20N", "25N"),
+                   las = 1,
+                   tick = TRUE)
+    graphics::axis(3,
+                   labels = FALSE,
+                   at = seq(-40, 15, 5))
+    graphics::axis(4,
+                   labels = FALSE,
+                   at = seq(-25, 25, 5))
+    graphics::abline(v = seq(-30, 30, 10),
+                     col = "darkgrey",
+                     lty = 3)
+    graphics::abline(h = seq(-30, 30, 10),
+                     col = "darkgrey",
+                     lty = 3)
 
-  ### Add the pie plots
-  for (i in c(1:nrow(datafile))) {
-    plotrix::floating.pie(long[i],
-                          lat[i],
-                          c(datafile$yft[i],
-                            datafile$skj[i],
-                            datafile$bet[i]),
-                          radius = (sqrt(datafile$total) / sqrt(2000))[i],
-                          edges = 25,
-                          col = c("khaki1",
-                                  "firebrick2",
-                                  "cornflowerblue"))
+    ### Add the pie plots
+    for (i in c(1:nrow(datafile))) {
+      plotrix::floating.pie(long[i],
+                            lat[i],
+                            c(datafile$yft[i],
+                              datafile$skj[i],
+                              datafile$bet[i]),
+                            radius = (sqrt(datafile$total) / sqrt(2000))[i],
+                            edges = 25,
+                            col = c("khaki1",
+                                    "firebrick2",
+                                    "cornflowerblue"))
+    }
+    angles <- plotrix::floating.pie(-20,
+                                    -12.5,
+                                    c(1, 1, 1),
+                                    radius = 1,
+                                    edge = 25,
+                                    col = c("yellow",
+                                            "red",
+                                            "blue"))
+    plotrix::pie.labels(-20,
+                        -12.5,
+                        angles,
+                        c("YFT",
+                          "SKJ",
+                          "BET"),
+                        cex = 0.7,
+                        border = 0,
+                        bg = 0,
+                        radius = c(2.4, 2.4, 2.4))
+    graphics::text(-17,
+                   -12.5,
+                   paste(2000, " t", sep = ""),
+                   cex = .9)
+  } else if (graph_type == "plotly") {
+    world_boundaries <- rnaturalearth::ne_countries(returnclass = "sf",
+                                                    scale       = "medium")
+
+    datafile$lat <- quad2pos(as.numeric(datafile$cwp11_act + 5 * 1e6))$y
+    datafile$long <- quad2pos(as.numeric(datafile$cwp11_act + 5 * 1e6))$x
+    datafile$radius <- sqrt(datafile$total) / sqrt(2000)
+    colours_group = c("khaki1", "firebrick2","cornflowerblue")
+
+    ggplot2::ggplot() +
+      ggplot2::geom_sf(data = world_boundaries) +
+      ggspatial::coord_sf(xlim = c(-40, 15),
+                          ylim = c(-25, 25)) +
+      scatterpie::geom_scatterpie(ggplot2::aes(x=long,
+                                               y=lat,
+                                               r=radius),
+                                  data=datafile,
+                                  cols=c("yft","skj","bet")) +
+      ggplot2::scale_fill_manual("species", values = colours_group) +
+      ggplot2::labs(title = paste0("Spatial distribution of tuna catches of the ",
+                                   vessel_type_legend,
+                                   " fishing fleet made on ",
+                                   fishing_type,
+                                   " schools in ",
+                                   ifelse(test = length(x = time_period) != 1,
+                                          yes  =  paste0(min(time_period),
+                                                         "-",
+                                                         max(time_period)),
+                                          no  = paste0(time_period))))
   }
-  angles <- plotrix::floating.pie(-20,
-                                  -12.5,
-                                  c(1, 1, 1),
-                                  radius = 1,
-                                  edge = 25,
-                                  col = c("yellow",
-                                          "red",
-                                          "blue"))
-  plotrix::pie.labels(-20,
-                      -12.5,
-                      angles,
-                      c("YFT",
-                        "SKJ",
-                        "BET"),
-                      cex = 0.7,
-                      border = 0,
-                      bg = 0,
-                      radius = c(2.4, 2.4, 2.4))
-  graphics::text(-17,
-                 -12.5,
-                 paste(2000, " t", sep = ""),
-                 cex = .9)
+
 }

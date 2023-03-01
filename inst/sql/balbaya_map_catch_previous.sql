@@ -9,6 +9,9 @@ select
 	,a.c_ocea
 	,a.c_tban
 	,b.c_pav_b
+	,b.c_pav_b::text as country_id
+	,tb.c_engin:: text as vessel_type_id
+	
 from
 	public.activite a
 	join public.bateau b on (a.c_bat = b.c_bat)

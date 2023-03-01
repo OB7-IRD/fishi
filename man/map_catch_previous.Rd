@@ -10,7 +10,8 @@ map_catch_previous(
   country = as.integer(x = 1),
   vessel_type = as.integer(x = 1),
   ocean = as.integer(x = 1),
-  fishing_type = "ALL"
+  fishing_type = "ALL",
+  graph_type = "plot"
 )
 }
 \arguments{
@@ -25,6 +26,8 @@ map_catch_previous(
 \item{ocean}{{\link[base]{integer}} expected. Ocean codes identification.}
 
 \item{fishing_type}{{\link[base]{character}} expected. FOB, FSC or ALL. ALL by default.}
+
+\item{graph_type}{{\link[base]{character}} expected. plot or plotly. Plot by default.}
 }
 \value{
 The function return ggplot R plot.
