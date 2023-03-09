@@ -3,13 +3,13 @@ SELECT
 	,a.v_la_act::numeric as lat 
 	,a.v_lo_act::numeric as lon
 	,o.l_ocea::text as ocean_name
-	,o.c_ocea::numeric as ocean_code
+	,o.c_ocea::numeric as ocean_id
 	,c.v_poids_capt::numeric as catch
 	,e.c_esp_3l::text as specie_name
-	,e.c_esp::numeric as specie_code
+	,e.c_esp::numeric as specie_id
 	,e2.l_engin::text as vessel_type_name
-	,e2.c_engin::numeric as vessel_type_code
-	,p.c_pav_b::numeric as country_code
+	,e2.c_engin::numeric as vessel_type_id
+	,p.c_pav_b::numeric as country_id
 	,p.c_pays_fao::text as country_name
 FROM 
 	public.activite a 

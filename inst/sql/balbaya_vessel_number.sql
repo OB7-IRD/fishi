@@ -1,9 +1,9 @@
 SELECT
-	o.c_ocea::numeric as ocean_code
+	o.c_ocea::numeric as ocean_id
 	,o.l_ocea::text as ocean_name
 	,a.d_act::date as activity_date
-	,a.c_bat::numeric as vessel_code
-	,e2.c_engin::numeric as vessel_type_code
+	,a.c_bat::numeric as vessel_id
+	,e2.c_engin::numeric as vessel_type_id
 	,e2.l_engin::text as vessel_type_name
 FROM 
 	public.activite a 

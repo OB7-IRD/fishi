@@ -1,9 +1,9 @@
 SELECT
-	v.topiaid::text AS vessel_code
-	,o.code::integer AS ocean_code
+	v.topiaid::text AS vessel_id
+	,o.code::integer AS ocean_id
 	,o.label1::text AS ocean_name
 	,t.landingdate::date AS landing_date
-	,vst.code::integer AS vessel_type_code
+	,vst.code::integer AS vessel_type_id
 	,vst.label1::text AS vessel_type_name
 FROM
 	public.trip t

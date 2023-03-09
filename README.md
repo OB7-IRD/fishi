@@ -24,8 +24,7 @@ Working in progress for this section. Be patient.
 Working in progress for this section. Be patient.
 
 ``` r
-devtools::install_github("https://github.com/OB7-IRD/fishi",
-                         INSTALL_opts=c("--no-multiarch"))
+devtools::install_github("https://github.com/OB7-IRD/fishi", INSTALL_opts=c("--no-multiarch"))
 ```
 
 ### Development version
@@ -34,9 +33,7 @@ To get a bug fix or to use a feature from the development version, you
 can install the development version of furdeb from GitHub.
 
 ``` r
-devtools::install_github("https://github.com/OB7-IRD/fishi",
-                         ref = "development",
-                         INSTALL_opts=c("--no-multiarch"))
+devtools::install_github("https://github.com/OB7-IRD/fishi", ref = "development", INSTALL_opts=c("--no-multiarch"))
 ```
 
 ## Cheatsheet

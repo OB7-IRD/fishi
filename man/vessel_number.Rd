@@ -14,7 +14,7 @@ vessel_number(
 )
 }
 \arguments{
-\item{data_connection}{{\link[base]{list}} expected. Output of the function {\link[furdeb]{postgresql_dbconnection}}, which must be done before using the catch_serie function.}
+\item{data_connection}{{\link[base]{list}} expected. Output of the function {\link[furdeb]{postgresql_dbconnection}}, which must be done before using the vessel_number function.}
 
 \item{time_period}{{\link[base]{integer}} expected. Period identification in year.}
 

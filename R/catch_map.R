@@ -1,7 +1,7 @@
 #' @name catch_map
 #' @title Catch map
 #' @description catch_map() graphically represents the distribution of catches on a map by specie, country, ocean, period, time step and vessel type.
-#' @param data_connection {\link[base]{list}} expected. Output of the function {\link[furdeb]{postgresql_dbconnection}}, which must be done before using the catch_serie function.
+#' @param data_connection {\link[base]{list}} expected. Output of the function {\link[furdeb]{postgresql_dbconnection}}, which must be done before using the catch_map function.
 #' @param time_period {\link[base]{integer}} expected. Period identification in year.
 #' @param specie {\link[base]{integer}} expected. Specie codes identification.
 #' @param ocean {\link[base]{integer}} expected. Ocean codes identification.
@@ -31,7 +31,7 @@ catch_map <- function(data_connection,
   catch <- NULL
   lon <- NULL
   lat <- NULL
-  specie_code <- NULL
+  specie_id <- NULL
   # 1 - Arguments verification ----
   if (codama::r_type_checking(r_object = data_connection,
                               type = "list",
@@ -117,37 +117,37 @@ catch_map <- function(data_connection,
   #Other
   if (length(x = specie) > 5) {
     number_specie <-  length(x = specie) - 5
-    capture_specie <- forcats::fct_count(catch_serie_final$specie_name)
+    capture_specie <- forcats::fct_count(catch_map_final$specie_name)
     capture_specie$f <- as.character(x = capture_specie$f)
     capture_specie <- capture_specie[order(capture_specie$n), ]
     selection_specie <- capture_specie[c(1:number_specie), ]
     name_specie <- selection_specie$f
     for (number_name in seq_along(name_specie)) {
-      catch_serie_final["specie_name"][catch_serie_final["specie_name"] == name_specie[number_name]] <- "Other"
+      catch_map_final["specie_name"][catch_map_final["specie_name"] == name_specie[number_name]] <- "Other"
     }
-    catch_serie_final$specie_code[catch_serie_final$specie_name == "Other"] <- 100
+    catch_map_final$specie_id[catch_map_final$specie_name == "Other"] <- 100
   }
   # 4 - Legend design ----
   #Specie
-  specie_type_color <- code_manipulation(data         = catch_map_final$specie_code,
+  specie_type_color <- code_manipulation(data         = catch_map_final$specie_id,
                                          referential  = "specie",
                                          manipulation = "color")
-  specie_type_modality <- code_manipulation(data         = catch_map_final$specie_code,
+  specie_type_modality <- code_manipulation(data         = catch_map_final$specie_id,
                                             referential  = "specie",
                                             manipulation = "modality")
-  specie_type_legend <- code_manipulation(data         = catch_map_final$specie_code,
+  specie_type_legend <- code_manipulation(data         = catch_map_final$specie_id,
                                           referential  = "specie",
                                           manipulation = "legend")
   #Ocean
-  ocean_legend <- code_manipulation(data         = catch_map_final$ocean_code,
+  ocean_legend <- code_manipulation(data         = catch_map_final$ocean_id,
                                     referential  = "ocean",
                                     manipulation = "legend")
   #country
-  country_legend <- code_manipulation(data         = catch_map_final$country_code,
+  country_legend <- code_manipulation(data         = catch_map_final$country_id,
                                       referential  = "country",
                                       manipulation = "legend")
   #vessel
-  vessel_type_legend <- code_manipulation(data         = catch_map_final$vessel_type_code,
+  vessel_type_legend <- code_manipulation(data         = catch_map_final$vessel_type_id,
                                           referential  = "vessel_simple_type",
                                           manipulation = "legend")
   # 5 - Graphic design ----
@@ -158,7 +158,7 @@ catch_map <- function(data_connection,
     ggplot2::geom_point(data = catch_map_final,
                         ggplot2::aes(x     = lon,
                                      y     = lat,
-                                     color = as.factor(specie_code),
+                                     color = as.factor(specie_id),
                                      size  = catch)) +
     ggplot2::scale_color_manual(values = specie_type_color,
                                 labels = specie_type_modality) +
