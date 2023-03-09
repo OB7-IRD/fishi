@@ -324,7 +324,7 @@ bio_weight_tuna <- function(data_connection,
         graphics::mtext(title2, side = 3, outer = FALSE, line = 1.5, cex = 1.6)
       }
     }
-  } else if (graph_type == "ggplot") {
+  } else if (graph_type == "plotly") {
     number_report_year <- as.character(report_year)
     number_previous_five <- as.character(paste0(report_year - 5, "-", report_year - 1))
     ### YFT ----
