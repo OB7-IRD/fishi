@@ -1,28 +1,28 @@
 #' @name catch_per_searching_day
 #' @title Catch per searching day
-#' @description Annual number of sets per searching day and catch per positive set on FOB-associated and free-swimming schools for the French purse seine fishing fleet in the Atlantic Ocean
+#' @description Annual number of catch per positive set on FOB-associated and free-swimming schools for the French purse seine fishing fleet in the Atlantic Ocean
 #' @param data_connection {\link[base]{list}} expected. Output of the function {\link[furdeb]{postgresql_dbconnection}}, which must be done before using the catch_per_searching_day() function.
 #' @param time_period {\link[base]{integer}} expected. Period identification in year.
-#' @param country {\link[base]{integer}} expected. Country codes identification.
-#' @param vessel_type {\link[base]{integer}} expected. Vessel type codes identification.
+#' @param country {\link[base]{integer}} expected. Country codes identification. 1 by default.
+#' @param vessel_type {\link[base]{integer}} expected. Vessel type codes identification. 1 by default.
 #' @param ocean {\link[base]{integer}} expected. Ocean codes identification.
 #' @param fishing_type {\link[base]{character}} expected. FOB and FSC.
 #' @param graph_type {\link[base]{character}} expected. plot or plotly. Plot by default.
 #' @return The function return ggplot R plot.
 #' @export
 #' @importFrom DBI dbGetQuery sqlInterpolate SQL
-#' @importFrom dplyr mutate tibble group_by summarise case_when
+#' @importFrom dplyr mutate tibble group_by summarise case_when filter
 #' @importFrom lubridate year
-#' @importFrom plotrix stackpoly
-#' @importFrom ggplot2 ggplot aes geom_line scale_color_manual geom_point scale_x_continuous labs ylim theme_bw geom_hline
+#' @importFrom ggplot2 ggplot aes geom_line scale_color_manual geom_point labs ylim theme_bw ggtitle
 #' @importFrom plotly ggplotly
 #' @importFrom graphics par plot axis lines abline legend
+#' @importFrom codama r_type_checking
 catch_per_searching_day <- function(data_connection,
                                time_period,
+                               ocean,
+                               fishing_type,
                                country = as.integer(x = 1),
                                vessel_type = as.integer(x = 1),
-                               ocean = as.integer(x = 1),
-                               fishing_type,
                                graph_type = "plot") {
   # 0 - Global variables assignement ----
   activity_date <- NULL
@@ -316,7 +316,7 @@ catch_per_searching_day <- function(data_connection,
                                         y = bet)) +
         ggplot2::geom_line(ggplot2::aes(x = year,
                                           y = total)) +
-        ggplot2::scale_color_manual(values = c("black", "black","black","black")) +
+        ggplot2::scale_color_manual(values = c("black", "black", "black", "black")) +
         ggplot2::geom_point(ggplot2::aes(x = year,
                                          y = yft,
                                          color = "Yellowfin"),
@@ -333,11 +333,9 @@ catch_per_searching_day <- function(data_connection,
                                          y = total,
                                          color = "total"),
                             shape = 16, size = 2) +
-        ggplot2::scale_x_continuous(breaks = c(1991, 1995, 2000, 2005, 2010, 2015, 2020, 2025)) +
-
         ggplot2::labs(x = "",
                       y = "Catch (t) per positive set") +
-        ggplot2::ylim(0,35) +
+        ggplot2::ylim(0, 35) +
         ggplot2::theme_bw() +
         ggplot2::labs(colour = "") +
         ggplot2::ggtitle("FOB")
@@ -421,7 +419,7 @@ catch_per_searching_day <- function(data_connection,
                                         y = bet)) +
         ggplot2::geom_line(ggplot2::aes(x = year,
                                         y = total)) +
-        ggplot2::scale_color_manual(values = c("black", "black","black","black")) +
+        ggplot2::scale_color_manual(values = c("black", "black", "black", "black")) +
         ggplot2::geom_point(ggplot2::aes(x = year,
                                          y = yft,
                                          color = "Yellowfin"),
@@ -442,12 +440,11 @@ catch_per_searching_day <- function(data_connection,
 
         ggplot2::labs(x = "",
                       y = "Catch (t) per positive set") +
-        ggplot2::ylim(0,35) +
+        ggplot2::ylim(0, 35) +
         ggplot2::theme_bw() +
         ggplot2::labs(colour = "") +
         ggplot2::ggtitle("FSC")
       plotly::ggplotly(ggplot_table_cpue)
     }
   }
-
 }

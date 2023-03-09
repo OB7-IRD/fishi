@@ -3,8 +3,8 @@
 #' @description Fishing capacity of the French purse seine fishing fleet in the Atlantic Ocean. Annual changes in the number of purse seiners by tonnage categories (barplots) and total carrying capacity (dashed line with circles).
 #' @param data_connection {\link[base]{list}} expected. Output of the function {\link[furdeb]{postgresql_dbconnection}}, which must be done before using the fishing_capacity function.
 #' @param time_period {\link[base]{integer}} expected. Period identification in year.
-#' @param country {\link[base]{integer}} expected. Country codes identification.
-#' @param vessel_type {\link[base]{integer}} expected. Vessel type codes identification.
+#' @param country {\link[base]{integer}} expected. Country codes identification. 1 by default.
+#' @param vessel_type {\link[base]{integer}} expected. Vessel type codes identification. 1 by default.
 #' @param ocean {\link[base]{integer}} expected. Ocean codes identification.
 #' @param graph_type {\link[base]{character}} expected. plot or plotly. Plot by default.
 #' @return The function return ggplot R plot.
@@ -13,16 +13,17 @@
 #' @importFrom dplyr mutate tibble group_by summarise n_distinct
 #' @importFrom lubridate year
 #' @importFrom RColorBrewer brewer.pal
-#' @importFrom codama r_type_checking
 #' @importFrom graphics par plot axis lines abline legend
-#' @importFrom ggplot2 ggplot aes geom_line scale_color_manual geom_point scale_x_continuous labs ylim theme_bw geom_hline
+#' @importFrom ggplot2 ggplot aes geom_line geom_point scale_y_continuous sec_axis labs theme_bw
 #' @importFrom plotly ggplotly
 #' @importFrom tidyr pivot_longer
+#' @importFrom forcats fct_relevel
+#' @importFrom codama r_type_checking
 fishing_capacity <- function(data_connection,
                              time_period,
+                             ocean,
                              country = as.integer(x = 1),
                              vessel_type = as.integer(x = 1),
-                             ocean = as.integer(x = 1),
                              graph_type = "plot") {
   # 0 - Global variables assignement ----
   c_quille <- NULL
@@ -33,7 +34,6 @@ fishing_capacity <- function(data_connection,
   activity_date <- NULL
   c_quille_nb_months <- NULL
   nb_vessels <- NULL
-  type <- NULL
   CC <- NULL
   # 1 - Arguments verification ----
   if (codama::r_type_checking(r_object = data_connection,
@@ -119,7 +119,7 @@ fishing_capacity <- function(data_connection,
                      "c_quille_nb_months" = dplyr::n_distinct(month, na.rm = TRUE),
                      .groups = "drop")
   # Number of ships per category
-  fishing_capacity_data <- fishing_capacity_t2 %>%
+  fishing_capacity_t3 <- fishing_capacity_t2 %>%
     dplyr::group_by(year) %>%
     dplyr::summarise("50-400" = sum(tons > 50 & tons <= 400, na.rm = TRUE),
                      "401-600" = sum(tons > 401 & tons <= 600, na.rm = TRUE),
@@ -131,6 +131,9 @@ fishing_capacity <- function(data_connection,
                      "Nb_vessels_weighted" = sum(c_quille_nb_months / 12, na.rm = TRUE),
                      "CC" = sum(cc, na.rm = TRUE),
                      .groups = "drop")
+
+  fishing_capacity_data <- fishing_capacity_t3 %>%
+    dplyr::mutate("fishing_capacity" = CC / 1000 * 1.8)
   # 4 - Graphic design ----
   if (graph_type == "plot") {
     graphics::par(mar = c(5.1, 4.1, 4.1, 4.1))
@@ -196,45 +199,33 @@ fishing_capacity <- function(data_connection,
                     line = 2.6,
                     cex = 1.3)
   } else if (graph_type == "plotly") {
-      data_pivot <- fishing_capacity_data %>%
-        dplyr::rename("50" = "50-400",
-                      "401" = "401-600",
-                      "601" = "601-800",
-                      "801" = "801-1200",
-                      "1201" = "1201-2000",
-                      "2000" = "> 2000")
-
-      data_pivot <- tidyr::pivot_longer(data_pivot,
-                                        cols = c(2:6),
-                                        names_to = "type",
-                                        values_to = "nb_vessels")
-      data_pivot$type <- as.factor(data_pivot$type)
-
-
-      ggplot_table_capacity <- ggplot2::ggplot(data = data_pivot) +
-        ggplot2::geom_bar(mapping = ggplot2::aes(x = year,
-                                                 y = nb_vessels,
-                                                 fill = factor(type,
-                                                               levels=c("1201",
-                                                                        "801",
-                                                                        "601",
-                                                                        "401",
-                                                                        "50"))),
-                          stat = "identity",
-                          color = "black") +
-        ggplot2::scale_fill_manual(values = c("black","grey26","grey54","grey70", "grey90"),
-                                   labels = c("1201-2000 t", "801-1200 t", "601-800 t", "401-600 t", "50-400 t")) +
-        ggplot2::geom_line(ggplot2::aes(x = year,
-                                        y = CC / 1000 * 1.8)) +
-        ggplot2::geom_point(data = data_pivot,
-                            ggplot2::aes(x = year,
-                                         y = CC / 1000 * 1.8)) +
-        ggplot2::scale_y_continuous(name = "Number of vessels", sec.axis = ggplot2::sec_axis(trans = ~. / 1.6, name = "Carrying capacity (x1000m^3)")) +
-        ggplot2::scale_x_continuous(name = "", breaks = c(1991, 1995, 2000, 2005, 2010, 2015, 2020, 2025)) +
-        ggplot2::theme_bw() +
-        ggplot2::labs(fill = "")
-
-      plotly::ggplotly(ggplot_table_capacity)
+    data_pivot <- tidyr::pivot_longer(fishing_capacity_data,
+                                      cols = c(2:6),
+                                      names_to = "tons",
+                                      values_to = "nb_vessels")
+    data_pivot <- data_pivot %>%
+      dplyr::mutate(tons = forcats::fct_relevel(tons,
+                                                "1201-2000",
+                                                "801-1200",
+                                                "601-800",
+                                                "401-600",
+                                                "50-400"))
+    ggplot_table_capacity <- ggplot2::ggplot(data = data_pivot) +
+      ggplot2::geom_bar(mapping = ggplot2::aes(x = year,
+                                               y = nb_vessels,
+                                               fill = tons),
+                        stat = "identity",
+                        color = "black") +
+      ggplot2::scale_fill_manual(values = c("black", "grey26", "grey54", "grey70", "grey90"),
+                                 labels = c("1201-2000 t", "801-1200 t", "601-800 t", "401-600 t", "50-400 t")) +
+      ggplot2::geom_line(ggplot2::aes(x = year,
+                                      y = fishing_capacity)) +
+      ggplot2::geom_point(data = data_pivot,
+                          ggplot2::aes(x = year,
+                                       y = fishing_capacity)) +
+      ggplot2::scale_y_continuous(name = "Number of vessels", sec.axis = ggplot2::sec_axis(trans = ~. / 1.6, name = "Carrying capacity (x1000m^3)")) +
+      ggplot2::theme_bw() +
+      ggplot2::labs(fill = "")
+    plotly::ggplotly(ggplot_table_capacity)
   }
-
 }

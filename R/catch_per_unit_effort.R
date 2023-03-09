@@ -14,9 +14,10 @@
 #' @importFrom dplyr mutate tibble group_by summarise case_when
 #' @importFrom lubridate year
 #' @importFrom plotrix stackpoly
-#' @importFrom ggplot2 ggplot aes geom_line scale_color_manual geom_point scale_x_continuous labs ylim theme_bw geom_hline
+#' @importFrom ggplot2 ggplot aes geom_line scale_color_manual geom_point labs ylim theme_bw ggtitle
 #' @importFrom plotly ggplotly
 #' @importFrom graphics par plot axis lines abline legend
+#' @importFrom codama r_type_checking
 catch_per_unit_effort <- function(data_connection,
                                time_period,
                                country = as.integer(x = 1),
@@ -269,7 +270,7 @@ catch_per_unit_effort <- function(data_connection,
                                         y = bet)) +
         ggplot2::geom_line(ggplot2::aes(x = year,
                                         y = total)) +
-        ggplot2::scale_color_manual(values = c("black", "black","black","black")) +
+        ggplot2::scale_color_manual(values = c("black", "black", "black", "black")) +
         ggplot2::geom_point(ggplot2::aes(x = year,
                                          y = yft,
                                          color = "Yellowfin"),
@@ -286,17 +287,14 @@ catch_per_unit_effort <- function(data_connection,
                                          y = total,
                                          color = "total"),
                             shape = 16, size = 2) +
-        ggplot2::scale_x_continuous(breaks = c(1991, 1995, 2000, 2005, 2010, 2015, 2020, 2025)) +
-
         ggplot2::labs(x = "",
                       y = "Catch per unit effort (t/d)") +
-        ggplot2::ylim(0,20) +
+        ggplot2::ylim(0, 20) +
         ggplot2::theme_bw() +
         ggplot2::labs(colour = "") +
         ggplot2::ggtitle("FOB")
       plotly::ggplotly(ggplot_table_cpue_fad)
     }
-
   } else if (fishing_type == "FSC") {
     if (graph_type == "plot") {
       graphics::plot(table_cpue_fsc$year,
@@ -379,7 +377,7 @@ catch_per_unit_effort <- function(data_connection,
                                         y = bet)) +
         ggplot2::geom_line(ggplot2::aes(x = year,
                                         y = total)) +
-        ggplot2::scale_color_manual(values = c("black", "black","black","black")) +
+        ggplot2::scale_color_manual(values = c("black", "black", "black", "black")) +
         ggplot2::geom_point(ggplot2::aes(x = year,
                                          y = yft,
                                          color = "Yellowfin"),
@@ -400,7 +398,7 @@ catch_per_unit_effort <- function(data_connection,
 
         ggplot2::labs(x = "",
                       y = "Catch per unit effort (t/d)") +
-        ggplot2::ylim(0,20) +
+        ggplot2::ylim(0, 20) +
         ggplot2::theme_bw() +
         ggplot2::labs(colour = "") +
         ggplot2::ggtitle("FSC")

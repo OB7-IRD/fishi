@@ -3,23 +3,21 @@
 #' @description Size distribution of major tuna catches (in percentage of the total number of fishes) for the French purse seine fleet.
 #' @param data_connection {\link[base]{list}} expected. Output of the function {\link[furdeb]{postgresql_dbconnection}}, which must be done before using the bio_size_tuna() function.
 #' @param report_year {\link[base]{integer}} expected. Year of the statistical report.
-#' @param country {\link[base]{integer}} expected. Country codes identification.
+#' @param country {\link[base]{integer}} expected. Country codes identification. 1 by default.
 #' @param ocean {\link[base]{integer}} expected. Ocean codes identification.
 #' @param graph_type {\link[base]{character}} expected. plot or plotly. Plot by default.
 #' @return The function return ggplot R plot.
 #' @export
 #' @importFrom DBI dbGetQuery sqlInterpolate SQL
-#' @importFrom dplyr tibble group_by summarise case_when filter mutate
-#' @importFrom lubridate year
-#' @importFrom plotrix floating.pie pie.labels
-#' @importFrom graphics axis lines abline legend mtext
-#' @importFrom maps map
-#' @importFrom ggplot2 ggplot aes geom_line scale_color_manual geom_point scale_x_continuous labs ylim theme_bw geom_hline
+#' @importFrom dplyr tibble group_by summarise filter mutate
+#' @importFrom graphics plot lines legend mtext
+#' @importFrom ggplot2 ggplot aes geom_line labs ylim xlim theme_bw theme element_blank ggtitle
 #' @importFrom ggpubr ggarrange
+#' @importFrom codama r_type_checking
 bio_size_tuna <- function(data_connection,
                           report_year,
+                          ocean,
                           country = as.integer(x = 1),
-                          ocean = as.integer(x = 1),
                           graph_type = "plot") {
   # 0 - Global variables assignement ----
   c_esp <- NULL
@@ -364,13 +362,11 @@ bio_size_tuna <- function(data_connection,
                            sep = ""))[[paste(mode,
                                              "_AVG_5_YEARS",
                                              sep = "")]]
-
       if (species == "skj") {
         x.max <-  80
       } else {
         x.max <- 160
       }
-
       graphics::plot(table$cl,
                      column1,
                      cex.axis = 1.3,
@@ -402,7 +398,6 @@ bio_size_tuna <- function(data_connection,
                        bty = "n",
                        cex = 1.3)
     }
-
     ylabel <- "Percentage"
     indic_species <- c("yft", "bet", "skj")
     indic_mode <- c("LOG", "FREE", "ALL")
@@ -412,7 +407,6 @@ bio_size_tuna <- function(data_connection,
     par(mfcol = c(3, 3),
         mar = c(4, 4, 2, 2),
         oma = c(0, 2.5, 2.5, 0))
-
     for (i in (1:length(indic_species))){
       for (j in (1:length(indic_mode))){
         compteur <- compteur + 1
@@ -423,180 +417,169 @@ bio_size_tuna <- function(data_connection,
         graphics::mtext(title2, side = 3, outer = FALSE, line = 1.5, cex = 1.6)
       }
     }
-  }else if (graph_type == "plotly") {
+  } else if (graph_type == "plotly") {
     number_report_year <- as.character(report_year)
-    number_previous_five <- as.character(paste0(report_year-5,"-",report_year-1))
+    number_previous_five <- as.character(paste0(report_year - 5, "-", report_year - 1))
     ### YFT ----
     #YFT LOG
     yft_fob <- ggplot2::ggplot(data = table_size_yft_n) +
       ggplot2::geom_line(ggplot2::aes(x = cl,
                                       y = LOG_AVG_5_YEARS,
                                       color = number_previous_five),
-                         linetype="dashed") +
+                         linetype = "dashed") +
       ggplot2::geom_line(ggplot2::aes(x = cl,
                                       y = LOG_CURRENT_YEAR,
                                       color = number_report_year)) +
       ggplot2::labs(x = "Size class (cm)",
                     y = "Percentage") +
-      ggplot2::ylim(0,max(table_size_yft_n$LOG_CURRENT_YEAR,
+      ggplot2::ylim(0, max(table_size_yft_n$LOG_CURRENT_YEAR,
                           table_size_yft_n$LOG_AVG_5_YEARS) * 1.1) +
       ggplot2::xlim(20, 160) +
       ggplot2::theme_bw() +
       ggplot2::theme(legend.position = c(0.85, 0.85), legend.title = ggplot2::element_blank()) +
       ggplot2::ggtitle("YFT - FOB")
-
     #YFT FREE
     yft_free <- ggplot2::ggplot(data = table_size_yft_n) +
       ggplot2::geom_line(ggplot2::aes(x = cl,
                                       y = FREE_AVG_5_YEARS,
                                       color = number_previous_five),
-                         linetype="dashed") +
+                         linetype = "dashed") +
       ggplot2::geom_line(ggplot2::aes(x = cl,
                                       y = FREE_CURRENT_YEAR,
                                       color = number_report_year)) +
       ggplot2::labs(x = "Size class (cm)",
                     y = "Percentage") +
-      ggplot2::ylim(0,max(table_size_yft_n$FREE_CURRENT_YEAR,
+      ggplot2::ylim(0, max(table_size_yft_n$FREE_CURRENT_YEAR,
                           table_size_yft_n$FREE_AVG_5_YEARS) * 1.1) +
       ggplot2::xlim(20, 160) +
       ggplot2::theme_bw() +
       ggplot2::theme(legend.position = c(0.2, 0.85), legend.title = ggplot2::element_blank()) +
       ggplot2::ggtitle("YFT - FSC")
-
     #YFT ALL
     yft_all <- ggplot2::ggplot(data = table_size_yft_n) +
       ggplot2::geom_line(ggplot2::aes(x = cl,
                                       y = ALL_AVG_5_YEARS,
                                       color = number_previous_five),
-                         linetype="dashed") +
+                         linetype = "dashed") +
       ggplot2::geom_line(ggplot2::aes(x = cl,
                                       y = ALL_CURRENT_YEAR,
                                       color = number_report_year)) +
       ggplot2::labs(x = "Size class (cm)",
                     y = "Percentage") +
-      ggplot2::ylim(0,max(table_size_yft_n$ALL_CURRENT_YEAR,
+      ggplot2::ylim(0, max(table_size_yft_n$ALL_CURRENT_YEAR,
                           table_size_yft_n$ALL_AVG_5_YEARS) * 1.1) +
       ggplot2::xlim(20, 160) +
       ggplot2::theme_bw() +
       ggplot2::theme(legend.position = c(0.85, 0.85), legend.title = ggplot2::element_blank()) +
       ggplot2::ggtitle("YFT - ALL")
-
     ### BET ----
     #BET LOG
     bet_fob <- ggplot2::ggplot(data = table_size_bet_n) +
       ggplot2::geom_line(ggplot2::aes(x = cl,
                                       y = LOG_AVG_5_YEARS,
                                       color = number_previous_five),
-                         linetype="dashed") +
+                         linetype = "dashed") +
       ggplot2::geom_line(ggplot2::aes(x = cl,
                                       y = LOG_CURRENT_YEAR,
                                       color = number_report_year)) +
       ggplot2::labs(x = "Size class (cm)",
                     y = "Percentage") +
-      ggplot2::ylim(0,max(table_size_bet_n$LOG_CURRENT_YEAR,
+      ggplot2::ylim(0, max(table_size_bet_n$LOG_CURRENT_YEAR,
                           table_size_bet_n$LOG_AVG_5_YEARS) * 1.1) +
       ggplot2::xlim(20, 160) +
       ggplot2::theme_bw() +
       ggplot2::theme(legend.position = c(0.85, 0.85), legend.title = ggplot2::element_blank()) +
       ggplot2::ggtitle("BET - FOB")
-
     #BET FREE
     bet_free <- ggplot2::ggplot(data = table_size_bet_n) +
       ggplot2::geom_line(ggplot2::aes(x = cl,
                                       y = FREE_AVG_5_YEARS,
                                       color = number_previous_five),
-                         linetype="dashed") +
+                         linetype = "dashed") +
       ggplot2::geom_line(ggplot2::aes(x = cl,
                                       y = FREE_CURRENT_YEAR,
                                       color = number_report_year)) +
       ggplot2::labs(x = "Size class (cm)",
                     y = "Percentage") +
-      ggplot2::ylim(0,max(table_size_bet_n$FREE_CURRENT_YEAR,
+      ggplot2::ylim(0, max(table_size_bet_n$FREE_CURRENT_YEAR,
                           table_size_bet_n$FREE_AVG_5_YEARS) * 1.1) +
       ggplot2::xlim(20, 160) +
       ggplot2::theme_bw() +
       ggplot2::theme(legend.position = c(0.85, 0.85), legend.title = ggplot2::element_blank()) +
       ggplot2::ggtitle("BET - FSC")
-
     #BET ALL
     bet_all <- ggplot2::ggplot(data = table_size_bet_n) +
       ggplot2::geom_line(ggplot2::aes(x = cl,
                                       y = ALL_AVG_5_YEARS,
                                       color = number_previous_five),
-                         linetype="dashed") +
+                         linetype = "dashed") +
       ggplot2::geom_line(ggplot2::aes(x = cl,
                                       y = ALL_CURRENT_YEAR,
                                       color = number_report_year)) +
       ggplot2::labs(x = "Size class (cm)",
                     y = "Percentage") +
-      ggplot2::ylim(0,max(table_size_bet_n$ALL_CURRENT_YEAR,
+      ggplot2::ylim(0, max(table_size_bet_n$ALL_CURRENT_YEAR,
                           table_size_bet_n$ALL_AVG_5_YEARS) * 1.1) +
       ggplot2::xlim(20, 160) +
       ggplot2::theme_bw() +
       ggplot2::theme(legend.position = c(0.85, 0.85), legend.title = ggplot2::element_blank()) +
       ggplot2::ggtitle("BET - ALL")
-
     ### SKJ ----
     #SKJ LOG
     skj_fob <- ggplot2::ggplot(data = table_size_skj_n) +
       ggplot2::geom_line(ggplot2::aes(x = cl,
                                       y = LOG_AVG_5_YEARS,
                                       color = number_previous_five),
-                         linetype="dashed") +
+                         linetype = "dashed") +
       ggplot2::geom_line(ggplot2::aes(x = cl,
                                       y = LOG_CURRENT_YEAR,
                                       color = number_report_year)) +
       ggplot2::labs(x = "Size class (cm)",
                     y = "Percentage") +
-      ggplot2::ylim(0,max(table_size_skj_n$LOG_CURRENT_YEAR,
+      ggplot2::ylim(0, max(table_size_skj_n$LOG_CURRENT_YEAR,
                           table_size_skj_n$LOG_AVG_5_YEARS) * 1.1) +
       ggplot2::xlim(20, 80) +
       ggplot2::theme_bw() +
       ggplot2::theme(legend.position = c(0.85, 0.85), legend.title = ggplot2::element_blank()) +
       ggplot2::ggtitle("SKJ - FOB")
-
     #SKJ FREE
     skj_free <- ggplot2::ggplot(data = table_size_skj_n) +
       ggplot2::geom_line(ggplot2::aes(x = cl,
                                       y = FREE_AVG_5_YEARS,
                                       color = number_previous_five),
-                         linetype="dashed") +
+                         linetype = "dashed") +
       ggplot2::geom_line(ggplot2::aes(x = cl,
                                       y = FREE_CURRENT_YEAR,
                                       color = number_report_year)) +
       ggplot2::labs(x = "Size class (cm)",
                     y = "Percentage") +
-      ggplot2::ylim(0,max(table_size_skj_n$FREE_CURRENT_YEAR,
+      ggplot2::ylim(0, max(table_size_skj_n$FREE_CURRENT_YEAR,
                           table_size_skj_n$FREE_AVG_5_YEARS) * 1.1) +
       ggplot2::xlim(20, 80) +
       ggplot2::theme_bw() +
       ggplot2::theme(legend.position = c(0.85, 0.85), legend.title = ggplot2::element_blank()) +
       ggplot2::ggtitle("SKJ - FSC")
-
     #SKJ ALL
     skj_all <- ggplot2::ggplot(data = table_size_skj_n) +
       ggplot2::geom_line(ggplot2::aes(x = cl,
                                       y = ALL_AVG_5_YEARS,
                                       color = number_previous_five),
-                         linetype="dashed") +
+                         linetype = "dashed") +
       ggplot2::geom_line(ggplot2::aes(x = cl,
                                       y = ALL_CURRENT_YEAR,
                                       color = number_report_year)) +
       ggplot2::labs(x = "Size class (cm)",
                     y = "Percentage") +
-      ggplot2::ylim(0,max(table_size_skj_n$ALL_CURRENT_YEAR,
+      ggplot2::ylim(0, max(table_size_skj_n$ALL_CURRENT_YEAR,
                           table_size_skj_n$ALL_AVG_5_YEARS) * 1.1) +
       ggplot2::xlim(20, 80) +
       ggplot2::theme_bw() +
       ggplot2::theme(legend.position = c(0.85, 0.85), legend.title = ggplot2::element_blank()) +
       ggplot2::ggtitle("SKJ - ALL")
-
     ### GG ARRANGE ----
-
     ggpubr::ggarrange(yft_fob, bet_fob, skj_fob,
                       yft_free, bet_free, skj_free,
                       yft_all, bet_all, skj_all,
                       ncol = 3, nrow = 3)
-
   }
 }

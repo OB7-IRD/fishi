@@ -3,8 +3,8 @@
 #' @description Changes in nominal effort over time. Annual total number of fishing and searching days for the French purse seine fishing fleet in the Atlantic Ocean.
 #' @param data_connection {\link[base]{list}} expected. Output of the function {\link[furdeb]{postgresql_dbconnection}}, which must be done before using the fishing_effort function.
 #' @param time_period {\link[base]{integer}} expected. Period identification in year.
-#' @param country {\link[base]{integer}} expected. Country codes identification.
-#' @param vessel_type {\link[base]{integer}} expected. Vessel type codes identification.
+#' @param country {\link[base]{integer}} expected. Country codes identification. 1 by default.
+#' @param vessel_type {\link[base]{integer}} expected. Vessel type codes identification. 1 by default.
 #' @param ocean {\link[base]{integer}} expected. Ocean codes identification.
 #' @param graph_type {\link[base]{character}} expected. plot or plotly. Plot by default.
 #' @return The function return ggplot R plot.
@@ -12,14 +12,15 @@
 #' @importFrom DBI dbGetQuery sqlInterpolate SQL
 #' @importFrom dplyr mutate tibble group_by summarise
 #' @importFrom lubridate year
-#' @importFrom ggplot2 ggplot aes geom_line scale_color_manual geom_point scale_x_continuous labs ylim theme_bw geom_hline
-#' @importFrom plotly ggplotly
+#' @importFrom ggplot2 ggplot aes geom_line scale_color_manual geom_point labs ylim theme_bw
+#' @importFrom plotly ggplotly layout
 #' @importFrom graphics par plot axis lines abline legend
+#' @importFrom codama r_type_checking
 fishing_effort <- function(data_connection,
                            time_period,
+                           ocean,
                            country = as.integer(x = 1),
                            vessel_type = as.integer(x = 1),
-                           ocean = as.integer(x = 1),
                            graph_type = "plot"
 ) {
   # 0 - Global variables assignement ----
@@ -38,6 +39,8 @@ fishing_effort <- function(data_connection,
   v_dur_cal <- NULL
   fishing_days <- NULL
   searching_days <- NULL
+  fishing_days_1000 <- NULL
+  searching_days_1000 <- NULL
   # 1 - Arguments verification ----
   if (codama::r_type_checking(r_object = data_connection,
                               type = "list",
@@ -135,36 +138,40 @@ fishing_effort <- function(data_connection,
   fishing_effort_t3 <- fishing_effort_t2 %>%
     dplyr::group_by(year) %>%
     dplyr::summarise("days_at_sea" = round(sum(v_tmer / 24, na.rm = TRUE)),
-                     "fishing_days" = ifelse(test = ocean_id == 1,
+                     "fishing_days_1000" = ifelse(test = ocean_id == 1,
                                              yes = round(sum(v_tpec / 12, na.rm = TRUE)),
                                              no = round(sum(v_tpec / 13, na.rm = TRUE))),
                      "set_duration_in_days" = ifelse(test = ocean_id == 1,
                                                      yes = round(sum(v_dur_cal / 12, na.rm = TRUE)),
                                                      no = round(sum(v_dur_cal / 13, na.rm = TRUE))),
-                     "searching_days" = ifelse(test = ocean_id == 1,
+                     "searching_days_1000" = ifelse(test = ocean_id == 1,
                                                yes = round(sum((v_tpec - v_dur_cal) / 12, na.rm = TRUE)),
                                                no = round(sum((v_tpec - v_dur_cal) / 13, na.rm = TRUE))),
                      .groups = "drop")
 
   #remove duplicates
-  table_effort <- unique(fishing_effort_t3[, c("year",
+  fishing_effort_t4 <- unique(fishing_effort_t3[, c("year",
                                                "days_at_sea",
-                                               "fishing_days",
+                                               "fishing_days_1000",
                                                "set_duration_in_days",
-                                               "searching_days")])
+                                               "searching_days_1000")])
+
+  table_effort <- fishing_effort_t4 %>%
+    dplyr::mutate("fishing_days" = fishing_days_1000 / 1000,
+                  "searching_days" = searching_days_1000 / 1000)
   # 4 - Legend design ----
   # 5 - Graphic design ----
   if (graph_type == "plot") {
     par(mar = c(4, 4.7, 4.1, 1.5))
     plot(table_effort$year,
-         table_effort$fishing_days / 1000,
+         table_effort$fishing_days,
          type = "b",
          xlab = "",
          ylab = "Activity duration (x1000 days)",
          cex.axis = 1.4,
          cex.lab = 1.4,
          main = "",
-         ylim = c(0, max(table_effort$fishing_days * 1.1, na.rm = TRUE) / 1000),
+         ylim = c(0, max(table_effort$fishing_days * 1.1, na.rm = TRUE)),
          las = 1,
          pch = 18,
          xaxt = "n")
@@ -178,7 +185,7 @@ fishing_effort <- function(data_connection,
                       by = 2),
          cex.axis = 1.3)
     lines(table_effort$year,
-          table_effort$searching_days / 1000,
+          table_effort$searching_days,
           type = "b",
           lty = 2,
           pch = 4)
@@ -197,30 +204,27 @@ fishing_effort <- function(data_connection,
   } else if (graph_type == "plotly") {
     ggplot_table_effort <- ggplot2::ggplot(data = table_effort) +
       ggplot2::geom_line(ggplot2::aes(x = year,
-                                      y = fishing_days/1000,
+                                      y = fishing_days,
                                       color = "Fishing")) +
       ggplot2::geom_line(ggplot2::aes(x = year,
-                                      y = searching_days/1000,
+                                      y = searching_days,
                                       color = "Searching"),
-                         linetype="dashed") +
+                         linetype = "dashed") +
       ggplot2::scale_color_manual(values = c("black", "grey")) +
       ggplot2::geom_point(ggplot2::aes(x = year,
-                                       y = fishing_days/1000)) +
+                                       y = fishing_days)) +
       ggplot2::geom_point(ggplot2::aes(x = year,
-                                       y = searching_days/1000),
+                                       y = searching_days),
                           shape = 4) +
-      ggplot2::scale_x_continuous(breaks = c(1991, 1995, 2000, 2005, 2010, 2015, 2020, 2025)) +
 
       ggplot2::labs(x = "",
                     y = "Activity duration (x1000 days)") +
-      ggplot2::ylim(0,5) +
+      ggplot2::ylim(0, 5) +
       ggplot2::theme_bw() +
-      #ggplot2::theme(panel.background = element_rect(fill = "white", colour = "black", linewidth = 1)) +
-      ggplot2::geom_hline(yintercept = c(1:5),
-                          linetype = "dashed",
-                          color = "lightgrey",
-                          size = 0.3) +
       ggplot2::labs(colour = "")
-    plotly::ggplotly(ggplot_table_effort)
+    plotly::ggplotly(ggplot_table_effort) %>%
+      plotly::layout(legend = list(orientation = "v",
+                                   x = 0.85,
+                                   y = 0.95))
   }
 }

@@ -7,8 +7,8 @@
 bio_size_tuna(
   data_connection,
   report_year,
+  ocean,
   country = as.integer(x = 1),
-  ocean = as.integer(x = 1),
   graph_type = "plot"
 )
 }
@@ -17,9 +17,9 @@ bio_size_tuna(
 
 \item{report_year}{{\link[base]{integer}} expected. Year of the statistical report.}
 
-\item{country}{{\link[base]{integer}} expected. Country codes identification.}
-
 \item{ocean}{{\link[base]{integer}} expected. Ocean codes identification.}
+
+\item{country}{{\link[base]{integer}} expected. Country codes identification. 1 by default.}
 
 \item{graph_type}{{\link[base]{character}} expected. plot or plotly. Plot by default.}
 }

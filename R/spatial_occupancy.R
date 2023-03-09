@@ -1,11 +1,11 @@
 #' @name spatial_occupancy
 #' @title Spatial occupancy
 #' @description Changes in the spatial extent of the fishery over time. Annual number of 1-degree squares explored by each vessel of the French purse seine fishing fleet.
-#' @param data_connection {\link[base]{list}} expected. Output of the function {\link[furdeb]{postgresql_dbconnection}}, which must be done before using the spatial_occupancy function.
+#' @param data_connection {\link[base]{list}} expected. Output of the function {\link[furdeb]{postgresql_dbconnection}}, which must be done before using the spatial_occupancy() function.
 #' @param time_period {\link[base]{integer}} expected. Period identification in year.
-#' @param country {\link[base]{integer}} expected. Country codes identification.
+#' @param country {\link[base]{integer}} expected. Country codes identification. 1 by default.
 #' @param ocean {\link[base]{integer}} expected. Ocean codes identification.
-#' @param vessel_type {\link[base]{integer}} expected. Vessel type codes identification.
+#' @param vessel_type {\link[base]{integer}} expected. Vessel type codes identification. 1 by default.
 #' @param graph_type {\link[base]{character}} expected. plot or plotly. Plot by default.
 #' @return The function return ggplot R plot.
 #' @export
@@ -13,12 +13,13 @@
 #' @importFrom dplyr mutate tibble group_by summarise n_distinct filter
 #' @importFrom lubridate year
 #' @importFrom graphics par plot axis lines abline legend
-#' @importFrom ggplot2 ggplot aes geom_line scale_color_manual geom_point scale_x_continuous labs ylim theme_bw geom_hline
+#' @importFrom ggplot2 ggplot aes geom_line scale_color_manual geom_point labs ylim theme_bw
 #' @importFrom plotly ggplotly
+#' @importFrom codama r_type_checking
 spatial_occupancy <- function(data_connection,
                               time_period,
+                              ocean,
                               country = as.integer(x = 1),
-                              ocean = as.integer(x = 1),
                               vessel_type = as.integer(x = 1),
                               graph_type = "plot"
 ) {
@@ -207,14 +208,14 @@ spatial_occupancy <- function(data_connection,
                                       y = TOTAL)) +
       ggplot2::geom_line(ggplot2::aes(x = year,
                                       y = `Catch > 0`),
-                         linetype="dashed") +
+                         linetype = "dashed") +
       ggplot2::geom_line(ggplot2::aes(x = year,
                                       y = `Effort > 1 d`),
-                         linetype="dashed") +
+                         linetype = "dashed") +
       ggplot2::geom_line(ggplot2::aes(x = year,
                                       y = `#sets`),
-                         linetype="dashed") +
-      ggplot2::scale_color_manual(values = c("black", "black","black","black")) +
+                         linetype = "dashed") +
+      ggplot2::scale_color_manual(values = c("black", "black", "black", "black")) +
       ggplot2::geom_point(ggplot2::aes(x = year,
                                        y = TOTAL,
                                        color = "Total")) +
@@ -230,17 +231,12 @@ spatial_occupancy <- function(data_connection,
                                        y = `#sets`,
                                        color = "With #sets > 1"),
                           shape = 4, size = 2) +
-      ggplot2::scale_x_continuous(breaks = c(1991, 1995, 2000, 2005, 2010, 2015, 2020, 2025)) +
 
       ggplot2::labs(x = "",
-                    y = "Spatial occupancy") +
-      ggplot2::ylim(0,500) +
-      ggplot2::theme_bw() +
-      ggplot2::geom_hline(yintercept = c(100,200,300,400,500),
-                          linetype = "dashed",
-                          color = "lightgrey",
-                          size = 0.3) +
-      ggplot2::labs(colour = "")
+                    y = "Spatial occupancy",
+                    colour = "") +
+      ggplot2::ylim(0, 500) +
+      ggplot2::theme_bw()
     plotly::ggplotly(ggplot_table_occ)
   }
 }

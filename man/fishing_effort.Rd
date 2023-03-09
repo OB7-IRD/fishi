@@ -7,9 +7,9 @@
 fishing_effort(
   data_connection,
   time_period,
+  ocean,
   country = as.integer(x = 1),
   vessel_type = as.integer(x = 1),
-  ocean = as.integer(x = 1),
   graph_type = "plot"
 )
 }
@@ -18,11 +18,11 @@ fishing_effort(
 
 \item{time_period}{{\link[base]{integer}} expected. Period identification in year.}
 
-\item{country}{{\link[base]{integer}} expected. Country codes identification.}
-
-\item{vessel_type}{{\link[base]{integer}} expected. Vessel type codes identification.}
-
 \item{ocean}{{\link[base]{integer}} expected. Ocean codes identification.}
+
+\item{country}{{\link[base]{integer}} expected. Country codes identification. 1 by default.}
+
+\item{vessel_type}{{\link[base]{integer}} expected. Vessel type codes identification. 1 by default.}
 
 \item{graph_type}{{\link[base]{character}} expected. plot or plotly. Plot by default.}
 }

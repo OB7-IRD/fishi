@@ -12,13 +12,14 @@
 #' @export
 #' @importFrom DBI dbGetQuery sqlInterpolate SQL
 #' @importFrom dplyr tibble group_by summarise case_when filter
-#' @importFrom lubridate year
 #' @importFrom plotrix floating.pie pie.labels
 #' @importFrom maps map
-#' @importFrom ggplot2 ggplot aes geom_line scale_color_manual geom_point scale_x_continuous labs ylim theme_bw geom_hline
+#' @importFrom ggplot2 ggplot geom_sf aes scale_fill_manual labs ylim xlim
 #' @importFrom plotly ggplotly
 #' @importFrom graphics par plot axis lines abline legend
 #' @importFrom scatterpie geom_scatterpie
+#' @importFrom rnaturalearth ne_countries
+#' @importFrom ggspatial coord_sf
 map_catch_previous <- function(data_connection,
                                time_period,
                                country = as.integer(x = 1),
@@ -156,13 +157,8 @@ map_catch_previous <- function(data_connection,
          " - Indicator not developed yet for this \"fishing_type\" argument.\n",
          sep = "")
   }
-
   datafile[datafile == 0] <-1e-8
   # 4 - Legend design ----
-  #country
-  country_legend <- code_manipulation(data         = map_catch_previous_sql_final$country_id,
-                                      referential  = "country",
-                                      manipulation = "legend")
   #vessel
   vessel_type_legend <- code_manipulation(data         = map_catch_previous_sql_final$vessel_type_id,
                                           referential  = "vessel_simple_type",
@@ -186,7 +182,6 @@ map_catch_previous <- function(data_connection,
     lon <- (lonm * (lon + lonsiz[siz] / 2))
     invisible(list(x = lon, y = lat, sizelat = latsiz[siz], sizelon = lonsiz[siz]))
   }
-
   # 5 - Graphic design ----
   if (graph_type == "plot") {
     lat <- quad2pos(as.numeric(datafile$cwp11_act + 5 * 1e6))$y
@@ -226,7 +221,6 @@ map_catch_previous <- function(data_connection,
     graphics::abline(h = seq(-30, 30, 10),
                      col = "darkgrey",
                      lty = 3)
-
     ### Add the pie plots
     for (i in c(1:nrow(datafile))) {
       plotrix::floating.pie(long[i],
@@ -265,25 +259,23 @@ map_catch_previous <- function(data_connection,
   } else if (graph_type == "plotly") {
     world_boundaries <- rnaturalearth::ne_countries(returnclass = "sf",
                                                     scale       = "medium")
-
     datafile$lat <- quad2pos(as.numeric(datafile$cwp11_act + 5 * 1e6))$y
     datafile$long <- quad2pos(as.numeric(datafile$cwp11_act + 5 * 1e6))$x
     datafile$radius <- sqrt(datafile$total) / sqrt(2000)
-    colours_group = c("khaki1", "firebrick2","cornflowerblue")
-
+    colours_group <- c("khaki1", "firebrick2", "cornflowerblue")
     ggplot2::ggplot() +
       ggplot2::geom_sf(data = world_boundaries) +
       ggspatial::coord_sf(xlim = c(-40, 15),
                           ylim = c(-25, 25)) +
-      scatterpie::geom_scatterpie(ggplot2::aes(x=long,
-                                               y=lat,
-                                               r=radius),
-                                  data=datafile,
-                                  cols=c("yft","skj","bet")) +
+      scatterpie::geom_scatterpie(ggplot2::aes(x = long,
+                                               y = lat,
+                                               r = radius),
+                                  data = datafile,
+                                  cols = c("yft", "skj", "bet")) +
       ggplot2::scale_fill_manual("species", values = colours_group) +
-      ggplot2::labs(title = paste0("Spatial distribution of tuna catches of the ",
+      ggplot2::labs(title = paste0("Map of of the ",
                                    vessel_type_legend,
-                                   " fishing fleet made on ",
+                                   " catches made on ",
                                    fishing_type,
                                    " schools in ",
                                    ifelse(test = length(x = time_period) != 1,
@@ -292,5 +284,4 @@ map_catch_previous <- function(data_connection,
                                                          max(time_period)),
                                           no  = paste0(time_period))))
   }
-
 }

@@ -1,10 +1,10 @@
 #' @name set_per_searching_day
 #' @title Set per searching day
-#' @description Annual number of sets per searching day and catch per positive set on FOB-associated and free-swimming schools for the French purse seine fishing fleet in the Atlantic Ocean
+#' @description Annual number of sets per searching day on FOB-associated and free-swimming schools for the French purse seine fishing fleet in the Atlantic Ocean
 #' @param data_connection {\link[base]{list}} expected. Output of the function {\link[furdeb]{postgresql_dbconnection}}, which must be done before using the set_per_searching_day() function.
 #' @param time_period {\link[base]{integer}} expected. Period identification in year.
-#' @param country {\link[base]{integer}} expected. Country codes identification.
-#' @param vessel_type {\link[base]{integer}} expected. Vessel type codes identification.
+#' @param country {\link[base]{integer}} expected. Country codes identification. 1 by default.
+#' @param vessel_type {\link[base]{integer}} expected. Vessel type codes identification. 1 by default.
 #' @param ocean {\link[base]{integer}} expected. Ocean codes identification.
 #' @param fishing_type {\link[base]{character}} expected. FOB and FSC.
 #' @param graph_type {\link[base]{character}} expected. plot or plotly. Plot by default.
@@ -14,15 +14,16 @@
 #' @importFrom dplyr mutate tibble group_by summarise case_when
 #' @importFrom lubridate year
 #' @importFrom plotrix stackpoly
-#' @importFrom ggplot2 ggplot aes geom_line scale_color_manual geom_point scale_x_continuous labs ylim theme_bw geom_hline
+#' @importFrom ggplot2 ggplot aes geom_line geom_point labs ylim theme_bw ggtitle
 #' @importFrom plotly ggplotly
 #' @importFrom graphics par plot axis lines abline legend
+#' @importFrom codama r_type_checking
 set_per_searching_day <- function(data_connection,
                                   time_period,
+                                  ocean,
+                                  fishing_type,
                                   country = as.integer(x = 1),
                                   vessel_type = as.integer(x = 1),
-                                  ocean = as.integer(x = 1),
-                                  fishing_type,
                                   graph_type = "plot") {
   # 0 - Global variables assignement ----
   activity_date <- NULL
@@ -124,11 +125,11 @@ set_per_searching_day <- function(data_connection,
   # Create columns sets_per_day for ALL, FOB and FSC
   table_cpue_set_per_day <- table_cpue_set_per_day %>%
     dplyr::group_by(year) %>%
-    dplyr::summarise(sets_per_day_all = dplyr::case_when(c_tban == 1 | c_tban == 2 | c_tban == 3 ~ nb_sets / (t_recherche /12),
+    dplyr::summarise(sets_per_day_all = dplyr::case_when(c_tban == 1 | c_tban == 2 | c_tban == 3 ~ nb_sets / (t_recherche / 12),
                                                          T ~ 0),
-                     sets_per_day_fad = dplyr::case_when(c_tban == 1 ~ nb_sets / (t_recherche /12),
+                     sets_per_day_fad = dplyr::case_when(c_tban == 1 ~ nb_sets / (t_recherche / 12),
                                                          T ~ 0),
-                     sets_per_day_fsc = dplyr::case_when(c_tban %in% c(2:3) ~ nb_sets / (t_recherche /12),
+                     sets_per_day_fsc = dplyr::case_when(c_tban %in% c(2:3) ~ nb_sets / (t_recherche / 12),
                                                          T ~ 0),
                      .groups = "drop")
   # Sum columns sets_per_day for ALL, FOB and FSC
@@ -228,7 +229,6 @@ set_per_searching_day <- function(data_connection,
         ggplot2::geom_line(ggplot2::aes(x = year,
                                         y = sets_per_day_fsc),
                            color = "black") +
-        ggplot2::scale_x_continuous(breaks = c(1991, 1995, 2000, 2005, 2010, 2015, 2020, 2025)) +
         ggplot2::geom_point(ggplot2::aes(x = year,
                                          y = sets_per_day_fsc),
                             shape = 16, size = 2) +

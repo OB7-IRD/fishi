@@ -7,10 +7,10 @@
 catch_per_searching_day(
   data_connection,
   time_period,
+  ocean,
+  fishing_type,
   country = as.integer(x = 1),
   vessel_type = as.integer(x = 1),
-  ocean = as.integer(x = 1),
-  fishing_type,
   graph_type = "plot"
 )
 }
@@ -19,13 +19,13 @@ catch_per_searching_day(
 
 \item{time_period}{{\link[base]{integer}} expected. Period identification in year.}
 
-\item{country}{{\link[base]{integer}} expected. Country codes identification.}
-
-\item{vessel_type}{{\link[base]{integer}} expected. Vessel type codes identification.}
-
 \item{ocean}{{\link[base]{integer}} expected. Ocean codes identification.}
 
 \item{fishing_type}{{\link[base]{character}} expected. FOB and FSC.}
+
+\item{country}{{\link[base]{integer}} expected. Country codes identification. 1 by default.}
+
+\item{vessel_type}{{\link[base]{integer}} expected. Vessel type codes identification. 1 by default.}
 
 \item{graph_type}{{\link[base]{character}} expected. plot or plotly. Plot by default.}
 }
@@ -33,5 +33,5 @@ catch_per_searching_day(
 The function return ggplot R plot.
 }
 \description{
-Annual number of sets per searching day and catch per positive set on FOB-associated and free-swimming schools for the French purse seine fishing fleet in the Atlantic Ocean
+Annual number of catch per positive set on FOB-associated and free-swimming schools for the French purse seine fishing fleet in the Atlantic Ocean
 }

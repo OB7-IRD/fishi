@@ -1,26 +1,27 @@
 #' @name fishing_activity
 #' @title Fishing activity
 #' @description Fishing operations. Annual number of fishing sets in the French purse seine fishery on FOB- associated and free-swimming tuna schools.
-#' @param data_connection {\link[base]{list}} expected. Output of the function {\link[furdeb]{postgresql_dbconnection}}, which must be done before using the fishing_activity function.
+#' @param data_connection {\link[base]{list}} expected. Output of the function {\link[furdeb]{postgresql_dbconnection}}, which must be done before using the fishing_activity() function.
 #' @param time_period {\link[base]{integer}} expected. Period identification in year.
-#' @param country {\link[base]{integer}} expected. Country codes identification.
-#' @param vessel_type {\link[base]{integer}} expected. Vessel type codes identification.
+#' @param country {\link[base]{integer}} expected. Country codes identification. 1 by default.
+#' @param vessel_type {\link[base]{integer}} expected. Vessel type codes identification. 1 by default.
 #' @param ocean {\link[base]{integer}} expected. Ocean codes identification.
 #' @param graph_type {\link[base]{character}} expected. plot or plotly. Plot by default.
 #' @return The function return ggplot R plot.
 #' @export
 #' @importFrom DBI dbGetQuery sqlInterpolate SQL
-#' @importFrom dplyr mutate tibble group_by summarise n_distinct
+#' @importFrom dplyr mutate tibble group_by summarise
 #' @importFrom lubridate year
 #' @importFrom graphics par plot axis lines abline legend
-#' @importFrom ggplot2 ggplot aes geom_line scale_color_manual geom_point scale_x_continuous labs ylim theme_bw geom_hline
-#' @importFrom plotly ggplotly
+#' @importFrom ggplot2 ggplot aes geom_bar geom_line scale_fill_manual geom_point scale_y_continuous labs ylim theme_bw ggplot
+#' @importFrom plotly ggplotly layout
 #' @importFrom tidyr pivot_longer
+#' @importFrom codama r_type_checking
 fishing_activity <- function(data_connection,
                              time_period,
+                             ocean,
                              country = as.integer(x = 1),
                              vessel_type = as.integer(x = 1),
-                             ocean = as.integer(x = 1),
                              graph_type = "plot") {
   # 0 - Global variables assignement ----
   activity_date <- NULL
@@ -201,7 +202,7 @@ fishing_activity <- function(data_connection,
                                                y = nb_sets,
                                                fill = type),
                         stat = "identity",
-                        colour="black") +
+                        colour ="black") +
       ggplot2::geom_line(data = t_set,
                          ggplot2::aes(x = year,
                                       y = `%_log` / 0.025)) +
@@ -210,10 +211,11 @@ fishing_activity <- function(data_connection,
                           ggplot2::aes(x = year,
                                        y = `%_log` / 0.025)) +
       ggplot2::scale_y_continuous(name = "Number of sets", sec.axis = ggplot2::sec_axis(trans = ~. * 0.025, name = "% FOB-associated sets")) +
-      ggplot2::scale_x_continuous(name = "", breaks = c(1991, 1995, 2000, 2005, 2010, 2015, 2020, 2025)) +
       ggplot2::theme_bw() +
       ggplot2::labs(fill = "")
-    plotly::ggplotly(ggplot_set)
+    plotly::ggplotly(ggplot_set) %>%
+      plotly::layout(legend = list(orientation = "v",
+                                   x = 0.7,
+                                   y = 0.95))
   }
-
 }
