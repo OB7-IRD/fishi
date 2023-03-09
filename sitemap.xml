@@ -13,7 +13,19 @@
     <loc>https://ob7-ird.github.io/fishi/index.html</loc>
   </url>
   <url>
+    <loc>https://ob7-ird.github.io/fishi/reference/bio_size_tuna.html</loc>
+  </url>
+  <url>
+    <loc>https://ob7-ird.github.io/fishi/reference/bio_weight_tuna.html</loc>
+  </url>
+  <url>
     <loc>https://ob7-ird.github.io/fishi/reference/catch_map.html</loc>
+  </url>
+  <url>
+    <loc>https://ob7-ird.github.io/fishi/reference/catch_per_searching_day.html</loc>
+  </url>
+  <url>
+    <loc>https://ob7-ird.github.io/fishi/reference/catch_per_unit_effort.html</loc>
   </url>
   <url>
     <loc>https://ob7-ird.github.io/fishi/reference/catch_serie.html</loc>
@@ -22,13 +34,34 @@
     <loc>https://ob7-ird.github.io/fishi/reference/code_manipulation.html</loc>
   </url>
   <url>
+    <loc>https://ob7-ird.github.io/fishi/reference/fishery_production.html</loc>
+  </url>
+  <url>
     <loc>https://ob7-ird.github.io/fishi/reference/fishi-package.html</loc>
+  </url>
+  <url>
+    <loc>https://ob7-ird.github.io/fishi/reference/fishing_activity.html</loc>
+  </url>
+  <url>
+    <loc>https://ob7-ird.github.io/fishi/reference/fishing_capacity.html</loc>
+  </url>
+  <url>
+    <loc>https://ob7-ird.github.io/fishi/reference/fishing_effort.html</loc>
   </url>
   <url>
     <loc>https://ob7-ird.github.io/fishi/reference/index.html</loc>
   </url>
   <url>
+    <loc>https://ob7-ird.github.io/fishi/reference/map_catch_previous.html</loc>
+  </url>
+  <url>
     <loc>https://ob7-ird.github.io/fishi/reference/pipe.html</loc>
+  </url>
+  <url>
+    <loc>https://ob7-ird.github.io/fishi/reference/set_per_searching_day.html</loc>
+  </url>
+  <url>
+    <loc>https://ob7-ird.github.io/fishi/reference/spatial_occupancy.html</loc>
   </url>
   <url>
     <loc>https://ob7-ird.github.io/fishi/reference/vessel_number.html</loc>
