@@ -24,8 +24,7 @@ Working in progress for this section. Be patient.
 Working in progress for this section. Be patient.
 
 ``` r
-devtools::install_github("https://github.com/OB7-IRD/fishi",
-                         INSTALL_opts=c("--no-multiarch"))
+devtools::install_github("https://github.com/OB7-IRD/fishi", INSTALL_opts=c("--no-multiarch"))
 ```
 
 ### Development version
