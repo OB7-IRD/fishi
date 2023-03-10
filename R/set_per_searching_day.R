@@ -139,7 +139,7 @@ set_per_searching_day <- function(data_connection,
                      sets_per_day_fad = sum(sets_per_day_fad, na.rm = TRUE),
                      sets_per_day_fsc = sum(sets_per_day_fsc, na.rm = TRUE),
                      .groups = "drop")
-  # 5 - Graphic design ----
+  # 4 - Graphic design ----
   graphics::par(mar = c(4, 4.7, 4.1, 1.5))
   if (fishing_type == "FOB") {
     if (graph_type == "plot") {
@@ -174,6 +174,7 @@ set_per_searching_day <- function(data_connection,
                        bty = "n",
                        cex = 2)
     } else if (graph_type == "plotly") {
+      table_cpue_set_per_day$sets_per_day_fad <- round(table_cpue_set_per_day$sets_per_day_fad, 3)
       ggplot_table_cpue <- ggplot2::ggplot(data = table_cpue_set_per_day) +
         ggplot2::geom_line(ggplot2::aes(x = year,
                                         y = sets_per_day_fad),
@@ -225,6 +226,7 @@ set_per_searching_day <- function(data_connection,
                        bty = "n",
                        cex = 2)
     } else if (graph_type == "plotly") {
+      table_cpue_set_per_day$sets_per_day_fsc <- round(table_cpue_set_per_day$sets_per_day_fsc, 3)
       ggplot_table_cpue <- ggplot2::ggplot(data = table_cpue_set_per_day) +
         ggplot2::geom_line(ggplot2::aes(x = year,
                                         y = sets_per_day_fsc),

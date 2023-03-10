@@ -7,6 +7,7 @@
 #' @param vessel_type {\link[base]{integer}} expected. Vessel type codes identification. 1 by default.
 #' @param ocean {\link[base]{integer}} expected. Ocean codes identification.
 #' @param graph_type {\link[base]{character}} expected. plot or plotly. Plot by default.
+#' @param figure {\link[base]{character}} expected. set (for number of sets graph) or log (for %FOB-associated sets graph).
 #' @return The function return ggplot R plot.
 #' @export
 #' @importFrom DBI dbGetQuery sqlInterpolate SQL
@@ -22,7 +23,8 @@ fishing_activity <- function(data_connection,
                              ocean,
                              country = as.integer(x = 1),
                              vessel_type = as.integer(x = 1),
-                             graph_type = "plot") {
+                             graph_type = "plot",
+                             figure) {
   # 0 - Global variables assignement ----
   activity_date <- NULL
   v_nb_calees <- NULL
@@ -128,6 +130,16 @@ fishing_activity <- function(data_connection,
   # Add column : % LOG
   table_sets <- table_sets %>%
     dplyr::mutate("%_log" = l_total / a_total * 100)
+  # For ggplot graph
+  set <- as.matrix(table_sets[, c(1, 5, 8, 11)])
+  t_set <- as.data.frame(set)
+  t_set <- t_set %>%
+    dplyr::rename(`Free swimming schools` = l_total,
+                  `FOB-associated schools` = f_total)
+  t_set_pivot <- tidyr::pivot_longer(t_set,
+                                     cols = c(2:3),
+                                     names_to = "type",
+                                     values_to = "nb_sets")
   # 4 - Graphic design ----
   if (graph_type == "plot") {
     graphics::par(mar = c(5, 4, 4, 4))
@@ -187,35 +199,40 @@ fishing_activity <- function(data_connection,
                     line = 2,
                     cex = 1.3)
   } else if (graph_type == "plotly") {
-    set <- as.matrix(table_sets[, c(1, 5, 8, 11)])
-    t_set <- as.data.frame(set)
-    t_set <- t_set %>%
-      dplyr::rename(`Free swimming schools` = l_total,
-             `FOB-associated schools` = f_total)
-    t_set_pivot <- tidyr::pivot_longer(t_set,
-                                       cols = c(2:3),
-                                       names_to = "type",
-                                       values_to = "nb_sets")
-    ggplot_set <- ggplot2::ggplot() +
-      ggplot2::geom_bar(data = t_set_pivot,
-                        mapping = ggplot2::aes(x = year,
-                                               y = nb_sets,
-                                               fill = type),
-                        stat = "identity",
-                        colour ="black") +
-      ggplot2::geom_line(data = t_set,
-                         ggplot2::aes(x = year,
-                                      y = `%_log` / 0.025)) +
-      ggplot2::scale_fill_manual(values = c("grey95", "grey26")) +
-      ggplot2::geom_point(data = table_sets,
-                          ggplot2::aes(x = year,
-                                       y = `%_log` / 0.025)) +
-      ggplot2::scale_y_continuous(name = "Number of sets", sec.axis = ggplot2::sec_axis(trans = ~. * 0.025, name = "% FOB-associated sets")) +
-      ggplot2::theme_bw() +
-      ggplot2::labs(fill = "")
-    plotly::ggplotly(ggplot_set) %>%
-      plotly::layout(legend = list(orientation = "v",
-                                   x = 0.7,
-                                   y = 0.95))
+    if (figure == "set") {
+      ggplot_set <- ggplot2::ggplot() +
+        ggplot2::geom_bar(data = t_set_pivot,
+                          mapping = ggplot2::aes(x = year,
+                                                 y = nb_sets,
+                                                 fill = type),
+                          stat = "identity",
+                          colour ="black") +
+        ggplot2::scale_fill_manual(values = c("grey95", "grey26")) +
+        ggplot2::scale_y_continuous(name = "Number of sets") +
+        ggplot2::theme_bw() +
+        ggplot2::labs(fill = "")
+      plotly::ggplotly(ggplot_set) %>%
+        plotly::layout(legend = list(orientation = "v",
+                                     x = 0.6,
+                                     y = 0.98))
+    } else if (figure == "log") {
+      t_set$`%_log` <- round(t_set$`%_log`, 3)
+      ggplot_set <-ggplot2::ggplot() +
+        ggplot2::geom_line(data = t_set,
+                           ggplot2::aes(x = year,
+                                        y = `%_log`)) +
+        ggplot2::geom_point(data = t_set,
+                            ggplot2::aes(x = year,
+                                         y = `%_log`)) +
+        ggplot2::scale_y_continuous(name = "% FOB-associated sets") +
+        ggplot2::theme_bw() +
+        ggplot2::labs(fill = "")
+
+
+      plotly::ggplotly(ggplot_set) %>%
+        plotly::layout(legend = list(orientation = "v",
+                                     x = 0.7,
+                                     y = 0.95))
+    }
   }
 }

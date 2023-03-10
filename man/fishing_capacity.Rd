@@ -10,7 +10,8 @@ fishing_capacity(
   ocean,
   country = as.integer(x = 1),
   vessel_type = as.integer(x = 1),
-  graph_type = "plot"
+  graph_type = "plot",
+  figure
 )
 }
 \arguments{
@@ -25,6 +26,8 @@ fishing_capacity(
 \item{vessel_type}{{\link[base]{integer}} expected. Vessel type codes identification. 1 by default.}
 
 \item{graph_type}{{\link[base]{character}} expected. plot or plotly. Plot by default.}
+
+\item{figure}{{\link[base]{character}} expected. vessel (for number of vessels graph) or capacity (for carrying capacity graph).}
 }
 \value{
 The function return ggplot R plot.

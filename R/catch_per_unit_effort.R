@@ -261,6 +261,13 @@ catch_per_unit_effort <- function(data_connection,
                        bty = "n",
                        cex = 2)
     } else if (graph_type == "plotly") {
+      # round values
+      table_cpue_fad$yft <- round(table_cpue_fad$yft, 3)
+      table_cpue_fad$skj <- round(table_cpue_fad$skj, 3)
+      table_cpue_fad$bet <- round(table_cpue_fad$bet, 3)
+      table_cpue_fad$ALB <- round(table_cpue_fad$ALB, 3)
+      table_cpue_fad$total <- round(table_cpue_fad$total, 3)
+      #plot
       ggplot_table_cpue_fad <- ggplot2::ggplot(data = table_cpue_fad) +
         ggplot2::geom_line(ggplot2::aes(x = year,
                                         y = yft)) +
@@ -368,6 +375,13 @@ catch_per_unit_effort <- function(data_connection,
                        bty = "n",
                        cex = 2)
     } else if (graph_type == "plotly") {
+      # round values
+      table_cpue_fsc$yft <- round(table_cpue_fsc$yft, 3)
+      table_cpue_fsc$skj <- round(table_cpue_fsc$skj, 3)
+      table_cpue_fsc$bet <- round(table_cpue_fsc$bet, 3)
+      table_cpue_fsc$ALB <- round(table_cpue_fsc$ALB, 3)
+      table_cpue_fsc$total <- round(table_cpue_fsc$total, 3)
+      #plot
       ggplot_table_cpue_fsc <- ggplot2::ggplot(data = table_cpue_fsc) +
         ggplot2::geom_line(ggplot2::aes(x = year,
                                         y = yft)) +
