@@ -257,31 +257,32 @@ map_catch_previous <- function(data_connection,
                    paste(2000, " t", sep = ""),
                    cex = .9)
   } else if (graph_type == "plotly") {
-    world_boundaries <- rnaturalearth::ne_countries(returnclass = "sf",
-                                                    scale       = "medium")
     datafile$lat <- quad2pos(as.numeric(datafile$cwp11_act + 5 * 1e6))$y
     datafile$long <- quad2pos(as.numeric(datafile$cwp11_act + 5 * 1e6))$x
-    datafile$radius <- sqrt(datafile$total) / sqrt(2000)
-    colours_group <- c("khaki1", "firebrick2", "cornflowerblue")
-    ggplot2::ggplot() +
+    world_boundaries <- rnaturalearth::ne_countries(returnclass = "sf",
+                                                    scale       = "medium")
+    datafile$total <- round(datafile$total, 3)
+    datafile$yft <- round(datafile$yft, 3)
+    datafile$skj <- round(datafile$skj, 3)
+    datafile$bet <- round(datafile$bet, 3)
+    data_pivot <- tidyr::pivot_longer(datafile,
+                                      cols = c(2:4),
+                                      names_to = "specie",
+                                      values_to = "catch (t)")
+    data_pivot$`catch (t)` <- round(data_pivot$`catch (t)`, 3)
+    map <- ggplot2::ggplot() +
       ggplot2::geom_sf(data = world_boundaries) +
       ggspatial::coord_sf(xlim = c(-40, 15),
                           ylim = c(-25, 25)) +
-      scatterpie::geom_scatterpie(ggplot2::aes(x = long,
-                                               y = lat,
-                                               r = radius),
-                                  data = datafile,
-                                  cols = c("yft", "skj", "bet")) +
-      ggplot2::scale_fill_manual("species", values = colours_group) +
-      ggplot2::labs(title = paste0("Map of of the ",
-                                   vessel_type_legend,
-                                   " catches made on ",
-                                   fishing_type,
-                                   " schools in ",
-                                   ifelse(test = length(x = time_period) != 1,
-                                          yes  =  paste0(min(time_period),
-                                                         "-",
-                                                         max(time_period)),
-                                          no  = paste0(time_period))))
+      ggplot2::geom_point(data = datafile,
+                          ggplot2::aes(x     = long,
+                                       y     = lat,
+                                       color  = total,
+                                       size  = total,
+                                       text = paste("yft :", yft, "\n",
+                                                    "skj :", skj, "\n",
+                                                    "bet:", bet))) +
+      ggplot2::scale_color_viridis_c(option = "plasma")
+    plotly::ggplotly(map)
   }
 }
