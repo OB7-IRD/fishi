@@ -355,14 +355,14 @@ bio_size_tuna <- function(data_connection,
                            "_",
                            data_type,
                            sep = ""))[[paste(mode,
-                                             "_CURRENT_YEAR",
+                                             "_current_year",
                                              sep = "")]]
       column2 <- get(paste("table_size_",
                            species,
                            "_",
                            data_type,
                            sep = ""))[[paste(mode,
-                                             "_AVG_5_YEARS",
+                                             "_avg_5_years",
                                              sep = "")]]
       if (species == "skj") {
         x.max <-  80
@@ -402,7 +402,7 @@ bio_size_tuna <- function(data_connection,
     }
     ylabel <- "Percentage"
     indic_species <- c("yft", "bet", "skj")
-    indic_mode <- c("LOG", "FREE", "ALL")
+    indic_mode <- c("log", "free", "all")
     title1 <- c("YFT", "", "", "BET", "", "", "SKJ", "", "")
     compteur <- 0
     mtext_mode <- c("FOB", "FSC", "ALL", "", "", "", "", "", "")
