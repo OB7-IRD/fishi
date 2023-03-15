@@ -237,6 +237,9 @@ spatial_occupancy <- function(data_connection,
                     colour = "") +
       ggplot2::ylim(0, 500) +
       ggplot2::theme_bw()
-    plotly::ggplotly(ggplot_table_occ)
+    plotly::ggplotly(ggplot_table_occ) %>%
+      plotly::layout(legend = list(orientation = "v",
+                                   x = 0.7,
+                                   y = 0.07))
   }
 }

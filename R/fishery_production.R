@@ -241,18 +241,23 @@ fishery_production <- function(data_connection,
                        cex = 1.3)
     }
   } else if (graph_type == "plotly") {
-    data_pivot <- tidyr::pivot_longer(table_catch_all,
+    # pivot wider
+    table_catch_3 <- table_catch_all %>%
+      dplyr::select(1:4)
+    data_pivot <- tidyr::pivot_longer(table_catch_3,
                                       cols = c(2:4),
                                       names_to = "specie",
                                       values_to = "count")
-
-    ggplot_table_catch <- ggplot2::ggplot(data_pivot, ggplot2::aes(x= year, y= count, fill = specie)) +
+    # ggplot
+    ggplot_table_catch <- ggplot2::ggplot(data_pivot, ggplot2::aes(x= year,
+                                                                   y= count,
+                                                                   fill = specie)) +
       ggplot2::geom_area() +
       ggplot2::scale_fill_manual(values = c("cornflowerblue", "firebrick2", "khaki1")) +
       ggplot2::scale_y_continuous(name = "Catch (x1000 t)") +
       ggplot2::theme_bw() +
       ggplot2::labs(fill = "")
-
+    # fishing type
     if (fishing_type == "FSC") {
       ggplot_table_catch <- ggplot_table_catch + ggplot2::ggtitle("FSC")
     } else if (fishing_type == "FOB") {
@@ -260,6 +265,10 @@ fishery_production <- function(data_connection,
     } else if (fishing_type == "ALL") {
       ggplot_table_catch <- ggplot_table_catch + ggplot2::ggtitle("ALL")
     }
-    plotly::ggplotly(ggplot_table_catch)
+    # plotly
+    plotly::ggplotly(ggplot_table_catch) %>%
+      plotly::layout(legend = list(orientation = "v",
+                                   x = 0.9,
+                                   y = 0.95))
   }
 }

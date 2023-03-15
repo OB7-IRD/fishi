@@ -213,8 +213,8 @@ fishing_activity <- function(data_connection,
         ggplot2::labs(fill = "")
       plotly::ggplotly(ggplot_set) %>%
         plotly::layout(legend = list(orientation = "v",
-                                     x = 0.6,
-                                     y = 0.98))
+                                     x = 0.8,
+                                     y = 0.95))
     } else if (figure == "log") {
       t_set$`%_log` <- round(t_set$`%_log`, 3)
       ggplot_set <-ggplot2::ggplot() +
@@ -231,7 +231,7 @@ fishing_activity <- function(data_connection,
 
       plotly::ggplotly(ggplot_set) %>%
         plotly::layout(legend = list(orientation = "v",
-                                     x = 0.7,
+                                     x = 0.9,
                                      y = 0.95))
     }
   }

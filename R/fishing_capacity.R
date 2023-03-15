@@ -227,7 +227,7 @@ fishing_capacity <- function(data_connection,
         ggplot2::theme(legend.position = c(0.85, 0.9))
       plotly::ggplotly(ggplot_table_vessel) %>%
         plotly::layout(legend = list(orientation = "v",
-                                     x = 0.6,
+                                     x = 0.80,
                                      y = 0.98))
     } else if (figure == "capacity") {
       data_pivot$fishing_capacity <- round(data_pivot$fishing_capacity, 3)

@@ -300,7 +300,10 @@ catch_per_unit_effort <- function(data_connection,
         ggplot2::theme_bw() +
         ggplot2::labs(colour = "") +
         ggplot2::ggtitle("FOB")
-      plotly::ggplotly(ggplot_table_cpue_fad)
+      plotly::ggplotly(ggplot_table_cpue_fad) %>%
+        plotly::layout(legend = list(orientation = "v",
+                                     x = 0.85,
+                                     y = 0.97))
     }
   } else if (fishing_type == "FSC") {
     if (graph_type == "plot") {
@@ -416,7 +419,10 @@ catch_per_unit_effort <- function(data_connection,
         ggplot2::theme_bw() +
         ggplot2::labs(colour = "") +
         ggplot2::ggtitle("FSC")
-      plotly::ggplotly(ggplot_table_cpue_fsc)
+      plotly::ggplotly(ggplot_table_cpue_fsc) %>%
+        plotly::layout(legend = list(orientation = "v",
+                                     x = 0.85,
+                                     y = 0.97))
     }
   }
 }
