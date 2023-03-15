@@ -126,11 +126,11 @@ set_per_searching_day <- function(data_connection,
   table_cpue_set_per_day <- table_cpue_set_per_day %>%
     dplyr::group_by(year) %>%
     dplyr::summarise(sets_per_day_all = dplyr::case_when(c_tban == 1 | c_tban == 2 | c_tban == 3 ~ nb_sets / (t_recherche / 12),
-                                                         T ~ 0),
+                                                         TRUE ~ 0),
                      sets_per_day_fad = dplyr::case_when(c_tban == 1 ~ nb_sets / (t_recherche / 12),
-                                                         T ~ 0),
+                                                         TRUE ~ 0),
                      sets_per_day_fsc = dplyr::case_when(c_tban %in% c(2:3) ~ nb_sets / (t_recherche / 12),
-                                                         T ~ 0),
+                                                         TRUE ~ 0),
                      .groups = "drop")
   # Sum columns sets_per_day for ALL, FOB and FSC
   table_cpue_set_per_day <- table_cpue_set_per_day %>%

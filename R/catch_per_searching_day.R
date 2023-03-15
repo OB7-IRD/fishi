@@ -183,15 +183,15 @@ catch_per_searching_day <- function(data_connection,
   t1 <- time_serie_catch_data %>%
     dplyr::group_by(year) %>%
     dplyr::summarise(yft = sum(dplyr::case_when(c_tban == 1 & c_esp == 1 ~ v_poids_capt,
-                                                T ~ 0), na.rm = TRUE),
+                                                TRUE ~ 0), na.rm = TRUE),
                      skj = sum(dplyr::case_when(c_tban == 1 & c_esp == 2 ~ v_poids_capt,
-                                                T ~ 0), na.rm = TRUE),
+                                                TRUE ~ 0), na.rm = TRUE),
                      bet = sum(dplyr::case_when(c_tban == 1 & c_esp == 3 ~ v_poids_capt,
-                                                T ~ 0), na.rm = TRUE),
+                                                TRUE ~ 0), na.rm = TRUE),
                      alb = sum(dplyr::case_when(c_tban == 1 & c_esp == 4 ~ v_poids_capt,
-                                                T ~ 0), na.rm = TRUE),
+                                                TRUE ~ 0), na.rm = TRUE),
                      total = sum(dplyr::case_when(c_tban == 1 ~ v_poids_capt,
-                                                  T ~ 0), na.rm = TRUE),
+                                                  TRUE ~ 0), na.rm = TRUE),
                      .groups = "drop")
   #merge t0 and t1
   table_cpue_fad_set <- merge(t0, t1, by = "year")
@@ -217,15 +217,15 @@ catch_per_searching_day <- function(data_connection,
   t3 <- time_serie_catch_data %>%
     dplyr::group_by(year) %>%
     dplyr::summarise(yft = sum(dplyr::case_when(c_tban %in% c(2, 3) & c_esp == 1 ~ v_poids_capt,
-                                                T ~ 0), na.rm = TRUE),
+                                                TRUE ~ 0), na.rm = TRUE),
                      skj = sum(dplyr::case_when(c_tban %in% c(2, 3) & c_esp == 2 ~ v_poids_capt,
-                                                T ~ 0), na.rm = TRUE),
+                                                TRUE ~ 0), na.rm = TRUE),
                      bet = sum(dplyr::case_when(c_tban %in% c(2, 3) & c_esp == 3 ~ v_poids_capt,
-                                                T ~ 0), na.rm = TRUE),
+                                                TRUE ~ 0), na.rm = TRUE),
                      alb = sum(dplyr::case_when(c_tban %in% c(2, 3) & c_esp == 4 ~ v_poids_capt,
-                                                T ~ 0), na.rm = TRUE),
+                                                TRUE ~ 0), na.rm = TRUE),
                      total = sum(dplyr::case_when(c_tban %in% c(2, 3) ~ v_poids_capt,
-                                                  T ~ 0), na.rm = TRUE),
+                                                  TRUE ~ 0), na.rm = TRUE),
                      .groups = "drop")
   #merge t2 and t3
   table_cpue_fsc_set <- merge(t2, t3, by = "year")

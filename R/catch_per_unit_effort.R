@@ -135,15 +135,15 @@ catch_per_unit_effort <- function(data_connection,
   t1 <- annual_catch_rate_data %>%
     dplyr::group_by(year) %>%
     dplyr::summarise(yft = sum(dplyr::case_when(c_tban == 1 & c_esp == 1 ~ v_poids_capt, #OK
-                                            T ~ 0), na.rm = TRUE),
+                                            TRUE ~ 0), na.rm = TRUE),
                      skj = sum(dplyr::case_when(c_tban == 1 & c_esp == 2 ~ v_poids_capt, #OK
-                                            T ~ 0), na.rm = TRUE),
+                                            TRUE ~ 0), na.rm = TRUE),
                      bet = sum(dplyr::case_when(c_tban == 1 & c_esp == 3 ~ v_poids_capt, #OK
-                                            T ~ 0), na.rm = TRUE),
+                                            TRUE ~ 0), na.rm = TRUE),
                      alb = sum(dplyr::case_when(c_tban == 1 & c_esp == 4 ~ v_poids_capt, #OK
-                                            T ~ 0), na.rm = TRUE),
+                                            TRUE ~ 0), na.rm = TRUE),
                      total = sum(dplyr::case_when(c_tban == 1 ~ v_poids_capt, #OK
-                                              T ~ 0), na.rm = TRUE),
+                                              TRUE ~ 0), na.rm = TRUE),
                      .groups = "drop")
   #merge t0 and t1
   table_cpue_fad <- merge(t0, t1, by = "year")
@@ -165,16 +165,16 @@ catch_per_unit_effort <- function(data_connection,
   #Creation of t3 database from annual_catch_rate_nb_set_data
   t3 <- annual_catch_rate_data %>%
     dplyr::group_by(year) %>%
-    dplyr::summarise(yft = sum(dplyr::case_when(c_tban %in% c(2,3) & c_esp == 1 ~ v_poids_capt, #OK
-                                                T ~ 0), na.rm = TRUE),
-                     skj = sum(dplyr::case_when(c_tban %in% c(2,3) & c_esp == 2 ~ v_poids_capt, #OK
-                                                T ~ 0), na.rm = TRUE),
-                     bet = sum(dplyr::case_when(c_tban %in% c(2,3) & c_esp == 3 ~ v_poids_capt, #OK
-                                                T ~ 0), na.rm = TRUE),
-                     alb = sum(dplyr::case_when(c_tban %in% c(2,3) & c_esp == 4 ~ v_poids_capt, #OK
-                                                T ~ 0), na.rm = TRUE),
-                     total = sum(dplyr::case_when(c_tban %in% c(2,3) ~ v_poids_capt, #OK
-                                                  T ~ 0), na.rm = TRUE),
+    dplyr::summarise(yft = sum(dplyr::case_when(c_tban %in% c(2, 3) & c_esp == 1 ~ v_poids_capt, #OK
+                                                TRUE ~ 0), na.rm = TRUE),
+                     skj = sum(dplyr::case_when(c_tban %in% c(2, 3) & c_esp == 2 ~ v_poids_capt, #OK
+                                                TRUE ~ 0), na.rm = TRUE),
+                     bet = sum(dplyr::case_when(c_tban %in% c(2, 3) & c_esp == 3 ~ v_poids_capt, #OK
+                                                TRUE ~ 0), na.rm = TRUE),
+                     alb = sum(dplyr::case_when(c_tban %in% c(2, 3) & c_esp == 4 ~ v_poids_capt, #OK
+                                                TRUE ~ 0), na.rm = TRUE),
+                     total = sum(dplyr::case_when(c_tban %in% c(2, 3) ~ v_poids_capt, #OK
+                                                  TRUE ~ 0), na.rm = TRUE),
                      .groups = "drop")
   #merge t2 and t3
   table_cpue_fsc <- merge(t2, t3, by = "year")

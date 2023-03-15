@@ -274,9 +274,9 @@ bio_weight_tuna <- function(data_connection,
                                              "_avg_5_years",
                                              sep = "")]]
       if (species == "skj") {
-        x.max <-  80
+        x_max <-  80
       } else {
-        x.max <- 160
+        x_max <- 160
       }
       graphics::plot(table$size_class,
                      column1,
@@ -288,7 +288,7 @@ bio_weight_tuna <- function(data_connection,
                      ylab = ylabel,
                      lty = "solid",
                      col = "black",
-                     xlim = c(20, x.max),
+                     xlim = c(20, x_max),
                      ylim = (c(0, max(column1, column2) * 1.1)),
                      lwd = 1.2)
       graphics::lines(table$size_class,
@@ -309,15 +309,15 @@ bio_weight_tuna <- function(data_connection,
                        bty = "n",
                        cex = 1.3)
     }
-    ylabel = "Biomass (t)"
+    ylabel <- "Biomass (t)"
     indic_species <- c("yft", "bet", "skj")
     indic_mode <- c("log", "free", "all")
     title1 <- c("YFT", "", "", "BET", "", "", "SKJ", "", "")
     compteur <- 0
     mtext_mode <- c("FOB", "FSC", "ALL", "", "", "", "", "", "")
     par(mfcol = c(3, 3), mar = c(4, 4, 2, 2), oma = c(0, 2.5, 2.5, 0))
-    for (i in (1:length(indic_species))){
-      for (j in (1:length(indic_mode))){
+    for (i in (seq_along(indic_species))){
+      for (j in (seq_along(indic_species))){
         compteur <- compteur + 1
         title2 <- title1[compteur]
         weight_plot_f(indic_species[i], indic_mode[j], "w")
@@ -450,7 +450,7 @@ bio_weight_tuna <- function(data_connection,
       ggplot2::theme_bw() +
       ggplot2::theme(legend.position = c(0.85, 0.85), legend.title = ggplot2::element_blank())
     # plotly
-    bet_all <-plotly::ggplotly(bet_all) %>%
+    bet_all <- plotly::ggplotly(bet_all) %>%
       plotly::layout(showlegend = FALSE)
     ### SKJ ----
     # SKJ LOG
@@ -517,7 +517,6 @@ bio_weight_tuna <- function(data_connection,
                     yft_all, bet_all, skj_all, nrows = 3,
                     titleX = TRUE, titleY = TRUE,
                     shareX = TRUE,
-                    #shareY = TRUE,
                     margin = 0.03)  %>%
       plotly::layout(annotations = list(
         # YFT title : Add text to the plot

@@ -7,7 +7,7 @@
 #' @param vessel_type {\link[base]{integer}} expected. Vessel type codes identification. 1 by default.
 #' @param ocean {\link[base]{integer}} expected. Ocean codes identification.
 #' @param graph_type {\link[base]{character}} expected. plot or plotly. Plot by default.
-#' @param figure {\link[base]{character}} expected. set (for number of sets graph) or log (for %FOB-associated sets graph).
+#' @param figure {\link[base]{character}} expected. set (for number of sets graph) or log (for percentage FOB-associated sets graph).
 #' @return The function return ggplot R plot.
 #' @export
 #' @importFrom DBI dbGetQuery sqlInterpolate SQL
@@ -145,7 +145,7 @@ fishing_activity <- function(data_connection,
     graphics::par(mar = c(5, 4, 4, 4))
     set <- as.matrix(table_sets[, c(5,
                                     8)])
-    fig.sets <- graphics::barplot(t(set),
+    fig_sets <- graphics::barplot(t(set),
                                   beside = FALSE,
                                   ylab = "Number of sets",
                                   ylim = c(0, max(set) * 1.6),
@@ -153,7 +153,7 @@ fishing_activity <- function(data_connection,
                                   cex.lab = 1.3,
                                   xaxt = "n")
     graphics::axis(1,
-                   at = fig.sets,
+                   at = fig_sets,
                    tick = TRUE,
                    labels = table_sets$year,
                    line = .8,
@@ -167,7 +167,7 @@ fishing_activity <- function(data_connection,
                      fill = c("black",
                               "lightgrey"))
     graphics::par(new = TRUE)
-    plot(fig.sets,
+    plot(fig_sets,
          table_sets$`%_log`,
          type = "b",
          col = "black",
@@ -206,7 +206,7 @@ fishing_activity <- function(data_connection,
                                                  y = nb_sets,
                                                  fill = type),
                           stat = "identity",
-                          colour ="black") +
+                          colour = "black") +
         ggplot2::scale_fill_manual(values = c("grey95", "grey26")) +
         ggplot2::scale_y_continuous(name = "Number of sets") +
         ggplot2::theme_bw() +
@@ -217,7 +217,7 @@ fishing_activity <- function(data_connection,
                                      y = 0.95))
     } else if (figure == "log") {
       t_set$`%_log` <- round(t_set$`%_log`, 3)
-      ggplot_set <-ggplot2::ggplot() +
+      ggplot_set <- ggplot2::ggplot() +
         ggplot2::geom_line(data = t_set,
                            ggplot2::aes(x = year,
                                         y = `%_log`)) +

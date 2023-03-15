@@ -27,7 +27,7 @@ fishing_activity(
 
 \item{graph_type}{{\link[base]{character}} expected. plot or plotly. Plot by default.}
 
-\item{figure}{{\link[base]{character}} expected. set (for number of sets graph) or log (for %FOB-associated sets graph).}
+\item{figure}{{\link[base]{character}} expected. set (for number of sets graph) or log (for percentage FOB-associated sets graph).}
 }
 \value{
 The function return ggplot R plot.

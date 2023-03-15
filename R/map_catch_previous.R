@@ -38,7 +38,10 @@ map_catch_previous <- function(data_connection,
   cwp11_act <- NULL
   v_poids_capt <- NULL
   wrld_simpl <- NULL
-  radius <- NULL
+  total <- NULL
+  yft <- NULL
+  skj <- NULL
+  bet <- NULL
   # 1 - Arguments verification ----
   if (codama::r_type_checking(r_object = data_connection,
                               type = "list",
@@ -118,51 +121,47 @@ map_catch_previous <- function(data_connection,
       dplyr::filter(v_nb_calee_pos > 0) %>%
       dplyr::group_by(cwp11_act) %>%
       dplyr::summarise(yft = sum(dplyr::case_when(c_esp == 1 ~ poids,
-                                                  T ~ 0.00000001), na.rm = TRUE),
+                                                  TRUE ~ 0.00000001), na.rm = TRUE),
                        skj = sum(dplyr::case_when(c_esp == 2 ~ poids,
-                                                  T ~ 0.00000001), na.rm = TRUE),
+                                                  TRUE ~ 0.00000001), na.rm = TRUE),
                        bet = sum(dplyr::case_when(c_esp == 3 ~ poids,
-                                                  T ~ 0.00000001), na.rm = TRUE),
+                                                  TRUE ~ 0.00000001), na.rm = TRUE),
                        total = sum(dplyr::case_when(c_esp %in% c(1:3) ~ poids,
-                                                    T ~ 0.00000001), na.rm = TRUE))
+                                                    TRUE ~ 0.00000001), na.rm = TRUE))
   } else if (fishing_type == "FSC") {
     datafile <- t1  %>%
       dplyr::filter(v_nb_calee_pos > 0,
                     c_tban %in% c(2:3)) %>%
       dplyr::group_by(cwp11_act) %>%
       dplyr::summarise(yft = sum(dplyr::case_when(c_esp == 1 ~ poids,
-                                                  T ~ 0.00000001), na.rm = TRUE),
+                                                  TRUE ~ 0.00000001), na.rm = TRUE),
                        skj = sum(dplyr::case_when(c_esp == 2 ~ poids,
-                                                  T ~ 0.00000001), na.rm = TRUE),
+                                                  TRUE ~ 0.00000001), na.rm = TRUE),
                        bet = sum(dplyr::case_when(c_esp == 3 ~ poids,
-                                                  T ~ 0.00000001), na.rm = TRUE),
+                                                  TRUE ~ 0.00000001), na.rm = TRUE),
                        total = sum(dplyr::case_when(c_esp %in% c(1:3) ~ poids,
-                                                    T ~ 0.00000001), na.rm = TRUE))
+                                                    TRUE ~ 0.00000001), na.rm = TRUE))
   } else if (fishing_type == "FOB") {
     datafile <- t1  %>%
       dplyr::filter(v_nb_calee_pos > 0,
                     c_tban == 1) %>%
       dplyr::group_by(cwp11_act) %>%
       dplyr::summarise(yft = sum(dplyr::case_when(c_esp == 1 ~ poids,
-                                                  T ~ 0.00000001), na.rm = TRUE),
+                                                  TRUE ~ 0.00000001), na.rm = TRUE),
                        skj = sum(dplyr::case_when(c_esp == 2 ~ poids,
-                                                  T ~ 0.00000001), na.rm = TRUE),
+                                                  TRUE ~ 0.00000001), na.rm = TRUE),
                        bet = sum(dplyr::case_when(c_esp == 3 ~ poids,
-                                                  T ~ 0.00000001), na.rm = TRUE),
+                                                  TRUE ~ 0.00000001), na.rm = TRUE),
                        total = sum(dplyr::case_when(c_esp %in% c(1:3) ~ poids,
-                                                    T ~ 0.00000001), na.rm = TRUE))
+                                                    TRUE ~ 0.00000001), na.rm = TRUE))
   } else {
     stop(format(x = Sys.time(),
                 format = "%Y-%m-%d %H:%M:%S"),
          " - Indicator not developed yet for this \"fishing_type\" argument.\n",
          sep = "")
   }
-  datafile[datafile == 0] <-1e-8
+  datafile[datafile == 0] <- 1e-8
   # 4 - Legend design ----
-  #vessel
-  vessel_type_legend <- code_manipulation(data         = map_catch_previous_sql_final$vessel_type_id,
-                                          referential  = "vessel_simple_type",
-                                          manipulation = "legend")
   # Define fuction quad2pos
   quad2pos <- function(id) {
     latsiz <- c(5, 10, 10, 20, 1, 5)

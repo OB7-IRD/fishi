@@ -33,5 +33,5 @@ fishery_production(
 The function return ggplot R plot.
 }
 \description{
-Total fishery production. Catch by species of the French purse seine fishing fleet.
+total fishery production. Catch by species of the French purse seine fishing fleet.
 }
