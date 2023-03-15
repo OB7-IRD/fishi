@@ -24,15 +24,15 @@ bio_size_tuna <- function(data_connection,
   c_banc <- NULL
   an <- NULL
   v_mensur <- NULL
-  cl <- NULL
+  size_class <- NULL
   numbers_total <- NULL
   numbers <- NULL
-  LOG_AVG_5_YEARS <- NULL
-  LOG_CURRENT_YEAR <- NULL
-  FREE_CURRENT_YEAR <- NULL
-  FREE_AVG_5_YEARS <- NULL
-  ALL_AVG_5_YEARS <- NULL
-  ALL_CURRENT_YEAR <- NULL
+  log_avg_5_years <- NULL
+  log_current_year <- NULL
+  free_current_year <- NULL
+  free_avg_5_years <- NULL
+  all_avg_5_years <- NULL
+  all_current_year <- NULL
   # 1 - Arguments verification ----
   if (codama::r_type_checking(r_object = data_connection,
                               type = "list",
@@ -91,18 +91,20 @@ bio_size_tuna <- function(data_connection,
   bio_size_tuna_sql_data <- dplyr::tibble(DBI::dbGetQuery(conn      = data_connection[[2]],
                                                           statement = bio_size_tuna_sql_final))
   # 3.a - Data design for SKJ ----
+  bio_size_tuna_sql_data <- bio_size_tuna_sql_data %>%
+    dplyr::rename("size_class" = "cl")
   # Dataframe - Mode : LOG, Year : Report year
   t0 <- bio_size_tuna_sql_data %>%
     dplyr::filter(c_esp == 2,
                   c_banc == 1,
                   an %in% report_year) %>%
     dplyr::mutate(numbers_total = sum(v_mensur, na.rm = TRUE)) %>%
-    dplyr::group_by(cl,
+    dplyr::group_by(size_class,
                     numbers_total) %>%
     dplyr::summarise(numbers = sum(v_mensur, na.rm = TRUE),
                      .groups = "drop") %>%
-    dplyr::group_by(cl) %>%
-    dplyr::summarise(LOG_CURRENT_YEAR = numbers / numbers_total * 100,
+    dplyr::group_by(size_class) %>%
+    dplyr::summarise(log_current_year = numbers / numbers_total * 100,
                      .groups = "drop")
   # Dataframe - Mode : LOG, Year : Five previous
   t1 <- bio_size_tuna_sql_data %>%
@@ -110,12 +112,12 @@ bio_size_tuna <- function(data_connection,
                   c_banc == 1,
                   an %in% five_previous) %>%
     dplyr::mutate(numbers_total = sum(v_mensur / 5, na.rm = TRUE)) %>%
-    dplyr::group_by(cl,
+    dplyr::group_by(size_class,
                     numbers_total) %>%
     dplyr::summarise(numbers = sum(v_mensur / 5, na.rm = TRUE),
                      .groups = "drop")  %>%
-    dplyr::group_by(cl) %>%
-    dplyr::summarise(LOG_AVG_5_YEARS = numbers / numbers_total * 100,
+    dplyr::group_by(size_class) %>%
+    dplyr::summarise(log_avg_5_years = numbers / numbers_total * 100,
                      .groups = "drop")
   # Dataframe - Mode : FREE, Year : Report year
   t2 <- bio_size_tuna_sql_data %>%
@@ -123,12 +125,12 @@ bio_size_tuna <- function(data_connection,
                   c_banc %in% c(2, 3, 9),
                   an %in% report_year) %>%
     dplyr::mutate(numbers_total = sum(v_mensur, na.rm = TRUE)) %>%
-    dplyr::group_by(cl,
+    dplyr::group_by(size_class,
                     numbers_total) %>%
     dplyr::summarise(numbers = sum(v_mensur, na.rm = TRUE),
                      .groups = "drop") %>%
-    dplyr::group_by(cl) %>%
-    dplyr::summarise(FREE_CURRENT_YEAR = numbers / numbers_total * 100,
+    dplyr::group_by(size_class) %>%
+    dplyr::summarise(free_current_year = numbers / numbers_total * 100,
                      .groups = "drop")
   # Dataframe - Mode : FREE, Year : Five previous
   t3 <- bio_size_tuna_sql_data %>%
@@ -136,43 +138,43 @@ bio_size_tuna <- function(data_connection,
                   c_banc %in% c(2, 3, 9),
                   an %in% five_previous) %>%
     dplyr::mutate(numbers_total = sum(v_mensur / 5, na.rm = TRUE)) %>%
-    dplyr::group_by(cl,
+    dplyr::group_by(size_class,
                     numbers_total) %>%
     dplyr::summarise(numbers = sum(v_mensur / 5, na.rm = TRUE),
                      .groups = "drop")  %>%
-    dplyr::group_by(cl) %>%
-    dplyr::summarise(FREE_AVG_5_YEARS = numbers / numbers_total * 100,
+    dplyr::group_by(size_class) %>%
+    dplyr::summarise(free_avg_5_years = numbers / numbers_total * 100,
                      .groups = "drop")
   # Dataframe - Mode : ALL, Year : Report year
   t4 <- bio_size_tuna_sql_data %>%
     dplyr::filter(c_esp == 2,
                   an %in% report_year) %>%
     dplyr::mutate(numbers_total = sum(v_mensur, na.rm = TRUE)) %>%
-    dplyr::group_by(cl,
+    dplyr::group_by(size_class,
                     numbers_total) %>%
     dplyr::summarise(numbers = sum(v_mensur, na.rm = TRUE),
                      .groups = "drop") %>%
-    dplyr::group_by(cl) %>%
-    dplyr::summarise(ALL_CURRENT_YEAR = numbers / numbers_total * 100,
+    dplyr::group_by(size_class) %>%
+    dplyr::summarise(all_current_year = numbers / numbers_total * 100,
                      .groups = "drop")
   # Dataframe - Mode : ALL, Year : Five previous
   t5 <- bio_size_tuna_sql_data %>%
     dplyr::filter(c_esp == 2,
                   an %in% five_previous) %>%
     dplyr::mutate(numbers_total = sum(v_mensur / 5, na.rm = TRUE)) %>%
-    dplyr::group_by(cl,
+    dplyr::group_by(size_class,
                     numbers_total) %>%
     dplyr::summarise(numbers = sum(v_mensur / 5, na.rm = TRUE),
                      .groups = "drop")   %>%
-    dplyr::group_by(cl) %>%
-    dplyr::summarise(ALL_AVG_5_YEARS = numbers / numbers_total * 100,
+    dplyr::group_by(size_class) %>%
+    dplyr::summarise(all_avg_5_years = numbers / numbers_total * 100,
                      .groups = "drop")
   # Merge
-  table_size_skj_n <- merge(t0, t1, by = "cl")
-  table_size_skj_n <- merge(table_size_skj_n, t2, by = "cl")
-  table_size_skj_n <- merge(table_size_skj_n, t3, by = "cl")
-  table_size_skj_n <- merge(table_size_skj_n, t4, by = "cl")
-  table_size_skj_n <- merge(table_size_skj_n, t5, by = "cl")
+  table_size_skj_n <- merge(t0, t1, by = "size_class")
+  table_size_skj_n <- merge(table_size_skj_n, t2, by = "size_class")
+  table_size_skj_n <- merge(table_size_skj_n, t3, by = "size_class")
+  table_size_skj_n <- merge(table_size_skj_n, t4, by = "size_class")
+  table_size_skj_n <- merge(table_size_skj_n, t5, by = "size_class")
   # 3.b - Data design for BET ----
   # Dataframe - Mode : LOG, Year : Report year
   t0 <- bio_size_tuna_sql_data %>%
@@ -180,12 +182,12 @@ bio_size_tuna <- function(data_connection,
                   c_banc == 1,
                   an %in% report_year) %>%
     dplyr::mutate(numbers_total = sum(v_mensur, na.rm = TRUE)) %>%
-    dplyr::group_by(cl,
+    dplyr::group_by(size_class,
                     numbers_total) %>%
     dplyr::summarise(numbers = sum(v_mensur, na.rm = TRUE),
                      .groups = "drop") %>%
-    dplyr::group_by(cl) %>%
-    dplyr::summarise(LOG_CURRENT_YEAR = numbers / numbers_total * 100,
+    dplyr::group_by(size_class) %>%
+    dplyr::summarise(log_current_year = numbers / numbers_total * 100,
                      .groups = "drop")
   # Dataframe - Mode : LOG, Year : Previous years
   t1 <- bio_size_tuna_sql_data %>%
@@ -193,12 +195,12 @@ bio_size_tuna <- function(data_connection,
                   c_banc == 1,
                   an %in% five_previous) %>%
     dplyr::mutate(numbers_total = sum(v_mensur / 5, na.rm = TRUE)) %>%
-    dplyr::group_by(cl,
+    dplyr::group_by(size_class,
                     numbers_total) %>%
     dplyr::summarise(numbers = sum(v_mensur / 5, na.rm = TRUE),
                      .groups = "drop")  %>%
-    dplyr::group_by(cl) %>%
-    dplyr::summarise(LOG_AVG_5_YEARS = numbers / numbers_total * 100,
+    dplyr::group_by(size_class) %>%
+    dplyr::summarise(log_avg_5_years = numbers / numbers_total * 100,
                      .groups = "drop")
   # Dataframe - Mode : FREE, Year : Report year
   t2 <- bio_size_tuna_sql_data %>%
@@ -206,12 +208,12 @@ bio_size_tuna <- function(data_connection,
                   c_banc %in% c(2, 3, 9),
                   an %in% report_year) %>%
     dplyr::mutate(numbers_total = sum(v_mensur, na.rm = TRUE)) %>%
-    dplyr::group_by(cl,
+    dplyr::group_by(size_class,
                     numbers_total) %>%
     dplyr::summarise(numbers = sum(v_mensur, na.rm = TRUE),
                      .groups = "drop") %>%
-    dplyr::group_by(cl) %>%
-    dplyr::summarise(FREE_CURRENT_YEAR = numbers / numbers_total * 100,
+    dplyr::group_by(size_class) %>%
+    dplyr::summarise(free_current_year = numbers / numbers_total * 100,
                      .groups = "drop")
   # Dataframe - Mode : FREE, Year : Previous years
   t3 <- bio_size_tuna_sql_data %>%
@@ -219,43 +221,43 @@ bio_size_tuna <- function(data_connection,
                   c_banc %in% c(2, 3, 9),
                   an %in% five_previous) %>%
     dplyr::mutate(numbers_total = sum(v_mensur / 5, na.rm = TRUE)) %>%
-    dplyr::group_by(cl,
+    dplyr::group_by(size_class,
                     numbers_total) %>%
     dplyr::summarise(numbers = sum(v_mensur / 5, na.rm = TRUE),
                      .groups = "drop")  %>%
-    dplyr::group_by(cl) %>%
-    dplyr::summarise(FREE_AVG_5_YEARS = numbers / numbers_total * 100,
+    dplyr::group_by(size_class) %>%
+    dplyr::summarise(free_avg_5_years = numbers / numbers_total * 100,
                      .groups = "drop")
   # Dataframe - Mode : ALL, Year : Report year
   t4 <- bio_size_tuna_sql_data %>%
     dplyr::filter(c_esp == 3,
                   an %in% report_year) %>%
     dplyr::mutate(numbers_total = sum(v_mensur, na.rm = TRUE)) %>%
-    dplyr::group_by(cl,
+    dplyr::group_by(size_class,
                     numbers_total) %>%
     dplyr::summarise(numbers = sum(v_mensur, na.rm = TRUE),
                      .groups = "drop") %>%
-    dplyr::group_by(cl) %>%
-    dplyr::summarise(ALL_CURRENT_YEAR = numbers / numbers_total * 100,
+    dplyr::group_by(size_class) %>%
+    dplyr::summarise(all_current_year = numbers / numbers_total * 100,
                      .groups = "drop")
   # Dataframe - Mode : ALL, Year : Previous years
   t5 <- bio_size_tuna_sql_data %>%
     dplyr::filter(c_esp == 3,
                   an %in% five_previous) %>%
     dplyr::mutate(numbers_total = sum(v_mensur / 5, na.rm = TRUE)) %>%
-    dplyr::group_by(cl,
+    dplyr::group_by(size_class,
                     numbers_total) %>%
     dplyr::summarise(numbers = sum(v_mensur / 5, na.rm = TRUE),
                      .groups = "drop")   %>%
-    dplyr::group_by(cl) %>%
-    dplyr::summarise(ALL_AVG_5_YEARS = numbers / numbers_total * 100,
+    dplyr::group_by(size_class) %>%
+    dplyr::summarise(all_avg_5_years = numbers / numbers_total * 100,
                      .groups = "drop")
   # Merge
-  table_size_bet_n <- merge(t0, t1, by = "cl")
-  table_size_bet_n <- merge(table_size_bet_n, t2, by = "cl")
-  table_size_bet_n <- merge(table_size_bet_n, t3, by = "cl")
-  table_size_bet_n <- merge(table_size_bet_n, t4, by = "cl")
-  table_size_bet_n <- merge(table_size_bet_n, t5, by = "cl")
+  table_size_bet_n <- merge(t0, t1, by = "size_class")
+  table_size_bet_n <- merge(table_size_bet_n, t2, by = "size_class")
+  table_size_bet_n <- merge(table_size_bet_n, t3, by = "size_class")
+  table_size_bet_n <- merge(table_size_bet_n, t4, by = "size_class")
+  table_size_bet_n <- merge(table_size_bet_n, t5, by = "size_class")
   # 3.c - Data design for YFT ----
   # Dataframe - Mode : LOG, Year : Report year
   t0 <- bio_size_tuna_sql_data %>%
@@ -263,12 +265,12 @@ bio_size_tuna <- function(data_connection,
                   c_banc == 1,
                   an %in% report_year) %>%
     dplyr::mutate(numbers_total = sum(v_mensur, na.rm = TRUE)) %>%
-    dplyr::group_by(cl,
+    dplyr::group_by(size_class,
                     numbers_total) %>%
     dplyr::summarise(numbers = sum(v_mensur, na.rm = TRUE),
                      .groups = "drop") %>%
-    dplyr::group_by(cl) %>%
-    dplyr::summarise(LOG_CURRENT_YEAR = numbers / numbers_total * 100,
+    dplyr::group_by(size_class) %>%
+    dplyr::summarise(log_current_year = numbers / numbers_total * 100,
                      .groups = "drop")
   # Dataframe - Mode : LOG, Year : Previous years
   t1 <- bio_size_tuna_sql_data %>%
@@ -276,12 +278,12 @@ bio_size_tuna <- function(data_connection,
                   c_banc == 1,
                   an %in% five_previous) %>%
     dplyr::mutate(numbers_total = sum(v_mensur / 5, na.rm = TRUE)) %>%
-    dplyr::group_by(cl,
+    dplyr::group_by(size_class,
                     numbers_total) %>%
     dplyr::summarise(numbers = sum(v_mensur / 5, na.rm = TRUE),
                      .groups = "drop")  %>%
-    dplyr::group_by(cl) %>%
-    dplyr::summarise(LOG_AVG_5_YEARS = numbers / numbers_total * 100,
+    dplyr::group_by(size_class) %>%
+    dplyr::summarise(log_avg_5_years = numbers / numbers_total * 100,
                      .groups = "drop")
   # Dataframe - Mode : FREE, Year : Report year
   t2 <- bio_size_tuna_sql_data %>%
@@ -289,12 +291,12 @@ bio_size_tuna <- function(data_connection,
                   c_banc %in% c(2, 3, 9),
                   an %in% report_year) %>%
     dplyr::mutate(numbers_total = sum(v_mensur, na.rm = TRUE)) %>%
-    dplyr::group_by(cl,
+    dplyr::group_by(size_class,
                     numbers_total) %>%
     dplyr::summarise(numbers = sum(v_mensur, na.rm = TRUE),
                      .groups = "drop") %>%
-    dplyr::group_by(cl) %>%
-    dplyr::summarise(FREE_CURRENT_YEAR = numbers / numbers_total * 100,
+    dplyr::group_by(size_class) %>%
+    dplyr::summarise(free_current_year = numbers / numbers_total * 100,
                      .groups = "drop")
   # Dataframe - Mode : FREE, Year : Previous years
   t3 <- bio_size_tuna_sql_data %>%
@@ -302,43 +304,43 @@ bio_size_tuna <- function(data_connection,
                   c_banc %in% c(2, 3, 9),
                   an %in% five_previous) %>%
     dplyr::mutate(numbers_total = sum(v_mensur / 5, na.rm = TRUE)) %>%
-    dplyr::group_by(cl,
+    dplyr::group_by(size_class,
                     numbers_total) %>%
     dplyr::summarise(numbers = sum(v_mensur / 5, na.rm = TRUE),
                      .groups = "drop")  %>%
-    dplyr::group_by(cl) %>%
-    dplyr::summarise(FREE_AVG_5_YEARS = numbers / numbers_total * 100,
+    dplyr::group_by(size_class) %>%
+    dplyr::summarise(free_avg_5_years = numbers / numbers_total * 100,
                      .groups = "drop")
   # Dataframe - Mode : ALL, Year : Report year
   t4 <- bio_size_tuna_sql_data %>%
     dplyr::filter(c_esp == 1,
                   an %in% report_year) %>%
     dplyr::mutate(numbers_total = sum(v_mensur, na.rm = TRUE)) %>%
-    dplyr::group_by(cl,
+    dplyr::group_by(size_class,
                     numbers_total) %>%
     dplyr::summarise(numbers = sum(v_mensur, na.rm = TRUE),
                      .groups = "drop") %>%
-    dplyr::group_by(cl) %>%
-    dplyr::summarise(ALL_CURRENT_YEAR = numbers / numbers_total * 100,
+    dplyr::group_by(size_class) %>%
+    dplyr::summarise(all_current_year = numbers / numbers_total * 100,
                      .groups = "drop")
   # Dataframe - Mode : ALL, Year : Previous years
   t5 <- bio_size_tuna_sql_data %>%
     dplyr::filter(c_esp == 1,
                   an %in% five_previous) %>%
     dplyr::mutate(numbers_total = sum(v_mensur / 5, na.rm = TRUE)) %>%
-    dplyr::group_by(cl,
+    dplyr::group_by(size_class,
                     numbers_total) %>%
     dplyr::summarise(numbers = sum(v_mensur / 5, na.rm = TRUE),
                      .groups = "drop")   %>%
-    dplyr::group_by(cl) %>%
-    dplyr::summarise(ALL_AVG_5_YEARS = numbers / numbers_total * 100,
+    dplyr::group_by(size_class) %>%
+    dplyr::summarise(all_avg_5_years = numbers / numbers_total * 100,
                      .groups = "drop")
   # Merge
-  table_size_yft_n <- merge(t0, t1, by = "cl")
-  table_size_yft_n <- merge(table_size_yft_n, t2, by = "cl")
-  table_size_yft_n <- merge(table_size_yft_n, t3, by = "cl")
-  table_size_yft_n <- merge(table_size_yft_n, t4, by = "cl")
-  table_size_yft_n <- merge(table_size_yft_n, t5, by = "cl")
+  table_size_yft_n <- merge(t0, t1, by = "size_class")
+  table_size_yft_n <- merge(table_size_yft_n, t2, by = "size_class")
+  table_size_yft_n <- merge(table_size_yft_n, t3, by = "size_class")
+  table_size_yft_n <- merge(table_size_yft_n, t4, by = "size_class")
+  table_size_yft_n <- merge(table_size_yft_n, t5, by = "size_class")
   # 4 - Graphic design ----
   # Function that read the 3 dataframe and print it in a plot
   if (graph_type == "plot") {
@@ -367,20 +369,20 @@ bio_size_tuna <- function(data_connection,
       } else {
         x.max <- 160
       }
-      graphics::plot(table$cl,
+      graphics::plot(table$size_class,
                      column1,
                      cex.axis = 1.3,
                      cex.lab = 1.3,
                      type = "l",
                      main = "",
-                     xlab = "Size class (cm)",
+                     xlab = "size class (cm)",
                      ylab = ylabel,
                      lty = "solid",
                      col = "black",
                      xlim = c(20, x.max),
                      ylim = (c(0, max(column1, column2) * 1.1)),
                      lwd = 1.2)
-      graphics::lines(table$cl,
+      graphics::lines(table$size_class,
                       column2,
                       lty = "dashed",
                       col = "black",
@@ -418,168 +420,273 @@ bio_size_tuna <- function(data_connection,
       }
     }
   } else if (graph_type == "plotly") {
-    number_report_year <- as.character(report_year)
-    number_previous_five <- as.character(paste0(report_year - 5, "-", report_year - 1))
+    year <- as.character(report_year)
+    years <- as.character(paste0(report_year - 5, "-", report_year - 1))
     ### YFT ----
-    #YFT LOG
+    # Round values
+    table_size_yft_n$log_current_year <- round(table_size_yft_n$log_current_year, 3)
+    table_size_yft_n$log_avg_5_years <- round(table_size_yft_n$log_avg_5_years, 3)
+    table_size_yft_n$free_current_year <- round(table_size_yft_n$free_current_year, 3)
+    table_size_yft_n$free_avg_5_years <- round(table_size_yft_n$free_avg_5_years, 3)
+    table_size_yft_n$all_current_year <- round(table_size_yft_n$all_current_year, 3)
+    table_size_yft_n$all_avg_5_years <- round(table_size_yft_n$all_avg_5_years, 3)
+    # YFT LOG
     yft_fob <- ggplot2::ggplot(data = table_size_yft_n) +
-      ggplot2::geom_line(ggplot2::aes(x = cl,
-                                      y = LOG_AVG_5_YEARS,
-                                      color = number_previous_five),
+      ggplot2::geom_line(ggplot2::aes(x = size_class,
+                                      y = log_avg_5_years,
+                                      color = years),
                          linetype = "dashed") +
-      ggplot2::geom_line(ggplot2::aes(x = cl,
-                                      y = LOG_CURRENT_YEAR,
-                                      color = number_report_year)) +
-      ggplot2::labs(x = "Size class (cm)",
+      ggplot2::geom_line(ggplot2::aes(x = size_class,
+                                      y = log_current_year,
+                                      color = year)) +
+      ggplot2::labs(x = "size class (cm)",
                     y = "Percentage") +
-      ggplot2::ylim(0, max(table_size_yft_n$LOG_CURRENT_YEAR,
-                          table_size_yft_n$LOG_AVG_5_YEARS) * 1.1) +
+      ggplot2::ylim(0, max(table_size_yft_n$log_current_year,
+                           table_size_yft_n$log_avg_5_years) * 1.1) +
       ggplot2::xlim(20, 160) +
       ggplot2::theme_bw() +
-      ggplot2::theme(legend.position = c(0.85, 0.85), legend.title = ggplot2::element_blank()) +
-      ggplot2::ggtitle("YFT - FOB")
-    #YFT FREE
+      ggplot2::theme(legend.position = c(0.85, 0.85), legend.title = ggplot2::element_blank())
+    # plotly
+    yft_fob <- plotly::ggplotly(yft_fob) %>%
+      plotly::layout(showlegend = FALSE)
+    # YFT FREE
     yft_free <- ggplot2::ggplot(data = table_size_yft_n) +
-      ggplot2::geom_line(ggplot2::aes(x = cl,
-                                      y = FREE_AVG_5_YEARS,
-                                      color = number_previous_five),
+      ggplot2::geom_line(ggplot2::aes(x = size_class,
+                                      y = free_avg_5_years,
+                                      color = years),
                          linetype = "dashed") +
-      ggplot2::geom_line(ggplot2::aes(x = cl,
-                                      y = FREE_CURRENT_YEAR,
-                                      color = number_report_year)) +
-      ggplot2::labs(x = "Size class (cm)",
+      ggplot2::geom_line(ggplot2::aes(x = size_class,
+                                      y = free_current_year,
+                                      color = year)) +
+      ggplot2::labs(x = "size class (cm)",
                     y = "Percentage") +
-      ggplot2::ylim(0, max(table_size_yft_n$FREE_CURRENT_YEAR,
-                          table_size_yft_n$FREE_AVG_5_YEARS) * 1.1) +
+      ggplot2::ylim(0, max(table_size_yft_n$free_current_year,
+                           table_size_yft_n$free_avg_5_years) * 1.1) +
       ggplot2::xlim(20, 160) +
       ggplot2::theme_bw() +
-      ggplot2::theme(legend.position = c(0.2, 0.85), legend.title = ggplot2::element_blank()) +
-      ggplot2::ggtitle("YFT - FSC")
-    #YFT ALL
+      ggplot2::theme(legend.position = c(0.2, 0.85), legend.title = ggplot2::element_blank())
+    # plotly
+    yft_free <-  plotly::ggplotly(yft_free) %>%
+      plotly::layout(showlegend = FALSE)
+    # YFT ALL
     yft_all <- ggplot2::ggplot(data = table_size_yft_n) +
-      ggplot2::geom_line(ggplot2::aes(x = cl,
-                                      y = ALL_AVG_5_YEARS,
-                                      color = number_previous_five),
+      ggplot2::geom_line(ggplot2::aes(x = size_class,
+                                      y = all_avg_5_years,
+                                      color = years),
                          linetype = "dashed") +
-      ggplot2::geom_line(ggplot2::aes(x = cl,
-                                      y = ALL_CURRENT_YEAR,
-                                      color = number_report_year)) +
-      ggplot2::labs(x = "Size class (cm)",
+      ggplot2::geom_line(ggplot2::aes(x = size_class,
+                                      y = all_current_year,
+                                      color = year)) +
+      ggplot2::labs(x = "size class (cm)",
                     y = "Percentage") +
-      ggplot2::ylim(0, max(table_size_yft_n$ALL_CURRENT_YEAR,
-                          table_size_yft_n$ALL_AVG_5_YEARS) * 1.1) +
+      ggplot2::ylim(0, max(table_size_yft_n$all_current_year,
+                           table_size_yft_n$all_avg_5_years) * 1.1) +
       ggplot2::xlim(20, 160) +
       ggplot2::theme_bw() +
-      ggplot2::theme(legend.position = c(0.85, 0.85), legend.title = ggplot2::element_blank()) +
-      ggplot2::ggtitle("YFT - ALL")
+      ggplot2::theme(legend.position = c(0.85, 0.85), legend.title = ggplot2::element_blank())
+    # plotly
+    yft_all <- plotly::ggplotly(yft_all) %>%
+      plotly::layout(showlegend = FALSE)
     ### BET ----
-    #BET LOG
+    # BET LOG
     bet_fob <- ggplot2::ggplot(data = table_size_bet_n) +
-      ggplot2::geom_line(ggplot2::aes(x = cl,
-                                      y = LOG_AVG_5_YEARS,
-                                      color = number_previous_five),
+      ggplot2::geom_line(ggplot2::aes(x = size_class,
+                                      y = log_avg_5_years,
+                                      color = years),
                          linetype = "dashed") +
-      ggplot2::geom_line(ggplot2::aes(x = cl,
-                                      y = LOG_CURRENT_YEAR,
-                                      color = number_report_year)) +
-      ggplot2::labs(x = "Size class (cm)",
+      ggplot2::geom_line(ggplot2::aes(x = size_class,
+                                      y = log_current_year,
+                                      color = year)) +
+      ggplot2::labs(x = "size class (cm)",
                     y = "Percentage") +
-      ggplot2::ylim(0, max(table_size_bet_n$LOG_CURRENT_YEAR,
-                          table_size_bet_n$LOG_AVG_5_YEARS) * 1.1) +
+      ggplot2::ylim(0, max(table_size_bet_n$log_current_year,
+                           table_size_bet_n$log_avg_5_years) * 1.1) +
       ggplot2::xlim(20, 160) +
       ggplot2::theme_bw() +
-      ggplot2::theme(legend.position = c(0.85, 0.85), legend.title = ggplot2::element_blank()) +
-      ggplot2::ggtitle("BET - FOB")
-    #BET FREE
+      ggplot2::theme(legend.position = c(0.85, 0.85), legend.title = ggplot2::element_blank())
+    # plotly
+    bet_fob <- plotly::ggplotly(bet_fob) %>%
+      plotly::layout(showlegend = FALSE)
+    # BET FREE
     bet_free <- ggplot2::ggplot(data = table_size_bet_n) +
-      ggplot2::geom_line(ggplot2::aes(x = cl,
-                                      y = FREE_AVG_5_YEARS,
-                                      color = number_previous_five),
+      ggplot2::geom_line(ggplot2::aes(x = size_class,
+                                      y = free_avg_5_years,
+                                      color = years),
                          linetype = "dashed") +
-      ggplot2::geom_line(ggplot2::aes(x = cl,
-                                      y = FREE_CURRENT_YEAR,
-                                      color = number_report_year)) +
-      ggplot2::labs(x = "Size class (cm)",
+      ggplot2::geom_line(ggplot2::aes(x = size_class,
+                                      y = free_current_year,
+                                      color = year)) +
+      ggplot2::labs(x = "size class (cm)",
                     y = "Percentage") +
-      ggplot2::ylim(0, max(table_size_bet_n$FREE_CURRENT_YEAR,
-                          table_size_bet_n$FREE_AVG_5_YEARS) * 1.1) +
+      ggplot2::ylim(0, max(table_size_bet_n$free_current_year,
+                           table_size_bet_n$free_avg_5_years) * 1.1) +
       ggplot2::xlim(20, 160) +
       ggplot2::theme_bw() +
-      ggplot2::theme(legend.position = c(0.85, 0.85), legend.title = ggplot2::element_blank()) +
-      ggplot2::ggtitle("BET - FSC")
-    #BET ALL
+      ggplot2::theme(legend.position = c(0.85, 0.85), legend.title = ggplot2::element_blank())
+    # plotly
+    bet_free <- plotly::ggplotly(bet_free) %>%
+      plotly::layout(showlegend = FALSE)
+    # BET ALL
     bet_all <- ggplot2::ggplot(data = table_size_bet_n) +
-      ggplot2::geom_line(ggplot2::aes(x = cl,
-                                      y = ALL_AVG_5_YEARS,
-                                      color = number_previous_five),
+      ggplot2::geom_line(ggplot2::aes(x = size_class,
+                                      y = all_avg_5_years,
+                                      color = years),
                          linetype = "dashed") +
-      ggplot2::geom_line(ggplot2::aes(x = cl,
-                                      y = ALL_CURRENT_YEAR,
-                                      color = number_report_year)) +
-      ggplot2::labs(x = "Size class (cm)",
+      ggplot2::geom_line(ggplot2::aes(x = size_class,
+                                      y = all_current_year,
+                                      color = year)) +
+      ggplot2::labs(x = "size class (cm)",
                     y = "Percentage") +
-      ggplot2::ylim(0, max(table_size_bet_n$ALL_CURRENT_YEAR,
-                          table_size_bet_n$ALL_AVG_5_YEARS) * 1.1) +
+      ggplot2::ylim(0, max(table_size_bet_n$all_current_year,
+                           table_size_bet_n$all_avg_5_years) * 1.1) +
       ggplot2::xlim(20, 160) +
       ggplot2::theme_bw() +
-      ggplot2::theme(legend.position = c(0.85, 0.85), legend.title = ggplot2::element_blank()) +
-      ggplot2::ggtitle("BET - ALL")
+      ggplot2::theme(legend.position = c(0.85, 0.85), legend.title = ggplot2::element_blank())
+    # plotly
+    bet_all <-plotly::ggplotly(bet_all) %>%
+      plotly::layout(showlegend = FALSE)
     ### SKJ ----
-    #SKJ LOG
+    # SKJ LOG
     skj_fob <- ggplot2::ggplot(data = table_size_skj_n) +
-      ggplot2::geom_line(ggplot2::aes(x = cl,
-                                      y = LOG_AVG_5_YEARS,
-                                      color = number_previous_five),
+      ggplot2::geom_line(ggplot2::aes(x = size_class,
+                                      y = log_avg_5_years,
+                                      color = years),
                          linetype = "dashed") +
-      ggplot2::geom_line(ggplot2::aes(x = cl,
-                                      y = LOG_CURRENT_YEAR,
-                                      color = number_report_year)) +
-      ggplot2::labs(x = "Size class (cm)",
+      ggplot2::geom_line(ggplot2::aes(x = size_class,
+                                      y = log_current_year,
+                                      color = year)) +
+      ggplot2::labs(x = "size class (cm)",
                     y = "Percentage") +
-      ggplot2::ylim(0, max(table_size_skj_n$LOG_CURRENT_YEAR,
-                          table_size_skj_n$LOG_AVG_5_YEARS) * 1.1) +
+      ggplot2::ylim(0, max(table_size_skj_n$log_current_year,
+                           table_size_skj_n$log_avg_5_years) * 1.1) +
       ggplot2::xlim(20, 80) +
       ggplot2::theme_bw() +
-      ggplot2::theme(legend.position = c(0.85, 0.85), legend.title = ggplot2::element_blank()) +
-      ggplot2::ggtitle("SKJ - FOB")
-    #SKJ FREE
+      ggplot2::theme(legend.position = c(0.85, 0.85), legend.title = ggplot2::element_blank())
+    # plotly
+    skj_fob <- plotly::ggplotly(skj_fob) %>%
+      plotly::layout(showlegend = FALSE)
+    # SKJ FREE
     skj_free <- ggplot2::ggplot(data = table_size_skj_n) +
-      ggplot2::geom_line(ggplot2::aes(x = cl,
-                                      y = FREE_AVG_5_YEARS,
-                                      color = number_previous_five),
+      ggplot2::geom_line(ggplot2::aes(x = size_class,
+                                      y = free_avg_5_years,
+                                      color = years),
                          linetype = "dashed") +
-      ggplot2::geom_line(ggplot2::aes(x = cl,
-                                      y = FREE_CURRENT_YEAR,
-                                      color = number_report_year)) +
-      ggplot2::labs(x = "Size class (cm)",
+      ggplot2::geom_line(ggplot2::aes(x = size_class,
+                                      y = free_current_year,
+                                      color = year)) +
+      ggplot2::labs(x = "size class (cm)",
                     y = "Percentage") +
-      ggplot2::ylim(0, max(table_size_skj_n$FREE_CURRENT_YEAR,
-                          table_size_skj_n$FREE_AVG_5_YEARS) * 1.1) +
+      ggplot2::ylim(0, max(table_size_skj_n$free_current_year,
+                           table_size_skj_n$free_avg_5_years) * 1.1) +
       ggplot2::xlim(20, 80) +
       ggplot2::theme_bw() +
-      ggplot2::theme(legend.position = c(0.85, 0.85), legend.title = ggplot2::element_blank()) +
-      ggplot2::ggtitle("SKJ - FSC")
-    #SKJ ALL
+      ggplot2::theme(legend.position = c(0.85, 0.85), legend.title = ggplot2::element_blank())
+    # plotly
+    skj_free <- plotly::ggplotly(skj_free) %>%
+      plotly::layout(showlegend = FALSE)
+    # SKJ ALL
     skj_all <- ggplot2::ggplot(data = table_size_skj_n) +
-      ggplot2::geom_line(ggplot2::aes(x = cl,
-                                      y = ALL_AVG_5_YEARS,
-                                      color = number_previous_five),
+      ggplot2::geom_line(ggplot2::aes(x = size_class,
+                                      y = all_avg_5_years,
+                                      color = years),
                          linetype = "dashed") +
-      ggplot2::geom_line(ggplot2::aes(x = cl,
-                                      y = ALL_CURRENT_YEAR,
-                                      color = number_report_year)) +
-      ggplot2::labs(x = "Size class (cm)",
+      ggplot2::geom_line(ggplot2::aes(x = size_class,
+                                      y = all_current_year,
+                                      color = year)) +
+      ggplot2::labs(x = "size class (cm)",
                     y = "Percentage") +
-      ggplot2::ylim(0, max(table_size_skj_n$ALL_CURRENT_YEAR,
-                          table_size_skj_n$ALL_AVG_5_YEARS) * 1.1) +
+      ggplot2::ylim(0, max(table_size_skj_n$all_current_year,
+                           table_size_skj_n$all_avg_5_years) * 1.1) +
       ggplot2::xlim(20, 80) +
       ggplot2::theme_bw() +
-      ggplot2::theme(legend.position = c(0.85, 0.85), legend.title = ggplot2::element_blank()) +
-      ggplot2::ggtitle("SKJ - ALL")
-    ### GG ARRANGE ----
-    ggpubr::ggarrange(yft_fob, bet_fob, skj_fob,
-                      yft_free, bet_free, skj_free,
-                      yft_all, bet_all, skj_all,
-                      ncol = 3, nrow = 3)
+      ggplot2::theme(legend.position = c(0.85, 0.85), legend.title = ggplot2::element_blank())
+
+    skj_all <- plotly::ggplotly(skj_all) %>%
+      plotly::layout(showlegend = FALSE)
+
+    ### Plotly ----
+    plotly::subplot(yft_fob, bet_fob, skj_fob,
+                    yft_free, bet_free, skj_free,
+                    yft_all, bet_all, skj_all, nrows = 3,
+                    titleX = TRUE, titleY = TRUE,
+                    shareX = TRUE,
+                    #shareY = TRUE,
+                    margin = 0.03)  %>%
+      plotly::layout(annotations = list(
+        # YFT title : Add text to the plot
+        list(text = "<b>YFT - FOB</b>",
+             x = 0.25,
+             y = 0.95,
+             xref = "paper",
+             yref = "paper",
+             showarrow = FALSE,
+             xanchor = "center",
+             yanchor = "bottom"),
+        list(text = "<b>YFT - FSC</b>",
+             x = 0.05,
+             y = 0.58,
+             xref = "paper",
+             yref = "paper",
+             showarrow = FALSE,
+             xanchor = "center",
+             yanchor = "bottom"),
+        list(text = "<b>YFT - ALL</b>",
+             x = 0.25,
+             y = 0.25,
+             xref = "paper",
+             yref = "paper",
+             showarrow = FALSE,
+             xanchor = "center",
+             yanchor = "bottom"),
+        # BET title : Add text to the plot
+        list(text = "<b>BET - FOB</b>",
+             x = 0.58,
+             y = 0.95,
+             xref = "paper",
+             yref = "paper",
+             showarrow = FALSE,
+             xanchor = "center",
+             yanchor = "bottom"),
+        list(text = "<b>BET - FSC</b>",
+             x = 0.58,
+             y = 0.58,
+             xref = "paper",
+             yref = "paper",
+             showarrow = FALSE,
+             xanchor = "center",
+             yanchor = "bottom"),
+        list(text = "<b>BET - ALL</b>",
+             x = 0.58,
+             y = 0.25,
+             xref = "paper",
+             yref = "paper",
+             showarrow = FALSE,
+             xanchor = "center",
+             yanchor = "bottom"),
+        # SKJ title : Add text to the plot
+        list(text = "<b>SKJ - FOB</b>",
+             x = 0.95,
+             y = 0.95,
+             xref = "paper",
+             yref = "paper",
+             showarrow = FALSE,
+             xanchor = "center",
+             yanchor = "bottom"),
+        list(text = "<b>SKJ - FSC</b>",
+             x = 0.95,
+             y = 0.58,
+             xref = "paper",
+             yref = "paper",
+             showarrow = FALSE,
+             xanchor = "center",
+             yanchor = "bottom"),
+        list(text = "<b>SKJ - ALL</b>",
+             x = 0.95,
+             y = 0.25,
+             xref = "paper",
+             yref = "paper",
+             showarrow = FALSE,
+             xanchor = "center",
+             yanchor = "bottom")))
   }
 }
