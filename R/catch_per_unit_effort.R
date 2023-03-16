@@ -80,6 +80,13 @@ catch_per_unit_effort <- function(data_connection,
                                    type = "character",
                                    output = "message"))
   }
+  if (codama::r_type_checking(r_object = graph_type,
+                              type = "character",
+                              output = "logical") != TRUE) {
+    return(codama::r_type_checking(r_object = graph_type,
+                                   type = "character",
+                                   output = "message"))
+  }
   # 2 - Data extraction ----
   if (data_connection[[1]] == "balbaya") {
     annual_catch_rate_sql <- paste(readLines(con = system.file("sql",
@@ -110,7 +117,7 @@ catch_per_unit_effort <- function(data_connection,
   annual_catch_rate_data <- dplyr::tibble(DBI::dbGetQuery(conn      = data_connection[[2]],
                                                           statement  = annual_catch_rate_sql_final))
   #ANNUAL CATCH RATE NB SETS SQL
-  annual_catch_rate_nb_set_sql_final <- DBI::sqlInterpolate(conn = data_connection[[2]],
+  annual_catch_rate_nb_set <- DBI::sqlInterpolate(conn = data_connection[[2]],
                                                      sql  = annual_catch_rate_nb_set_sql,
                                                      time_period = DBI::SQL(paste(time_period,
                                                                                   collapse = ", ")),
@@ -121,7 +128,7 @@ catch_per_unit_effort <- function(data_connection,
                                                      ocean = DBI::SQL(paste(ocean,
                                                                             collapse = ", ")))
   annual_catch_rate_nb_set_data <- dplyr::tibble(DBI::dbGetQuery(conn      = data_connection[[2]],
-                                                          statement  = annual_catch_rate_nb_set_sql_final))
+                                                          statement  = annual_catch_rate_nb_set))
   # 3.a - Data design for FOB----
   annual_catch_rate_nb_set_data <-  annual_catch_rate_nb_set_data %>%
     dplyr::mutate(year = lubridate::year(x = activity_date))
@@ -160,7 +167,8 @@ catch_per_unit_effort <- function(data_connection,
   t2 <- annual_catch_rate_nb_set_data %>%
     dplyr::group_by(year) %>%
     dplyr::summarise(t_peche = sum(v_tpec, na.rm = TRUE),
-                     t_recherche = sum(v_tpec - v_dur_cal, na.rm = TRUE),
+                     t_recherche = sum(v_tpec - v_dur_cal,
+                                       na.rm = TRUE),
                      .groups = "drop")
   #Creation of t3 database from annual_catch_rate_nb_set_data
   t3 <- annual_catch_rate_data %>%
@@ -277,7 +285,10 @@ catch_per_unit_effort <- function(data_connection,
                                         y = bet)) +
         ggplot2::geom_line(ggplot2::aes(x = year,
                                         y = total)) +
-        ggplot2::scale_color_manual(values = c("black", "black", "black", "black")) +
+        ggplot2::scale_color_manual(values = c("black",
+                                               "black",
+                                               "black",
+                                               "black")) +
         ggplot2::geom_point(ggplot2::aes(x = year,
                                          y = yft,
                                          color = "Yellowfin"),
@@ -394,7 +405,10 @@ catch_per_unit_effort <- function(data_connection,
                                         y = bet)) +
         ggplot2::geom_line(ggplot2::aes(x = year,
                                         y = total)) +
-        ggplot2::scale_color_manual(values = c("black", "black", "black", "black")) +
+        ggplot2::scale_color_manual(values = c("black",
+                                               "black",
+                                               "black",
+                                               "black")) +
         ggplot2::geom_point(ggplot2::aes(x = year,
                                          y = yft,
                                          color = "Yellowfin"),
@@ -411,8 +425,6 @@ catch_per_unit_effort <- function(data_connection,
                                          y = total,
                                          color = "total"),
                             shape = 16, size = 2) +
-        ggplot2::scale_x_continuous(breaks = c(1991, 1995, 2000, 2005, 2010, 2015, 2020, 2025)) +
-
         ggplot2::labs(x = "",
                       y = "Catch per unit effort (t/d)") +
         ggplot2::ylim(0, 20) +

@@ -3,8 +3,8 @@
 #' @description weight distribution of major tuna catches (in percentage of the total number of fishes) for the French purse seine fleet.
 #' @param data_connection {\link[base]{list}} expected. Output of the function {\link[furdeb]{postgresql_dbconnection}}, which must be done before using the bio_weight_tuna() function.
 #' @param report_year {\link[base]{integer}} expected. Year of the statistical report.
-#' @param country {\link[base]{integer}} expected. Country codes identification. 1 by default.
 #' @param ocean {\link[base]{integer}} expected. Ocean codes identification.
+#' @param country {\link[base]{integer}} expected. Country codes identification. 1 by default.
 #' @param graph_type {\link[base]{character}} expected. plot or ggplot. Plot by default.
 #' @return The function return ggplot R plot.
 #' @export
@@ -48,13 +48,6 @@ bio_weight_tuna <- function(data_connection,
                                    type = "integer",
                                    output = "message"))
   }
-  if (codama::r_type_checking(r_object = country,
-                              type = "integer",
-                              output = "logical") != TRUE) {
-    return(codama::r_type_checking(r_object = country,
-                                   type = "integer",
-                                   output = "message"))
-  }
   if (codama::r_type_checking(r_object = ocean,
                               type = "integer",
                               output = "logical") != TRUE) {
@@ -62,6 +55,21 @@ bio_weight_tuna <- function(data_connection,
                                    type = "integer",
                                    output = "message"))
   }
+  if (codama::r_type_checking(r_object = country,
+                              type = "integer",
+                              output = "logical") != TRUE) {
+    return(codama::r_type_checking(r_object = country,
+                                   type = "integer",
+                                   output = "message"))
+  }
+  if (codama::r_type_checking(r_object = graph_type,
+                              type = "character",
+                              output = "logical") != TRUE) {
+    return(codama::r_type_checking(r_object = graph_type,
+                                   type = "character",
+                                   output = "message"))
+  }
+
   # 2 - Data extraction ----
   # Report_year
   five_previous <- c((report_year - 1):(report_year - 5))
@@ -93,49 +101,55 @@ bio_weight_tuna <- function(data_connection,
     dplyr::rename("size_class" = "cl")
   # Dataframe - Mode : LOG, Year : Report year
   t0 <- bio_weight_tuna_sql_data %>%
-    dplyr::filter(c_esp == 2,
-                  c_banc == 1,
+    dplyr::filter(c_esp %in% 2,
+                  c_banc %in% 1,
                   an %in% report_year) %>%
     dplyr::group_by(size_class) %>%
-    dplyr::summarise(log_current_year = (unique(0.00000748 * (size_class + 0.5)^3.2526) * sum(v_mensur, na.rm = TRUE)) / 1000,
+    dplyr::summarise(log_current_year = (unique(0.00000748 * (size_class + 0.5)^3.2526) * sum(v_mensur,
+                                                                                              na.rm = TRUE)) / 1000,
                      .groups = "drop")
   # Dataframe - Mode : LOG, Year : Previous years
   t1 <- bio_weight_tuna_sql_data %>%
-    dplyr::filter(c_esp == 2,
-                  c_banc == 1,
+    dplyr::filter(c_esp %in% 2,
+                  c_banc %in% 1,
                   an %in% five_previous) %>%
     dplyr::group_by(size_class) %>%
-    dplyr::summarise(log_avg_5_years = (unique(0.00000748 * (size_class + 0.5)^3.2526) * sum(v_mensur / 5, na.rm = TRUE)) / 1000,
+    dplyr::summarise(log_avg_5_years = (unique(0.00000748 * (size_class + 0.5)^3.2526) * sum(v_mensur / 5,
+                                                                                             na.rm = TRUE)) / 1000,
                      .groups = "drop")
   # Dataframe - Mode : FREE, Year : Report year
   t2 <- bio_weight_tuna_sql_data %>%
-    dplyr::filter(c_esp == 2,
+    dplyr::filter(c_esp %in% 2,
                   c_banc %in% c(2, 3, 9),
                   an %in% report_year) %>%
     dplyr::group_by(size_class) %>%
-    dplyr::summarise(free_current_year = (unique(0.00000748 * (size_class + 0.5)^3.2526) * sum(v_mensur, na.rm = TRUE)) / 1000,
+    dplyr::summarise(free_current_year = (unique(0.00000748 * (size_class + 0.5)^3.2526) * sum(v_mensur,
+                                                                                               na.rm = TRUE)) / 1000,
                      .groups = "drop")
   # Dataframe - Mode : FREE, Year : Previous years
   t3 <- bio_weight_tuna_sql_data %>%
-    dplyr::filter(c_esp == 2,
+    dplyr::filter(c_esp %in% 2,
                   c_banc %in% c(2, 3, 9),
                   an %in% five_previous) %>%
     dplyr::group_by(size_class) %>%
-    dplyr::summarise(free_avg_5_years = (unique(0.00000748 * (size_class + 0.5)^3.2526) * sum(v_mensur / 5, na.rm = TRUE)) / 1000,
+    dplyr::summarise(free_avg_5_years = (unique(0.00000748 * (size_class + 0.5)^3.2526) * sum(v_mensur / 5,
+                                                                                              na.rm = TRUE)) / 1000,
                      .groups = "drop")
   # Dataframe - Mode : ALL, Year : Report year
   t4 <- bio_weight_tuna_sql_data %>%
-    dplyr::filter(c_esp == 2,
+    dplyr::filter(c_esp %in% 2,
                   an %in% report_year) %>%
     dplyr::group_by(size_class) %>%
-    dplyr::summarise(all_current_year = (unique(0.00000748 * (size_class + 0.5)^3.2526) * sum(v_mensur, na.rm = TRUE)) / 1000,
+    dplyr::summarise(all_current_year = (unique(0.00000748 * (size_class + 0.5)^3.2526) * sum(v_mensur,
+                                                                                              na.rm = TRUE)) / 1000,
                      .groups = "drop")
   # Dataframe - Mode : ALL, Year : Previous years
   t5 <- bio_weight_tuna_sql_data %>%
-    dplyr::filter(c_esp == 2,
+    dplyr::filter(c_esp %in% 2,
                   an %in% five_previous) %>%
     dplyr::group_by(size_class) %>%
-    dplyr::summarise(all_avg_5_years = (unique(0.00000748 * (size_class + 0.5)^3.2526) * sum(v_mensur / 5, na.rm = TRUE)) / 1000,
+    dplyr::summarise(all_avg_5_years = (unique(0.00000748 * (size_class + 0.5)^3.2526) * sum(v_mensur / 5,
+                                                                                             na.rm = TRUE)) / 1000,
                      .groups = "drop")
   # Merge
   table_weight_skj_w <- merge(t0, t1, by = "size_class")
@@ -147,49 +161,55 @@ bio_weight_tuna <- function(data_connection,
   # 3.b - Data design for BET ----
   # Dataframe - Mode : LOG, Year : Report year
   t0 <- bio_weight_tuna_sql_data %>%
-    dplyr::filter(c_esp == 3,
-                  c_banc == 1,
-                  an == report_year) %>%
+    dplyr::filter(c_esp %in% 3,
+                  c_banc %in% 1,
+                  an %in% report_year) %>%
     dplyr::group_by(size_class) %>%
-    dplyr::summarise(log_current_year = (unique(0.00002396 * (size_class + 1)^2.9774) * sum(v_mensur, na.rm = TRUE)) / 1000,
+    dplyr::summarise(log_current_year = (unique(0.00002396 * (size_class + 1)^2.9774) * sum(v_mensur,
+                                                                                            na.rm = TRUE)) / 1000,
                      .groups = "drop")
   # Dataframe - Mode : LOG, Year : Previous years
   t1 <- bio_weight_tuna_sql_data %>%
-    dplyr::filter(c_esp == 3,
-                  c_banc == 1,
+    dplyr::filter(c_esp %in% 3,
+                  c_banc %in% 1,
                   an %in% five_previous) %>%
     dplyr::group_by(size_class) %>%
-    dplyr::summarise(log_avg_5_years = (unique(0.00002396 * (size_class + 1)^2.9774) * sum(v_mensur / 5, na.rm = TRUE)) / 1000,
+    dplyr::summarise(log_avg_5_years = (unique(0.00002396 * (size_class + 1)^2.9774) * sum(v_mensur / 5,
+                                                                                           na.rm = TRUE)) / 1000,
                      .groups = "drop")
   # Dataframe - Mode : FREE, Year : Report year
   t2 <- bio_weight_tuna_sql_data %>%
-    dplyr::filter(c_esp == 3,
+    dplyr::filter(c_esp %in% 3,
                   c_banc %in% c(2, 3, 9),
-                  an == report_year) %>%
+                  an %in% report_year) %>%
     dplyr::group_by(size_class) %>%
-    dplyr::summarise(free_current_year = (unique(0.00002396 * (size_class + 1)^2.9774) * sum(v_mensur, na.rm = TRUE)) / 1000,
+    dplyr::summarise(free_current_year = (unique(0.00002396 * (size_class + 1)^2.9774) * sum(v_mensur,
+                                                                                             na.rm = TRUE)) / 1000,
                      .groups = "drop")
   # Dataframe - Mode : FREE, Year : Previous years
   t3 <- bio_weight_tuna_sql_data %>%
-    dplyr::filter(c_esp == 3,
+    dplyr::filter(c_esp %in% 3,
                   c_banc %in% c(2, 3, 9),
                   an %in% five_previous) %>%
     dplyr::group_by(size_class) %>%
-    dplyr::summarise(free_avg_5_years = (unique(0.00002396 * (size_class + 1)^2.9774) * sum(v_mensur / 5, na.rm = TRUE)) / 1000,
+    dplyr::summarise(free_avg_5_years = (unique(0.00002396 * (size_class + 1)^2.9774) * sum(v_mensur / 5,
+                                                                                            na.rm = TRUE)) / 1000,
                      .groups = "drop")
   # Dataframe - Mode : ALL, Year : Report year
   t4 <- bio_weight_tuna_sql_data %>%
-    dplyr::filter(c_esp == 3,
-                  an == report_year) %>%
+    dplyr::filter(c_esp %in% 3,
+                  an %in% report_year) %>%
     dplyr::group_by(size_class) %>%
-    dplyr::summarise(all_current_year = (unique(0.00002396 * (size_class + 1)^2.9774) * sum(v_mensur, na.rm = TRUE)) / 1000,
+    dplyr::summarise(all_current_year = (unique(0.00002396 * (size_class + 1)^2.9774) * sum(v_mensur,
+                                                                                            na.rm = TRUE)) / 1000,
                      .groups = "drop")
   # Dataframe - Mode : ALL, Year : Previous yearss
   t5 <- bio_weight_tuna_sql_data %>%
-    dplyr::filter(c_esp == 3,
+    dplyr::filter(c_esp %in% 3,
                   an %in% five_previous) %>%
     dplyr::group_by(size_class) %>%
-    dplyr::summarise(all_avg_5_years = (unique(0.00002396 * (size_class + 1)^2.9774) * sum(v_mensur / 5, na.rm = TRUE)) / 1000,
+    dplyr::summarise(all_avg_5_years = (unique(0.00002396 * (size_class + 1)^2.9774) * sum(v_mensur / 5,
+                                                                                           na.rm = TRUE)) / 1000,
                      .groups = "drop")
   # Merge
   table_weight_bet_w <- merge(t0, t1, by = "size_class")
@@ -200,49 +220,55 @@ bio_weight_tuna <- function(data_connection,
   # 3.c - Data design for YFT ----
   # Dataframe - Mode : LOG, Year : Report year
   t0 <- bio_weight_tuna_sql_data %>%
-    dplyr::filter(c_esp == 1,
-                  c_banc == 1,
-                  an == report_year) %>%
+    dplyr::filter(c_esp %in% 1,
+                  c_banc %in% 1,
+                  an %in% report_year) %>%
     dplyr::group_by(size_class) %>%
-    dplyr::summarise(log_current_year = (unique(0.000021527 * (size_class + 1)^2.976) * sum(v_mensur, na.rm = TRUE)) / 1000,
+    dplyr::summarise(log_current_year = (unique(0.000021527 * (size_class + 1)^2.976) * sum(v_mensur,
+                                                                                            na.rm = TRUE)) / 1000,
                      .groups = "drop")
   # Dataframe - Mode : LOG, Year : Previous years
   t1 <- bio_weight_tuna_sql_data %>%
-    dplyr::filter(c_esp == 1,
-                  c_banc == 1,
+    dplyr::filter(c_esp %in% 1,
+                  c_banc %in% 1,
                   an %in% five_previous) %>%
     dplyr::group_by(size_class) %>%
-    dplyr::summarise(log_avg_5_years = (unique(0.000021527 * (size_class + 1)^2.976) * sum(v_mensur / 5, na.rm = TRUE)) / 1000,
+    dplyr::summarise(log_avg_5_years = (unique(0.000021527 * (size_class + 1)^2.976) * sum(v_mensur / 5,
+                                                                                           na.rm = TRUE)) / 1000,
                      .groups = "drop")
   # Dataframe - Mode : FREE, Year : Report year
   t2 <- bio_weight_tuna_sql_data %>%
-    dplyr::filter(c_esp == 1,
+    dplyr::filter(c_esp %in% 1,
                   c_banc %in% c(2, 3, 9),
                   an == report_year) %>%
     dplyr::group_by(size_class) %>%
-    dplyr::summarise(free_current_year = (unique(0.000021527 * (size_class + 1)^2.976) * sum(v_mensur, na.rm = TRUE)) / 1000,
+    dplyr::summarise(free_current_year = (unique(0.000021527 * (size_class + 1)^2.976) * sum(v_mensur,
+                                                                                             na.rm = TRUE)) / 1000,
                      .groups = "drop")
   # Dataframe - Mode : FREE, Year : Previous years
   t3 <- bio_weight_tuna_sql_data %>%
-    dplyr::filter(c_esp == 1,
+    dplyr::filter(c_esp %in% 1,
                   c_banc %in% c(2, 3, 9),
                   an %in% five_previous) %>%
     dplyr::group_by(size_class) %>%
-    dplyr::summarise(free_avg_5_years = (unique(0.000021527 * (size_class + 1)^2.976) * sum(v_mensur / 5, na.rm = TRUE)) / 1000,
+    dplyr::summarise(free_avg_5_years = (unique(0.000021527 * (size_class + 1)^2.976) * sum(v_mensur / 5,
+                                                                                            na.rm = TRUE)) / 1000,
                      .groups = "drop")
   # Dataframe - Mode : ALL, Year : Report year
   t4 <- bio_weight_tuna_sql_data %>%
-    dplyr::filter(c_esp == 1,
-                  an == report_year) %>%
+    dplyr::filter(c_esp %in% 1,
+                  an %in% report_year) %>%
     dplyr::group_by(size_class) %>%
-    dplyr::summarise(all_current_year = (unique(0.000021527 * (size_class + 1)^2.976) * sum(v_mensur, na.rm = TRUE)) / 1000,
+    dplyr::summarise(all_current_year = (unique(0.000021527 * (size_class + 1)^2.976) * sum(v_mensur,
+                                                                                            na.rm = TRUE)) / 1000,
                      .groups = "drop")
   # Dataframe - Mode : ALL, Year : Previous years
   t5 <- bio_weight_tuna_sql_data %>%
-    dplyr::filter(c_esp == 1,
+    dplyr::filter(c_esp %in% 1,
                   an %in% five_previous) %>%
     dplyr::group_by(size_class) %>%
-    dplyr::summarise(all_avg_5_years = (unique(0.000021527 * (size_class + 1)^2.976) * sum(v_mensur / 5, na.rm = TRUE)) / 1000,
+    dplyr::summarise(all_avg_5_years = (unique(0.000021527 * (size_class + 1)^2.976) * sum(v_mensur / 5,
+                                                                                           na.rm = TRUE)) / 1000,
                      .groups = "drop")
   # Merge
   table_weight_yft_w <- merge(t0, t1, by = "size_class")
@@ -253,7 +279,10 @@ bio_weight_tuna <- function(data_connection,
   # 4 - Graphic design ----
   # Function that read the 3 dataframe and print it in a plot
   if (graph_type == "plot") {
-    weight_plot_f <- function(species, mode, data_type) {
+    # The function reads the different data sets
+    weight_plot_f <- function(species,
+                              mode,
+                              data_type) {
       table <- get(paste("table_weight_",
                          species,
                          "_",
@@ -273,11 +302,13 @@ bio_weight_tuna <- function(data_connection,
                            sep = ""))[[paste(mode,
                                              "_avg_5_years",
                                              sep = "")]]
+      # The abscissa limit is 160 for yft and bet, and 80 for skj
       if (species == "skj") {
         x_max <-  80
       } else {
         x_max <- 160
       }
+      # Plot
       graphics::plot(table$size_class,
                      column1,
                      cex.axis = 1.3,
@@ -288,8 +319,11 @@ bio_weight_tuna <- function(data_connection,
                      ylab = ylabel,
                      lty = "solid",
                      col = "black",
-                     xlim = c(20, x_max),
-                     ylim = (c(0, max(column1, column2) * 1.1)),
+                     xlim = c(20,
+                              x_max),
+                     ylim = (c(0,
+                               max(column1,
+                                   column2) * 1.1)),
                      lwd = 1.2)
       graphics::lines(table$size_class,
                       column2,
@@ -309,26 +343,70 @@ bio_weight_tuna <- function(data_connection,
                        bty = "n",
                        cex = 1.3)
     }
+    # Variables used in the plot
     ylabel <- "Biomass (t)"
-    indic_species <- c("yft", "bet", "skj")
-    indic_mode <- c("log", "free", "all")
-    title1 <- c("YFT", "", "", "BET", "", "", "SKJ", "", "")
+    indic_species <- c("yft",
+                       "bet",
+                       "skj")
+    indic_mode <- c("log",
+                    "free",
+                    "all")
+    title1 <- c("YFT",
+                "",
+                "",
+                "BET",
+                "",
+                "",
+                "SKJ",
+                "",
+                "")
     compteur <- 0
-    mtext_mode <- c("FOB", "FSC", "ALL", "", "", "", "", "", "")
-    par(mfcol = c(3, 3), mar = c(4, 4, 2, 2), oma = c(0, 2.5, 2.5, 0))
+    mtext_mode <- c("FOB",
+                    "FSC",
+                    "ALL",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "",
+                    "")
+    par(mfcol = c(3,
+                  3),
+        mar = c(4,
+                4,
+                2,
+                2),
+        oma = c(0,
+                2.5,
+                2.5,
+                0))
+    # variables used in the plot
     for (i in (seq_along(indic_species))){
       for (j in (seq_along(indic_species))){
         compteur <- compteur + 1
         title2 <- title1[compteur]
-        weight_plot_f(indic_species[i], indic_mode[j], "w")
+        weight_plot_f(indic_species[i],
+                      indic_mode[j],
+                      "w")
         text <- mtext_mode[compteur]
-        graphics::mtext(text, side = 2, outer = FALSE, line = 4.5, cex = 1.6)
-        graphics::mtext(title2, side = 3, outer = FALSE, line = 1.5, cex = 1.6)
+        graphics::mtext(text,
+                        side = 2,
+                        outer = FALSE,
+                        line = 4.5,
+                        cex = 1.6)
+        graphics::mtext(title2,
+                        side = 3,
+                        outer = FALSE,
+                        line = 1.5,
+                        cex = 1.6)
       }
     }
   } else if (graph_type == "plotly") {
+    # creation of year variables
     year <- as.character(report_year)
-    years <- as.character(paste0(report_year - 5, "-", report_year - 1))
+    years <- as.character(paste0(report_year - 5,
+                                 "-",
+                                 report_year - 1))
     ### YFT ----
     # Round values
     table_weight_yft_w$log_current_year <- round(table_weight_yft_w$log_current_year, 3)
@@ -350,9 +428,12 @@ bio_weight_tuna <- function(data_connection,
                     y = "Percentage") +
       ggplot2::ylim(0, max(table_weight_yft_w$log_current_year,
                            table_weight_yft_w$log_avg_5_years) * 1.1) +
-      ggplot2::xlim(20, 160) +
+      ggplot2::xlim(20,
+                    160) +
       ggplot2::theme_bw() +
-      ggplot2::theme(legend.position = c(0.85, 0.85), legend.title = ggplot2::element_blank())
+      ggplot2::theme(legend.position = c(0.85,
+                                         0.85),
+                     legend.title = ggplot2::element_blank())
     # plotly
     yft_fob <- plotly::ggplotly(yft_fob) %>%
       plotly::layout(showlegend = FALSE)
@@ -369,9 +450,12 @@ bio_weight_tuna <- function(data_connection,
                     y = "Percentage") +
       ggplot2::ylim(0, max(table_weight_yft_w$free_current_year,
                            table_weight_yft_w$free_avg_5_years) * 1.1) +
-      ggplot2::xlim(20, 160) +
+      ggplot2::xlim(20,
+                    160) +
       ggplot2::theme_bw() +
-      ggplot2::theme(legend.position = c(0.2, 0.85), legend.title = ggplot2::element_blank())
+      ggplot2::theme(legend.position = c(0.2,
+                                         0.85),
+                     legend.title = ggplot2::element_blank())
     # plotly
     yft_free <-  plotly::ggplotly(yft_free) %>%
       plotly::layout(showlegend = FALSE)
@@ -388,9 +472,12 @@ bio_weight_tuna <- function(data_connection,
                     y = "Percentage") +
       ggplot2::ylim(0, max(table_weight_yft_w$all_current_year,
                            table_weight_yft_w$all_avg_5_years) * 1.1) +
-      ggplot2::xlim(20, 160) +
+      ggplot2::xlim(20,
+                    160) +
       ggplot2::theme_bw() +
-      ggplot2::theme(legend.position = c(0.85, 0.85), legend.title = ggplot2::element_blank())
+      ggplot2::theme(legend.position = c(0.85,
+                                         0.85),
+                     legend.title = ggplot2::element_blank())
     # plotly
     yft_all <- plotly::ggplotly(yft_all) %>%
       plotly::layout(showlegend = FALSE)
@@ -408,9 +495,12 @@ bio_weight_tuna <- function(data_connection,
                     y = "Percentage") +
       ggplot2::ylim(0, max(table_weight_bet_w$log_current_year,
                            table_weight_bet_w$log_avg_5_years) * 1.1) +
-      ggplot2::xlim(20, 160) +
+      ggplot2::xlim(20,
+                    160) +
       ggplot2::theme_bw() +
-      ggplot2::theme(legend.position = c(0.85, 0.85), legend.title = ggplot2::element_blank())
+      ggplot2::theme(legend.position = c(0.85,
+                                         0.85),
+                     legend.title = ggplot2::element_blank())
     # plotly
     bet_fob <- plotly::ggplotly(bet_fob) %>%
       plotly::layout(showlegend = FALSE)
@@ -427,9 +517,12 @@ bio_weight_tuna <- function(data_connection,
                     y = "Percentage") +
       ggplot2::ylim(0, max(table_weight_bet_w$free_current_year,
                            table_weight_bet_w$free_avg_5_years) * 1.1) +
-      ggplot2::xlim(20, 160) +
+      ggplot2::xlim(20,
+                    160) +
       ggplot2::theme_bw() +
-      ggplot2::theme(legend.position = c(0.85, 0.85), legend.title = ggplot2::element_blank())
+      ggplot2::theme(legend.position = c(0.85,
+                                         0.85),
+                     legend.title = ggplot2::element_blank())
     # plotly
     bet_free <- plotly::ggplotly(bet_free) %>%
       plotly::layout(showlegend = FALSE)
@@ -446,9 +539,12 @@ bio_weight_tuna <- function(data_connection,
                     y = "Percentage") +
       ggplot2::ylim(0, max(table_weight_bet_w$all_current_year,
                            table_weight_bet_w$all_avg_5_years) * 1.1) +
-      ggplot2::xlim(20, 160) +
+      ggplot2::xlim(20,
+                    160) +
       ggplot2::theme_bw() +
-      ggplot2::theme(legend.position = c(0.85, 0.85), legend.title = ggplot2::element_blank())
+      ggplot2::theme(legend.position = c(0.85,
+                                         0.85),
+                     legend.title = ggplot2::element_blank())
     # plotly
     bet_all <- plotly::ggplotly(bet_all) %>%
       plotly::layout(showlegend = FALSE)
@@ -466,9 +562,12 @@ bio_weight_tuna <- function(data_connection,
                     y = "Percentage") +
       ggplot2::ylim(0, max(table_weight_skj_w$log_current_year,
                            table_weight_skj_w$log_avg_5_years) * 1.1) +
-      ggplot2::xlim(20, 80) +
+      ggplot2::xlim(20,
+                    80) +
       ggplot2::theme_bw() +
-      ggplot2::theme(legend.position = c(0.85, 0.85), legend.title = ggplot2::element_blank())
+      ggplot2::theme(legend.position = c(0.85,
+                                         0.85),
+                     legend.title = ggplot2::element_blank())
     # plotly
     skj_fob <- plotly::ggplotly(skj_fob) %>%
       plotly::layout(showlegend = FALSE)
@@ -485,9 +584,12 @@ bio_weight_tuna <- function(data_connection,
                     y = "Percentage") +
       ggplot2::ylim(0, max(table_weight_skj_w$free_current_year,
                            table_weight_skj_w$free_avg_5_years) * 1.1) +
-      ggplot2::xlim(20, 80) +
+      ggplot2::xlim(20,
+                    80) +
       ggplot2::theme_bw() +
-      ggplot2::theme(legend.position = c(0.85, 0.85), legend.title = ggplot2::element_blank())
+      ggplot2::theme(legend.position = c(0.85,
+                                         0.85),
+                     legend.title = ggplot2::element_blank())
     # plotly
     skj_free <- plotly::ggplotly(skj_free) %>%
       plotly::layout(showlegend = FALSE)
@@ -504,13 +606,15 @@ bio_weight_tuna <- function(data_connection,
                     y = "Percentage") +
       ggplot2::ylim(0, max(table_weight_skj_w$all_current_year,
                            table_weight_skj_w$all_avg_5_years) * 1.1) +
-      ggplot2::xlim(20, 80) +
+      ggplot2::xlim(20,
+                    80) +
       ggplot2::theme_bw() +
-      ggplot2::theme(legend.position = c(0.85, 0.85), legend.title = ggplot2::element_blank())
+      ggplot2::theme(legend.position = c(0.85,
+                                         0.85),
+                     legend.title = ggplot2::element_blank())
 
     skj_all <- plotly::ggplotly(skj_all) %>%
       plotly::layout(showlegend = FALSE)
-
     ### Plotly ----
     plotly::subplot(yft_fob, bet_fob, skj_fob,
                     yft_free, bet_free, skj_free,
@@ -594,6 +698,5 @@ bio_weight_tuna <- function(data_connection,
              showarrow = FALSE,
              xanchor = "center",
              yanchor = "bottom")))
-
   }
 }

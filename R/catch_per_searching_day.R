@@ -3,10 +3,10 @@
 #' @description Annual number of catch per positive set on FOB-associated and free-swimming schools for the French purse seine fishing fleet in the Atlantic Ocean
 #' @param data_connection {\link[base]{list}} expected. Output of the function {\link[furdeb]{postgresql_dbconnection}}, which must be done before using the catch_per_searching_day() function.
 #' @param time_period {\link[base]{integer}} expected. Period identification in year.
-#' @param country {\link[base]{integer}} expected. Country codes identification. 1 by default.
-#' @param vessel_type {\link[base]{integer}} expected. Vessel type codes identification. 1 by default.
 #' @param ocean {\link[base]{integer}} expected. Ocean codes identification.
 #' @param fishing_type {\link[base]{character}} expected. FOB and FSC.
+#' @param country {\link[base]{integer}} expected. Country codes identification. 1 by default.
+#' @param vessel_type {\link[base]{integer}} expected. Vessel type codes identification. 1 by default.
 #' @param graph_type {\link[base]{character}} expected. plot or plotly. Plot by default.
 #' @return The function return ggplot R plot.
 #' @export
@@ -80,47 +80,10 @@ catch_per_searching_day <- function(data_connection,
                                    type = "character",
                                    output = "message"))
   }
-  if (codama::r_type_checking(r_object = data_connection,
-                              type = "list",
-                              length = 2L,
-                              output = "logical") != TRUE) {
-    return(codama::r_type_checking(r_object = data_connection,
-                                   type = "list",
-                                   length = 2L,
-                                   output = "message"))
-  }
-  if (codama::r_type_checking(r_object = time_period,
-                              type = "integer",
-                              output = "logical") != TRUE) {
-    return(codama::r_type_checking(r_object = time_period,
-                                   type = "integer",
-                                   output = "message"))
-  }
-  if (codama::r_type_checking(r_object = ocean,
-                              type = "integer",
-                              output = "logical") != TRUE) {
-    return(codama::r_type_checking(r_object = ocean,
-                                   type = "integer",
-                                   output = "message"))
-  }
-  if (codama::r_type_checking(r_object = country,
-                              type = "integer",
-                              output = "logical") != TRUE) {
-    return(codama::r_type_checking(r_object = country,
-                                   type = "integer",
-                                   output = "message"))
-  }
-  if (codama::r_type_checking(r_object = vessel_type,
-                              type = "integer",
-                              output = "logical") != TRUE) {
-    return(codama::r_type_checking(r_object = vessel_type,
-                                   type = "integer",
-                                   output = "message"))
-  }
-  if (codama::r_type_checking(r_object = fishing_type,
+  if (codama::r_type_checking(r_object = graph_type,
                               type = "character",
                               output = "logical") != TRUE) {
-    return(codama::r_type_checking(r_object = fishing_type,
+    return(codama::r_type_checking(r_object = graph_type,
                                    type = "character",
                                    output = "message"))
   }
@@ -154,7 +117,7 @@ catch_per_searching_day <- function(data_connection,
   time_serie_catch_data <- dplyr::tibble(DBI::dbGetQuery(conn      = data_connection[[2]],
                                                          statement = time_serie_catch_sql_final))
   # NB SETS SQL
-  time_serie_catch_nb_set_sql_final <- DBI::sqlInterpolate(conn = data_connection[[2]],
+  time_serie_catch_nb_set <- DBI::sqlInterpolate(conn = data_connection[[2]],
                                                            sql  = time_serie_catch_nb_set_sql,
                                                            time_period = DBI::SQL(paste(time_period,
                                                                                         collapse = ", ")),
@@ -165,7 +128,7 @@ catch_per_searching_day <- function(data_connection,
                                                            ocean = DBI::SQL(paste(ocean,
                                                                                   collapse = ", ")))
   time_serie_catch_nb_set_data <- dplyr::tibble(DBI::dbGetQuery(conn      = data_connection[[2]],
-                                                                statement = time_serie_catch_nb_set_sql_final))
+                                                                statement = time_serie_catch_nb_set))
   # 3 - Data design ----
   time_serie_catch_nb_set_data <-  time_serie_catch_nb_set_data %>%
     dplyr::mutate(year = lubridate::year(x = activity_date))
@@ -175,8 +138,10 @@ catch_per_searching_day <- function(data_connection,
   t0 <- time_serie_catch_nb_set_data %>%
     dplyr::filter(c_tban == 1) %>%
     dplyr::group_by(year) %>%
-    dplyr::summarise(nb_sets_pos = sum(v_nb_calee_pos, na.rm = TRUE),
-                     nb_sets = sum(v_nb_calees, na.rm = TRUE),
+    dplyr::summarise(nb_sets_pos = sum(v_nb_calee_pos,
+                                       na.rm = TRUE),
+                     nb_sets = sum(v_nb_calees,
+                                   na.rm = TRUE),
                      .groups = "drop")
   # Creation of t1 database from time_serie_catch_data
   # Add columns species from fob school (c_tban 1)
@@ -209,8 +174,10 @@ catch_per_searching_day <- function(data_connection,
   t2 <- time_serie_catch_nb_set_data %>%
     dplyr::filter(c_tban == 2 | c_tban == 3) %>%
     dplyr::group_by(year) %>%
-    dplyr::summarise(nb_sets_pos = sum(v_nb_calee_pos, na.rm = TRUE),
-                     nb_sets = sum(v_nb_calees, na.rm = TRUE),
+    dplyr::summarise(nb_sets_pos = sum(v_nb_calee_pos,
+                                       na.rm = TRUE),
+                     nb_sets = sum(v_nb_calees,
+                                   na.rm = TRUE),
                      .groups = "drop")
   #Creation of t1 database from time_serie_catch_data
   # Add columns species from fsc school (c_tban 2 et 3)
@@ -323,15 +290,20 @@ catch_per_searching_day <- function(data_connection,
                                         y = bet)) +
         ggplot2::geom_line(ggplot2::aes(x = year,
                                           y = total)) +
-        ggplot2::scale_color_manual(values = c("black", "black", "black", "black")) +
+        ggplot2::scale_color_manual(values = c("black",
+                                               "black",
+                                               "black",
+                                               "black")) +
         ggplot2::geom_point(ggplot2::aes(x = year,
                                          y = yft,
                                          color = "Yellowfin"),
-                            shape = 15, size = 2) +
+                            shape = 15,
+                            size = 2) +
         ggplot2::geom_point(ggplot2::aes(x = year,
                                          y = skj,
                                          color = "Skipjack"),
-                            shape = 5, size = 2) +
+                            shape = 5,
+                            size = 2) +
         ggplot2::geom_point(ggplot2::aes(x = year,
                                          y = bet,
                                          color = "Bigeye"),
@@ -342,7 +314,8 @@ catch_per_searching_day <- function(data_connection,
                             shape = 16, size = 2) +
         ggplot2::labs(x = "",
                       y = "Catch (t) per positive set") +
-        ggplot2::ylim(0, 35) +
+        ggplot2::ylim(0,
+                      35) +
         ggplot2::theme_bw() +
         ggplot2::labs(colour = "") +
         ggplot2::ggtitle("FOB")
@@ -436,28 +409,34 @@ catch_per_searching_day <- function(data_connection,
                                         y = bet)) +
         ggplot2::geom_line(ggplot2::aes(x = year,
                                         y = total)) +
-        ggplot2::scale_color_manual(values = c("black", "black", "black", "black")) +
+        ggplot2::scale_color_manual(values = c("black",
+                                               "black",
+                                               "black",
+                                               "black")) +
         ggplot2::geom_point(ggplot2::aes(x = year,
                                          y = yft,
                                          color = "Yellowfin"),
-                            shape = 15, size = 2) +
+                            shape = 15,
+                            size = 2) +
         ggplot2::geom_point(ggplot2::aes(x = year,
                                          y = skj,
                                          color = "Skipjack"),
-                            shape = 5, size = 2) +
+                            shape = 5,
+                            size = 2) +
         ggplot2::geom_point(ggplot2::aes(x = year,
                                          y = bet,
                                          color = "Bigeye"),
-                            shape = 2, size = 2) +
+                            shape = 2,
+                            size = 2) +
         ggplot2::geom_point(ggplot2::aes(x = year,
                                          y = total,
                                          color = "total"),
-                            shape = 16, size = 2) +
-        ggplot2::scale_x_continuous(breaks = c(1991, 1995, 2000, 2005, 2010, 2015, 2020, 2025)) +
-
+                            shape = 16,
+                            size = 2) +
         ggplot2::labs(x = "",
                       y = "Catch (t) per positive set") +
-        ggplot2::ylim(0, 35) +
+        ggplot2::ylim(0,
+                      35) +
         ggplot2::theme_bw() +
         ggplot2::labs(colour = "") +
         ggplot2::ggtitle("FSC")

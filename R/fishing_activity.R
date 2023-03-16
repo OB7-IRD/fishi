@@ -3,9 +3,9 @@
 #' @description Fishing operations. Annual number of fishing sets in the French purse seine fishery on FOB- associated and free-swimming tuna schools.
 #' @param data_connection {\link[base]{list}} expected. Output of the function {\link[furdeb]{postgresql_dbconnection}}, which must be done before using the fishing_activity() function.
 #' @param time_period {\link[base]{integer}} expected. Period identification in year.
+#' @param ocean {\link[base]{integer}} expected. Ocean codes identification.
 #' @param country {\link[base]{integer}} expected. Country codes identification. 1 by default.
 #' @param vessel_type {\link[base]{integer}} expected. Vessel type codes identification. 1 by default.
-#' @param ocean {\link[base]{integer}} expected. Ocean codes identification.
 #' @param graph_type {\link[base]{character}} expected. plot or plotly. Plot by default.
 #' @param figure {\link[base]{character}} expected. set (for number of sets graph) or log (for percentage FOB-associated sets graph).
 #' @return The function return ggplot R plot.
@@ -74,6 +74,20 @@ fishing_activity <- function(data_connection,
                                    type = "integer",
                                    output = "message"))
   }
+  if (codama::r_type_checking(r_object = graph_type,
+                              type = "character",
+                              output = "logical") != TRUE) {
+    return(codama::r_type_checking(r_object = graph_type,
+                                   type = "character",
+                                   output = "message"))
+  }
+  if (codama::r_type_checking(r_object = figure,
+                              type = "character",
+                              output = "logical") != TRUE) {
+    return(codama::r_type_checking(r_object = figure,
+                                   type = "character",
+                                   output = "message"))
+  }
   # 2 - Data extraction ----
   if (data_connection[[1]] == "balbaya") {
     fishing_activity_sql <- paste(readLines(con = system.file("sql",
@@ -104,25 +118,34 @@ fishing_activity <- function(data_connection,
   # db a1 - Add : Number of total, positive, and null sets by ALL
   a1 <- fishing_activity_t1 %>%
     dplyr::group_by(year) %>%
-    dplyr::summarise(a_total = sum(v_nb_calees, na.rm = TRUE),
-                     a_positive = sum(v_nb_calee_pos, na.rm = TRUE),
-                     a_null = sum(v_nb_calees - v_nb_calee_pos, na.rm = TRUE),
+    dplyr::summarise(a_total = sum(v_nb_calees,
+                                   na.rm = TRUE),
+                     a_positive = sum(v_nb_calee_pos,
+                                      na.rm = TRUE),
+                     a_null = sum(v_nb_calees - v_nb_calee_pos,
+                                  na.rm = TRUE),
                      .groups = "drop")
   # db a2 - Add : Number of total, positive, and null sets by FOB
   a2 <- fishing_activity_t1 %>%
     dplyr::filter(c_tban == 1) %>%
     dplyr::group_by(year) %>%
-    dplyr::summarise(l_total = sum(v_nb_calees, na.rm = TRUE),
-                     l_positive = sum(v_nb_calee_pos, na.rm = TRUE),
-                     l_null = sum(v_nb_calees - v_nb_calee_pos, na.rm = TRUE),
+    dplyr::summarise(l_total = sum(v_nb_calees,
+                                   na.rm = TRUE),
+                     l_positive = sum(v_nb_calee_pos,
+                                      na.rm = TRUE),
+                     l_null = sum(v_nb_calees - v_nb_calee_pos,
+                                  na.rm = TRUE),
                      .groups = "drop")
   # db a3 - Add : Number of total, positive, and null sets by FSC
   a3 <- fishing_activity_t1 %>%
     dplyr::filter(c_tban == 2 | c_tban == 3) %>%
     dplyr::group_by(year) %>%
-    dplyr::summarise(f_total = sum(v_nb_calees, na.rm = TRUE),
-                     f_positive = sum(v_nb_calee_pos, na.rm = TRUE),
-                     f_null = sum(v_nb_calees - v_nb_calee_pos, na.rm = TRUE),
+    dplyr::summarise(f_total = sum(v_nb_calees,
+                                   na.rm = TRUE),
+                     f_positive = sum(v_nb_calee_pos,
+                                      na.rm = TRUE),
+                     f_null = sum(v_nb_calees - v_nb_calee_pos,
+                                  na.rm = TRUE),
                      .groups = "drop")
   # Merge db by Year
   table_sets <- merge(a1, a2, by = "year")

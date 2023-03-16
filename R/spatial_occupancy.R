@@ -3,8 +3,8 @@
 #' @description Changes in the spatial extent of the fishery over time. Annual number of 1-degree squares explored by each vessel of the French purse seine fishing fleet.
 #' @param data_connection {\link[base]{list}} expected. Output of the function {\link[furdeb]{postgresql_dbconnection}}, which must be done before using the spatial_occupancy() function.
 #' @param time_period {\link[base]{integer}} expected. Period identification in year.
-#' @param country {\link[base]{integer}} expected. Country codes identification. 1 by default.
 #' @param ocean {\link[base]{integer}} expected. Ocean codes identification.
+#' @param country {\link[base]{integer}} expected. Country codes identification. 1 by default.
 #' @param vessel_type {\link[base]{integer}} expected. Vessel type codes identification. 1 by default.
 #' @param graph_type {\link[base]{character}} expected. plot or plotly. Plot by default.
 #' @return The function return ggplot R plot.
@@ -70,6 +70,13 @@ spatial_occupancy <- function(data_connection,
                               type = "integer",
                               output = "logical") != TRUE) {
     return(codama::r_type_checking(r_object = vessel_type,
+                                   type = "integer",
+                                   output = "message"))
+  }
+  if (codama::r_type_checking(r_object = graph_type,
+                              type = "integer",
+                              output = "logical") != TRUE) {
+    return(codama::r_type_checking(r_object = graph_type,
                                    type = "integer",
                                    output = "message"))
   }
@@ -144,7 +151,10 @@ spatial_occupancy <- function(data_connection,
   table_occ[is.na(table_occ)] <- 0
   # 4 - Graphic design ----
   if (graph_type == "plot") {
-    graphics::par(mar = c(5, 4.7, 4.1, 1.5))
+    graphics::par(mar = c(5,
+                          4.7,
+                          4.1,
+                          1.5))
     graphics::plot(table_occ$year,
                    table_occ$total,
                    type = "b",
@@ -215,7 +225,10 @@ spatial_occupancy <- function(data_connection,
       ggplot2::geom_line(ggplot2::aes(x = year,
                                       y = `#sets`),
                          linetype = "dashed") +
-      ggplot2::scale_color_manual(values = c("black", "black", "black", "black")) +
+      ggplot2::scale_color_manual(values = c("black",
+                                             "black",
+                                             "black",
+                                             "black")) +
       ggplot2::geom_point(ggplot2::aes(x = year,
                                        y = total,
                                        color = "total")) +

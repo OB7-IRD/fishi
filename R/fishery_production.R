@@ -3,8 +3,8 @@
 #' @description total fishery production. Catch by species of the French purse seine fishing fleet.
 #' @param data_connection {\link[base]{list}} expected. Output of the function {\link[furdeb]{postgresql_dbconnection}}, which must be done before using the fishery_production() function.
 #' @param time_period {\link[base]{integer}} expected. Period identification in year.
-#' @param country {\link[base]{integer}} expected. Country codes identification. 1 by default.
 #' @param ocean {\link[base]{integer}} expected. Ocean codes identification.
+#' @param country {\link[base]{integer}} expected. Country codes identification. 1 by default.
 #' @param vessel_type {\link[base]{integer}} expected. Vessel type codes identification. 1 by default.
 #' @param fishing_type  {\link[base]{character}} expected. FSC, FOB or ALL.
 #' @param graph_type {\link[base]{character}} expected. plot or plotly. Plot by default.
@@ -22,9 +22,9 @@
 fishery_production <- function(data_connection,
                                time_period,
                                ocean,
-                               fishing_type = "ALL",
                                country = as.integer(x = 1),
                                vessel_type = as.integer(x = 1),
+                               fishing_type = "ALL",
                                graph_type = "plot") {
   # 0 - Global variables assignement ----
   activity_date <- NULL
@@ -62,13 +62,6 @@ fishery_production <- function(data_connection,
                                    type = "integer",
                                    output = "message"))
   }
-  if (codama::r_type_checking(r_object = fishing_type,
-                              type = "character",
-                              output = "logical") != TRUE) {
-    return(codama::r_type_checking(r_object = fishing_type,
-                                   type = "character",
-                                   output = "message"))
-  }
   if (codama::r_type_checking(r_object = ocean,
                               type = "integer",
                               output = "logical") != TRUE) {
@@ -88,6 +81,20 @@ fishery_production <- function(data_connection,
                               output = "logical") != TRUE) {
     return(codama::r_type_checking(r_object = vessel_type,
                                    type = "integer",
+                                   output = "message"))
+  }
+  if (codama::r_type_checking(r_object = fishing_type,
+                              type = "character",
+                              output = "logical") != TRUE) {
+    return(codama::r_type_checking(r_object = fishing_type,
+                                   type = "character",
+                                   output = "message"))
+  }
+  if (codama::r_type_checking(r_object = graph_type,
+                              type = "character",
+                              output = "logical") != TRUE) {
+    return(codama::r_type_checking(r_object = graph_type,
+                                   type = "character",
                                    output = "message"))
   }
   # 2 - Data extraction ----
