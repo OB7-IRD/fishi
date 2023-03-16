@@ -213,7 +213,7 @@ fishing_activity <- function(data_connection,
         ggplot2::labs(fill = "")
       plotly::ggplotly(ggplot_set) %>%
         plotly::layout(legend = list(orientation = "v",
-                                     x = 0.8,
+                                     x = 0.7,
                                      y = 0.95))
     } else if (figure == "log") {
       t_set$`%_log` <- round(t_set$`%_log`, 3)
@@ -227,12 +227,7 @@ fishing_activity <- function(data_connection,
         ggplot2::scale_y_continuous(name = "% FOB-associated sets") +
         ggplot2::theme_bw() +
         ggplot2::labs(fill = "")
-
-
-      plotly::ggplotly(ggplot_set) %>%
-        plotly::layout(legend = list(orientation = "v",
-                                     x = 0.9,
-                                     y = 0.95))
+      plotly::ggplotly(ggplot_set)
     }
   }
 }
