@@ -3,8 +3,8 @@
 #' @description Changes in the spatial extent of the fishery over time. Annual number of 1-degree squares explored by each vessel of the French purse seine fishing fleet.
 #' @param data_connection {\link[base]{list}} expected. Output of the function {\link[furdeb]{postgresql_dbconnection}}, which must be done before using the spatial_occupancy() function.
 #' @param time_period {\link[base]{integer}} expected. Period identification in year.
-#' @param country {\link[base]{integer}} expected. Country codes identification. 1 by default.
 #' @param ocean {\link[base]{integer}} expected. Ocean codes identification.
+#' @param country {\link[base]{integer}} expected. Country codes identification. 1 by default.
 #' @param vessel_type {\link[base]{integer}} expected. Vessel type codes identification. 1 by default.
 #' @param graph_type {\link[base]{character}} expected. plot or plotly. Plot by default.
 #' @return The function return ggplot R plot.
@@ -31,7 +31,7 @@ spatial_occupancy <- function(data_connection,
   v_tpec <- NULL
   t_pec <- NULL
   sumvtpec <- NULL
-  TOTAL <- NULL
+  total <- NULL
   `Catch > 0` <- NULL
   `Effort > 1 d` <- NULL
   `#sets` <- NULL
@@ -73,6 +73,13 @@ spatial_occupancy <- function(data_connection,
                                    type = "integer",
                                    output = "message"))
   }
+  if (codama::r_type_checking(r_object = graph_type,
+                              type = "integer",
+                              output = "logical") != TRUE) {
+    return(codama::r_type_checking(r_object = graph_type,
+                                   type = "integer",
+                                   output = "message"))
+  }
   # 2 - Data extraction ----
   if (data_connection[[1]] == "balbaya") {
     spatial_occupancy_sql <- paste(readLines(con = system.file("sql",
@@ -100,10 +107,10 @@ spatial_occupancy <- function(data_connection,
   # 3 - Data design ----
   spatial_occupancy_t1 <- spatial_occupancy_data %>%
     dplyr::mutate(year = lubridate::year(x = activity_date))
-  #db t0 - YEAR and TOTAL
+  #db t0 - YEAR and total
   t0 <- spatial_occupancy_t1 %>%
     dplyr::group_by(year) %>%
-    dplyr::summarise("TOTAL" = dplyr::n_distinct(cwp11_act),
+    dplyr::summarise("total" = dplyr::n_distinct(cwp11_act),
                      .groups = "drop")
   #db t1 - YEAR and #SETS
   t1 <- spatial_occupancy_t1 %>%
@@ -144,9 +151,12 @@ spatial_occupancy <- function(data_connection,
   table_occ[is.na(table_occ)] <- 0
   # 4 - Graphic design ----
   if (graph_type == "plot") {
-    graphics::par(mar = c(5, 4.7, 4.1, 1.5))
+    graphics::par(mar = c(5,
+                          4.7,
+                          4.1,
+                          1.5))
     graphics::plot(table_occ$year,
-                   table_occ$TOTAL,
+                   table_occ$total,
                    type = "b",
                    xlab = "",
                    ylab = "Spatial occupancy",
@@ -154,7 +164,7 @@ spatial_occupancy <- function(data_connection,
                    cex.lab = 1.4,
                    main = "",
                    ylim = c(0,
-                            max(table_occ$TOTAL,
+                            max(table_occ$total,
                                 na.rm = TRUE) * 1.05),
                    pch = 18,
                    xaxt = "n")
@@ -183,7 +193,7 @@ spatial_occupancy <- function(data_connection,
                     lty = 2,
                     pch = 17)
     graphics::legend("topright",
-                     legend = c("Total",
+                     legend = c("total",
                                 "With # sets > 1",
                                 "With catch > 0",
                                 "With effort > 1 d"),
@@ -205,7 +215,7 @@ spatial_occupancy <- function(data_connection,
   } else if (graph_type == "plotly") {
     ggplot_table_occ <- ggplot2::ggplot(data = table_occ) +
       ggplot2::geom_line(ggplot2::aes(x = year,
-                                      y = TOTAL)) +
+                                      y = total)) +
       ggplot2::geom_line(ggplot2::aes(x = year,
                                       y = `Catch > 0`),
                          linetype = "dashed") +
@@ -215,10 +225,13 @@ spatial_occupancy <- function(data_connection,
       ggplot2::geom_line(ggplot2::aes(x = year,
                                       y = `#sets`),
                          linetype = "dashed") +
-      ggplot2::scale_color_manual(values = c("black", "black", "black", "black")) +
+      ggplot2::scale_color_manual(values = c("black",
+                                             "black",
+                                             "black",
+                                             "black")) +
       ggplot2::geom_point(ggplot2::aes(x = year,
-                                       y = TOTAL,
-                                       color = "Total")) +
+                                       y = total,
+                                       color = "total")) +
       ggplot2::geom_point(ggplot2::aes(x = year,
                                        y = `Catch > 0`,
                                        color = "With catch > 0"),
@@ -237,6 +250,9 @@ spatial_occupancy <- function(data_connection,
                     colour = "") +
       ggplot2::ylim(0, 500) +
       ggplot2::theme_bw()
-    plotly::ggplotly(ggplot_table_occ)
+    plotly::ggplotly(ggplot_table_occ) %>%
+      plotly::layout(legend = list(orientation = "v",
+                                   x = 0.7,
+                                   y = 0.07))
   }
 }

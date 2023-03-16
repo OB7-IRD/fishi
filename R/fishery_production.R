@@ -1,10 +1,10 @@
 #' @name fishery_production
 #' @title Fishery production
-#' @description Total fishery production. Catch by species of the French purse seine fishing fleet.
+#' @description total fishery production. Catch by species of the French purse seine fishing fleet.
 #' @param data_connection {\link[base]{list}} expected. Output of the function {\link[furdeb]{postgresql_dbconnection}}, which must be done before using the fishery_production() function.
 #' @param time_period {\link[base]{integer}} expected. Period identification in year.
-#' @param country {\link[base]{integer}} expected. Country codes identification. 1 by default.
 #' @param ocean {\link[base]{integer}} expected. Ocean codes identification.
+#' @param country {\link[base]{integer}} expected. Country codes identification. 1 by default.
 #' @param vessel_type {\link[base]{integer}} expected. Vessel type codes identification. 1 by default.
 #' @param fishing_type  {\link[base]{character}} expected. FSC, FOB or ALL.
 #' @param graph_type {\link[base]{character}} expected. plot or plotly. Plot by default.
@@ -22,9 +22,9 @@
 fishery_production <- function(data_connection,
                                time_period,
                                ocean,
-                               fishing_type = "ALL",
                                country = as.integer(x = 1),
                                vessel_type = as.integer(x = 1),
+                               fishing_type = "ALL",
                                graph_type = "plot") {
   # 0 - Global variables assignement ----
   activity_date <- NULL
@@ -41,8 +41,8 @@ fishery_production <- function(data_connection,
   alb <- NULL
   oth <- NULL
   dsc <- NULL
-  TOTAL_WITH_dsc <- NULL
-  TOTAL <- NULL
+  total_with_dsc <- NULL
+  total <- NULL
   count <- NULL
   specie <- NULL
   # 1 - Arguments verification ----
@@ -60,13 +60,6 @@ fishery_production <- function(data_connection,
                               output = "logical") != TRUE) {
     return(codama::r_type_checking(r_object = time_period,
                                    type = "integer",
-                                   output = "message"))
-  }
-  if (codama::r_type_checking(r_object = fishing_type,
-                              type = "character",
-                              output = "logical") != TRUE) {
-    return(codama::r_type_checking(r_object = fishing_type,
-                                   type = "character",
                                    output = "message"))
   }
   if (codama::r_type_checking(r_object = ocean,
@@ -88,6 +81,20 @@ fishery_production <- function(data_connection,
                               output = "logical") != TRUE) {
     return(codama::r_type_checking(r_object = vessel_type,
                                    type = "integer",
+                                   output = "message"))
+  }
+  if (codama::r_type_checking(r_object = fishing_type,
+                              type = "character",
+                              output = "logical") != TRUE) {
+    return(codama::r_type_checking(r_object = fishing_type,
+                                   type = "character",
+                                   output = "message"))
+  }
+  if (codama::r_type_checking(r_object = graph_type,
+                              type = "character",
+                              output = "logical") != TRUE) {
+    return(codama::r_type_checking(r_object = graph_type,
+                                   type = "character",
                                    output = "message"))
   }
   # 2 - Data extraction ----
@@ -121,20 +128,20 @@ fishery_production <- function(data_connection,
                   school_type = dplyr::case_when(l4c_tban == "IND" ~ "free",
                                                  l4c_tban == "BL"  ~ "free",
                                                  l4c_tban == "BO"  ~ "log",
-                                                 T ~ "und"),
+                                                 TRUE ~ "und"),
                   yft = dplyr::case_when(c_esp == 1 ~ v_poids_capt * rf3,
-                                         T ~ 0),
+                                         TRUE ~ 0),
                   skj = dplyr::case_when(c_esp == 2 ~ v_poids_capt * rf3,
-                                         T ~ 0),
+                                         TRUE ~ 0),
                   bet = dplyr::case_when(c_esp == 3 ~ v_poids_capt * rf3,
-                                         T ~ 0),
+                                         TRUE ~ 0),
                   alb = dplyr::case_when(c_esp == 4 ~ v_poids_capt * rf3,
-                                         T ~ 0),
+                                         TRUE ~ 0),
                   dsc = dplyr::case_when(c_esp == 8 | (c_esp >= 800 & c_esp <= 899) ~ v_poids_capt * rf3,
-                                         T ~ 0),
+                                         TRUE ~ 0),
                   oth = dplyr::case_when(c_esp == 1 | c_esp == 2 | c_esp == 3 | c_esp == 4 | c_esp == 8 | (c_esp >= 800 & c_esp <= 899) ~ 0,
-                                         T ~ v_poids_capt * rf3),
-                  TOTAL_WITH_dsc = v_poids_capt * rf3)
+                                         TRUE ~ v_poids_capt * rf3),
+                  total_with_dsc = v_poids_capt * rf3)
   # Sum columns species
   fishery_production_t2 <- fishery_production_t1 %>%
     dplyr::group_by(ocean_name,
@@ -149,7 +156,7 @@ fishery_production <- function(data_connection,
                      alb = sum(alb, na.rm = TRUE),
                      dsc = sum(dsc, na.rm = TRUE),
                      oth = sum(oth, na.rm = TRUE),
-                     TOTAL = sum(TOTAL_WITH_dsc, na.rm = TRUE) - sum(dsc, na.rm = TRUE),
+                     total = sum(total_with_dsc, na.rm = TRUE) - sum(dsc, na.rm = TRUE),
                      .groups = "drop")
   if (fishing_type == "ALL") {
     ### Percentage of catches by species on all fishing mode
@@ -161,7 +168,7 @@ fishery_production <- function(data_connection,
                        bet = sum(bet, na.rm = TRUE),
                        alb = sum(alb, na.rm = TRUE),
                        oth = sum(oth, na.rm = TRUE),
-                       TOTAL = sum(TOTAL, na.rm = TRUE),
+                       total = sum(total, na.rm = TRUE),
                        .groups = "drop")
   } else if (fishing_type == "FSC") {
     ### Percentage of catches by species on FSC
@@ -174,7 +181,7 @@ fishery_production <- function(data_connection,
                        bet = sum(bet, na.rm = TRUE),
                        alb = sum(alb, na.rm = TRUE),
                        oth = sum(oth, na.rm = TRUE),
-                       TOTAL = sum(TOTAL, na.rm = TRUE),
+                       total = sum(total, na.rm = TRUE),
                        .groups = "drop")
   } else if (fishing_type == "FOB") {
     ### Percentage of catches by species on FOB
@@ -187,7 +194,7 @@ fishery_production <- function(data_connection,
                        bet = sum(bet, na.rm = TRUE),
                        alb = sum(alb, na.rm = TRUE),
                        oth = sum(oth, na.rm = TRUE),
-                       TOTAL = sum(TOTAL, na.rm = TRUE),
+                       total = sum(total, na.rm = TRUE),
                        .groups = "drop")
   }
   # 4 - Graphic design ----
@@ -213,7 +220,7 @@ fishery_production <- function(data_connection,
                        cex = 1.3,
                        las = 1,
                        ylim = c(0,
-                                max((table_catch_all$TOTAL * 1.02) / 1000,
+                                max((table_catch_all$total * 1.02) / 1000,
                                     na.rm = TRUE)))
     graphics::abline(h = seq(20,
                              100,
@@ -241,18 +248,23 @@ fishery_production <- function(data_connection,
                        cex = 1.3)
     }
   } else if (graph_type == "plotly") {
-    data_pivot <- tidyr::pivot_longer(table_catch_all,
+    # pivot wider
+    table_catch_3 <- table_catch_all %>%
+      dplyr::select(1:4)
+    data_pivot <- tidyr::pivot_longer(table_catch_3,
                                       cols = c(2:4),
                                       names_to = "specie",
                                       values_to = "count")
-
-    ggplot_table_catch <- ggplot2::ggplot(data_pivot, ggplot2::aes(x= year, y= count, fill = specie)) +
+    # ggplot
+    ggplot_table_catch <- ggplot2::ggplot(data_pivot, ggplot2::aes(x = year,
+                                                                   y = count,
+                                                                   fill = specie)) +
       ggplot2::geom_area() +
       ggplot2::scale_fill_manual(values = c("cornflowerblue", "firebrick2", "khaki1")) +
       ggplot2::scale_y_continuous(name = "Catch (x1000 t)") +
       ggplot2::theme_bw() +
       ggplot2::labs(fill = "")
-
+    # fishing type
     if (fishing_type == "FSC") {
       ggplot_table_catch <- ggplot_table_catch + ggplot2::ggtitle("FSC")
     } else if (fishing_type == "FOB") {
@@ -260,6 +272,10 @@ fishery_production <- function(data_connection,
     } else if (fishing_type == "ALL") {
       ggplot_table_catch <- ggplot_table_catch + ggplot2::ggtitle("ALL")
     }
-    plotly::ggplotly(ggplot_table_catch)
+    # plotly
+    plotly::ggplotly(ggplot_table_catch) %>%
+      plotly::layout(legend = list(orientation = "v",
+                                   x = 0.9,
+                                   y = 0.95))
   }
 }

@@ -8,9 +8,9 @@ fishery_production(
   data_connection,
   time_period,
   ocean,
-  fishing_type = "ALL",
   country = as.integer(x = 1),
   vessel_type = as.integer(x = 1),
+  fishing_type = "ALL",
   graph_type = "plot"
 )
 }
@@ -21,11 +21,11 @@ fishery_production(
 
 \item{ocean}{{\link[base]{integer}} expected. Ocean codes identification.}
 
-\item{fishing_type}{{\link[base]{character}} expected. FSC, FOB or ALL.}
-
 \item{country}{{\link[base]{integer}} expected. Country codes identification. 1 by default.}
 
 \item{vessel_type}{{\link[base]{integer}} expected. Vessel type codes identification. 1 by default.}
+
+\item{fishing_type}{{\link[base]{character}} expected. FSC, FOB or ALL.}
 
 \item{graph_type}{{\link[base]{character}} expected. plot or plotly. Plot by default.}
 }
@@ -33,5 +33,5 @@ fishery_production(
 The function return ggplot R plot.
 }
 \description{
-Total fishery production. Catch by species of the French purse seine fishing fleet.
+total fishery production. Catch by species of the French purse seine fishing fleet.
 }

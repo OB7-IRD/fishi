@@ -80,6 +80,13 @@ catch_per_unit_effort <- function(data_connection,
                                    type = "character",
                                    output = "message"))
   }
+  if (codama::r_type_checking(r_object = graph_type,
+                              type = "character",
+                              output = "logical") != TRUE) {
+    return(codama::r_type_checking(r_object = graph_type,
+                                   type = "character",
+                                   output = "message"))
+  }
   # 2 - Data extraction ----
   if (data_connection[[1]] == "balbaya") {
     annual_catch_rate_sql <- paste(readLines(con = system.file("sql",
@@ -110,7 +117,7 @@ catch_per_unit_effort <- function(data_connection,
   annual_catch_rate_data <- dplyr::tibble(DBI::dbGetQuery(conn      = data_connection[[2]],
                                                           statement  = annual_catch_rate_sql_final))
   #ANNUAL CATCH RATE NB SETS SQL
-  annual_catch_rate_nb_set_sql_final <- DBI::sqlInterpolate(conn = data_connection[[2]],
+  annual_catch_rate_nb_set <- DBI::sqlInterpolate(conn = data_connection[[2]],
                                                      sql  = annual_catch_rate_nb_set_sql,
                                                      time_period = DBI::SQL(paste(time_period,
                                                                                   collapse = ", ")),
@@ -121,7 +128,7 @@ catch_per_unit_effort <- function(data_connection,
                                                      ocean = DBI::SQL(paste(ocean,
                                                                             collapse = ", ")))
   annual_catch_rate_nb_set_data <- dplyr::tibble(DBI::dbGetQuery(conn      = data_connection[[2]],
-                                                          statement  = annual_catch_rate_nb_set_sql_final))
+                                                          statement  = annual_catch_rate_nb_set))
   # 3.a - Data design for FOB----
   annual_catch_rate_nb_set_data <-  annual_catch_rate_nb_set_data %>%
     dplyr::mutate(year = lubridate::year(x = activity_date))
@@ -135,15 +142,15 @@ catch_per_unit_effort <- function(data_connection,
   t1 <- annual_catch_rate_data %>%
     dplyr::group_by(year) %>%
     dplyr::summarise(yft = sum(dplyr::case_when(c_tban == 1 & c_esp == 1 ~ v_poids_capt, #OK
-                                            T ~ 0), na.rm = TRUE),
+                                            TRUE ~ 0), na.rm = TRUE),
                      skj = sum(dplyr::case_when(c_tban == 1 & c_esp == 2 ~ v_poids_capt, #OK
-                                            T ~ 0), na.rm = TRUE),
+                                            TRUE ~ 0), na.rm = TRUE),
                      bet = sum(dplyr::case_when(c_tban == 1 & c_esp == 3 ~ v_poids_capt, #OK
-                                            T ~ 0), na.rm = TRUE),
+                                            TRUE ~ 0), na.rm = TRUE),
                      alb = sum(dplyr::case_when(c_tban == 1 & c_esp == 4 ~ v_poids_capt, #OK
-                                            T ~ 0), na.rm = TRUE),
+                                            TRUE ~ 0), na.rm = TRUE),
                      total = sum(dplyr::case_when(c_tban == 1 ~ v_poids_capt, #OK
-                                              T ~ 0), na.rm = TRUE),
+                                              TRUE ~ 0), na.rm = TRUE),
                      .groups = "drop")
   #merge t0 and t1
   table_cpue_fad <- merge(t0, t1, by = "year")
@@ -160,21 +167,22 @@ catch_per_unit_effort <- function(data_connection,
   t2 <- annual_catch_rate_nb_set_data %>%
     dplyr::group_by(year) %>%
     dplyr::summarise(t_peche = sum(v_tpec, na.rm = TRUE),
-                     t_recherche = sum(v_tpec - v_dur_cal, na.rm = TRUE),
+                     t_recherche = sum(v_tpec - v_dur_cal,
+                                       na.rm = TRUE),
                      .groups = "drop")
   #Creation of t3 database from annual_catch_rate_nb_set_data
   t3 <- annual_catch_rate_data %>%
     dplyr::group_by(year) %>%
-    dplyr::summarise(yft = sum(dplyr::case_when(c_tban %in% c(2,3) & c_esp == 1 ~ v_poids_capt, #OK
-                                                T ~ 0), na.rm = TRUE),
-                     skj = sum(dplyr::case_when(c_tban %in% c(2,3) & c_esp == 2 ~ v_poids_capt, #OK
-                                                T ~ 0), na.rm = TRUE),
-                     bet = sum(dplyr::case_when(c_tban %in% c(2,3) & c_esp == 3 ~ v_poids_capt, #OK
-                                                T ~ 0), na.rm = TRUE),
-                     alb = sum(dplyr::case_when(c_tban %in% c(2,3) & c_esp == 4 ~ v_poids_capt, #OK
-                                                T ~ 0), na.rm = TRUE),
-                     total = sum(dplyr::case_when(c_tban %in% c(2,3) ~ v_poids_capt, #OK
-                                                  T ~ 0), na.rm = TRUE),
+    dplyr::summarise(yft = sum(dplyr::case_when(c_tban %in% c(2, 3) & c_esp == 1 ~ v_poids_capt, #OK
+                                                TRUE ~ 0), na.rm = TRUE),
+                     skj = sum(dplyr::case_when(c_tban %in% c(2, 3) & c_esp == 2 ~ v_poids_capt, #OK
+                                                TRUE ~ 0), na.rm = TRUE),
+                     bet = sum(dplyr::case_when(c_tban %in% c(2, 3) & c_esp == 3 ~ v_poids_capt, #OK
+                                                TRUE ~ 0), na.rm = TRUE),
+                     alb = sum(dplyr::case_when(c_tban %in% c(2, 3) & c_esp == 4 ~ v_poids_capt, #OK
+                                                TRUE ~ 0), na.rm = TRUE),
+                     total = sum(dplyr::case_when(c_tban %in% c(2, 3) ~ v_poids_capt, #OK
+                                                  TRUE ~ 0), na.rm = TRUE),
                      .groups = "drop")
   #merge t2 and t3
   table_cpue_fsc <- merge(t2, t3, by = "year")
@@ -261,6 +269,13 @@ catch_per_unit_effort <- function(data_connection,
                        bty = "n",
                        cex = 2)
     } else if (graph_type == "plotly") {
+      # round values
+      table_cpue_fad$yft <- round(table_cpue_fad$yft, 3)
+      table_cpue_fad$skj <- round(table_cpue_fad$skj, 3)
+      table_cpue_fad$bet <- round(table_cpue_fad$bet, 3)
+      table_cpue_fad$ALB <- round(table_cpue_fad$ALB, 3)
+      table_cpue_fad$total <- round(table_cpue_fad$total, 3)
+      #plot
       ggplot_table_cpue_fad <- ggplot2::ggplot(data = table_cpue_fad) +
         ggplot2::geom_line(ggplot2::aes(x = year,
                                         y = yft)) +
@@ -270,7 +285,10 @@ catch_per_unit_effort <- function(data_connection,
                                         y = bet)) +
         ggplot2::geom_line(ggplot2::aes(x = year,
                                         y = total)) +
-        ggplot2::scale_color_manual(values = c("black", "black", "black", "black")) +
+        ggplot2::scale_color_manual(values = c("black",
+                                               "black",
+                                               "black",
+                                               "black")) +
         ggplot2::geom_point(ggplot2::aes(x = year,
                                          y = yft,
                                          color = "Yellowfin"),
@@ -293,7 +311,10 @@ catch_per_unit_effort <- function(data_connection,
         ggplot2::theme_bw() +
         ggplot2::labs(colour = "") +
         ggplot2::ggtitle("FOB")
-      plotly::ggplotly(ggplot_table_cpue_fad)
+      plotly::ggplotly(ggplot_table_cpue_fad) %>%
+        plotly::layout(legend = list(orientation = "v",
+                                     x = 0.85,
+                                     y = 0.97))
     }
   } else if (fishing_type == "FSC") {
     if (graph_type == "plot") {
@@ -368,6 +389,13 @@ catch_per_unit_effort <- function(data_connection,
                        bty = "n",
                        cex = 2)
     } else if (graph_type == "plotly") {
+      # round values
+      table_cpue_fsc$yft <- round(table_cpue_fsc$yft, 3)
+      table_cpue_fsc$skj <- round(table_cpue_fsc$skj, 3)
+      table_cpue_fsc$bet <- round(table_cpue_fsc$bet, 3)
+      table_cpue_fsc$ALB <- round(table_cpue_fsc$ALB, 3)
+      table_cpue_fsc$total <- round(table_cpue_fsc$total, 3)
+      #plot
       ggplot_table_cpue_fsc <- ggplot2::ggplot(data = table_cpue_fsc) +
         ggplot2::geom_line(ggplot2::aes(x = year,
                                         y = yft)) +
@@ -377,7 +405,10 @@ catch_per_unit_effort <- function(data_connection,
                                         y = bet)) +
         ggplot2::geom_line(ggplot2::aes(x = year,
                                         y = total)) +
-        ggplot2::scale_color_manual(values = c("black", "black", "black", "black")) +
+        ggplot2::scale_color_manual(values = c("black",
+                                               "black",
+                                               "black",
+                                               "black")) +
         ggplot2::geom_point(ggplot2::aes(x = year,
                                          y = yft,
                                          color = "Yellowfin"),
@@ -394,15 +425,16 @@ catch_per_unit_effort <- function(data_connection,
                                          y = total,
                                          color = "total"),
                             shape = 16, size = 2) +
-        ggplot2::scale_x_continuous(breaks = c(1991, 1995, 2000, 2005, 2010, 2015, 2020, 2025)) +
-
         ggplot2::labs(x = "",
                       y = "Catch per unit effort (t/d)") +
         ggplot2::ylim(0, 20) +
         ggplot2::theme_bw() +
         ggplot2::labs(colour = "") +
         ggplot2::ggtitle("FSC")
-      plotly::ggplotly(ggplot_table_cpue_fsc)
+      plotly::ggplotly(ggplot_table_cpue_fsc) %>%
+        plotly::layout(legend = list(orientation = "v",
+                                     x = 0.85,
+                                     y = 0.97))
     }
   }
 }

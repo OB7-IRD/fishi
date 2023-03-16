@@ -3,10 +3,11 @@
 #' @description Fishing capacity of the French purse seine fishing fleet in the Atlantic Ocean. Annual changes in the number of purse seiners by tonnage categories (barplots) and total carrying capacity (dashed line with circles).
 #' @param data_connection {\link[base]{list}} expected. Output of the function {\link[furdeb]{postgresql_dbconnection}}, which must be done before using the fishing_capacity function.
 #' @param time_period {\link[base]{integer}} expected. Period identification in year.
+#' @param ocean {\link[base]{integer}} expected. Ocean codes identification.
 #' @param country {\link[base]{integer}} expected. Country codes identification. 1 by default.
 #' @param vessel_type {\link[base]{integer}} expected. Vessel type codes identification. 1 by default.
-#' @param ocean {\link[base]{integer}} expected. Ocean codes identification.
 #' @param graph_type {\link[base]{character}} expected. plot or plotly. Plot by default.
+#' @param figure {\link[base]{character}} expected. vessel (for number of vessels graph) or capacity (for carrying capacity graph).
 #' @return The function return ggplot R plot.
 #' @export
 #' @importFrom DBI dbGetQuery sqlInterpolate SQL
@@ -24,7 +25,8 @@ fishing_capacity <- function(data_connection,
                              ocean,
                              country = as.integer(x = 1),
                              vessel_type = as.integer(x = 1),
-                             graph_type = "plot") {
+                             graph_type = "plot",
+                             figure) {
   # 0 - Global variables assignement ----
   c_quille <- NULL
   catch <- NULL
@@ -73,6 +75,20 @@ fishing_capacity <- function(data_connection,
                                    type = "integer",
                                    output = "message"))
   }
+  if (codama::r_type_checking(r_object = graph_type,
+                              type = "character",
+                              output = "logical") != TRUE) {
+    return(codama::r_type_checking(r_object = graph_type,
+                                   type = "character",
+                                   output = "message"))
+  }
+  if (codama::r_type_checking(r_object = figure,
+                              type = "character",
+                              output = "logical") != TRUE) {
+    return(codama::r_type_checking(r_object = figure,
+                                   type = "character",
+                                   output = "message"))
+  }
   # 2 - Data extraction ----
   if (data_connection[[1]] == "balbaya") {
     fishing_capacity_sql <- paste(readLines(con = system.file("sql",
@@ -94,7 +110,7 @@ fishing_capacity <- function(data_connection,
                                                     vessel_type = DBI::SQL(paste(vessel_type,
                                                                                  collapse = ", ")),
                                                     ocean       = DBI::SQL(paste(ocean,
-                                                                           collapse = ", ")))
+                                                                                 collapse = ", ")))
   fishing_capacity_data <- dplyr::tibble(DBI::dbGetQuery(conn      = data_connection[[2]],
                                                          statement = fishing_capacity_sql_final))
   # 3 - Data design ----
@@ -107,16 +123,21 @@ fishing_capacity <- function(data_connection,
                      tons = catch * 0.7,
                      .groups = "drop")
   # Remove duplicates
-  fishing_capacity_t1 <- unique(fishing_capacity_t1[, c("year", "month", "c_quille", "tons", "tons_month")])
+  fishing_capacity_t1 <- unique(fishing_capacity_t1[, c("year",
+                                                        "month",
+                                                        "c_quille",
+                                                        "tons",
+                                                        "tons_month")])
   # Add columns cc and c_quille_nb_month
   fishing_capacity_t2 <- fishing_capacity_t1 %>%
     dplyr::group_by(year,
                     c_quille,
                     tons,
-                    tons_month
-    ) %>%
-    dplyr::summarise("cc" = sum(tons_month, na.rm = TRUE),
-                     "c_quille_nb_months" = dplyr::n_distinct(month, na.rm = TRUE),
+                    tons_month) %>%
+    dplyr::summarise("cc" = sum(tons_month,
+                                na.rm = TRUE),
+                     "c_quille_nb_months" = dplyr::n_distinct(month,
+                                                              na.rm = TRUE),
                      .groups = "drop")
   # Number of ships per category
   fishing_capacity_t3 <- fishing_capacity_t2 %>%
@@ -131,12 +152,26 @@ fishing_capacity <- function(data_connection,
                      "Nb_vessels_weighted" = sum(c_quille_nb_months / 12, na.rm = TRUE),
                      "CC" = sum(cc, na.rm = TRUE),
                      .groups = "drop")
-
   fishing_capacity_data <- fishing_capacity_t3 %>%
-    dplyr::mutate("fishing_capacity" = CC / 1000 * 1.8)
+    dplyr::mutate("fishing_capacity" = CC / 1000)
+  # Pivot wider for ggplot
+  data_pivot <- tidyr::pivot_longer(fishing_capacity_data,
+                                    cols = c(2:6),
+                                    names_to = "tons",
+                                    values_to = "nb_vessels")
+  data_pivot <- data_pivot %>%
+    dplyr::mutate(tons = forcats::fct_relevel(tons,
+                                              "1201-2000",
+                                              "801-1200",
+                                              "601-800",
+                                              "401-600",
+                                              "50-400"))
   # 4 - Graphic design ----
   if (graph_type == "plot") {
-    graphics::par(mar = c(5.1, 4.1, 4.1, 4.1))
+    graphics::par(mar = c(5.1,
+                          4.1,
+                          4.1,
+                          4.1))
     barvessels <- graphics::barplot(t(fishing_capacity_data[, 2:6]),
                                     xlab = "",
                                     ylab = "Number of vessels",
@@ -199,33 +234,44 @@ fishing_capacity <- function(data_connection,
                     line = 2.6,
                     cex = 1.3)
   } else if (graph_type == "plotly") {
-    data_pivot <- tidyr::pivot_longer(fishing_capacity_data,
-                                      cols = c(2:6),
-                                      names_to = "tons",
-                                      values_to = "nb_vessels")
-    data_pivot <- data_pivot %>%
-      dplyr::mutate(tons = forcats::fct_relevel(tons,
-                                                "1201-2000",
-                                                "801-1200",
-                                                "601-800",
-                                                "401-600",
-                                                "50-400"))
-    ggplot_table_capacity <- ggplot2::ggplot(data = data_pivot) +
-      ggplot2::geom_bar(mapping = ggplot2::aes(x = year,
-                                               y = nb_vessels,
-                                               fill = tons),
-                        stat = "identity",
-                        color = "black") +
-      ggplot2::scale_fill_manual(values = c("black", "grey26", "grey54", "grey70", "grey90"),
-                                 labels = c("1201-2000 t", "801-1200 t", "601-800 t", "401-600 t", "50-400 t")) +
-      ggplot2::geom_line(ggplot2::aes(x = year,
-                                      y = fishing_capacity)) +
-      ggplot2::geom_point(data = data_pivot,
-                          ggplot2::aes(x = year,
-                                       y = fishing_capacity)) +
-      ggplot2::scale_y_continuous(name = "Number of vessels", sec.axis = ggplot2::sec_axis(trans = ~. / 1.6, name = "Carrying capacity (x1000m^3)")) +
-      ggplot2::theme_bw() +
-      ggplot2::labs(fill = "")
-    plotly::ggplotly(ggplot_table_capacity)
+    if (figure == "vessel") {
+      ggplot_table_vessel <- ggplot2::ggplot(data = data_pivot) +
+        ggplot2::geom_bar(mapping = ggplot2::aes(x = year,
+                                                 y = nb_vessels,
+                                                 fill = tons),
+                          stat = "identity",
+                          color = "black") +
+        ggplot2::scale_fill_manual(values = c("black",
+                                              "grey26",
+                                              "grey54",
+                                              "grey70",
+                                              "grey90"),
+                                   labels = c("1201-2000 t",
+                                              "801-1200 t",
+                                              "601-800 t",
+                                              "401-600 t",
+                                              "50-400 t")) +
+        ggplot2::scale_y_continuous(name = "Number of vessels") +
+        ggplot2::theme_bw() +
+        ggplot2::labs(fill = "") +
+        ggplot2::theme(legend.position = c(0.85,
+                                           0.9))
+      plotly::ggplotly(ggplot_table_vessel) %>%
+        plotly::layout(legend = list(orientation = "v",
+                                     x = 0.80,
+                                     y = 0.98))
+    } else if (figure == "capacity") {
+      data_pivot$fishing_capacity <- round(data_pivot$fishing_capacity, 3)
+      ggplot_table_capacity <- ggplot2::ggplot(data = data_pivot) +
+        ggplot2::geom_line(ggplot2::aes(x = year,
+                                        y = fishing_capacity)) +
+        ggplot2::geom_point(data = data_pivot,
+                            ggplot2::aes(x = year,
+                                         y = fishing_capacity)) +
+        ggplot2::scale_y_continuous(name = "Carrying capacity (x1000m^3)") +
+        ggplot2::theme_bw() +
+        ggplot2::labs(fill = "")
+      plotly::ggplotly(ggplot_table_capacity)
+    }
   }
 }

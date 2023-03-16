@@ -38,7 +38,10 @@ map_catch_previous <- function(data_connection,
   cwp11_act <- NULL
   v_poids_capt <- NULL
   wrld_simpl <- NULL
-  radius <- NULL
+  total <- NULL
+  yft <- NULL
+  skj <- NULL
+  bet <- NULL
   # 1 - Arguments verification ----
   if (codama::r_type_checking(r_object = data_connection,
                               type = "list",
@@ -74,6 +77,20 @@ map_catch_previous <- function(data_connection,
                               type = "integer",
                               output = "logical") != TRUE) {
     return(codama::r_type_checking(r_object = vessel_type,
+                                   type = "integer",
+                                   output = "message"))
+  }
+  if (codama::r_type_checking(r_object = fishing_type,
+                              type = "character",
+                              output = "logical") != TRUE) {
+    return(codama::r_type_checking(r_object = fishing_type,
+                                   type = "integer",
+                                   output = "message"))
+  }
+  if (codama::r_type_checking(r_object = graph_type,
+                              type = "character",
+                              output = "logical") != TRUE) {
+    return(codama::r_type_checking(r_object = graph_type,
                                    type = "integer",
                                    output = "message"))
   }
@@ -118,51 +135,47 @@ map_catch_previous <- function(data_connection,
       dplyr::filter(v_nb_calee_pos > 0) %>%
       dplyr::group_by(cwp11_act) %>%
       dplyr::summarise(yft = sum(dplyr::case_when(c_esp == 1 ~ poids,
-                                                  T ~ 0.00000001), na.rm = TRUE),
+                                                  TRUE ~ 0.00000001), na.rm = TRUE),
                        skj = sum(dplyr::case_when(c_esp == 2 ~ poids,
-                                                  T ~ 0.00000001), na.rm = TRUE),
+                                                  TRUE ~ 0.00000001), na.rm = TRUE),
                        bet = sum(dplyr::case_when(c_esp == 3 ~ poids,
-                                                  T ~ 0.00000001), na.rm = TRUE),
+                                                  TRUE ~ 0.00000001), na.rm = TRUE),
                        total = sum(dplyr::case_when(c_esp %in% c(1:3) ~ poids,
-                                                    T ~ 0.00000001), na.rm = TRUE))
+                                                    TRUE ~ 0.00000001), na.rm = TRUE))
   } else if (fishing_type == "FSC") {
     datafile <- t1  %>%
       dplyr::filter(v_nb_calee_pos > 0,
                     c_tban %in% c(2:3)) %>%
       dplyr::group_by(cwp11_act) %>%
       dplyr::summarise(yft = sum(dplyr::case_when(c_esp == 1 ~ poids,
-                                                  T ~ 0.00000001), na.rm = TRUE),
+                                                  TRUE ~ 0.00000001), na.rm = TRUE),
                        skj = sum(dplyr::case_when(c_esp == 2 ~ poids,
-                                                  T ~ 0.00000001), na.rm = TRUE),
+                                                  TRUE ~ 0.00000001), na.rm = TRUE),
                        bet = sum(dplyr::case_when(c_esp == 3 ~ poids,
-                                                  T ~ 0.00000001), na.rm = TRUE),
+                                                  TRUE ~ 0.00000001), na.rm = TRUE),
                        total = sum(dplyr::case_when(c_esp %in% c(1:3) ~ poids,
-                                                    T ~ 0.00000001), na.rm = TRUE))
+                                                    TRUE ~ 0.00000001), na.rm = TRUE))
   } else if (fishing_type == "FOB") {
     datafile <- t1  %>%
       dplyr::filter(v_nb_calee_pos > 0,
                     c_tban == 1) %>%
       dplyr::group_by(cwp11_act) %>%
       dplyr::summarise(yft = sum(dplyr::case_when(c_esp == 1 ~ poids,
-                                                  T ~ 0.00000001), na.rm = TRUE),
+                                                  TRUE ~ 0.00000001), na.rm = TRUE),
                        skj = sum(dplyr::case_when(c_esp == 2 ~ poids,
-                                                  T ~ 0.00000001), na.rm = TRUE),
+                                                  TRUE ~ 0.00000001), na.rm = TRUE),
                        bet = sum(dplyr::case_when(c_esp == 3 ~ poids,
-                                                  T ~ 0.00000001), na.rm = TRUE),
+                                                  TRUE ~ 0.00000001), na.rm = TRUE),
                        total = sum(dplyr::case_when(c_esp %in% c(1:3) ~ poids,
-                                                    T ~ 0.00000001), na.rm = TRUE))
+                                                    TRUE ~ 0.00000001), na.rm = TRUE))
   } else {
     stop(format(x = Sys.time(),
                 format = "%Y-%m-%d %H:%M:%S"),
          " - Indicator not developed yet for this \"fishing_type\" argument.\n",
          sep = "")
   }
-  datafile[datafile == 0] <-1e-8
+  datafile[datafile == 0] <- 1e-8
   # 4 - Legend design ----
-  #vessel
-  vessel_type_legend <- code_manipulation(data         = map_catch_previous_sql_final$vessel_type_id,
-                                          referential  = "vessel_simple_type",
-                                          manipulation = "legend")
   # Define fuction quad2pos
   quad2pos <- function(id) {
     latsiz <- c(5, 10, 10, 20, 1, 5)
@@ -180,7 +193,10 @@ map_catch_previous <- function(data_connection,
     lonm <- quadlon[quad]
     lat <- (latm * (lat + latsiz[siz] / 2))
     lon <- (lonm * (lon + lonsiz[siz] / 2))
-    invisible(list(x = lon, y = lat, sizelat = latsiz[siz], sizelon = lonsiz[siz]))
+    invisible(list(x = lon,
+                   y = lat,
+                   sizelat = latsiz[siz],
+                   sizelon = lonsiz[siz]))
   }
   # 5 - Graphic design ----
   if (graph_type == "plot") {
@@ -195,30 +211,68 @@ map_catch_previous <- function(data_connection,
               add = FALSE,
               col = "lightgrey",
               fill = TRUE,
-              xlim = c(-40, 15),
-              ylim = c(-25, 25),
+              xlim = c(-40,
+                       15),
+              ylim = c(-25,
+                       25),
               xaxs = "i",
-              mar = c(4, 4.1, 3, 2),
+              mar = c(4,
+                      4.1,
+                      3,
+                      2),
               border = 0)
     graphics::axis(1,
-                   at = seq(-40, 15, 5),
-                   labels = c("40W", "35W", "30W", "25W", "20W", "15W", "10W", "5W", "0", "5E", "10E", "15E"),
+                   at = seq(-40,
+                            15,
+                            5),
+                   labels = c("40W",
+                              "35W",
+                              "30W",
+                              "25W",
+                              "20W",
+                              "15W",
+                              "10W",
+                              "5W",
+                              "0",
+                              "5E",
+                              "10E",
+                              "15E"),
                    tick = TRUE)
     graphics::axis(2,
-                   at = seq(-25, 25, 5),
-                   labels = c("25S", "20S", "15S", "10S", "5S", "0", "5N", "10N", "15N", "20N", "25N"),
+                   at = seq(-25,
+                            25,
+                            5),
+                   labels = c("25S",
+                              "20S",
+                              "15S",
+                              "10S",
+                              "5S",
+                              "0",
+                              "5N",
+                              "10N",
+                              "15N",
+                              "20N",
+                              "25N"),
                    las = 1,
                    tick = TRUE)
     graphics::axis(3,
                    labels = FALSE,
-                   at = seq(-40, 15, 5))
+                   at = seq(-40,
+                            15,
+                            5))
     graphics::axis(4,
                    labels = FALSE,
-                   at = seq(-25, 25, 5))
-    graphics::abline(v = seq(-30, 30, 10),
+                   at = seq(-25,
+                            25,
+                            5))
+    graphics::abline(v = seq(-30,
+                             30,
+                             10),
                      col = "darkgrey",
                      lty = 3)
-    graphics::abline(h = seq(-30, 30, 10),
+    graphics::abline(h = seq(-30,
+                             30,
+                             10),
                      col = "darkgrey",
                      lty = 3)
     ### Add the pie plots
@@ -236,7 +290,9 @@ map_catch_previous <- function(data_connection,
     }
     angles <- plotrix::floating.pie(-20,
                                     -12.5,
-                                    c(1, 1, 1),
+                                    c(1,
+                                      1,
+                                      1),
                                     radius = 1,
                                     edge = 25,
                                     col = c("yellow",
@@ -251,37 +307,42 @@ map_catch_previous <- function(data_connection,
                         cex = 0.7,
                         border = 0,
                         bg = 0,
-                        radius = c(2.4, 2.4, 2.4))
+                        radius = c(2.4,
+                                   2.4,
+                                   2.4))
     graphics::text(-17,
                    -12.5,
                    paste(2000, " t", sep = ""),
                    cex = .9)
   } else if (graph_type == "plotly") {
-    world_boundaries <- rnaturalearth::ne_countries(returnclass = "sf",
-                                                    scale       = "medium")
     datafile$lat <- quad2pos(as.numeric(datafile$cwp11_act + 5 * 1e6))$y
     datafile$long <- quad2pos(as.numeric(datafile$cwp11_act + 5 * 1e6))$x
-    datafile$radius <- sqrt(datafile$total) / sqrt(2000)
-    colours_group <- c("khaki1", "firebrick2", "cornflowerblue")
-    ggplot2::ggplot() +
+    world_boundaries <- rnaturalearth::ne_countries(returnclass = "sf",
+                                                    scale       = "medium")
+    datafile$total <- round(datafile$total, 3)
+    datafile$yft <- round(datafile$yft, 3)
+    datafile$skj <- round(datafile$skj, 3)
+    datafile$bet <- round(datafile$bet, 3)
+    data_pivot <- tidyr::pivot_longer(datafile,
+                                      cols = c(2:4),
+                                      names_to = "specie",
+                                      values_to = "catch (t)")
+    data_pivot$`catch (t)` <- round(data_pivot$`catch (t)`, 3)
+    map <- ggplot2::ggplot() +
       ggplot2::geom_sf(data = world_boundaries) +
-      ggspatial::coord_sf(xlim = c(-40, 15),
-                          ylim = c(-25, 25)) +
-      scatterpie::geom_scatterpie(ggplot2::aes(x = long,
-                                               y = lat,
-                                               r = radius),
-                                  data = datafile,
-                                  cols = c("yft", "skj", "bet")) +
-      ggplot2::scale_fill_manual("species", values = colours_group) +
-      ggplot2::labs(title = paste0("Map of of the ",
-                                   vessel_type_legend,
-                                   " catches made on ",
-                                   fishing_type,
-                                   " schools in ",
-                                   ifelse(test = length(x = time_period) != 1,
-                                          yes  =  paste0(min(time_period),
-                                                         "-",
-                                                         max(time_period)),
-                                          no  = paste0(time_period))))
+      ggspatial::coord_sf(xlim = c(-40,
+                                   15),
+                          ylim = c(-25,
+                                   25)) +
+      ggplot2::geom_point(data = datafile,
+                          ggplot2::aes(x     = long,
+                                       y     = lat,
+                                       color = total,
+                                       size  = total,
+                                       text  = paste("yft :", yft, "\n",
+                                                    "skj :", skj, "\n",
+                                                    "bet:", bet))) +
+      ggplot2::scale_color_viridis_c(option = "plasma")
+    plotly::ggplotly(map)
   }
 }

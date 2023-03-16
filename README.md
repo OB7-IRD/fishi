@@ -9,7 +9,7 @@
 [![Lifecycle:
 experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
 
-[![R-CMD-check](https://github.com/OB7-IRD/fishi/workflows/R-CMD-check/badge.svg)](https://github.com/OB7-IRD/furdeb/actions)
+[![R-CMD-check](https://github.com/OB7-IRD/fishi/workflows/R-CMD-check/badge.svg)](https://github.com/OB7-IRD/fishi/actions)
 <!-- badges: end -->
 
 ***FISHeries Indicators: exploratory and descriptive processes of data

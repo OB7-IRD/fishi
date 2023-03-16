@@ -3,10 +3,11 @@
 #' @description Fishing operations. Annual number of fishing sets in the French purse seine fishery on FOB- associated and free-swimming tuna schools.
 #' @param data_connection {\link[base]{list}} expected. Output of the function {\link[furdeb]{postgresql_dbconnection}}, which must be done before using the fishing_activity() function.
 #' @param time_period {\link[base]{integer}} expected. Period identification in year.
+#' @param ocean {\link[base]{integer}} expected. Ocean codes identification.
 #' @param country {\link[base]{integer}} expected. Country codes identification. 1 by default.
 #' @param vessel_type {\link[base]{integer}} expected. Vessel type codes identification. 1 by default.
-#' @param ocean {\link[base]{integer}} expected. Ocean codes identification.
 #' @param graph_type {\link[base]{character}} expected. plot or plotly. Plot by default.
+#' @param figure {\link[base]{character}} expected. set (for number of sets graph) or log (for percentage FOB-associated sets graph).
 #' @return The function return ggplot R plot.
 #' @export
 #' @importFrom DBI dbGetQuery sqlInterpolate SQL
@@ -22,7 +23,8 @@ fishing_activity <- function(data_connection,
                              ocean,
                              country = as.integer(x = 1),
                              vessel_type = as.integer(x = 1),
-                             graph_type = "plot") {
+                             graph_type = "plot",
+                             figure) {
   # 0 - Global variables assignement ----
   activity_date <- NULL
   v_nb_calees <- NULL
@@ -72,6 +74,20 @@ fishing_activity <- function(data_connection,
                                    type = "integer",
                                    output = "message"))
   }
+  if (codama::r_type_checking(r_object = graph_type,
+                              type = "character",
+                              output = "logical") != TRUE) {
+    return(codama::r_type_checking(r_object = graph_type,
+                                   type = "character",
+                                   output = "message"))
+  }
+  if (codama::r_type_checking(r_object = figure,
+                              type = "character",
+                              output = "logical") != TRUE) {
+    return(codama::r_type_checking(r_object = figure,
+                                   type = "character",
+                                   output = "message"))
+  }
   # 2 - Data extraction ----
   if (data_connection[[1]] == "balbaya") {
     fishing_activity_sql <- paste(readLines(con = system.file("sql",
@@ -102,25 +118,34 @@ fishing_activity <- function(data_connection,
   # db a1 - Add : Number of total, positive, and null sets by ALL
   a1 <- fishing_activity_t1 %>%
     dplyr::group_by(year) %>%
-    dplyr::summarise(a_total = sum(v_nb_calees, na.rm = TRUE),
-                     a_positive = sum(v_nb_calee_pos, na.rm = TRUE),
-                     a_null = sum(v_nb_calees - v_nb_calee_pos, na.rm = TRUE),
+    dplyr::summarise(a_total = sum(v_nb_calees,
+                                   na.rm = TRUE),
+                     a_positive = sum(v_nb_calee_pos,
+                                      na.rm = TRUE),
+                     a_null = sum(v_nb_calees - v_nb_calee_pos,
+                                  na.rm = TRUE),
                      .groups = "drop")
   # db a2 - Add : Number of total, positive, and null sets by FOB
   a2 <- fishing_activity_t1 %>%
     dplyr::filter(c_tban == 1) %>%
     dplyr::group_by(year) %>%
-    dplyr::summarise(l_total = sum(v_nb_calees, na.rm = TRUE),
-                     l_positive = sum(v_nb_calee_pos, na.rm = TRUE),
-                     l_null = sum(v_nb_calees - v_nb_calee_pos, na.rm = TRUE),
+    dplyr::summarise(l_total = sum(v_nb_calees,
+                                   na.rm = TRUE),
+                     l_positive = sum(v_nb_calee_pos,
+                                      na.rm = TRUE),
+                     l_null = sum(v_nb_calees - v_nb_calee_pos,
+                                  na.rm = TRUE),
                      .groups = "drop")
   # db a3 - Add : Number of total, positive, and null sets by FSC
   a3 <- fishing_activity_t1 %>%
     dplyr::filter(c_tban == 2 | c_tban == 3) %>%
     dplyr::group_by(year) %>%
-    dplyr::summarise(f_total = sum(v_nb_calees, na.rm = TRUE),
-                     f_positive = sum(v_nb_calee_pos, na.rm = TRUE),
-                     f_null = sum(v_nb_calees - v_nb_calee_pos, na.rm = TRUE),
+    dplyr::summarise(f_total = sum(v_nb_calees,
+                                   na.rm = TRUE),
+                     f_positive = sum(v_nb_calee_pos,
+                                      na.rm = TRUE),
+                     f_null = sum(v_nb_calees - v_nb_calee_pos,
+                                  na.rm = TRUE),
                      .groups = "drop")
   # Merge db by Year
   table_sets <- merge(a1, a2, by = "year")
@@ -128,12 +153,22 @@ fishing_activity <- function(data_connection,
   # Add column : % LOG
   table_sets <- table_sets %>%
     dplyr::mutate("%_log" = l_total / a_total * 100)
+  # For ggplot graph
+  set <- as.matrix(table_sets[, c(1, 5, 8, 11)])
+  t_set <- as.data.frame(set)
+  t_set <- t_set %>%
+    dplyr::rename(`Free swimming schools` = l_total,
+                  `FOB-associated schools` = f_total)
+  t_set_pivot <- tidyr::pivot_longer(t_set,
+                                     cols = c(2:3),
+                                     names_to = "type",
+                                     values_to = "nb_sets")
   # 4 - Graphic design ----
   if (graph_type == "plot") {
     graphics::par(mar = c(5, 4, 4, 4))
     set <- as.matrix(table_sets[, c(5,
                                     8)])
-    fig.sets <- graphics::barplot(t(set),
+    fig_sets <- graphics::barplot(t(set),
                                   beside = FALSE,
                                   ylab = "Number of sets",
                                   ylim = c(0, max(set) * 1.6),
@@ -141,7 +176,7 @@ fishing_activity <- function(data_connection,
                                   cex.lab = 1.3,
                                   xaxt = "n")
     graphics::axis(1,
-                   at = fig.sets,
+                   at = fig_sets,
                    tick = TRUE,
                    labels = table_sets$year,
                    line = .8,
@@ -155,7 +190,7 @@ fishing_activity <- function(data_connection,
                      fill = c("black",
                               "lightgrey"))
     graphics::par(new = TRUE)
-    plot(fig.sets,
+    plot(fig_sets,
          table_sets$`%_log`,
          type = "b",
          col = "black",
@@ -187,35 +222,35 @@ fishing_activity <- function(data_connection,
                     line = 2,
                     cex = 1.3)
   } else if (graph_type == "plotly") {
-    set <- as.matrix(table_sets[, c(1, 5, 8, 11)])
-    t_set <- as.data.frame(set)
-    t_set <- t_set %>%
-      dplyr::rename(`Free swimming schools` = l_total,
-             `FOB-associated schools` = f_total)
-    t_set_pivot <- tidyr::pivot_longer(t_set,
-                                       cols = c(2:3),
-                                       names_to = "type",
-                                       values_to = "nb_sets")
-    ggplot_set <- ggplot2::ggplot() +
-      ggplot2::geom_bar(data = t_set_pivot,
-                        mapping = ggplot2::aes(x = year,
-                                               y = nb_sets,
-                                               fill = type),
-                        stat = "identity",
-                        colour ="black") +
-      ggplot2::geom_line(data = t_set,
-                         ggplot2::aes(x = year,
-                                      y = `%_log` / 0.025)) +
-      ggplot2::scale_fill_manual(values = c("grey95", "grey26")) +
-      ggplot2::geom_point(data = table_sets,
-                          ggplot2::aes(x = year,
-                                       y = `%_log` / 0.025)) +
-      ggplot2::scale_y_continuous(name = "Number of sets", sec.axis = ggplot2::sec_axis(trans = ~. * 0.025, name = "% FOB-associated sets")) +
-      ggplot2::theme_bw() +
-      ggplot2::labs(fill = "")
-    plotly::ggplotly(ggplot_set) %>%
-      plotly::layout(legend = list(orientation = "v",
-                                   x = 0.7,
-                                   y = 0.95))
+    if (figure == "set") {
+      ggplot_set <- ggplot2::ggplot() +
+        ggplot2::geom_bar(data = t_set_pivot,
+                          mapping = ggplot2::aes(x = year,
+                                                 y = nb_sets,
+                                                 fill = type),
+                          stat = "identity",
+                          colour = "black") +
+        ggplot2::scale_fill_manual(values = c("grey95", "grey26")) +
+        ggplot2::scale_y_continuous(name = "Number of sets") +
+        ggplot2::theme_bw() +
+        ggplot2::labs(fill = "")
+      plotly::ggplotly(ggplot_set) %>%
+        plotly::layout(legend = list(orientation = "v",
+                                     x = 0.7,
+                                     y = 0.95))
+    } else if (figure == "log") {
+      t_set$`%_log` <- round(t_set$`%_log`, 3)
+      ggplot_set <- ggplot2::ggplot() +
+        ggplot2::geom_line(data = t_set,
+                           ggplot2::aes(x = year,
+                                        y = `%_log`)) +
+        ggplot2::geom_point(data = t_set,
+                            ggplot2::aes(x = year,
+                                         y = `%_log`)) +
+        ggplot2::scale_y_continuous(name = "% FOB-associated sets") +
+        ggplot2::theme_bw() +
+        ggplot2::labs(fill = "")
+      plotly::ggplotly(ggplot_set)
+    }
   }
 }
