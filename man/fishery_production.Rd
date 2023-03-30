@@ -27,7 +27,7 @@ fishery_production(
 
 \item{fishing_type}{{\link[base]{character}} expected. FSC, FOB or ALL.}
 
-\item{graph_type}{{\link[base]{character}} expected. plot or plotly. Plot by default.}
+\item{graph_type}{{\link[base]{character}} expected. plot, plotly, table or percentage. Plot by default.}
 }
 \value{
 The function return ggplot R plot.

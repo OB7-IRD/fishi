@@ -6,7 +6,7 @@
 #' @param ocean {\link[base]{integer}} expected. Ocean codes identification.
 #' @param country {\link[base]{integer}} expected. Country codes identification. 1 by default.
 #' @param vessel_type {\link[base]{integer}} expected. Vessel type codes identification. 1 by default.
-#' @param graph_type {\link[base]{character}} expected. plot or plotly. Plot by default.
+#' @param graph_type {\link[base]{character}} expected. plot, plotly or table. Plot by default.
 #' @param figure {\link[base]{character}} expected. set (for number of sets graph) or log (for percentage FOB-associated sets graph).
 #' @return The function return ggplot R plot.
 #' @export
@@ -252,5 +252,10 @@ fishing_activity <- function(data_connection,
         ggplot2::labs(fill = "")
       plotly::ggplotly(ggplot_set)
     }
+  } else if (graph_type == "table") {
+    table_sets <- table_sets %>%
+      dplyr::rename("% on FOB" = "%_log")
+    table_sets <- round(table_sets, 0)
+    as.data.frame(table_sets)
   }
 }

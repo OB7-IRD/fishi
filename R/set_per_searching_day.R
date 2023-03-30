@@ -7,7 +7,7 @@
 #' @param fishing_type {\link[base]{character}} expected. FOB and FSC.
 #' @param country {\link[base]{integer}} expected. Country codes identification. 1 by default.
 #' @param vessel_type {\link[base]{integer}} expected. Vessel type codes identification. 1 by default.
-#' @param graph_type {\link[base]{character}} expected. plot or plotly. Plot by default.
+#' @param graph_type {\link[base]{character}} expected. plot, plotly or table. Plot by default.
 #' @return The function return ggplot R plot.
 #' @export
 #' @importFrom DBI dbGetQuery sqlInterpolate SQL
@@ -100,15 +100,15 @@ set_per_searching_day <- function(data_connection,
          sep = "")
   }
   annual_catch_rate_nb_set <- DBI::sqlInterpolate(conn = data_connection[[2]],
-                                                           sql  = time_serie_catch_nb_set_sql,
-                                                           time_period = DBI::SQL(paste(time_period,
-                                                                                        collapse = ", ")),
-                                                           country     = DBI::SQL(paste(country,
-                                                                                        collapse = ", ")),
-                                                           vessel_type = DBI::SQL(paste(vessel_type,
-                                                                                        collapse = ", ")),
-                                                           ocean = DBI::SQL(paste(ocean,
-                                                                                  collapse = ", ")))
+                                                  sql  = time_serie_catch_nb_set_sql,
+                                                  time_period = DBI::SQL(paste(time_period,
+                                                                               collapse = ", ")),
+                                                  country     = DBI::SQL(paste(country,
+                                                                               collapse = ", ")),
+                                                  vessel_type = DBI::SQL(paste(vessel_type,
+                                                                               collapse = ", ")),
+                                                  ocean = DBI::SQL(paste(ocean,
+                                                                         collapse = ", ")))
   time_serie_catch_nb_set_data <- dplyr::tibble(DBI::dbGetQuery(conn      = data_connection[[2]],
                                                                 statement = annual_catch_rate_nb_set))
   # 3 - Data design ----
@@ -158,8 +158,9 @@ set_per_searching_day <- function(data_connection,
                         4.7,
                         4.1,
                         1.5))
-  if (fishing_type == "FOB") {
-    if (graph_type == "plot") {
+
+  if (graph_type == "plot") {
+    if (fishing_type == "FOB") {
       graphics::plot(table_cpue_set_per_day$year,
                      table_cpue_set_per_day$sets_per_day_fad,
                      type = "b",
@@ -190,28 +191,8 @@ set_per_searching_day <- function(data_connection,
                        legend = "(FOB)",
                        bty = "n",
                        cex = 2)
-    } else if (graph_type == "plotly") {
-      table_cpue_set_per_day$sets_per_day_fad <- round(table_cpue_set_per_day$sets_per_day_fad, 3)
-      ggplot_table_cpue <- ggplot2::ggplot(data = table_cpue_set_per_day) +
-        ggplot2::geom_line(ggplot2::aes(x = year,
-                                        y = sets_per_day_fad),
-                           color = "black") +
-        ggplot2::geom_point(ggplot2::aes(x = year,
-                                         y = sets_per_day_fad),
-                            shape = 16,
-                            size = 2) +
-        ggplot2::labs(x = "",
-                      y = "Number of sets per searching day") +
-        ggplot2::ylim(0,
-                      1) +
-        ggplot2::theme_bw() +
-        ggplot2::labs(colour = "") +
-        ggplot2::ggtitle("FOB")
-      plotly::ggplotly(ggplot_table_cpue)
     }
-
-  } else if (fishing_type == "FSC") {
-    if (graph_type == "plot") {
+    else if (fishing_type == "FSC") {
       graphics::plot(table_cpue_set_per_day$year,
                      table_cpue_set_per_day$sets_per_day_fsc,
                      type = "b",
@@ -243,7 +224,28 @@ set_per_searching_day <- function(data_connection,
                        legend = "(FSC)",
                        bty = "n",
                        cex = 2)
-    } else if (graph_type == "plotly") {
+    } }
+  else if (graph_type == "plotly") {
+    if (fishing_type == "FOB") {
+      table_cpue_set_per_day$sets_per_day_fad <- round(table_cpue_set_per_day$sets_per_day_fad, 3)
+      ggplot_table_cpue <- ggplot2::ggplot(data = table_cpue_set_per_day) +
+        ggplot2::geom_line(ggplot2::aes(x = year,
+                                        y = sets_per_day_fad),
+                           color = "black") +
+        ggplot2::geom_point(ggplot2::aes(x = year,
+                                         y = sets_per_day_fad),
+                            shape = 16,
+                            size = 2) +
+        ggplot2::labs(x = "",
+                      y = "Number of sets per searching day") +
+        ggplot2::ylim(0,
+                      1) +
+        ggplot2::theme_bw() +
+        ggplot2::labs(colour = "") +
+        ggplot2::ggtitle("FOB")
+      plotly::ggplotly(ggplot_table_cpue)
+    }
+    else if (fishing_type == "FSC") {
       table_cpue_set_per_day$sets_per_day_fsc <- round(table_cpue_set_per_day$sets_per_day_fsc, 3)
       ggplot_table_cpue <- ggplot2::ggplot(data = table_cpue_set_per_day) +
         ggplot2::geom_line(ggplot2::aes(x = year,
@@ -262,5 +264,14 @@ set_per_searching_day <- function(data_connection,
         ggplot2::ggtitle("FSC")
       plotly::ggplotly(ggplot_table_cpue)
     }
+  } else if (graph_type =="table") {
+    table_cpue_set_per_day <- table_cpue_set_per_day %>%
+      dplyr::rename("Year" = year,
+                    "ALL" = sets_per_day_all,
+                    "FOB" = sets_per_day_fad,
+                    "FSC" = sets_per_day_fsc)
+    table_cpue_set_per_day <- round(table_cpue_set_per_day, 2)
+
+    as.data.frame(table_cpue_set_per_day)
   }
 }

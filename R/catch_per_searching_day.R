@@ -7,7 +7,7 @@
 #' @param fishing_type {\link[base]{character}} expected. FOB and FSC.
 #' @param country {\link[base]{integer}} expected. Country codes identification. 1 by default.
 #' @param vessel_type {\link[base]{integer}} expected. Vessel type codes identification. 1 by default.
-#' @param graph_type {\link[base]{character}} expected. plot or plotly. Plot by default.
+#' @param graph_type {\link[base]{character}} expected. plot, plotly or table. Plot by default.
 #' @return The function return ggplot R plot.
 #' @export
 #' @importFrom DBI dbGetQuery sqlInterpolate SQL
@@ -273,7 +273,8 @@ catch_per_searching_day <- function(data_connection,
                        legend = "(FOB)",
                        bty = "n",
                        cex = 2)
-    } else if (graph_type == "plotly") {
+    }
+    else if (graph_type == "plotly") {
       # round values
       table_cpue_fad_set$yft <- round(table_cpue_fad_set$yft, 3)
       table_cpue_fad_set$skj <- round(table_cpue_fad_set$skj, 3)
@@ -323,6 +324,16 @@ catch_per_searching_day <- function(data_connection,
         plotly::layout(legend = list(orientation = "v",
                                      x = 0.85,
                                      y = 0.97))
+    }
+    else if (graph_type =="table") {
+      table_cpue_fad_set <- round(table_cpue_fad_set, 2)
+      table_cpue_fad_set <- table_cpue_fad_set %>%
+        dplyr::summarise(Year = year,
+                         YFT = yft,
+                         SKJ = skj,
+                         BET = bet,
+                         TOTAL = total)
+      as.data.frame(table_cpue_fad_set)
     }
   } else if (fishing_type == "FSC") {
     if (graph_type == "plot") {
@@ -392,7 +403,8 @@ catch_per_searching_day <- function(data_connection,
                        legend = "(FSC)",
                        bty = "n",
                        cex = 2)
-    } else if (graph_type == "plotly") {
+    }
+    else if (graph_type == "plotly") {
       # round values
       table_cpue_fsc_set$yft <- round(table_cpue_fsc_set$yft, 3)
       table_cpue_fsc_set$skj <- round(table_cpue_fsc_set$skj, 3)
@@ -444,6 +456,16 @@ catch_per_searching_day <- function(data_connection,
         plotly::layout(legend = list(orientation = "v",
                                      x = 0.85,
                                      y = 0.97))
+    }
+    else if (graph_type =="table") {
+      table_cpue_fsc_set <- round(table_cpue_fsc_set, 2)
+      table_cpue_fsc_set <- table_cpue_fsc_set %>%
+        dplyr::summarise(Year = year,
+                         YFT = yft,
+                         SKJ = skj,
+                         BET = bet,
+                         TOTAL = total)
+      as.data.frame(table_cpue_fsc_set)
     }
   }
 }

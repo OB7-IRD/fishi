@@ -6,7 +6,7 @@
 #' @param ocean {\link[base]{integer}} expected. Ocean codes identification.
 #' @param country {\link[base]{integer}} expected. Country codes identification. 1 by default.
 #' @param vessel_type {\link[base]{integer}} expected. Vessel type codes identification. 1 by default.
-#' @param graph_type {\link[base]{character}} expected. plot or plotly. Plot by default.
+#' @param graph_type {\link[base]{character}} expected. plot, plotly or table. Plot by default.
 #' @return The function return ggplot R plot.
 #' @export
 #' @importFrom DBI dbGetQuery sqlInterpolate SQL
@@ -74,10 +74,10 @@ spatial_occupancy <- function(data_connection,
                                    output = "message"))
   }
   if (codama::r_type_checking(r_object = graph_type,
-                              type = "integer",
+                              type = "character",
                               output = "logical") != TRUE) {
     return(codama::r_type_checking(r_object = graph_type,
-                                   type = "integer",
+                                   type = "character",
                                    output = "message"))
   }
   # 2 - Data extraction ----
@@ -254,5 +254,7 @@ spatial_occupancy <- function(data_connection,
       plotly::layout(legend = list(orientation = "v",
                                    x = 0.7,
                                    y = 0.07))
+  } else if (graph_type == "table") {
+    as.data.frame(table_occ)
   }
 }

@@ -7,7 +7,7 @@
 #' @param vessel_type {\link[base]{integer}} expected. Vessel type codes identification.
 #' @param ocean {\link[base]{integer}} expected. Ocean codes identification.
 #' @param fishing_type {\link[base]{character}} expected. FOB or FSC.
-#' @param graph_type {\link[base]{character}} expected. plot or plotly. Plot by default.
+#' @param graph_type {\link[base]{character}} expected. plot, plotly or table. Plot by default.
 #' @return The function return ggplot R plot.
 #' @export
 #' @importFrom DBI dbGetQuery sqlInterpolate SQL
@@ -173,15 +173,15 @@ catch_per_unit_effort <- function(data_connection,
   #Creation of t3 database from annual_catch_rate_nb_set_data
   t3 <- annual_catch_rate_data %>%
     dplyr::group_by(year) %>%
-    dplyr::summarise(yft = sum(dplyr::case_when(c_tban %in% c(2, 3) & c_esp == 1 ~ v_poids_capt, #OK
+    dplyr::summarise(yft = sum(dplyr::case_when(c_tban %in% c(2, 3) & c_esp == 1 ~ v_poids_capt,
                                                 TRUE ~ 0), na.rm = TRUE),
-                     skj = sum(dplyr::case_when(c_tban %in% c(2, 3) & c_esp == 2 ~ v_poids_capt, #OK
+                     skj = sum(dplyr::case_when(c_tban %in% c(2, 3) & c_esp == 2 ~ v_poids_capt,
                                                 TRUE ~ 0), na.rm = TRUE),
-                     bet = sum(dplyr::case_when(c_tban %in% c(2, 3) & c_esp == 3 ~ v_poids_capt, #OK
+                     bet = sum(dplyr::case_when(c_tban %in% c(2, 3) & c_esp == 3 ~ v_poids_capt,
                                                 TRUE ~ 0), na.rm = TRUE),
-                     alb = sum(dplyr::case_when(c_tban %in% c(2, 3) & c_esp == 4 ~ v_poids_capt, #OK
+                     alb = sum(dplyr::case_when(c_tban %in% c(2, 3) & c_esp == 4 ~ v_poids_capt,
                                                 TRUE ~ 0), na.rm = TRUE),
-                     total = sum(dplyr::case_when(c_tban %in% c(2, 3) ~ v_poids_capt, #OK
+                     total = sum(dplyr::case_when(c_tban %in% c(2, 3) ~ v_poids_capt,
                                                   TRUE ~ 0), na.rm = TRUE),
                      .groups = "drop")
   #merge t2 and t3
@@ -268,7 +268,8 @@ catch_per_unit_effort <- function(data_connection,
                        legend = "(FOB)",
                        bty = "n",
                        cex = 2)
-    } else if (graph_type == "plotly") {
+    }
+    else if (graph_type == "plotly") {
       # round values
       table_cpue_fad$yft <- round(table_cpue_fad$yft, 3)
       table_cpue_fad$skj <- round(table_cpue_fad$skj, 3)
@@ -315,6 +316,16 @@ catch_per_unit_effort <- function(data_connection,
         plotly::layout(legend = list(orientation = "v",
                                      x = 0.85,
                                      y = 0.97))
+    }
+    else if (graph_type =="table") {
+      table_cpue_fad <- round(table_cpue_fad, 2)
+      table_cpue_fad <- table_cpue_fad %>%
+        dplyr::summarise(Year = year,
+                         YFT = yft,
+                         SKJ = skj,
+                         BET = bet,
+                         TOTAL = total)
+      as.data.frame(table_cpue_fad)
     }
   } else if (fishing_type == "FSC") {
     if (graph_type == "plot") {
@@ -388,7 +399,8 @@ catch_per_unit_effort <- function(data_connection,
                        legend = "(FSC)",
                        bty = "n",
                        cex = 2)
-    } else if (graph_type == "plotly") {
+    }
+    else if (graph_type == "plotly") {
       # round values
       table_cpue_fsc$yft <- round(table_cpue_fsc$yft, 3)
       table_cpue_fsc$skj <- round(table_cpue_fsc$skj, 3)
@@ -435,6 +447,16 @@ catch_per_unit_effort <- function(data_connection,
         plotly::layout(legend = list(orientation = "v",
                                      x = 0.85,
                                      y = 0.97))
+    }
+    else if (graph_type =="table") {
+      table_cpue_fsc <- round(table_cpue_fsc, 2)
+      table_cpue_fsc <- table_cpue_fsc %>%
+        dplyr::summarise(Year = year,
+                         YFT = yft,
+                         SKJ = skj,
+                         BET = bet,
+                         TOTAL = total)
+      as.data.frame(table_cpue_fsc)
     }
   }
 }
