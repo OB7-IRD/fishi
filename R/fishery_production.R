@@ -7,7 +7,7 @@
 #' @param country {\link[base]{integer}} expected. Country codes identification. 1 by default.
 #' @param vessel_type {\link[base]{integer}} expected. Vessel type codes identification. 1 by default.
 #' @param fishing_type  {\link[base]{character}} expected. FSC, FOB or ALL.
-#' @param graph_type {\link[base]{character}} expected. plot or plotly. Plot by default.
+#' @param graph_type {\link[base]{character}} expected. plot, plotly, table or percentage. Plot by default.
 #' @return The function return ggplot R plot.
 #' @export
 #' @importFrom DBI dbGetQuery sqlInterpolate SQL
@@ -247,7 +247,8 @@ fishery_production <- function(data_connection,
                        legend = "(FOB)",
                        cex = 1.3)
     }
-  } else if (graph_type == "plotly") {
+  }
+  else if (graph_type == "plotly") {
     # pivot wider
     table_catch_3 <- table_catch_all %>%
       dplyr::select(1:4)
@@ -277,5 +278,30 @@ fishery_production <- function(data_connection,
       plotly::layout(legend = list(orientation = "v",
                                    x = 0.9,
                                    y = 0.95))
+  }
+  else if (graph_type =="table") {
+    table_catch_all <- round(table_catch_all, 0)
+    table_catch_all <- table_catch_all %>%
+      dplyr::summarise(Year = year,
+                       YFT = yft,
+                       SKJ = skj,
+                       BET = bet,
+                       ALB = alb,
+                       OTH = oth,
+                       TOTAL = total)
+    as.data.frame(table_catch_all)
+  }
+  else if (graph_type =="percentage") {
+    table_catch_all <- table_catch_all %>%
+      dplyr::summarise(Year = year,
+                       YFT = yft / total * 100,
+                       SKJ = skj / total * 100,
+                       BET = bet / total * 100,
+                       ALB = alb / total * 100,
+                       OTH = oth / total * 100,
+                       TOTAL = total)
+    table_catch_all <- round(table_catch_all, 1)
+    table_catch_all$TOTAL <- round(table_catch_all$TOTAL, 0)
+    as.data.frame(table_catch_all)
   }
 }

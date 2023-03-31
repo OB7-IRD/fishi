@@ -27,7 +27,7 @@ catch_per_unit_effort(
 
 \item{fishing_type}{{\link[base]{character}} expected. FOB or FSC.}
 
-\item{graph_type}{{\link[base]{character}} expected. plot or plotly. Plot by default.}
+\item{graph_type}{{\link[base]{character}} expected. plot, plotly or table. Plot by default.}
 }
 \value{
 The function return ggplot R plot.

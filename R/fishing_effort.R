@@ -6,7 +6,7 @@
 #' @param ocean {\link[base]{integer}} expected. Ocean codes identification.
 #' @param country {\link[base]{integer}} expected. Country codes identification. 1 by default.
 #' @param vessel_type {\link[base]{integer}} expected. Vessel type codes identification. 1 by default.
-#' @param graph_type {\link[base]{character}} expected. plot or plotly. Plot by default.
+#' @param graph_type {\link[base]{character}} expected. plot, plotly or table. Plot by default.
 #' @return The function return ggplot R plot.
 #' @export
 #' @importFrom DBI dbGetQuery sqlInterpolate SQL
@@ -40,6 +40,9 @@ fishing_effort <- function(data_connection,
   searching_days <- NULL
   fishing_days_1000 <- NULL
   searching_days_1000 <- NULL
+  landing_in_activity_year <- NULL
+  nb_landings_in_activity_year <- NULL
+  nb_days <- NULL
   # 1 - Arguments verification ----
   if (codama::r_type_checking(r_object = data_connection,
                               type = "list",
@@ -112,7 +115,9 @@ fishing_effort <- function(data_connection,
   # 3 - Data design ----
   #Adding columns years
   fishing_effort_t1 <- fishing_effort_data %>%
-    dplyr::mutate(year = lubridate::year(x = activity_date))
+    dplyr::mutate(year = lubridate::year(x = activity_date),
+                  landing_in_activity_year = dplyr::case_when(landing_date == activity_date ~ 1,
+                                                                TRUE ~ 0))
   #Adding columns by condition (vtmer, vtpec, ndurcal, nbdays)
   fishing_effort_t2 <- fishing_effort_t1 %>%
     dplyr::group_by(ocean_id,
@@ -131,9 +136,11 @@ fishing_effort <- function(data_connection,
                      "v_dur_cal" = sum(v_dur_cal,
                                        na.rm = TRUE),
                      "nb_days" = max(activity_date) - min(activity_date),
+                     "nb_landings_in_activity_year" = sum(landing_in_activity_year,
+                                                          na.rm = TRUE),
                      .groups = "drop")
   #Group rows by conditions
-  fishing_effort_t2 <- fishing_effort_t2 %>%
+  fishing_effort_t2b <- fishing_effort_t2 %>%
     dplyr::group_by(ocean_id,
                     fleet,
                     flag,
@@ -142,35 +149,42 @@ fishing_effort <- function(data_connection,
                     v_tmer,
                     v_tpec,
                     v_dur_cal) %>%
-    dplyr::summarise(.groups = "drop")
+    dplyr::summarise(nb_landings_in_activity_year = nb_landings_in_activity_year,
+                     nb_days = nb_days,
+                     .groups = "drop")
   #Adding columns by years (daysatsea, fishingdays, ...)
-  fishing_effort_t3 <- fishing_effort_t2 %>%
+  fishing_effort_t3 <- fishing_effort_t2b %>%
     dplyr::group_by(year) %>%
     dplyr::summarise("days_at_sea" = round(sum(v_tmer / 24,
                                                na.rm = TRUE)),
+                     "nb_landings_in_activity_year" = sum(nb_landings_in_activity_year, na.rm = TRUE),
+                     "average_nb_days_by_trip" = mean(nb_days, 0),
                      "fishing_days_1000" = ifelse(test = ocean_id == 1,
-                                             yes = round(sum(v_tpec / 12,
-                                                             na.rm = TRUE)),
-                                             no = round(sum(v_tpec / 13,
-                                                            na.rm = TRUE))),
+                                                  yes = round(sum(v_tpec / 12,
+                                                                  na.rm = TRUE)),
+                                                  no = round(sum(v_tpec / 13,
+                                                                 na.rm = TRUE))),
                      "set_duration_in_days" = ifelse(test = ocean_id == 1,
                                                      yes = round(sum(v_dur_cal / 12,
                                                                      na.rm = TRUE)),
                                                      no = round(sum(v_dur_cal / 13,
                                                                     na.rm = TRUE))),
                      "searching_days_1000" = ifelse(test = ocean_id == 1,
-                                               yes = round(sum((v_tpec - v_dur_cal) / 12,
+                                                    yes = round(sum((v_tpec - v_dur_cal) / 12,
 
-                                                               na.rm = TRUE)),
-                                               no = round(sum((v_tpec - v_dur_cal) / 13, na.rm = TRUE))),
+                                                                    na.rm = TRUE)),
+                                                    no = round(sum((v_tpec - v_dur_cal) / 13, na.rm = TRUE))),
                      .groups = "drop")
 
   #remove duplicates
+
   fishing_effort_t4 <- unique(fishing_effort_t3[, c("year",
-                                               "days_at_sea",
-                                               "fishing_days_1000",
-                                               "set_duration_in_days",
-                                               "searching_days_1000")])
+                                                    "nb_landings_in_activity_year",
+                                                    "average_nb_days_by_trip",
+                                                    "days_at_sea",
+                                                    "fishing_days_1000",
+                                                    "set_duration_in_days",
+                                                    "searching_days_1000")])
 
   table_effort <- fishing_effort_t4 %>%
     dplyr::mutate("fishing_days" = fishing_days_1000 / 1000,
@@ -218,7 +232,8 @@ fishing_effort <- function(data_connection,
                    1),
            lty = 2,
            col = "lightgrey")
-  } else if (graph_type == "plotly") {
+  }
+  else if (graph_type == "plotly") {
     ggplot_table_effort <- ggplot2::ggplot(data = table_effort) +
       ggplot2::geom_line(ggplot2::aes(x = year,
                                       y = fishing_days,
@@ -244,5 +259,21 @@ fishing_effort <- function(data_connection,
       plotly::layout(legend = list(orientation = "v",
                                    x = 0.85,
                                    y = 0.95))
+  }
+  else if (graph_type == "table") {
+    table_effort$average_nb_days_by_trip <- round(table_effort$average_nb_days_by_trip, 0)
+    table_effort$average_nb_days_by_trip <- as.integer(table_effort$average_nb_days_by_trip)
+    table_effort <- table_effort[,c(-8:-9)]
+    # rename columns
+    table_effort <- table_effort %>%
+      dplyr::rename("Days at sea" = "days_at_sea",
+                    "Fishing days" = "fishing_days_1000",
+                    "Set duration in days" = "set_duration_in_days",
+                    "Searching days" = "searching_days_1000",
+                    "Number of trips" = "nb_landings_in_activity_year",
+                    "Mean duration in days" = "average_nb_days_by_trip")
+    as.data.frame(table_effort)
+
+
   }
 }

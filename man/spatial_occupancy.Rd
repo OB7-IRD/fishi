@@ -24,7 +24,7 @@ spatial_occupancy(
 
 \item{vessel_type}{{\link[base]{integer}} expected. Vessel type codes identification. 1 by default.}
 
-\item{graph_type}{{\link[base]{character}} expected. plot or plotly. Plot by default.}
+\item{graph_type}{{\link[base]{character}} expected. plot, plotly or table. Plot by default.}
 }
 \value{
 The function return ggplot R plot.
