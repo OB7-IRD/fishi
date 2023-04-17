@@ -287,6 +287,20 @@ map_catch_previous <- function(data_connection,
                              10),
                      col = "darkgrey",
                      lty = 3)
+    if (title == TRUE) {
+      title(main = paste0("Spatial distribution of tuna catches of the ",
+                          country_legend, " ",
+                          vessel_type_legend, " fishing fleet made on ",
+                          fishing_type, "\n",
+                          " fishing mode in ",
+                          ifelse(test = length(x = time_period) != 1,
+                                 yes  = paste0(min(time_period), "-", max(time_period)),
+                                 no   = time_period),
+                          ", in the ",
+                          ocean_legend,
+                          " ocean."),
+            cex.main = 0.9)
+    }
     ### Add the pie plots
     for (i in c(1:nrow(datafile))) {
       plotrix::floating.pie(long[i],
