@@ -504,8 +504,7 @@ bio_size_tuna <- function(data_connection,
                         cex = 1.6)
       }
     }
-  }
-  else if (graph_type == "plotly") {
+  } else if (graph_type == "plotly") {
     # creation of year variables
     year <- as.character(report_year)
     years <- as.character(paste0(report_year - 5,
@@ -712,7 +711,7 @@ bio_size_tuna <- function(data_connection,
     if (title == TRUE) {
     plotly_size <- plotly_size %>%
       plotly::layout(title = list(text = paste0("Size distribution of major tuna catches (in percentage of the total number of fishes)", "\n",
-                                               " for the ", country_legend, " purse seine fleet in ", report_year," (solid line) and for an average year ", "\n",
+                                               " for the ", country_legend, " purse seine fleet in ", report_year, " (solid line) and for an average year ", "\n",
                                                "representing the period ", min(five_previous), "-", max(five_previous), " (dotted line) in the ", ocean_legend, " ocean."),
                                   font = list(size = 17)),
                      margin = list(t = 120))

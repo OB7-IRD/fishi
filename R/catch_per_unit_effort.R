@@ -228,7 +228,7 @@ catch_per_unit_effort <- function(data_connection,
                        cex.axis = 1.4,
                        cex.lab = 1.4,
                        main = paste0("Annual catch rates (in t per searching day) of the ", country_legend, " ", vessel_type_legend, " fishing fleet on ", "\n",
-                                     fishing_type, " fishing mode schools in the ", ocean_legend, " ocean during ", min(time_period), "-", max(time_period),"."),
+                                     fishing_type, " fishing mode schools in the ", ocean_legend, " ocean during ", min(time_period), "-", max(time_period), "."),
                        ylim = c(0,
                                 20),
                        las = 1,
@@ -310,8 +310,7 @@ catch_per_unit_effort <- function(data_connection,
                      legend = "(FOB)",
                      bty = "n",
                      cex = 2)
-    }
-    else if (graph_type == "plotly") {
+    } else if (graph_type == "plotly") {
       # round values
       table_cpue_fad$yft <- round(table_cpue_fad$yft, 3)
       table_cpue_fad$skj <- round(table_cpue_fad$skj, 3)
@@ -359,7 +358,7 @@ catch_per_unit_effort <- function(data_connection,
       if (title == TRUE) {
         plotly_graph <- plotly_graph %>%
           plotly::layout(title = list(text = paste0("Annual catch rates (in t per searching day) of the ", country_legend, " ", vessel_type_legend, " fishing fleet on ", fishing_type, " fishing", "\n",
-                                                   "mode schools in the ", ocean_legend, " ocean during ", min(time_period), "-", max(time_period),"."),
+                                                   "mode schools in the ", ocean_legend, " ocean during ", min(time_period), "-", max(time_period), "."),
                                       font = list(size = 17)),
                          margin = list(t = 120))
 
@@ -369,8 +368,7 @@ catch_per_unit_effort <- function(data_connection,
         plotly::layout(legend = list(orientation = "v",
                                      x = 0.85,
                                      y = 0.97))
-    }
-    else if (graph_type =="table") {
+    } else if (graph_type == "table") {
       table_cpue_fad <- round(table_cpue_fad, 2)
       table_cpue_fad <- table_cpue_fad %>%
         dplyr::summarise(Year = year,
@@ -380,8 +378,7 @@ catch_per_unit_effort <- function(data_connection,
                          TOTAL = total)
       as.data.frame(table_cpue_fad)
     }
-  }
-  else if (fishing_type == "FSC") {
+  } else if (fishing_type == "FSC") {
     if (graph_type == "plot") {
       if (title == TRUE) {
         graphics::plot(table_cpue_fsc$year,
@@ -389,12 +386,14 @@ catch_per_unit_effort <- function(data_connection,
                        type = "b",
                        xlab = "",
                        ylab = expression(paste("Catch per unit effort (t ",
-                                               d^{ -1 },
+                                               d^ {
+                                                 -1
+                                                 },
                                                ")")),
                        cex.axis = 1.4,
                        cex.lab = 1.4,
                        main = paste0("Annual catch rates (in t per searching day) of the ", country_legend, " ", vessel_type_legend, " fishing fleet on ", "\n",
-                                     fishing_type, " fishing mode schools in the", ocean_legend,  " ocean during ", min(time_period), "-", max(time_period),"."),
+                                     fishing_type, " fishing mode schools in the", ocean_legend,  " ocean during ", min(time_period), "-", max(time_period), "."),
                        ylim = c(0,
                                 20),
                        las = 1,
@@ -407,7 +406,9 @@ catch_per_unit_effort <- function(data_connection,
                        type = "b",
                        xlab = "",
                        ylab = expression(paste("Catch per unit effort (t ",
-                                               d^{ -1 },
+                                               d^ {
+                                                 -1
+                                                 },
                                                ")")),
                        cex.axis = 1.4,
                        cex.lab = 1.4,
@@ -474,8 +475,7 @@ catch_per_unit_effort <- function(data_connection,
                        legend = "(FSC)",
                        bty = "n",
                        cex = 2)
-    }
-    else if (graph_type == "plotly") {
+    } else if (graph_type == "plotly") {
       # round values
       table_cpue_fsc$yft <- round(table_cpue_fsc$yft, 3)
       table_cpue_fsc$skj <- round(table_cpue_fsc$skj, 3)
@@ -523,7 +523,7 @@ catch_per_unit_effort <- function(data_connection,
       if (title == TRUE) {
         plotly_graph <- plotly_graph %>%
           plotly::layout(title = list(text = paste0("Annual catch rates (in t per searching day) of the ", country_legend, " ", vessel_type_legend, " fishing fleet on ", fishing_type, " fishing", "\n",
-                                                   "mode schools in the", ocean_legend,  " ocean during ", min(time_period), "-", max(time_period),"."),
+                                                   "mode schools in the", ocean_legend,  " ocean during ", min(time_period), "-", max(time_period), "."),
                                       font = list(size = 17)),
                          margin = list(t = 120))
 
@@ -533,8 +533,7 @@ catch_per_unit_effort <- function(data_connection,
         plotly::layout(legend = list(orientation = "v",
                                      x = 0.85,
                                      y = 0.97))
-    }
-    else if (graph_type =="table") {
+    } else if (graph_type == "table") {
       table_cpue_fsc <- round(table_cpue_fsc, 2)
       table_cpue_fsc <- table_cpue_fsc %>%
         dplyr::summarise(Year = year,

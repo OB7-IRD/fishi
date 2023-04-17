@@ -119,7 +119,7 @@ fishing_effort <- function(data_connection,
   fishing_effort_t1 <- fishing_effort_data %>%
     dplyr::mutate(year = lubridate::year(x = activity_date),
                   landing_in_activity_year = dplyr::case_when(landing_date == activity_date ~ 1,
-                                                                TRUE ~ 0))
+                                                              TRUE ~ 0))
   #Adding columns by condition (vtmer, vtpec, ndurcal, nbdays)
   fishing_effort_t2 <- fishing_effort_t1 %>%
     dplyr::group_by(ocean_id,
@@ -211,39 +211,37 @@ fishing_effort <- function(data_connection,
     x_tick_pos <- seq(min(table_effort$year), max(table_effort$year))
     # plot the graph
     if (title == TRUE) {
-      plot_effort <- graphics::plot(table_effort$year,
-                                    table_effort$fishing_days,
-                                    type = "b",
-                                    xlab = "",
-                                    ylab = "Activity duration (x1000 days)",
-                                    cex.axis = 1.4,
-                                    cex.lab = 1.4,
-                                    main =       paste0("Changes in nominal effort over time. Annual total number of fishing and searching days for", "\n",
-                                                        "the ", country_legend, " ",
-                                                        vessel_type_legend,
-                                                        " in the ",
-                                                        ocean_legend,
-                                                        " ocean during ",
-                                                        min(time_period),
-                                                        "-",
-                                                        max(time_period),"."),
-                                    ylim = c(0, max(table_effort$fishing_days * 1.1, na.rm = TRUE)),
-                                    #las = 1,
-                                    pch = 18,
-                                    xaxt = "n")
+      graphics::plot(table_effort$year,
+                     table_effort$fishing_days,
+                     type = "b",
+                     xlab = "",
+                     ylab = "Activity duration (x1000 days)",
+                     cex.axis = 1.4,
+                     cex.lab = 1.4,
+                     main =       paste0("Changes in nominal effort over time. Annual total number of fishing and searching days for", "\n",
+                                         "the ", country_legend, " ",
+                                         vessel_type_legend,
+                                         " in the ",
+                                         ocean_legend,
+                                         " ocean during ",
+                                         min(time_period),
+                                         "-",
+                                         max(time_period), "."),
+                     ylim = c(0, max(table_effort$fishing_days * 1.1, na.rm = TRUE)),
+                     pch = 18,
+                     xaxt = "n")
     } else {
-      plot_effort <- graphics::plot(table_effort$year,
-                                    table_effort$fishing_days,
-                                    type = "b",
-                                    xlab = "",
-                                    ylab = "Activity duration (x1000 days)",
-                                    cex.axis = 1.4,
-                                    cex.lab = 1.4,
-                                    main = "",
-                                    ylim = c(0, max(table_effort$fishing_days * 1.1, na.rm = TRUE)),
-                                    #las = 1,
-                                    pch = 18,
-                                    xaxt = "n")
+      graphics::plot(table_effort$year,
+                     table_effort$fishing_days,
+                     type = "b",
+                     xlab = "",
+                     ylab = "Activity duration (x1000 days)",
+                     cex.axis = 1.4,
+                     cex.lab = 1.4,
+                     main = "",
+                     ylim = c(0, max(table_effort$fishing_days * 1.1, na.rm = TRUE)),
+                     pch = 18,
+                     xaxt = "n")
     }
     # Add the x-axis tick marks without labels
     graphics::axis(1,
@@ -251,12 +249,12 @@ fishing_effort <- function(data_connection,
                    tick = TRUE,
                    labels = FALSE)
     graphics::text(x = x_tick_pos,
-         y = par("usr")[3] - 0.15,
-         labels = table_effort$year,
-         srt = 45,
-         adj = 1,
-         xpd = TRUE,
-         cex = 1.2)
+                   y = par("usr")[3] - 0.15,
+                   labels = table_effort$year,
+                   srt = 45,
+                   adj = 1,
+                   xpd = TRUE,
+                   cex = 1.2)
 
     lines(table_effort$year,
           table_effort$searching_days,
@@ -275,8 +273,7 @@ fishing_effort <- function(data_connection,
                    1),
            lty = 2,
            col = "lightgrey")
-  }
-  else if (graph_type == "plotly") {
+  } else if (graph_type == "plotly") {
     ggplot_table_effort <- ggplot2::ggplot(data = table_effort) +
       ggplot2::geom_line(ggplot2::aes(x = year,
                                       y = fishing_days,
@@ -301,31 +298,30 @@ fishing_effort <- function(data_connection,
     # Plotly
     plotly_graph <- plotly::ggplotly(ggplot_table_effort)
     # Add a title
-      if (title == TRUE) {
-        plotly_graph <- plotly_graph %>%
-          plotly::layout(title = list(text = paste0("Changes in nominal effort over time. Annual total number of fishing and searching days for the", "\n",
-                                                   country_legend, " ",
-                                                   vessel_type_legend,
-                                                   " in the ",
-                                                   ocean_legend,
-                                                   " ocean during ",
-                                                   min(time_period),
-                                                   "-",
-                                                   max(time_period),"."),
-                                      font = list(size = 17)),
-                         margin = list(t = 120))
+    if (title == TRUE) {
+      plotly_graph <- plotly_graph %>%
+        plotly::layout(title = list(text = paste0("Changes in nominal effort over time. Annual total number of fishing and searching days for the", "\n",
+                                                  country_legend, " ",
+                                                  vessel_type_legend,
+                                                  " in the ",
+                                                  ocean_legend,
+                                                  " ocean during ",
+                                                  min(time_period),
+                                                  "-",
+                                                  max(time_period), "."),
+                                    font = list(size = 17)),
+                       margin = list(t = 120))
 
-      }
+    }
     # Plot the plotly
     plotly_graph %>%
       plotly::layout(legend = list(orientation = "v",
                                    x = 0.85,
                                    y = 0.95))
-  }
-  else if (graph_type == "table") {
+  } else if (graph_type == "table") {
     table_effort$average_nb_days_by_trip <- round(table_effort$average_nb_days_by_trip, 0)
     table_effort$average_nb_days_by_trip <- as.integer(table_effort$average_nb_days_by_trip)
-    table_effort <- table_effort[,c(-8:-9)]
+    table_effort <- table_effort[, c(-8:-9)]
     # rename columns
     table_effort <- table_effort %>%
       dplyr::rename("Days at sea" = "days_at_sea",

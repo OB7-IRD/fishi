@@ -326,8 +326,7 @@ map_catch_previous <- function(data_connection,
                    -12.5,
                    paste(2000, " t", sep = ""),
                    cex = .9)
-  }
-  else if (graph_type == "plotly") {
+  } else if (graph_type == "plotly") {
     datafile$lat <- quad2pos(as.numeric(datafile$cwp11_act + 5 * 1e6))$y
     datafile$long <- quad2pos(as.numeric(datafile$cwp11_act + 5 * 1e6))$x
     world_boundaries <- rnaturalearth::ne_countries(returnclass = "sf",
@@ -367,7 +366,7 @@ map_catch_previous <- function(data_connection,
                                                   fishing_type, "\n",
                                                   " fishing mode in ",
                                                   ifelse(test = length(x = time_period) != 1,
-                                                         yes  = paste0(min(time_period),"-",max(time_period)),
+                                                         yes  = paste0(min(time_period), "-", max(time_period)),
                                                          no   = time_period),
                                                   ", in the ",
                                                   ocean_legend,

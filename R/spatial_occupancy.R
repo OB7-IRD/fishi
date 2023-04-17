@@ -176,7 +176,7 @@ spatial_occupancy <- function(data_connection,
                      ylab = "Spatial occupancy",
                      cex.axis = 1.4,
                      cex.lab = 1.4,
-                     main = paste0("Changes in the spatial extent of the fishery over time. Annual number of 1° squares explored", "\n",
+                     main = paste0("Changes in the spatial extent of the fishery over time. Annual number of 1 degree squares explored", "\n",
                                    "by each vessel of the ",
                                    country_legend,
                                    " ",
@@ -255,8 +255,7 @@ spatial_occupancy <- function(data_connection,
                              100),
                      lty = 2,
                      col = "lightgrey")
-  }
-  else if (graph_type == "plotly") {
+  } else if (graph_type == "plotly") {
     ggplot_table_occ <- ggplot2::ggplot(data = table_occ) +
       ggplot2::geom_line(ggplot2::aes(x = year,
                                       y = total)) +
@@ -295,12 +294,12 @@ spatial_occupancy <- function(data_connection,
       ggplot2::ylim(0, 500) +
       ggplot2::theme_bw()
     # Plotly
-    plotly_graph <-plotly::ggplotly(ggplot_table_occ)
+    plotly_graph <- plotly::ggplotly(ggplot_table_occ)
     # Add a title
     if (title == TRUE) {
       plotly_graph <- plotly_graph %>%
         plotly::layout(title = list(text = paste0("Changes in the spatial extent of the fishery over time. Annual number of 1-degree squares explored by ", "\n",
-                                                  "each vessel of the ", country_legend, " ", vessel_type_legend, " fishing fleet during ", min(time_period), "-", max(time_period)," in the ", ocean_legend, " ocean."),
+                                                  "each vessel of the ", country_legend, " ", vessel_type_legend, " fishing fleet during ", min(time_period), "-", max(time_period), " in the ", ocean_legend, " ocean."),
                                     font = list(size = 17)),
                        margin = list(t = 120))
 

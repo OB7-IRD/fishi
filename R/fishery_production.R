@@ -228,7 +228,7 @@ fishery_production <- function(data_connection,
                          xlab = "",
                          ylab = "Catch (x1000 t)",
                          main = paste0("Fishery production by ", fishing_type, " fishing mode. Catch by species of the ", country_legend, " ", vessel_type_legend, " fishing",
-                                       "\n", "fleet during ", min(time_period), "-", max(time_period),", in the ", ocean_legend, " ocean."),
+                                       "\n", "fleet during ", min(time_period), "-", max(time_period), ", in the ", ocean_legend, " ocean."),
                          axis4 = FALSE,
                          col = c("khaki1",
                                  "firebrick2",
@@ -282,8 +282,7 @@ fishery_production <- function(data_connection,
                        legend = "(FOB)",
                        cex = 1.3)
     }
-  }
-  else if (graph_type == "plotly") {
+  } else if (graph_type == "plotly") {
     # pivot wider
     table_catch_3 <- table_catch_all %>%
       dplyr::select(1:4)
@@ -306,7 +305,7 @@ fishery_production <- function(data_connection,
     if (title == TRUE) {
       plotly_graph <- plotly_graph %>%
         plotly::layout(title = list(text = paste0("Fishery production by ", fishing_type, " fishing mode. Catch by species of the ", country_legend, " ", vessel_type_legend, " fishing",
-                                                 "\n", "fleet during ", min(time_period), "-", max(time_period),", in the ", ocean_legend, " ocean."),
+                                                 "\n", "fleet during ", min(time_period), "-", max(time_period), ", in the ", ocean_legend, " ocean."),
                                     font = list(size = 17)),
                        margin = list(t = 120))
 
@@ -317,8 +316,7 @@ fishery_production <- function(data_connection,
                                    x = 0.9,
                                    y = 0.95))
 
-  }
-  else if (graph_type =="table") {
+  } else if (graph_type == "table") {
     table_catch_all <- round(table_catch_all, 0)
     table_catch_all <- table_catch_all %>%
       dplyr::summarise(Year = year,
@@ -329,8 +327,7 @@ fishery_production <- function(data_connection,
                        OTH = oth,
                        TOTAL = total)
     as.data.frame(table_catch_all)
-  }
-  else if (graph_type =="percentage") {
+  } else if (graph_type == "percentage") {
     table_catch_all <- table_catch_all %>%
       dplyr::summarise(Year = year,
                        YFT = yft / total * 100,

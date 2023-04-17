@@ -210,8 +210,7 @@ set_per_searching_day <- function(data_connection,
                        legend = "(FOB)",
                        bty = "n",
                        cex = 2)
-    }
-    else if (fishing_type == "FSC") {
+    } else if (fishing_type == "FSC") {
       graphics::plot(table_cpue_set_per_day$year,
                      table_cpue_set_per_day$sets_per_day_fsc,
                      type = "b",
@@ -247,8 +246,7 @@ set_per_searching_day <- function(data_connection,
                        bty = "n",
                        cex = 2)
     }
-    }
-  else if (graph_type == "plotly") {
+    } else if (graph_type == "plotly") {
     if (fishing_type == "FOB") {
       table_cpue_set_per_day$sets_per_day_fad <- round(table_cpue_set_per_day$sets_per_day_fad, 3)
       ggplot_table_cpue <- ggplot2::ggplot(data = table_cpue_set_per_day) +
@@ -271,15 +269,14 @@ set_per_searching_day <- function(data_connection,
       if (title == TRUE) {
         plotly_graph <- plotly_graph %>%
           plotly::layout(title = list(text = paste0("Annual number of sets per searching day on ", fishing_type, " fishing mode schools for the ", country_legend, "\n",
-                                                   vessel_type_legend, " fishing fleet in the Atlantic Ocean during ", min(time_period), "-", max(time_period),", in the ", ocean_legend, " ocean."),
+                                                   vessel_type_legend, " fishing fleet in the Atlantic Ocean during ", min(time_period), "-", max(time_period), ", in the ", ocean_legend, " ocean."),
                                       font = list(size = 17)),
                          margin = list(t = 120))
 
       }
       # Plot the plotly
       plotly_graph
-    }
-    else if (fishing_type == "FSC") {
+    } else if (fishing_type == "FSC") {
       table_cpue_set_per_day$sets_per_day_fsc <- round(table_cpue_set_per_day$sets_per_day_fsc, 3)
       ggplot_table_cpue <- ggplot2::ggplot(data = table_cpue_set_per_day) +
         ggplot2::geom_line(ggplot2::aes(x = year,
@@ -301,7 +298,7 @@ set_per_searching_day <- function(data_connection,
       if (title == TRUE) {
         plotly_graph <- plotly_graph %>%
           plotly::layout(title = list(text = paste0("Annual number of sets per searching day on ", fishing_type, " fishing mode schoolsfor the ", country_legend, "\n",
-                                                    vessel_type_legend, " fishing fleet in the Atlantic Ocean during ", min(time_period), "-", max(time_period),", in the ", ocean_legend, " ocean."),
+                                                    vessel_type_legend, " fishing fleet in the Atlantic Ocean during ", min(time_period), "-", max(time_period), ", in the ", ocean_legend, " ocean."),
                                       font = list(size = 17)),
                          margin = list(t = 120))
 
@@ -309,7 +306,7 @@ set_per_searching_day <- function(data_connection,
       # Plot the plotly
       plotly_graph
     }
-  } else if (graph_type =="table") {
+  } else if (graph_type == "table") {
     table_cpue_set_per_day <- table_cpue_set_per_day %>%
       dplyr::rename("Year" = year,
                     "ALL" = sets_per_day_all,

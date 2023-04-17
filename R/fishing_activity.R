@@ -264,8 +264,7 @@ fishing_activity <- function(data_connection,
                     side = 4,
                     line = 2,
                     cex = 1.3)
-  }
-  else if (graph_type == "plotly") {
+  } else if (graph_type == "plotly") {
     if (figure == "set") {
       ggplot_set <- ggplot2::ggplot() +
         ggplot2::geom_bar(data = t_set_pivot,
@@ -279,7 +278,7 @@ fishing_activity <- function(data_connection,
         ggplot2::theme_bw() +
         ggplot2::labs(fill = "")
       # Plotly
-      plotly_graph <-plotly::ggplotly(ggplot_set)
+      plotly_graph <- plotly::ggplotly(ggplot_set)
       # Add a title
       if (title == TRUE) {
         plotly_graph <- plotly_graph %>%

@@ -262,8 +262,7 @@ fishing_capacity <- function(data_connection,
          ylim = c(0, max(fishing_capacity_data$CC / 1000) * 1.1),
          yaxs = "i",
          xlim = c(0, 37.6))
-  }
-  else if (graph_type == "plotly") {
+  } else if (graph_type == "plotly") {
     if (figure == "vessel") {
       ggplot_table_vessel <- ggplot2::ggplot(data = data_pivot) +
         ggplot2::geom_bar(mapping = ggplot2::aes(x = year,
@@ -310,8 +309,7 @@ fishing_capacity <- function(data_connection,
         plotly::layout(legend = list(orientation = "v",
                                      x = 0.80,
                                      y = 0.98))
-    }
-    else if (figure == "capacity") {
+    } else if (figure == "capacity") {
       data_pivot$fishing_capacity <- round(data_pivot$fishing_capacity, 3)
       ggplot_table_capacity <- ggplot2::ggplot(data = data_pivot) +
         ggplot2::geom_line(ggplot2::aes(x = year,
@@ -344,9 +342,8 @@ fishing_capacity <- function(data_connection,
       # Plot the plotly
       plotly_graph
     }
-  }
-  else if (graph_type == "table") {
-    fishing_capacity_data <- fishing_capacity_data[,-11]
+  } else if (graph_type == "table") {
+    fishing_capacity_data <- fishing_capacity_data[, -11]
     as.data.frame(fishing_capacity_data)
   }
 }

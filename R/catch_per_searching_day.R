@@ -234,7 +234,7 @@ catch_per_searching_day <- function(data_connection,
                        cex.axis = 1.4,
                        cex.lab = 1.4,
                        main = paste0("Annual number of catch per positive set on ", fishing_type, " fishing mode schools for the ", country_legend, "\n",
-                                     vessel_type_legend, " fishing fleet in the ", ocean_legend, " ocean during ", min(time_period), "-", max(time_period),"."),
+                                     vessel_type_legend, " fishing fleet in the ", ocean_legend, " ocean during ", min(time_period), "-", max(time_period), "."),
                        ylim = c(0,
                                 max(table_cpue_fad_set$total) * 1.05),
                        las = 1,
@@ -312,8 +312,7 @@ catch_per_searching_day <- function(data_connection,
                        legend = "(FOB)",
                        bty = "n",
                        cex = 2)
-    }
-    else if (graph_type == "plotly") {
+    } else if (graph_type == "plotly") {
       # round values
       table_cpue_fad_set$yft <- round(table_cpue_fad_set$yft, 3)
       table_cpue_fad_set$skj <- round(table_cpue_fad_set$skj, 3)
@@ -359,12 +358,12 @@ catch_per_searching_day <- function(data_connection,
         ggplot2::theme_bw() +
         ggplot2::labs(colour = "")
       # Plotly
-      plotly_graph <-plotly::ggplotly(ggplot_table_cpue)
+      plotly_graph <- plotly::ggplotly(ggplot_table_cpue)
       # Add a title
       if (title == TRUE) {
         plotly_graph <- plotly_graph %>%
           plotly::layout(title = list(text = paste0("Annual number of catch per positive set on ", fishing_type, " fishing mode schools", "\n",
-                                                   "for the ", country_legend, " ", vessel_type_legend, "fishing fleet in the ", ocean_legend, " ocean during ", min(time_period), "-", max(time_period),"."),
+                                                   "for the ", country_legend, " ", vessel_type_legend, "fishing fleet in the ", ocean_legend, " ocean during ", min(time_period), "-", max(time_period), "."),
                                       font = list(size = 17)),
                          margin = list(t = 120))
 
@@ -374,8 +373,7 @@ catch_per_searching_day <- function(data_connection,
         plotly::layout(legend = list(orientation = "v",
                                      x = 0.85,
                                      y = 0.97))
-    }
-    else if (graph_type =="table") {
+    } else if (graph_type == "table") {
       table_cpue_fad_set <- round(table_cpue_fad_set, 2)
       table_cpue_fad_set <- table_cpue_fad_set %>%
         dplyr::summarise(Year = year,
@@ -396,15 +394,14 @@ catch_per_searching_day <- function(data_connection,
                        cex.axis = 1.4,
                        cex.lab = 1.4,
                        main = paste0("Annual number of catch per positive set on ", fishing_type, " fishing mode schools for the ", country_legend, "\n",
-                                     vessel_type_legend, " fishing fleet in the ", ocean_legend, " ocean during ", min(time_period), "-", max(time_period),"."),
+                                     vessel_type_legend, " fishing fleet in the ", ocean_legend, " ocean during ", min(time_period), "-", max(time_period), "."),
                        ylim = c(0,
                                 max(table_cpue_fad_set$total) * 1.05),
                        las = 1,
                        xaxt = "n",
                        pch = 22,
                        bg = "grey")
-      }
-      else {
+      } else {
         graphics::plot(table_cpue_fad_set$year,
                        table_cpue_fad_set$yft,
                        type = "b",
@@ -547,8 +544,7 @@ catch_per_searching_day <- function(data_connection,
                        legend = "(FSC)",
                        bty = "n",
                        cex = 2)
-    }
-    else if (graph_type == "plotly") {
+    } else if (graph_type == "plotly") {
       # round values
       table_cpue_fsc_set$yft <- round(table_cpue_fsc_set$yft, 3)
       table_cpue_fsc_set$skj <- round(table_cpue_fsc_set$skj, 3)
@@ -601,7 +597,7 @@ catch_per_searching_day <- function(data_connection,
       if (title == TRUE) {
         plotly_graph <- plotly_graph %>%
           plotly::layout(title = list(text = paste0("Annual number of catch per positive set on ", fishing_type, " fishing mode schools for the ", country_legend, "\n",
-                                                    vessel_type_legend, " fishing fleet in the ", ocean_legend, " ocean during ", min(time_period), "-", max(time_period),"."),
+                                                    vessel_type_legend, " fishing fleet in the ", ocean_legend, " ocean during ", min(time_period), "-", max(time_period), "."),
                                       font = list(size = 17)),
                          margin = list(t = 120))
 
@@ -611,8 +607,7 @@ catch_per_searching_day <- function(data_connection,
         plotly::layout(legend = list(orientation = "v",
                                      x = 0.85,
                                      y = 0.97))
-    }
-    else if (graph_type =="table") {
+    } else if (graph_type == "table") {
       table_cpue_fsc_set <- round(table_cpue_fsc_set, 2)
       table_cpue_fsc_set <- table_cpue_fsc_set %>%
         dplyr::summarise(Year = year,
