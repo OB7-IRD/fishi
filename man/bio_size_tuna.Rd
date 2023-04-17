@@ -9,7 +9,8 @@ bio_size_tuna(
   report_year,
   ocean,
   country = as.integer(x = 1),
-  graph_type = "plot"
+  graph_type = "plot",
+  title = FALSE
 )
 }
 \arguments{
@@ -22,6 +23,8 @@ bio_size_tuna(
 \item{country}{{\link[base]{integer}} expected. Country codes identification. 1 by default.}
 
 \item{graph_type}{{\link[base]{character}} expected. plot or plotly. Plot by default.}
+
+\item{title}{TRUE or FALSE expected. False by default.}
 }
 \value{
 The function return ggplot R plot.

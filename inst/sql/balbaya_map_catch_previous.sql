@@ -9,8 +9,9 @@ select
 	,a.c_ocea
 	,a.c_tban
 	,b.c_pav_b
-	,b.c_pav_b::text as country_id
-	,tb.c_engin:: text as vessel_type_id
+	,b.c_pav_b::numeric as country_id
+	,tb.c_engin::numeric as vessel_type_id
+	,b.c_pav_b::NUMERIC AS ocean_id
 	
 from
 	public.activite a

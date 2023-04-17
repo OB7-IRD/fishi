@@ -8,6 +8,9 @@
 			,c.v_poids_capt
 			,a.rf3
 			,tb.l4c_tban
+			,a.c_ocea::numeric as ocean_id
+			,b.c_pav_b::numeric as country_id 
+			,a.c_engin::numeric as vessel_type_id
 		from
 			public.activite a
 			join public.bateau b on (a.c_bat = b.c_bat)

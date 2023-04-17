@@ -1,6 +1,7 @@
 select
 	ocean.c_ocea::numeric as ocean_id
-	,bateau.c_typ_b::text as vessel_type_id
+	,activite.c_engin::text as vessel_type_id
+	,bateau.c_pav_b::numeric as country_id 
 	,pavillon.l_pav_b as fleet
 	,pavillon.l_pav_b as flag
 	,activite.c_bat

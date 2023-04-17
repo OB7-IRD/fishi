@@ -8,6 +8,7 @@
 #' @param vessel_type {\link[base]{integer}} expected. Vessel type codes identification. 1 by default.
 #' @param fishing_type  {\link[base]{character}} expected. FSC, FOB or ALL.
 #' @param graph_type {\link[base]{character}} expected. plot, plotly, table or percentage. Plot by default.
+#' @param title TRUE or FALSE expected. False by default.
 #' @return The function return ggplot R plot.
 #' @export
 #' @importFrom DBI dbGetQuery sqlInterpolate SQL
@@ -25,7 +26,8 @@ fishery_production <- function(data_connection,
                                country = as.integer(x = 1),
                                vessel_type = as.integer(x = 1),
                                fishing_type = "ALL",
-                               graph_type = "plot") {
+                               graph_type = "plot",
+                               title = FALSE) {
   # 0 - Global variables assignement ----
   activity_date <- NULL
   v_poids_capt <- NULL
@@ -197,31 +199,64 @@ fishery_production <- function(data_connection,
                        total = sum(total, na.rm = TRUE),
                        .groups = "drop")
   }
-  # 4 - Graphic design ----
+  # 4 - Legend design ----
+  #Ocean
+  ocean_legend <- code_manipulation(data         = fishery_production_data$ocean_id,
+                                    referential  = "ocean",
+                                    manipulation = "legend")
+  #country
+  country_legend <- code_manipulation(data         = fishery_production_data$country_id,
+                                      referential  = "country",
+                                      manipulation = "legend")
+  #vessel
+  vessel_type_legend <- code_manipulation(data         = fishery_production_data$vessel_type_id,
+                                          referential  = "vessel_simple_type",
+                                          manipulation = "legend")
+  # 5 - Graphic design ----
   if (graph_type == "plot") {
     graphics::par(cex.axis = 1.4,
                   cex.lab = 1.4,
-                  las = 1)
-    plotrix::stackpoly(x = matrix(table_catch_all$year,
-                                  nrow = length(table_catch_all$year),
-                                  ncol = 3),
-                       y = table_catch_all[, c("yft", "skj", "bet")] / 1000,
-                       stack = TRUE,
-                       cex.axis = 1.3,
-                       cex.lab = 1.3,
-                       xlab = "",
-                       ylab = "Catch (x1000 t)",
-                       las = 1,
-                       main = "",
-                       axis4 = FALSE,
-                       col = c("khaki1",
-                               "firebrick2",
-                               "cornflowerblue"),
-                       cex = 1.3,
-                       las = 1,
-                       ylim = c(0,
-                                max((table_catch_all$total * 1.02) / 1000,
-                                    na.rm = TRUE)))
+                  las = 2)
+    if (title == TRUE) {
+      plotrix::stackpoly(x = matrix(table_catch_all$year,
+                                    nrow = length(table_catch_all$year),
+                                    ncol = 3),
+                         y = table_catch_all[, c("yft", "skj", "bet")] / 1000,
+                         stack = TRUE,
+                         cex.axis = 1.3,
+                         cex.lab = 1.3,
+                         xlab = "",
+                         ylab = "Catch (x1000 t)",
+                         main = paste0("Fishery production by ", fishing_type, " fishing mode. Catch by species of the ", country_legend, " ", vessel_type_legend, " fishing",
+                                       "\n", "fleet during ", min(time_period), "-", max(time_period), ", in the ", ocean_legend, " ocean."),
+                         axis4 = FALSE,
+                         col = c("khaki1",
+                                 "firebrick2",
+                                 "cornflowerblue"),
+                         cex = 1.3,
+                         ylim = c(0,
+                                  max((table_catch_all$total * 1.02) / 1000,
+                                      na.rm = TRUE)))
+    } else {
+      plotrix::stackpoly(x = matrix(table_catch_all$year,
+                                    nrow = length(table_catch_all$year),
+                                    ncol = 3),
+                         y = table_catch_all[, c("yft", "skj", "bet")] / 1000,
+                         stack = TRUE,
+                         cex.axis = 1.3,
+                         cex.lab = 1.3,
+                         xlab = "",
+                         ylab = "Catch (x1000 t)",
+                         main = "",
+                         axis4 = FALSE,
+                         col = c("khaki1",
+                                 "firebrick2",
+                                 "cornflowerblue"),
+                         cex = 1.3,
+                         ylim = c(0,
+                                  max((table_catch_all$total * 1.02) / 1000,
+                                      na.rm = TRUE)))
+    }
     graphics::abline(h = seq(20,
                              100,
                              20),
@@ -247,8 +282,7 @@ fishery_production <- function(data_connection,
                        legend = "(FOB)",
                        cex = 1.3)
     }
-  }
-  else if (graph_type == "plotly") {
+  } else if (graph_type == "plotly") {
     # pivot wider
     table_catch_3 <- table_catch_all %>%
       dplyr::select(1:4)
@@ -265,21 +299,24 @@ fishery_production <- function(data_connection,
       ggplot2::scale_y_continuous(name = "Catch (x1000 t)") +
       ggplot2::theme_bw() +
       ggplot2::labs(fill = "")
-    # fishing type
-    if (fishing_type == "FSC") {
-      ggplot_table_catch <- ggplot_table_catch + ggplot2::ggtitle("FSC")
-    } else if (fishing_type == "FOB") {
-      ggplot_table_catch <- ggplot_table_catch + ggplot2::ggtitle("FOB")
-    } else if (fishing_type == "ALL") {
-      ggplot_table_catch <- ggplot_table_catch + ggplot2::ggtitle("ALL")
-    }
     # plotly
-    plotly::ggplotly(ggplot_table_catch) %>%
+    plotly_graph <- plotly::ggplotly(ggplot_table_catch)
+    # Add a title
+    if (title == TRUE) {
+      plotly_graph <- plotly_graph %>%
+        plotly::layout(title = list(text = paste0("Fishery production by ", fishing_type, " fishing mode. Catch by species of the ", country_legend, " ", vessel_type_legend, " fishing",
+                                                 "\n", "fleet during ", min(time_period), "-", max(time_period), ", in the ", ocean_legend, " ocean."),
+                                    font = list(size = 17)),
+                       margin = list(t = 120))
+
+    }
+    # Plot the plotly
+    plotly_graph %>%
       plotly::layout(legend = list(orientation = "v",
                                    x = 0.9,
                                    y = 0.95))
-  }
-  else if (graph_type =="table") {
+
+  } else if (graph_type == "table") {
     table_catch_all <- round(table_catch_all, 0)
     table_catch_all <- table_catch_all %>%
       dplyr::summarise(Year = year,
@@ -290,8 +327,7 @@ fishery_production <- function(data_connection,
                        OTH = oth,
                        TOTAL = total)
     as.data.frame(table_catch_all)
-  }
-  else if (graph_type =="percentage") {
+  } else if (graph_type == "percentage") {
     table_catch_all <- table_catch_all %>%
       dplyr::summarise(Year = year,
                        YFT = yft / total * 100,

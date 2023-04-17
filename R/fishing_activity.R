@@ -8,12 +8,13 @@
 #' @param vessel_type {\link[base]{integer}} expected. Vessel type codes identification. 1 by default.
 #' @param graph_type {\link[base]{character}} expected. plot, plotly or table. Plot by default.
 #' @param figure {\link[base]{character}} expected. set (for number of sets graph) or log (for percentage FOB-associated sets graph).
+#' @param title TRUE or FALSE expected. False by default.
 #' @return The function return ggplot R plot.
 #' @export
 #' @importFrom DBI dbGetQuery sqlInterpolate SQL
 #' @importFrom dplyr mutate tibble group_by summarise
 #' @importFrom lubridate year
-#' @importFrom graphics par plot axis lines abline legend
+#' @importFrom graphics par plot axis lines abline legend text
 #' @importFrom ggplot2 ggplot aes geom_bar geom_line scale_fill_manual geom_point scale_y_continuous labs ylim theme_bw ggplot
 #' @importFrom plotly ggplotly layout
 #' @importFrom tidyr pivot_longer
@@ -24,7 +25,8 @@ fishing_activity <- function(data_connection,
                              country = as.integer(x = 1),
                              vessel_type = as.integer(x = 1),
                              graph_type = "plot",
-                             figure) {
+                             figure = "set",
+                             title = FALSE) {
   # 0 - Global variables assignement ----
   activity_date <- NULL
   v_nb_calees <- NULL
@@ -163,24 +165,65 @@ fishing_activity <- function(data_connection,
                                      cols = c(2:3),
                                      names_to = "type",
                                      values_to = "nb_sets")
-  # 4 - Graphic design ----
+  # 4 - Legend design ----
+  #Ocean
+  ocean_legend <- code_manipulation(data         = fishing_activity_data$ocean_id,
+                                    referential  = "ocean",
+                                    manipulation = "legend")
+  #country
+  country_legend <- code_manipulation(data         = fishing_activity_data$country_id,
+                                      referential  = "country",
+                                      manipulation = "legend")
+  #vessel
+  vessel_type_legend <- code_manipulation(data         = fishing_activity_data$vessel_type_id,
+                                          referential  = "vessel_simple_type",
+                                          manipulation = "legend")
+  # 5 - Graphic design ----
   if (graph_type == "plot") {
     graphics::par(mar = c(5, 4, 4, 4))
     set <- as.matrix(table_sets[, c(5,
                                     8)])
-    fig_sets <- graphics::barplot(t(set),
-                                  beside = FALSE,
-                                  ylab = "Number of sets",
-                                  ylim = c(0, max(set) * 1.6),
-                                  cex.axis = 1.3,
-                                  cex.lab = 1.3,
-                                  xaxt = "n")
+    if (title == TRUE) {
+      fig_sets <- graphics::barplot(t(set),
+                                    beside = FALSE,
+                                    ylab = "Number of sets",
+                                    ylim = c(0, max(set) * 1.6),
+                                    main = paste0("Annual number of fishing sets in the ",
+                                                  country_legend, " ",
+                                                  vessel_type_legend,
+                                                  " fishery on FOB-associated", "\n",
+                                                  "and free-swimming tuna schools during ",
+                                                  min(time_period),
+                                                  "-", max(time_period),
+                                                  ", in the ",
+                                                  ocean_legend,
+                                                  " ocean.", "\n",
+                                                  "Line with solid circles indicates the percentage of sets on FOB-associated schools."),
+                                    cex.axis = 1.3,
+                                    cex.lab = 1.3,
+                                    xaxt = "n")
+
+    } else {
+      fig_sets <- graphics::barplot(t(set),
+                                    beside = FALSE,
+                                    ylab = "Number of sets",
+                                    ylim = c(0, max(set) * 1.6),
+                                    main = "",
+                                    cex.axis = 1.3,
+                                    cex.lab = 1.3,
+                                    xaxt = "n")
+    }
     graphics::axis(1,
                    at = fig_sets,
                    tick = TRUE,
-                   labels = table_sets$year,
-                   line = .8,
-                   cex.axis = 1.3)
+                   labels = FALSE)
+    graphics::text(x = fig_sets,
+         y = -100,
+         labels = table_sets$year,
+         srt = 45,
+         adj = 1,
+         xpd = TRUE,
+         cex = 1.1)
     graphics::legend("topleft",
                      legend = c("FOB-associated schools",
                                 "Free swimming schools"),
@@ -234,7 +277,23 @@ fishing_activity <- function(data_connection,
         ggplot2::scale_y_continuous(name = "Number of sets") +
         ggplot2::theme_bw() +
         ggplot2::labs(fill = "")
-      plotly::ggplotly(ggplot_set) %>%
+      # Plotly
+      plotly_graph <- plotly::ggplotly(ggplot_set)
+      # Add a title
+      if (title == TRUE) {
+        plotly_graph <- plotly_graph %>%
+          plotly::layout(title = list(text = paste0("Fishing operations. Annual number of fishing sets in the ",
+                                                   country_legend, " ",
+                                                   vessel_type_legend,
+                                                   " fishery on FOB-associated", "\n",
+                                                   "and free-swimming tuna schools during ", min(time_period), "-", max(time_period), " (high panel), in the ", ocean_legend, " ocean.", "\n",
+                                                   "Line with solid circles indicates the percentage of sets on FOB-associated schools (low panel)."),
+                                      font = list(size = 17)),
+                         margin = list(t = 120))
+
+      }
+      # Plot the plotly
+      plotly_graph %>%
         plotly::layout(legend = list(orientation = "v",
                                      x = 0.7,
                                      y = 0.95))

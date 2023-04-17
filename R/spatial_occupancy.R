@@ -7,12 +7,13 @@
 #' @param country {\link[base]{integer}} expected. Country codes identification. 1 by default.
 #' @param vessel_type {\link[base]{integer}} expected. Vessel type codes identification. 1 by default.
 #' @param graph_type {\link[base]{character}} expected. plot, plotly or table. Plot by default.
+#' @param title TRUE or FALSE expected. False by default.
 #' @return The function return ggplot R plot.
 #' @export
 #' @importFrom DBI dbGetQuery sqlInterpolate SQL
 #' @importFrom dplyr mutate tibble group_by summarise n_distinct filter
 #' @importFrom lubridate year
-#' @importFrom graphics par plot axis lines abline legend
+#' @importFrom graphics par plot axis lines abline legend text
 #' @importFrom ggplot2 ggplot aes geom_line scale_color_manual geom_point labs ylim theme_bw
 #' @importFrom plotly ggplotly
 #' @importFrom codama r_type_checking
@@ -21,8 +22,8 @@ spatial_occupancy <- function(data_connection,
                               ocean,
                               country = as.integer(x = 1),
                               vessel_type = as.integer(x = 1),
-                              graph_type = "plot"
-) {
+                              graph_type = "plot",
+                              title = FALSE) {
   # 0 - Global variables assignement ----
   activity_date <- NULL
   cwp11_act <- NULL
@@ -149,34 +150,76 @@ spatial_occupancy <- function(data_connection,
   table_occ <- merge(table_occ, t3, by = "year")
   table_occ <- merge(table_occ, t4, by = "year")
   table_occ[is.na(table_occ)] <- 0
-  # 4 - Graphic design ----
+  # 4 - Legend design ----
+  #Ocean
+  ocean_legend <- code_manipulation(data         = spatial_occupancy_data$ocean_id,
+                                    referential  = "ocean",
+                                    manipulation = "legend")
+  #country
+  country_legend <- code_manipulation(data         = spatial_occupancy_data$country_id,
+                                      referential  = "country",
+                                      manipulation = "legend")
+  #vessel
+  vessel_type_legend <- code_manipulation(data         = spatial_occupancy_data$vessel_type_id,
+                                          referential  = "vessel_simple_type",
+                                          manipulation = "legend")
+  # 5 - Graphic design ----
   if (graph_type == "plot") {
-    graphics::par(mar = c(5,
-                          4.7,
-                          4.1,
-                          1.5))
-    graphics::plot(table_occ$year,
-                   table_occ$total,
-                   type = "b",
-                   xlab = "",
-                   ylab = "Spatial occupancy",
-                   cex.axis = 1.4,
-                   cex.lab = 1.4,
-                   main = "",
-                   ylim = c(0,
-                            max(table_occ$total,
-                                na.rm = TRUE) * 1.05),
-                   pch = 18,
-                   xaxt = "n")
+    graphics::par(mar = c(5, 4.7, 4.1, 1.5))
+    # Define the positions of the x-axis tick marks
+    x_tick_pos <- seq(min(table_occ$year), max(table_occ$year))
+    if (title == TRUE) {
+      graphics::plot(table_occ$year,
+                     table_occ$total,
+                     type = "b",
+                     xlab = "",
+                     ylab = "Spatial occupancy",
+                     cex.axis = 1.4,
+                     cex.lab = 1.4,
+                     main = paste0("Changes in the spatial extent of the fishery over time. Annual number of 1 degree squares explored", "\n",
+                                   "by each vessel of the ",
+                                   country_legend,
+                                   " ",
+                                   vessel_type_legend,
+                                   " fishing fleet during ",
+                                   min(time_period),
+                                   "-",
+                                   max(time_period),
+                                   " in the ",
+                                   ocean_legend,
+                                   " ocean."),
+                     ylim = c(0,
+                              max(table_occ$total,
+                                  na.rm = TRUE) * 1.05),
+                     pch = 18,
+                     xaxt = "n")
+    } else {
+      graphics::plot(table_occ$year,
+                     table_occ$total,
+                     type = "b",
+                     xlab = "",
+                     ylab = "Spatial occupancy",
+                     cex.axis = 1.4,
+                     cex.lab = 1.4,
+                     main = "",
+                     ylim = c(0,
+                              max(table_occ$total,
+                                  na.rm = TRUE) * 1.05),
+                     pch = 18,
+                     xaxt = "n")
+    }
+    # Add the x-axis tick marks without labels
     graphics::axis(1,
-                   at = seq(min(table_occ$year),
-                            max(table_occ$year),
-                            by = 2),
+                   at = x_tick_pos,
                    tick = TRUE,
-                   labels = seq(min(table_occ$year),
-                                max(table_occ$year),
-                                by = 2),
-                   cex.axis = 1.3)
+                   labels = FALSE)
+    graphics::text(x = x_tick_pos,
+                   y = par("usr")[3] - 10,
+                   labels = table_occ$year,
+                   srt = 45,
+                   adj = 1,
+                   xpd = TRUE,
+                   cex = 1.2)
     graphics::lines(table_occ$year,
                     table_occ[, 3],
                     type = "b",
@@ -192,7 +235,7 @@ spatial_occupancy <- function(data_connection,
                     type = "b",
                     lty = 2,
                     pch = 17)
-    graphics::legend("topright",
+    graphics::legend("bottomleft",
                      legend = c("total",
                                 "With # sets > 1",
                                 "With catch > 0",
@@ -250,7 +293,19 @@ spatial_occupancy <- function(data_connection,
                     colour = "") +
       ggplot2::ylim(0, 500) +
       ggplot2::theme_bw()
-    plotly::ggplotly(ggplot_table_occ) %>%
+    # Plotly
+    plotly_graph <- plotly::ggplotly(ggplot_table_occ)
+    # Add a title
+    if (title == TRUE) {
+      plotly_graph <- plotly_graph %>%
+        plotly::layout(title = list(text = paste0("Changes in the spatial extent of the fishery over time. Annual number of 1-degree squares explored by ", "\n",
+                                                  "each vessel of the ", country_legend, " ", vessel_type_legend, " fishing fleet during ", min(time_period), "-", max(time_period), " in the ", ocean_legend, " ocean."),
+                                    font = list(size = 17)),
+                       margin = list(t = 120))
+
+    }
+    # Plot the plotly
+    plotly_graph %>%
       plotly::layout(legend = list(orientation = "v",
                                    x = 0.7,
                                    y = 0.07))

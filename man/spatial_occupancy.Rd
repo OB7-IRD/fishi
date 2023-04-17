@@ -10,7 +10,8 @@ spatial_occupancy(
   ocean,
   country = as.integer(x = 1),
   vessel_type = as.integer(x = 1),
-  graph_type = "plot"
+  graph_type = "plot",
+  title = FALSE
 )
 }
 \arguments{
@@ -25,6 +26,8 @@ spatial_occupancy(
 \item{vessel_type}{{\link[base]{integer}} expected. Vessel type codes identification. 1 by default.}
 
 \item{graph_type}{{\link[base]{character}} expected. plot, plotly or table. Plot by default.}
+
+\item{title}{TRUE or FALSE expected. False by default.}
 }
 \value{
 The function return ggplot R plot.

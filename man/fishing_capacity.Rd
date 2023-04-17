@@ -11,7 +11,8 @@ fishing_capacity(
   country = as.integer(x = 1),
   vessel_type = as.integer(x = 1),
   graph_type = "plot",
-  figure
+  figure = "vessel",
+  title = FALSE
 )
 }
 \arguments{
@@ -27,7 +28,9 @@ fishing_capacity(
 
 \item{graph_type}{{\link[base]{character}} expected. plot, plotly or table. Plot by default.}
 
-\item{figure}{{\link[base]{character}} expected. vessel (for number of vessels graph) or capacity (for carrying capacity graph).}
+\item{figure}{{\link[base]{character}} expected. vessel (for number of vessels graph) or capacity (for carrying capacity graph). Vessel by default.}
+
+\item{title}{TRUE or FALSE expected. False by default.}
 }
 \value{
 The function return ggplot R plot.

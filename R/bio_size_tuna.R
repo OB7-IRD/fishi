@@ -6,6 +6,7 @@
 #' @param ocean {\link[base]{integer}} expected. Ocean codes identification.
 #' @param country {\link[base]{integer}} expected. Country codes identification. 1 by default.
 #' @param graph_type {\link[base]{character}} expected. plot or plotly. Plot by default.
+#' @param title TRUE or FALSE expected. False by default.
 #' @return The function return ggplot R plot.
 #' @export
 #' @importFrom DBI dbGetQuery sqlInterpolate SQL
@@ -18,7 +19,8 @@ bio_size_tuna <- function(data_connection,
                           report_year,
                           ocean,
                           country = as.integer(x = 1),
-                          graph_type = "plot") {
+                          graph_type = "plot",
+                          title = FALSE) {
   # 0 - Global variables assignement ----
   c_esp <- NULL
   c_banc <- NULL
@@ -369,7 +371,16 @@ bio_size_tuna <- function(data_connection,
   table_size_yft_n <- merge(table_size_yft_n, t3, by = "size_class")
   table_size_yft_n <- merge(table_size_yft_n, t4, by = "size_class")
   table_size_yft_n <- merge(table_size_yft_n, t5, by = "size_class")
-  # 4 - Graphic design ----
+  # 4 - Legend design ----
+  #Ocean
+  ocean_legend <- code_manipulation(data         = bio_size_tuna_sql_data$ocean_id,
+                                    referential  = "ocean",
+                                    manipulation = "legend")
+  #country
+  country_legend <- code_manipulation(data         = bio_size_tuna_sql_data$country_id,
+                                      referential  = "country",
+                                      manipulation = "legend")
+  # 5 - Graphic design ----
   # Function that read the 3 dataframe and print it in a plot
   if (graph_type == "plot") {
     # The function reads the different data sets
@@ -402,21 +413,21 @@ bio_size_tuna <- function(data_connection,
         x_max <- 160
       }
       # Plot
-      graphics::plot(table$size_class,
-                     column1,
-                     cex.axis = 1.3,
-                     cex.lab = 1.3,
-                     type = "l",
-                     main = "",
-                     xlab = "size class (cm)",
-                     ylab = ylabel,
-                     lty = "solid",
-                     col = "black",
-                     xlim = c(20,
-                              x_max),
-                     ylim = (c(0, max(column1,
-                                      column2) * 1.1)),
-                     lwd = 1.2)
+        graphics::plot(table$size_class,
+                       column1,
+                       cex.axis = 1.3,
+                       cex.lab = 1.3,
+                       type = "l",
+                       main = "",
+                       xlab = "size class (cm)",
+                       ylab = ylabel,
+                       lty = "solid",
+                       col = "black",
+                       xlim = c(20,
+                                x_max),
+                       ylim = (c(0, max(column1,
+                                        column2) * 1.1)),
+                       lwd = 1.2)
       graphics::lines(table$size_class,
                       column2,
                       lty = "dashed",
@@ -516,8 +527,8 @@ bio_size_tuna <- function(data_connection,
       ggplot2::geom_line(ggplot2::aes(x = size_class,
                                       y = log_current_year,
                                       color = year)) +
-      ggplot2::labs(x = "size class (cm)",
-                    y = "Percentage") +
+      ggplot2::labs(x = " ",
+                    y = " ") +
       ggplot2::ylim(0, max(table_size_yft_n$log_current_year,
                            table_size_yft_n$log_avg_5_years) * 1.1) +
       ggplot2::xlim(20, 160) +
@@ -536,7 +547,7 @@ bio_size_tuna <- function(data_connection,
       ggplot2::geom_line(ggplot2::aes(x = size_class,
                                       y = free_current_year,
                                       color = year)) +
-      ggplot2::labs(x = "size class (cm)",
+      ggplot2::labs(x = " ",
                     y = "Percentage") +
       ggplot2::ylim(0, max(table_size_yft_n$free_current_year,
                            table_size_yft_n$free_avg_5_years) * 1.1) +
@@ -556,8 +567,8 @@ bio_size_tuna <- function(data_connection,
       ggplot2::geom_line(ggplot2::aes(x = size_class,
                                       y = all_current_year,
                                       color = year)) +
-      ggplot2::labs(x = "size class (cm)",
-                    y = "Percentage") +
+      ggplot2::labs(x = " ",
+                    y = " ") +
       ggplot2::ylim(0, max(table_size_yft_n$all_current_year,
                            table_size_yft_n$all_avg_5_years) * 1.1) +
       ggplot2::xlim(20, 160) +
@@ -577,8 +588,8 @@ bio_size_tuna <- function(data_connection,
       ggplot2::geom_line(ggplot2::aes(x = size_class,
                                       y = log_current_year,
                                       color = year)) +
-      ggplot2::labs(x = "size class (cm)",
-                    y = "Percentage") +
+      ggplot2::labs(x = " ",
+                    y = " ") +
       ggplot2::ylim(0, max(table_size_bet_n$log_current_year,
                            table_size_bet_n$log_avg_5_years) * 1.1) +
       ggplot2::xlim(20, 160) +
@@ -597,8 +608,8 @@ bio_size_tuna <- function(data_connection,
       ggplot2::geom_line(ggplot2::aes(x = size_class,
                                       y = free_current_year,
                                       color = year)) +
-      ggplot2::labs(x = "size class (cm)",
-                    y = "Percentage") +
+      ggplot2::labs(x = " ",
+                    y = " ") +
       ggplot2::ylim(0, max(table_size_bet_n$free_current_year,
                            table_size_bet_n$free_avg_5_years) * 1.1) +
       ggplot2::xlim(20, 160) +
@@ -618,7 +629,7 @@ bio_size_tuna <- function(data_connection,
                                       y = all_current_year,
                                       color = year)) +
       ggplot2::labs(x = "size class (cm)",
-                    y = "Percentage") +
+                    y = " ") +
       ggplot2::ylim(0, max(table_size_bet_n$all_current_year,
                            table_size_bet_n$all_avg_5_years) * 1.1) +
       ggplot2::xlim(20, 160) +
@@ -638,8 +649,8 @@ bio_size_tuna <- function(data_connection,
       ggplot2::geom_line(ggplot2::aes(x = size_class,
                                       y = log_current_year,
                                       color = year)) +
-      ggplot2::labs(x = "size class (cm)",
-                    y = "Percentage") +
+      ggplot2::labs(x = " ",
+                    y = " ") +
       ggplot2::ylim(0, max(table_size_skj_n$log_current_year,
                            table_size_skj_n$log_avg_5_years) * 1.1) +
       ggplot2::xlim(20, 80) +
@@ -658,8 +669,8 @@ bio_size_tuna <- function(data_connection,
       ggplot2::geom_line(ggplot2::aes(x = size_class,
                                       y = free_current_year,
                                       color = year)) +
-      ggplot2::labs(x = "size class (cm)",
-                    y = "Percentage") +
+      ggplot2::labs(x = " ",
+                    y = " ") +
       ggplot2::ylim(0, max(table_size_skj_n$free_current_year,
                            table_size_skj_n$free_avg_5_years) * 1.1) +
       ggplot2::xlim(20, 80) +
@@ -678,8 +689,8 @@ bio_size_tuna <- function(data_connection,
       ggplot2::geom_line(ggplot2::aes(x = size_class,
                                       y = all_current_year,
                                       color = year)) +
-      ggplot2::labs(x = "size class (cm)",
-                    y = "Percentage") +
+      ggplot2::labs(x = " ",
+                    y = " ") +
       ggplot2::ylim(0, max(table_size_skj_n$all_current_year,
                            table_size_skj_n$all_avg_5_years) * 1.1) +
       ggplot2::xlim(20, 80) +
@@ -691,87 +702,98 @@ bio_size_tuna <- function(data_connection,
       plotly::layout(showlegend = FALSE)
 
     ### Plotly ----
-    plotly::subplot(yft_fob, bet_fob, skj_fob,
+    plotly_size <- plotly::subplot(yft_fob, bet_fob, skj_fob,
                     yft_free, bet_free, skj_free,
                     yft_all, bet_all, skj_all, nrows = 3,
                     titleX = TRUE, titleY = TRUE,
-                    shareX = TRUE,
-                    margin = 0.03)  %>%
+                    shareX = FALSE, shareY = FALSE,
+                    margin = 0.03)
+    if (title == TRUE) {
+    plotly_size <- plotly_size %>%
+      plotly::layout(title = list(text = paste0("Size distribution of major tuna catches (in percentage of the total number of fishes)", "\n",
+                                               " for the ", country_legend, " purse seine fleet in ", report_year, " (solid line) and for an average year ", "\n",
+                                               "representing the period ", min(five_previous), "-", max(five_previous), " (dotted line) in the ", ocean_legend, " ocean."),
+                                  font = list(size = 17)),
+                     margin = list(t = 120))
+
+    }
+    plotly_size %>%
       plotly::layout(annotations = list(
-        # YFT title : Add text to the plot
-        list(text = "<b>YFT - FOB</b>",
-             x = 0.25,
-             y = 0.95,
-             xref = "paper",
-             yref = "paper",
-             showarrow = FALSE,
-             xanchor = "center",
-             yanchor = "bottom"),
-        list(text = "<b>YFT - FSC</b>",
-             x = 0.05,
-             y = 0.58,
-             xref = "paper",
-             yref = "paper",
-             showarrow = FALSE,
-             xanchor = "center",
-             yanchor = "bottom"),
-        list(text = "<b>YFT - ALL</b>",
-             x = 0.25,
-             y = 0.25,
-             xref = "paper",
-             yref = "paper",
-             showarrow = FALSE,
-             xanchor = "center",
-             yanchor = "bottom"),
-        # BET title : Add text to the plot
-        list(text = "<b>BET - FOB</b>",
-             x = 0.58,
-             y = 0.95,
-             xref = "paper",
-             yref = "paper",
-             showarrow = FALSE,
-             xanchor = "center",
-             yanchor = "bottom"),
-        list(text = "<b>BET - FSC</b>",
-             x = 0.58,
-             y = 0.58,
-             xref = "paper",
-             yref = "paper",
-             showarrow = FALSE,
-             xanchor = "center",
-             yanchor = "bottom"),
-        list(text = "<b>BET - ALL</b>",
-             x = 0.58,
-             y = 0.25,
-             xref = "paper",
-             yref = "paper",
-             showarrow = FALSE,
-             xanchor = "center",
-             yanchor = "bottom"),
-        # SKJ title : Add text to the plot
-        list(text = "<b>SKJ - FOB</b>",
-             x = 0.95,
-             y = 0.95,
-             xref = "paper",
-             yref = "paper",
-             showarrow = FALSE,
-             xanchor = "center",
-             yanchor = "bottom"),
-        list(text = "<b>SKJ - FSC</b>",
-             x = 0.95,
-             y = 0.58,
-             xref = "paper",
-             yref = "paper",
-             showarrow = FALSE,
-             xanchor = "center",
-             yanchor = "bottom"),
-        list(text = "<b>SKJ - ALL</b>",
-             x = 0.95,
-             y = 0.25,
-             xref = "paper",
-             yref = "paper",
-             showarrow = FALSE,
-             xanchor = "center",
-             yanchor = "bottom")))
+                       # YFT title : Add text to the plot
+                       list(text = "<b>YFT - FOB</b>",
+                            x = 0.25,
+                            y = 0.95,
+                            xref = "paper",
+                            yref = "paper",
+                            showarrow = FALSE,
+                            xanchor = "center",
+                            yanchor = "bottom"),
+                       list(text = "<b>YFT - FSC</b>",
+                            x = 0.05,
+                            y = 0.58,
+                            xref = "paper",
+                            yref = "paper",
+                            showarrow = FALSE,
+                            xanchor = "center",
+                            yanchor = "bottom"),
+                       list(text = "<b>YFT - ALL</b>",
+                            x = 0.25,
+                            y = 0.25,
+                            xref = "paper",
+                            yref = "paper",
+                            showarrow = FALSE,
+                            xanchor = "center",
+                            yanchor = "bottom"),
+                       # BET title : Add text to the plot
+                       list(text = "<b>BET - FOB</b>",
+                            x = 0.58,
+                            y = 0.95,
+                            xref = "paper",
+                            yref = "paper",
+                            showarrow = FALSE,
+                            xanchor = "center",
+                            yanchor = "bottom"),
+                       list(text = "<b>BET - FSC</b>",
+                            x = 0.58,
+                            y = 0.58,
+                            xref = "paper",
+                            yref = "paper",
+                            showarrow = FALSE,
+                            xanchor = "center",
+                            yanchor = "bottom"),
+                       list(text = "<b>BET - ALL</b>",
+                            x = 0.58,
+                            y = 0.25,
+                            xref = "paper",
+                            yref = "paper",
+                            showarrow = FALSE,
+                            xanchor = "center",
+                            yanchor = "bottom"),
+                       # SKJ title : Add text to the plot
+                       list(text = "<b>SKJ - FOB</b>",
+                            x = 0.95,
+                            y = 0.95,
+                            xref = "paper",
+                            yref = "paper",
+                            showarrow = FALSE,
+                            xanchor = "center",
+                            yanchor = "bottom"),
+                       list(text = "<b>SKJ - FSC</b>",
+                            x = 0.95,
+                            y = 0.58,
+                            xref = "paper",
+                            yref = "paper",
+                            showarrow = FALSE,
+                            xanchor = "center",
+                            yanchor = "bottom"),
+                       list(text = "<b>SKJ - ALL</b>",
+                            x = 0.95,
+                            y = 0.25,
+                            xref = "paper",
+                            yref = "paper",
+                            showarrow = FALSE,
+                            xanchor = "center",
+                            yanchor = "bottom")))
+
   }
 }

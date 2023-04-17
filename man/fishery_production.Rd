@@ -11,7 +11,8 @@ fishery_production(
   country = as.integer(x = 1),
   vessel_type = as.integer(x = 1),
   fishing_type = "ALL",
-  graph_type = "plot"
+  graph_type = "plot",
+  title = FALSE
 )
 }
 \arguments{
@@ -28,6 +29,8 @@ fishery_production(
 \item{fishing_type}{{\link[base]{character}} expected. FSC, FOB or ALL.}
 
 \item{graph_type}{{\link[base]{character}} expected. plot, plotly, table or percentage. Plot by default.}
+
+\item{title}{TRUE or FALSE expected. False by default.}
 }
 \value{
 The function return ggplot R plot.
