@@ -11,7 +11,8 @@ fishing_activity(
   country = as.integer(x = 1),
   vessel_type = as.integer(x = 1),
   graph_type = "plot",
-  figure
+  figure = "set",
+  title = FALSE
 )
 }
 \arguments{
@@ -28,6 +29,8 @@ fishing_activity(
 \item{graph_type}{{\link[base]{character}} expected. plot, plotly or table. Plot by default.}
 
 \item{figure}{{\link[base]{character}} expected. set (for number of sets graph) or log (for percentage FOB-associated sets graph).}
+
+\item{title}{TRUE or FALSE expected. False by default.}
 }
 \value{
 The function return ggplot R plot.

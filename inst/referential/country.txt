@@ -1,3 +1,3 @@
 code;name;color
-1;France;#a6cee3
+1;French;#a6cee3
 41;Mayotte;#1f78b4

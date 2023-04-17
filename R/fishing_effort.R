@@ -7,6 +7,7 @@
 #' @param country {\link[base]{integer}} expected. Country codes identification. 1 by default.
 #' @param vessel_type {\link[base]{integer}} expected. Vessel type codes identification. 1 by default.
 #' @param graph_type {\link[base]{character}} expected. plot, plotly or table. Plot by default.
+#' @param title TRUE or FALSE expected. False by default.
 #' @return The function return ggplot R plot.
 #' @export
 #' @importFrom DBI dbGetQuery sqlInterpolate SQL
@@ -14,14 +15,15 @@
 #' @importFrom lubridate year
 #' @importFrom ggplot2 ggplot aes geom_line scale_color_manual geom_point labs ylim theme_bw
 #' @importFrom plotly ggplotly layout
-#' @importFrom graphics par plot axis lines abline legend
+#' @importFrom graphics par plot axis lines abline legend text
 #' @importFrom codama r_type_checking
 fishing_effort <- function(data_connection,
                            time_period,
                            ocean,
                            country = as.integer(x = 1),
                            vessel_type = as.integer(x = 1),
-                           graph_type = "plot") {
+                           graph_type = "plot",
+                           title = FALSE) {
   # 0 - Global variables assignement ----
   activity_date <- NULL
   landing_date <- NULL
@@ -190,31 +192,72 @@ fishing_effort <- function(data_connection,
     dplyr::mutate("fishing_days" = fishing_days_1000 / 1000,
                   "searching_days" = searching_days_1000 / 1000)
   # 4 - Legend design ----
+  #Ocean
+  ocean_legend <- code_manipulation(data         = fishing_effort_data$ocean_id,
+                                    referential  = "ocean",
+                                    manipulation = "legend")
+  #country
+  country_legend <- code_manipulation(data         = fishing_effort_data$country_id,
+                                      referential  = "country",
+                                      manipulation = "legend")
+  #vessel
+  vessel_type_legend <- code_manipulation(data         = fishing_effort_data$vessel_type_id,
+                                          referential  = "vessel_simple_type",
+                                          manipulation = "legend")
   # 5 - Graphic design ----
   if (graph_type == "plot") {
     par(mar = c(4, 4.7, 4.1, 1.5))
-    plot(table_effort$year,
-         table_effort$fishing_days,
-         type = "b",
-         xlab = "",
-         ylab = "Activity duration (x1000 days)",
-         cex.axis = 1.4,
-         cex.lab = 1.4,
-         main = "",
-         ylim = c(0, max(table_effort$fishing_days * 1.1,
-                         na.rm = TRUE)),
-         las = 1,
-         pch = 18,
-         xaxt = "n")
-    axis(1,
-         at = seq(min(table_effort$year),
-                  max(table_effort$year),
-                  by = 2),
-         tick = TRUE,
-         labels = seq(min(table_effort$year),
-                      max(table_effort$year),
-                      by = 2),
-         cex.axis = 1.3)
+    # Define the positions of the x-axis tick marks
+    x_tick_pos <- seq(min(table_effort$year), max(table_effort$year))
+    # plot the graph
+    if (title == TRUE) {
+      plot_effort <- graphics::plot(table_effort$year,
+                                    table_effort$fishing_days,
+                                    type = "b",
+                                    xlab = "",
+                                    ylab = "Activity duration (x1000 days)",
+                                    cex.axis = 1.4,
+                                    cex.lab = 1.4,
+                                    main =       paste0("Changes in nominal effort over time. Annual total number of fishing and searching days for", "\n",
+                                                        "the ", country_legend, " ",
+                                                        vessel_type_legend,
+                                                        " in the ",
+                                                        ocean_legend,
+                                                        " ocean during ",
+                                                        min(time_period),
+                                                        "-",
+                                                        max(time_period),"."),
+                                    ylim = c(0, max(table_effort$fishing_days * 1.1, na.rm = TRUE)),
+                                    #las = 1,
+                                    pch = 18,
+                                    xaxt = "n")
+    } else {
+      plot_effort <- graphics::plot(table_effort$year,
+                                    table_effort$fishing_days,
+                                    type = "b",
+                                    xlab = "",
+                                    ylab = "Activity duration (x1000 days)",
+                                    cex.axis = 1.4,
+                                    cex.lab = 1.4,
+                                    main = "",
+                                    ylim = c(0, max(table_effort$fishing_days * 1.1, na.rm = TRUE)),
+                                    #las = 1,
+                                    pch = 18,
+                                    xaxt = "n")
+    }
+    # Add the x-axis tick marks without labels
+    graphics::axis(1,
+                   at = x_tick_pos,
+                   tick = TRUE,
+                   labels = FALSE)
+    graphics::text(x = x_tick_pos,
+         y = par("usr")[3] - 0.15,
+         labels = table_effort$year,
+         srt = 45,
+         adj = 1,
+         xpd = TRUE,
+         cex = 1.2)
+
     lines(table_effort$year,
           table_effort$searching_days,
           type = "b",
@@ -255,7 +298,26 @@ fishing_effort <- function(data_connection,
       ggplot2::ylim(0, 5) +
       ggplot2::theme_bw() +
       ggplot2::labs(colour = "")
-    plotly::ggplotly(ggplot_table_effort) %>%
+    # Plotly
+    plotly_graph <- plotly::ggplotly(ggplot_table_effort)
+    # Add a title
+      if (title == TRUE) {
+        plotly_graph <- plotly_graph %>%
+          plotly::layout(title = list(text = paste0("Changes in nominal effort over time. Annual total number of fishing and searching days for the", "\n",
+                                                   country_legend, " ",
+                                                   vessel_type_legend,
+                                                   " in the ",
+                                                   ocean_legend,
+                                                   " ocean during ",
+                                                   min(time_period),
+                                                   "-",
+                                                   max(time_period),"."),
+                                      font = list(size = 17)),
+                         margin = list(t = 120))
+
+      }
+    # Plot the plotly
+    plotly_graph %>%
       plotly::layout(legend = list(orientation = "v",
                                    x = 0.85,
                                    y = 0.95))

@@ -8,6 +8,7 @@
 #' @param ocean {\link[base]{integer}} expected. Ocean codes identification.
 #' @param fishing_type {\link[base]{character}} expected. FOB or FSC.
 #' @param graph_type {\link[base]{character}} expected. plot, plotly or table. Plot by default.
+#' @param title TRUE or FALSE expected. False by default.
 #' @return The function return ggplot R plot.
 #' @export
 #' @importFrom DBI dbGetQuery sqlInterpolate SQL
@@ -16,7 +17,7 @@
 #' @importFrom plotrix stackpoly
 #' @importFrom ggplot2 ggplot aes geom_line scale_color_manual geom_point labs ylim theme_bw ggtitle
 #' @importFrom plotly ggplotly
-#' @importFrom graphics par plot axis lines abline legend
+#' @importFrom graphics par plot axis lines abline legend text
 #' @importFrom codama r_type_checking
 catch_per_unit_effort <- function(data_connection,
                                time_period,
@@ -24,7 +25,8 @@ catch_per_unit_effort <- function(data_connection,
                                vessel_type = as.integer(x = 1),
                                ocean = as.integer(x = 1),
                                fishing_type,
-                               graph_type = "plot") {
+                               graph_type = "plot",
+                               title = FALSE) {
   # 0 - Global variables assignement ----
   activity_date <- NULL
   v_tpec <- NULL
@@ -194,80 +196,120 @@ catch_per_unit_effort <- function(data_connection,
                      bet = (bet / (t_recherche / 12)),
                      ALB = (alb / (t_recherche / 12)),
                      total = (total / (t_recherche / 12)))
-  # 4 - Graphic design ----
+  # 4 - Legend design ----
+  #Ocean
+  ocean_legend <- code_manipulation(data         = annual_catch_rate_data$ocean_id,
+                                    referential  = "ocean",
+                                    manipulation = "legend")
+  #country
+  country_legend <- code_manipulation(data         = annual_catch_rate_data$country_id,
+                                      referential  = "country",
+                                      manipulation = "legend")
+  #vessel
+  vessel_type_legend <- code_manipulation(data         = annual_catch_rate_data$vessel_type_id,
+                                          referential  = "vessel_simple_type",
+                                          manipulation = "legend")
+  # 5 - Graphic design ----
   par(mar = c(4, 4.7, 4.1, 1.5))
+  # Define the positions of the x-axis tick marks
+  x_tick_pos <- seq(min(table_cpue_fad$year), max(table_cpue_fad$year))
   if (fishing_type == "FOB") {
     if (graph_type == "plot") {
-      graphics::plot(table_cpue_fad$year,
-                     table_cpue_fad$yft,
-                     type = "b",
-                     xlab = "",
-                     ylab = expression(paste("Catch per unit effort (t ",
-                                             d^ {
-                                               -1
-                                             },
-                                             ")")),
-                     cex.axis = 1.4,
-                     cex.lab = 1.4,
-                     main = "",
-                     ylim = c(0,
-                              20),
-                     las = 1,
-                     xaxt = "n",
-                     pch = 22,
-                     bg = "grey")
-      graphics::axis(1,
-                     at = seq(min(table_cpue_fad$year),
-                              max(table_cpue_fad$year),
-                              by = 2),
-                     tick = TRUE,
-                     labels = seq(min(table_cpue_fad$year),
-                                  max(table_cpue_fad$year),
-                                  by = 2),
-                     cex.axis = 1.3)
-      graphics::lines(table_cpue_fad$year,
-                      table_cpue_fad$skj,
-                      type = "b",
-                      lty = 1,
-                      pch = 23)
-      graphics::lines(table_cpue_fad$year,
-                      table_cpue_fad$bet,
-                      type = "b",
-                      lty = 1,
-                      pch = 24)
-      graphics::lines(table_cpue_fad$year,
-                      table_cpue_fad$total,
-                      type = "b",
-                      lty = 1,
-                      pch = 19)
-      graphics::abline(h = seq(5,
-                               35,
-                               5),
-                       col = "lightgrey",
-                       lty = 2)
-      graphics::legend("topleft",
-                       legend = c("total",
-                                  "Skipjack",
-                                  "Yellowfin",
-                                  "Bigeye"),
-                       pch = c(19,
-                               23,
-                               22,
-                               24),
-                       bty = "n",
-                       lty = c(1,
-                               1,
-                               1,
-                               1),
-                       pt.bg = c("black",
-                                 "white",
-                                 "grey",
-                                 "white"),
-                       cex = 1.3)
-      graphics::legend("topright",
-                       legend = "(FOB)",
-                       bty = "n",
-                       cex = 2)
+      if (title == TRUE) {
+        graphics::plot(table_cpue_fad$year,
+                       table_cpue_fad$yft,
+                       type = "b",
+                       xlab = "",
+                       ylab = expression(paste("Catch per unit effort (t ",
+                                               d^ {
+                                                 -1
+                                               },
+                                               ")")),
+                       cex.axis = 1.4,
+                       cex.lab = 1.4,
+                       main = paste0("Annual catch rates (in t per searching day) of the ", country_legend, " ", vessel_type_legend, " fishing fleet on ", "\n",
+                                     fishing_type, " fishing mode schools in the ", ocean_legend, " ocean during ", min(time_period), "-", max(time_period),"."),
+                       ylim = c(0,
+                                20),
+                       las = 1,
+                       xaxt = "n",
+                       pch = 22,
+                       bg = "grey")
+      } else {
+        graphics::plot(table_cpue_fad$year,
+                       table_cpue_fad$yft,
+                       type = "b",
+                       xlab = "",
+                       ylab = expression(paste("Catch per unit effort (t ",
+                                               d^ {
+                                                 -1
+                                               },
+                                               ")")),
+                       cex.axis = 1.4,
+                       cex.lab = 1.4,
+                       main = "",
+                       ylim = c(0,
+                                20),
+                       las = 1,
+                       xaxt = "n",
+                       pch = 22,
+                       bg = "grey")
+      }
+    # Add the x-axis tick marks without labels
+    graphics::axis(1,
+                   at = x_tick_pos,
+                   tick = TRUE,
+                   labels = FALSE)
+    graphics::text(x = x_tick_pos,
+         y = par("usr")[3] - 0.6,
+         labels = table_cpue_fad$year,
+         srt = 45,
+         adj = 1,
+         xpd = TRUE,
+         cex = 1.2)
+    graphics::lines(table_cpue_fad$year,
+                    table_cpue_fad$skj,
+                    type = "b",
+                    lty = 1,
+                    pch = 23)
+    graphics::lines(table_cpue_fad$year,
+                    table_cpue_fad$bet,
+                    type = "b",
+                    lty = 1,
+                    pch = 24)
+    graphics::lines(table_cpue_fad$year,
+                    table_cpue_fad$total,
+                    type = "b",
+                    lty = 1,
+                    pch = 19)
+    graphics::abline(h = seq(5,
+                             35,
+                             5),
+                     col = "lightgrey",
+                     lty = 2)
+    graphics::legend("topleft",
+                     legend = c("total",
+                                "Skipjack",
+                                "Yellowfin",
+                                "Bigeye"),
+                     pch = c(19,
+                             23,
+                             22,
+                             24),
+                     bty = "n",
+                     lty = c(1,
+                             1,
+                             1,
+                             1),
+                     pt.bg = c("black",
+                               "white",
+                               "grey",
+                               "white"),
+                     cex = 1.3)
+    graphics::legend("topright",
+                     legend = "(FOB)",
+                     bty = "n",
+                     cex = 2)
     }
     else if (graph_type == "plotly") {
       # round values
@@ -310,9 +352,20 @@ catch_per_unit_effort <- function(data_connection,
                       y = "Catch per unit effort (t/d)") +
         ggplot2::ylim(0, 20) +
         ggplot2::theme_bw() +
-        ggplot2::labs(colour = "") +
-        ggplot2::ggtitle("FOB")
-      plotly::ggplotly(ggplot_table_cpue_fad) %>%
+        ggplot2::labs(colour = "")
+      # Plotly
+      plotly_graph <- plotly::ggplotly(ggplot_table_cpue_fad)
+      # Add a title
+      if (title == TRUE) {
+        plotly_graph <- plotly_graph %>%
+          plotly::layout(title = list(text = paste0("Annual catch rates (in t per searching day) of the ", country_legend, " ", vessel_type_legend, " fishing fleet on ", fishing_type, " fishing", "\n",
+                                                   "mode schools in the ", ocean_legend, " ocean during ", min(time_period), "-", max(time_period),"."),
+                                      font = list(size = 17)),
+                         margin = list(t = 120))
+
+      }
+      # Plot the plotly
+      plotly_graph %>%
         plotly::layout(legend = list(orientation = "v",
                                      x = 0.85,
                                      y = 0.97))
@@ -327,35 +380,57 @@ catch_per_unit_effort <- function(data_connection,
                          TOTAL = total)
       as.data.frame(table_cpue_fad)
     }
-  } else if (fishing_type == "FSC") {
+  }
+  else if (fishing_type == "FSC") {
     if (graph_type == "plot") {
-      graphics::plot(table_cpue_fsc$year,
-                     table_cpue_fsc$yft,
-                     type = "b",
-                     xlab = "",
-                     ylab = expression(paste("Catch per unit effort (t ",
-                                             d^{
-                                               -1
-                                             },
-                                             ")")),
-                     cex.axis = 1.4,
-                     cex.lab = 1.4,
-                     main = "",
-                     ylim = c(0,
-                              20),
-                     las = 1,
-                     pch = 22,
-                     xaxt = "n",
-                     bg = "grey")
+      if (title == TRUE) {
+        graphics::plot(table_cpue_fsc$year,
+                       table_cpue_fsc$yft,
+                       type = "b",
+                       xlab = "",
+                       ylab = expression(paste("Catch per unit effort (t ",
+                                               d^{ -1 },
+                                               ")")),
+                       cex.axis = 1.4,
+                       cex.lab = 1.4,
+                       main = paste0("Annual catch rates (in t per searching day) of the ", country_legend, " ", vessel_type_legend, " fishing fleet on ", "\n",
+                                     fishing_type, " fishing mode schools in the", ocean_legend,  " ocean during ", min(time_period), "-", max(time_period),"."),
+                       ylim = c(0,
+                                20),
+                       las = 1,
+                       pch = 22,
+                       xaxt = "n",
+                       bg = "grey")
+      } else {
+        graphics::plot(table_cpue_fsc$year,
+                       table_cpue_fsc$yft,
+                       type = "b",
+                       xlab = "",
+                       ylab = expression(paste("Catch per unit effort (t ",
+                                               d^{ -1 },
+                                               ")")),
+                       cex.axis = 1.4,
+                       cex.lab = 1.4,
+                       main = "",
+                       ylim = c(0,
+                                20),
+                       las = 1,
+                       pch = 22,
+                       xaxt = "n",
+                       bg = "grey")
+      }
+      # Add the x-axis tick marks without labels
       graphics::axis(1,
-                     at = seq(min(table_cpue_fsc$year),
-                              max(table_cpue_fsc$year),
-                              by = 2),
+                     at = x_tick_pos,
                      tick = TRUE,
-                     labels = seq(min(table_cpue_fsc$year),
-                                  max(table_cpue_fsc$year),
-                                  by = 2),
-                     cex.axis = 1.3)
+                     labels = FALSE)
+      graphics::text(x = x_tick_pos,
+           y = par("usr")[3] - 0.6,
+           labels = table_cpue_fsc$year,
+           srt = 45,
+           adj = 1,
+           xpd = TRUE,
+           cex = 1.2)
       graphics::lines(table_cpue_fsc$year,
                       table_cpue_fsc$skj,
                       type = "b",
@@ -441,9 +516,20 @@ catch_per_unit_effort <- function(data_connection,
                       y = "Catch per unit effort (t/d)") +
         ggplot2::ylim(0, 20) +
         ggplot2::theme_bw() +
-        ggplot2::labs(colour = "") +
-        ggplot2::ggtitle("FSC")
-      plotly::ggplotly(ggplot_table_cpue_fsc) %>%
+        ggplot2::labs(colour = "")
+      # Plotly
+      plotly_graph <- plotly::ggplotly(ggplot_table_cpue_fsc)
+      # Add a title
+      if (title == TRUE) {
+        plotly_graph <- plotly_graph %>%
+          plotly::layout(title = list(text = paste0("Annual catch rates (in t per searching day) of the ", country_legend, " ", vessel_type_legend, " fishing fleet on ", fishing_type, " fishing", "\n",
+                                                   "mode schools in the", ocean_legend,  " ocean during ", min(time_period), "-", max(time_period),"."),
+                                      font = list(size = 17)),
+                         margin = list(t = 120))
+
+      }
+      # Plot the plotly
+      plotly_graph %>%
         plotly::layout(legend = list(orientation = "v",
                                      x = 0.85,
                                      y = 0.97))

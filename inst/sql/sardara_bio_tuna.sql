@@ -3,7 +3,9 @@ select
 	,mensur.v_mensur
 	,mensur.c_banc
 	,mensur.c_esp
-	,temps.an 
+	,temps.an
+	,mensur.c_ocean AS ocean_id
+	,mensur.c_pav AS country_id
 from
 	public.cl_taille
 	join public.mensur on (mensur.id_classe_t = cl_taille.id_classe_t and 

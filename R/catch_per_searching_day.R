@@ -8,6 +8,7 @@
 #' @param country {\link[base]{integer}} expected. Country codes identification. 1 by default.
 #' @param vessel_type {\link[base]{integer}} expected. Vessel type codes identification. 1 by default.
 #' @param graph_type {\link[base]{character}} expected. plot, plotly or table. Plot by default.
+#' @param title TRUE or FALSE expected. False by default.
 #' @return The function return ggplot R plot.
 #' @export
 #' @importFrom DBI dbGetQuery sqlInterpolate SQL
@@ -15,7 +16,7 @@
 #' @importFrom lubridate year
 #' @importFrom ggplot2 ggplot aes geom_line scale_color_manual geom_point labs ylim theme_bw ggtitle
 #' @importFrom plotly ggplotly
-#' @importFrom graphics par plot axis lines abline legend
+#' @importFrom graphics par plot axis lines abline legend text
 #' @importFrom codama r_type_checking
 catch_per_searching_day <- function(data_connection,
                                time_period,
@@ -23,7 +24,8 @@ catch_per_searching_day <- function(data_connection,
                                fishing_type,
                                country = as.integer(x = 1),
                                vessel_type = as.integer(x = 1),
-                               graph_type = "plot") {
+                               graph_type = "plot",
+                               title = FALSE) {
   # 0 - Global variables assignement ----
   activity_date <- NULL
   yft <- NULL
@@ -204,32 +206,69 @@ catch_per_searching_day <- function(data_connection,
                      bet = (bet / nb_sets_pos),
                      ALB = (alb / nb_sets_pos),
                      total = (total / nb_sets_pos))
-  # 4 - Graphic design ----
+  # 4 - Legend design ----
+  #Ocean
+  ocean_legend <- code_manipulation(data         = time_serie_catch_data$ocean_id,
+                                    referential  = "ocean",
+                                    manipulation = "legend")
+  #country
+  country_legend <- code_manipulation(data         = time_serie_catch_data$country_id,
+                                      referential  = "country",
+                                      manipulation = "legend")
+  #vessel
+  vessel_type_legend <- code_manipulation(data         = time_serie_catch_data$vessel_type_id,
+                                          referential  = "vessel_simple_type",
+                                          manipulation = "legend")
+  # 5 - Graphic design ----
   graphics::par(mar = c(4, 4.7, 4.1, 1.5))
+  # Define the positions of the x-axis tick marks
+  x_tick_pos <- seq(min(table_cpue_fad_set$year), max(table_cpue_fad_set$year))
   if (fishing_type == "FOB") {
     if (graph_type == "plot") {
-      graphics::plot(table_cpue_fad_set$year,
-                     table_cpue_fad_set$yft,
-                     type = "b",
-                     xlab = "",
-                     ylab = "Catch (t) per positive set",
-                     cex.axis = 1.4,
-                     cex.lab = 1.4,
-                     main = "",
-                     ylim = c(0,
-                              max(table_cpue_fad_set$total) * 1.05),
-                     las = 1,
-                     xaxt = "n",
-                     pch = 22,
-                     bg = "grey")
+      if (title == TRUE) {
+        graphics::plot(table_cpue_fad_set$year,
+                       table_cpue_fad_set$yft,
+                       type = "b",
+                       xlab = "",
+                       ylab = "Catch (t) per positive set",
+                       cex.axis = 1.4,
+                       cex.lab = 1.4,
+                       main = paste0("Annual number of catch per positive set on ", fishing_type, " fishing mode schools for the ", country_legend, "\n",
+                                     vessel_type_legend, " fishing fleet in the ", ocean_legend, " ocean during ", min(time_period), "-", max(time_period),"."),
+                       ylim = c(0,
+                                max(table_cpue_fad_set$total) * 1.05),
+                       las = 1,
+                       xaxt = "n",
+                       pch = 22,
+                       bg = "grey")
+      } else {
+        graphics::plot(table_cpue_fad_set$year,
+                       table_cpue_fad_set$yft,
+                       type = "b",
+                       xlab = "",
+                       ylab = "Catch (t) per positive set",
+                       cex.axis = 1.4,
+                       cex.lab = 1.4,
+                       main = "",
+                       ylim = c(0,
+                                max(table_cpue_fad_set$total) * 1.05),
+                       las = 1,
+                       xaxt = "n",
+                       pch = 22,
+                       bg = "grey")
+      }
+      # Add the x-axis tick marks without labels
       graphics::axis(1,
-                     at = seq(min(table_cpue_fad_set$year),
-                              max(table_cpue_fad_set$year),
-                              by = 2),
+                     at = x_tick_pos,
                      tick = TRUE,
-                     labels = seq(min(table_cpue_fad_set$year),
-                                  max(table_cpue_fad_set$year), by = 2),
-                     cex.axis = 1.3)
+                     labels = FALSE)
+      text(x = x_tick_pos,
+           y = par("usr")[3] - 1,
+           labels = table_cpue_fad_set$year,
+           srt = 45,
+           adj = 1,
+           xpd = TRUE,
+           cex = 1.2)
       graphics::lines(table_cpue_fad_set$year,
                       table_cpue_fad_set$skj,
                       type = "b",
@@ -318,9 +357,20 @@ catch_per_searching_day <- function(data_connection,
         ggplot2::ylim(0,
                       35) +
         ggplot2::theme_bw() +
-        ggplot2::labs(colour = "") +
-        ggplot2::ggtitle("FOB")
-      plotly::ggplotly(ggplot_table_cpue) %>%
+        ggplot2::labs(colour = "")
+      # Plotly
+      plotly_graph <-plotly::ggplotly(ggplot_table_cpue)
+      # Add a title
+      if (title == TRUE) {
+        plotly_graph <- plotly_graph %>%
+          plotly::layout(title = list(text = paste0("Annual number of catch per positive set on ", fishing_type, " fishing mode schools", "\n",
+                                                   "for the ", country_legend, " ", vessel_type_legend, "fishing fleet in the ", ocean_legend, " ocean during ", min(time_period), "-", max(time_period),"."),
+                                      font = list(size = 17)),
+                         margin = list(t = 120))
+
+      }
+      # Plot the plotly
+      plotly_graph %>%
         plotly::layout(legend = list(orientation = "v",
                                      x = 0.85,
                                      y = 0.97))
@@ -337,6 +387,97 @@ catch_per_searching_day <- function(data_connection,
     }
   } else if (fishing_type == "FSC") {
     if (graph_type == "plot") {
+      if (title == TRUE) {
+        graphics::plot(table_cpue_fad_set$year,
+                       table_cpue_fad_set$yft,
+                       type = "b",
+                       xlab = "",
+                       ylab = "Catch (t) per positive set",
+                       cex.axis = 1.4,
+                       cex.lab = 1.4,
+                       main = paste0("Annual number of catch per positive set on ", fishing_type, " fishing mode schools for the ", country_legend, "\n",
+                                     vessel_type_legend, " fishing fleet in the ", ocean_legend, " ocean during ", min(time_period), "-", max(time_period),"."),
+                       ylim = c(0,
+                                max(table_cpue_fad_set$total) * 1.05),
+                       las = 1,
+                       xaxt = "n",
+                       pch = 22,
+                       bg = "grey")
+      }
+      else {
+        graphics::plot(table_cpue_fad_set$year,
+                       table_cpue_fad_set$yft,
+                       type = "b",
+                       xlab = "",
+                       ylab = "Catch (t) per positive set",
+                       cex.axis = 1.4,
+                       cex.lab = 1.4,
+                       main = "",
+                       ylim = c(0,
+                                max(table_cpue_fad_set$total) * 1.05),
+                       las = 1,
+                       xaxt = "n",
+                       pch = 22,
+                       bg = "grey")
+      }
+      # Add the x-axis tick marks without labels
+      graphics::axis(1,
+                     at = x_tick_pos,
+                     tick = TRUE,
+                     labels = FALSE)
+      graphics::text(x = x_tick_pos,
+           y = par("usr")[3] - 1,
+           labels = table_cpue_fad_set$year,
+           srt = 45,
+           adj = 1,
+           xpd = TRUE,
+           cex = 1.2)
+      graphics::lines(table_cpue_fad_set$year,
+                      table_cpue_fad_set$skj,
+                      type = "b",
+                      lty = 1,
+                      pch = 23)
+      graphics::lines(table_cpue_fad_set$year,
+                      table_cpue_fad_set$bet,
+                      type = "b",
+                      lty = 1,
+                      pch = 24)
+      graphics::lines(table_cpue_fad_set$year,
+                      table_cpue_fad_set$total,
+                      type = "b",
+                      lty = 1,
+                      pch = 19)
+      graphics::abline(h = seq(10,
+                               50,
+                               10),
+                       lty = 2,
+                       col = "lightgrey")
+      graphics::legend("topright",
+                       legend = c("total",
+                                  "Skipjack",
+                                  "Yellowfin",
+                                  "Bigeye"),
+                       pch = c(19,
+                               23,
+                               22,
+                               24),
+                       bty = "n",
+                       lty = c(1,
+                               1,
+                               1,
+                               1),
+                       pt.bg = c("black",
+                                 "white",
+                                 "grey",
+                                 "white"),
+                       cex = 1.3)
+      graphics::legend("topleft",
+                       legend = "(FOB)",
+                       bty = "n",
+                       cex = 2)
+
+
+      ### IF FSC ET PLOT
       graphics::plot(table_cpue_fsc_set$year,
                      table_cpue_fsc_set$yft,
                      type = "b",
@@ -351,15 +492,18 @@ catch_per_searching_day <- function(data_connection,
                      xaxt = "n",
                      pch = 22,
                      bg = "grey")
+      # Add the x-axis tick marks without labels
       graphics::axis(1,
-                     at = seq(min(table_cpue_fsc_set$year),
-                              max(table_cpue_fsc_set$year),
-                              by = 2),
+                     at = x_tick_pos,
                      tick = TRUE,
-                     labels = seq(min(table_cpue_fsc_set$year),
-                                  max(table_cpue_fsc_set$year),
-                                  by = 2),
-                     cex.axis = 1.3)
+                     labels = FALSE)
+      graphics::text(x = x_tick_pos,
+           y = par("usr")[3] - 1,
+           labels = table_cpue_fsc_set$year,
+           srt = 45,
+           adj = 1,
+           xpd = TRUE,
+           cex = 1.2)
       graphics::lines(table_cpue_fsc_set$year,
                       table_cpue_fsc_set$skj,
                       type = "b",
@@ -450,9 +594,20 @@ catch_per_searching_day <- function(data_connection,
         ggplot2::ylim(0,
                       35) +
         ggplot2::theme_bw() +
-        ggplot2::labs(colour = "") +
-        ggplot2::ggtitle("FSC")
-      plotly::ggplotly(ggplot_table_cpue) %>%
+        ggplot2::labs(colour = "")
+      # Plotly
+      plotly_graph <- plotly::ggplotly(ggplot_table_cpue)
+      # Add a title
+      if (title == TRUE) {
+        plotly_graph <- plotly_graph %>%
+          plotly::layout(title = list(text = paste0("Annual number of catch per positive set on ", fishing_type, " fishing mode schools for the ", country_legend, "\n",
+                                                    vessel_type_legend, " fishing fleet in the ", ocean_legend, " ocean during ", min(time_period), "-", max(time_period),"."),
+                                      font = list(size = 17)),
+                         margin = list(t = 120))
+
+      }
+      # Plot the plotly
+      plotly_graph %>%
         plotly::layout(legend = list(orientation = "v",
                                      x = 0.85,
                                      y = 0.97))

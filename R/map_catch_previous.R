@@ -8,6 +8,7 @@
 #' @param ocean {\link[base]{integer}} expected. Ocean codes identification.
 #' @param fishing_type {\link[base]{character}} expected. FOB, FSC or ALL. ALL by default.
 #' @param graph_type {\link[base]{character}} expected. plot or plotly. Plot by default.
+#' @param title TRUE or FALSE expected. False by default.
 #' @return The function return ggplot R plot.
 #' @export
 #' @importFrom DBI dbGetQuery sqlInterpolate SQL
@@ -26,8 +27,8 @@ map_catch_previous <- function(data_connection,
                                vessel_type = as.integer(x = 1),
                                ocean = as.integer(x = 1),
                                fishing_type = "ALL",
-                               graph_type = "plot"
-) {
+                               graph_type = "plot",
+                               title = FALSE) {
   # 0 - Global variables assignement ----
   n_act <- NULL
   d_act <- NULL
@@ -198,29 +199,40 @@ map_catch_previous <- function(data_connection,
                    sizelat = latsiz[siz],
                    sizelon = lonsiz[siz]))
   }
+  #Ocean
+  ocean_legend <- code_manipulation(data         = map_catch_previous_sql_final$ocean_id,
+                                    referential  = "ocean",
+                                    manipulation = "legend")
+  #vessel
+  vessel_type_legend <- code_manipulation(data         = map_catch_previous_sql_final$vessel_type_id,
+                                          referential  = "vessel_simple_type",
+                                          manipulation = "legend")
+  #country
+  country_legend <- code_manipulation(data         = map_catch_previous_sql_final$country_id,
+                                      referential  = "country",
+                                      manipulation = "legend")
   # 5 - Graphic design ----
   if (graph_type == "plot") {
     lat <- quad2pos(as.numeric(datafile$cwp11_act + 5 * 1e6))$y
     long <- quad2pos(as.numeric(datafile$cwp11_act + 5 * 1e6))$x
-
     load(file = system.file("wrld_simpl.RData",
                             package = "fishi"))
-    maps::map(wrld_simpl,
-              main = "",
-              resolution = 0.1,
-              add = FALSE,
-              col = "lightgrey",
-              fill = TRUE,
-              xlim = c(-40,
-                       15),
-              ylim = c(-25,
-                       25),
-              xaxs = "i",
-              mar = c(4,
-                      4.1,
-                      3,
-                      2),
-              border = 0)
+      maps::map(wrld_simpl,
+                main = "",
+                resolution = 0.1,
+                add = FALSE,
+                col = "lightgrey",
+                fill = TRUE,
+                xlim = c(-40,
+                         15),
+                ylim = c(-25,
+                         25),
+                xaxs = "i",
+                mar = c(4,
+                        4.1,
+                        3,
+                        2),
+                border = 0)
     graphics::axis(1,
                    at = seq(-40,
                             15,
@@ -314,7 +326,8 @@ map_catch_previous <- function(data_connection,
                    -12.5,
                    paste(2000, " t", sep = ""),
                    cex = .9)
-  } else if (graph_type == "plotly") {
+  }
+  else if (graph_type == "plotly") {
     datafile$lat <- quad2pos(as.numeric(datafile$cwp11_act + 5 * 1e6))$y
     datafile$long <- quad2pos(as.numeric(datafile$cwp11_act + 5 * 1e6))$x
     world_boundaries <- rnaturalearth::ne_countries(returnclass = "sf",
@@ -343,6 +356,26 @@ map_catch_previous <- function(data_connection,
                                                     "skj :", skj, "\n",
                                                     "bet:", bet))) +
       ggplot2::scale_color_viridis_c(option = "plasma")
-    plotly::ggplotly(map)
+    # Plotly
+    plotly_map <- plotly::ggplotly(map)
+    # Add a title
+    if (title == TRUE) {
+      plotly_map <- plotly_map %>%
+        plotly::layout(title = list(text = paste0("Spatial distribution of tuna catches of the ",
+                                                  country_legend, " ",
+                                                  vessel_type_legend, " fishing fleet made on ",
+                                                  fishing_type, "\n",
+                                                  " fishing mode in ",
+                                                  ifelse(test = length(x = time_period) != 1,
+                                                         yes  = paste0(min(time_period),"-",max(time_period)),
+                                                         no   = time_period),
+                                                  ", in the ",
+                                                  ocean_legend,
+                                                  " ocean."),
+                                    font = list(size = 17)),
+                       margin = list(t = 120))
+    }
+    # Plot the plotly
+    plotly_map
   }
 }

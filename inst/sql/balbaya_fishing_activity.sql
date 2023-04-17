@@ -5,6 +5,9 @@ select
 		,activite.v_tpec
 		,activite.v_dur_cal
 		,activite.c_tban
+		,activite.c_ocea::numeric as ocean_id
+		,bateau.c_pav_b::numeric as country_id 
+		,activite.c_engin::numeric as vessel_type_id
 FROM 
 		public.activite
 		join public.bateau on (activite.c_bat = bateau.c_bat)

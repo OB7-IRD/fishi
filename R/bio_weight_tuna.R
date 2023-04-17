@@ -6,6 +6,7 @@
 #' @param ocean {\link[base]{integer}} expected. Ocean codes identification.
 #' @param country {\link[base]{integer}} expected. Country codes identification. 1 by default.
 #' @param graph_type {\link[base]{character}} expected. plot or ggplot. Plot by default.
+#' @param title TRUE or FALSE expected. False by default.
 #' @return The function return ggplot R plot.
 #' @export
 #' @importFrom DBI dbGetQuery sqlInterpolate SQL
@@ -18,7 +19,8 @@ bio_weight_tuna <- function(data_connection,
                             report_year,
                             ocean,
                             country = as.integer(x = 1),
-                            graph_type = "plot") {
+                            graph_type = "plot",
+                            title = FALSE) {
   # 0 - Global variables assignement ----
   c_esp <- NULL
   c_banc <- NULL
@@ -276,7 +278,16 @@ bio_weight_tuna <- function(data_connection,
   table_weight_yft_w <- merge(table_weight_yft_w, t3, by = "size_class")
   table_weight_yft_w <- merge(table_weight_yft_w, t4, by = "size_class")
   table_weight_yft_w <- merge(table_weight_yft_w, t5, by = "size_class")
-  # 4 - Graphic design ----
+  # 4 - Legend design ----
+  #Ocean
+  ocean_legend <- code_manipulation(data         = bio_weight_tuna_sql_data$ocean_id,
+                                    referential  = "ocean",
+                                    manipulation = "legend")
+  #country
+  country_legend <- code_manipulation(data         = bio_weight_tuna_sql_data$country_id,
+                                      referential  = "country",
+                                      manipulation = "legend")
+  # 5 - Graphic design ----
   # Function that read the 3 dataframe and print it in a plot
   if (graph_type == "plot") {
     # The function reads the different data sets
@@ -315,7 +326,7 @@ bio_weight_tuna <- function(data_connection,
                      cex.lab = 1.3,
                      type = "l",
                      main = "",
-                     xlab = "Size size_classass (cm)",
+                     xlab = "Size class (cm)",
                      ylab = ylabel,
                      lty = "solid",
                      col = "black",
@@ -424,8 +435,8 @@ bio_weight_tuna <- function(data_connection,
       ggplot2::geom_line(ggplot2::aes(x = size_class,
                                       y = log_current_year,
                                       color = year)) +
-      ggplot2::labs(x = "size class (cm)",
-                    y = "Percentage") +
+      ggplot2::labs(x = " ",
+                    y = " ") +
       ggplot2::ylim(0, max(table_weight_yft_w$log_current_year,
                            table_weight_yft_w$log_avg_5_years) * 1.1) +
       ggplot2::xlim(20,
@@ -446,7 +457,7 @@ bio_weight_tuna <- function(data_connection,
       ggplot2::geom_line(ggplot2::aes(x = size_class,
                                       y = free_current_year,
                                       color = year)) +
-      ggplot2::labs(x = "size class (cm)",
+      ggplot2::labs(x = " ",
                     y = "Percentage") +
       ggplot2::ylim(0, max(table_weight_yft_w$free_current_year,
                            table_weight_yft_w$free_avg_5_years) * 1.1) +
@@ -468,8 +479,8 @@ bio_weight_tuna <- function(data_connection,
       ggplot2::geom_line(ggplot2::aes(x = size_class,
                                       y = all_current_year,
                                       color = year)) +
-      ggplot2::labs(x = "size class (cm)",
-                    y = "Percentage") +
+      ggplot2::labs(x = " ",
+                    y = " ") +
       ggplot2::ylim(0, max(table_weight_yft_w$all_current_year,
                            table_weight_yft_w$all_avg_5_years) * 1.1) +
       ggplot2::xlim(20,
@@ -491,8 +502,8 @@ bio_weight_tuna <- function(data_connection,
       ggplot2::geom_line(ggplot2::aes(x = size_class,
                                       y = log_current_year,
                                       color = year)) +
-      ggplot2::labs(x = "size class (cm)",
-                    y = "Percentage") +
+      ggplot2::labs(x = " ",
+                    y = " ") +
       ggplot2::ylim(0, max(table_weight_bet_w$log_current_year,
                            table_weight_bet_w$log_avg_5_years) * 1.1) +
       ggplot2::xlim(20,
@@ -513,8 +524,8 @@ bio_weight_tuna <- function(data_connection,
       ggplot2::geom_line(ggplot2::aes(x = size_class,
                                       y = free_current_year,
                                       color = year)) +
-      ggplot2::labs(x = "size class (cm)",
-                    y = "Percentage") +
+      ggplot2::labs(x = " ",
+                    y = " ") +
       ggplot2::ylim(0, max(table_weight_bet_w$free_current_year,
                            table_weight_bet_w$free_avg_5_years) * 1.1) +
       ggplot2::xlim(20,
@@ -536,7 +547,7 @@ bio_weight_tuna <- function(data_connection,
                                       y = all_current_year,
                                       color = year)) +
       ggplot2::labs(x = "size class (cm)",
-                    y = "Percentage") +
+                    y = " ") +
       ggplot2::ylim(0, max(table_weight_bet_w$all_current_year,
                            table_weight_bet_w$all_avg_5_years) * 1.1) +
       ggplot2::xlim(20,
@@ -558,8 +569,8 @@ bio_weight_tuna <- function(data_connection,
       ggplot2::geom_line(ggplot2::aes(x = size_class,
                                       y = log_current_year,
                                       color = year)) +
-      ggplot2::labs(x = "size class (cm)",
-                    y = "Percentage") +
+      ggplot2::labs(x = " ",
+                    y = " ") +
       ggplot2::ylim(0, max(table_weight_skj_w$log_current_year,
                            table_weight_skj_w$log_avg_5_years) * 1.1) +
       ggplot2::xlim(20,
@@ -580,8 +591,8 @@ bio_weight_tuna <- function(data_connection,
       ggplot2::geom_line(ggplot2::aes(x = size_class,
                                       y = free_current_year,
                                       color = year)) +
-      ggplot2::labs(x = "size class (cm)",
-                    y = "Percentage") +
+      ggplot2::labs(x = " ",
+                    y = " ") +
       ggplot2::ylim(0, max(table_weight_skj_w$free_current_year,
                            table_weight_skj_w$free_avg_5_years) * 1.1) +
       ggplot2::xlim(20,
@@ -602,8 +613,8 @@ bio_weight_tuna <- function(data_connection,
       ggplot2::geom_line(ggplot2::aes(x = size_class,
                                       y = all_current_year,
                                       color = year)) +
-      ggplot2::labs(x = "size class (cm)",
-                    y = "Percentage") +
+      ggplot2::labs(x = " ",
+                    y = " ") +
       ggplot2::ylim(0, max(table_weight_skj_w$all_current_year,
                            table_weight_skj_w$all_avg_5_years) * 1.1) +
       ggplot2::xlim(20,
@@ -616,12 +627,21 @@ bio_weight_tuna <- function(data_connection,
     skj_all <- plotly::ggplotly(skj_all) %>%
       plotly::layout(showlegend = FALSE)
     ### Plotly ----
-    plotly::subplot(yft_fob, bet_fob, skj_fob,
+    plotly_weight <- plotly::subplot(yft_fob, bet_fob, skj_fob,
                     yft_free, bet_free, skj_free,
                     yft_all, bet_all, skj_all, nrows = 3,
                     titleX = TRUE, titleY = TRUE,
-                    shareX = TRUE,
-                    margin = 0.03)  %>%
+                    shareX = FALSE, shareY = FALSE,
+                    margin = 0.03)
+    if (title == TRUE) {
+      plotly_weight <- plotly_weight %>%
+        plotly::layout(title = list(text = paste0("Weight distribution of the catch for the ", country_legend, " purse seine fleet in ", report_year," (solid line)", "\n",
+                                                 " and for an average year representing the period ", min(five_previous), "-", max(five_previous), " (dotted line), in the ", ocean_legend, " ocean."),
+                                    font = list(size = 17)),
+                       margin = list(t = 120))
+
+    }
+    plotly_weight %>%
       plotly::layout(annotations = list(
         # YFT title : Add text to the plot
         list(text = "<b>YFT - FOB</b>",

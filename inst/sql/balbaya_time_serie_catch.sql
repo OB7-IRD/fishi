@@ -7,6 +7,9 @@ select
 		,a.v_dur_cal
 		,c.v_poids_capt 
 		,c.c_esp 
+		,a.c_ocea::numeric as ocean_id
+		,b.c_pav_b::numeric as country_id 
+		,a.c_engin::numeric as vessel_type_id
 FROM 
 		public.activite a
 		join public.bateau b on (a.c_bat = b.c_bat)
