@@ -182,7 +182,7 @@ fishing_capacity <- function(data_connection,
                                           referential  = "vessel_simple_type",
                                           manipulation = "legend")
   # 5 - Graphic design ----
-  par(mar=c(5.1,4.1,4.1,4.1))
+  par(mar = c(5.1, 4.1, 4.1, 4.1))
   if (graph_type == "plot") {
     if (title == TRUE) {
       barvessels <- graphics::barplot(t(fishing_capacity_data[, 2:6]),
@@ -263,14 +263,14 @@ fishing_capacity <- function(data_connection,
          yaxs = "i",
          xlim = c(0, 37.6))
     graphics::axis(4,
-                   at = seq(0,20,5),
-                   tick = T,
-                   labels = T,
+                   at = seq(0, 20 ,5),
+                   tick = TRUE,
+                   labels = TRUE,
                    las = 1,
                    cex.axis = 1.4,
                    cex.lab = 1.4,
                    yaxs = "i")
-    graphics::mtext(expression(paste("Carrying capacity (x1000 ",m^3,")",
+    graphics::mtext(expression(paste("Carrying capacity (x1000 ", m^3, ")",
                                      sep = "")),
                     side = 4,
                     line = 2.6,
