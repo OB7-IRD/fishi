@@ -15,7 +15,7 @@
 #' @importFrom dplyr mutate tibble group_by summarise n_distinct
 #' @importFrom lubridate year
 #' @importFrom RColorBrewer brewer.pal
-#' @importFrom graphics par plot axis lines abline legend text
+#' @importFrom graphics par plot axis lines abline legend text mtext
 #' @importFrom ggplot2 ggplot aes geom_line geom_point scale_y_continuous sec_axis labs theme_bw
 #' @importFrom plotly ggplotly
 #' @importFrom tidyr pivot_longer
@@ -182,6 +182,7 @@ fishing_capacity <- function(data_connection,
                                           referential  = "vessel_simple_type",
                                           manipulation = "legend")
   # 5 - Graphic design ----
+  par(mar=c(5.1,4.1,4.1,4.1))
   if (graph_type == "plot") {
     if (title == TRUE) {
       barvessels <- graphics::barplot(t(fishing_capacity_data[, 2:6]),
@@ -225,7 +226,6 @@ fishing_capacity <- function(data_connection,
                                       xlim = c(0,
                                                37.6))
     }
-
     graphics::axis(1,
                    at = barvessels,
                    tick = TRUE,
@@ -248,7 +248,7 @@ fishing_capacity <- function(data_connection,
                      fill = RColorBrewer::brewer.pal(5, "Greys"),
                      cex = 1.3)
     graphics::par(new = TRUE)
-    plot(barvessels,
+    graphics::plot(barvessels,
          fishing_capacity_data$CC / 1000,
          type = "b",
          col = "black",
@@ -262,6 +262,19 @@ fishing_capacity <- function(data_connection,
          ylim = c(0, max(fishing_capacity_data$CC / 1000) * 1.1),
          yaxs = "i",
          xlim = c(0, 37.6))
+    graphics::axis(4,
+                   at = seq(0,20,5),
+                   tick = T,
+                   labels = T,
+                   las = 1,
+                   cex.axis = 1.4,
+                   cex.lab = 1.4,
+                   yaxs = "i")
+    graphics::mtext(expression(paste("Carrying capacity (x1000 ",m^3,")",
+                                     sep = "")),
+                    side = 4,
+                    line = 2.6,
+                    cex = 1.3)
   } else if (graph_type == "plotly") {
     if (figure == "vessel") {
       ggplot_table_vessel <- ggplot2::ggplot(data = data_pivot) +
