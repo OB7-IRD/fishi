@@ -416,8 +416,8 @@ bio_weight_tuna <- function(data_connection,
     if (title == TRUE) {
       mtext(paste0("Weight distribution of the catch for the ", country_legend, " purse seine fleet in ", report_year,  " (solid line) and for an average year representing", "\n",
                    " the period ", min(five_previous), "-", max(five_previous), " (dotted line) in the ", ocean_legend, " ocean."),
-            outer=TRUE,
-            cex=0.9,
+            outer = TRUE,
+            cex = 0.9,
             line = 0.85)
     }
   } else if (graph_type == "plotly") {
