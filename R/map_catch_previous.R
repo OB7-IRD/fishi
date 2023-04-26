@@ -217,6 +217,8 @@ map_catch_previous <- function(data_connection,
     long <- quad2pos(as.numeric(datafile$cwp11_act + 5 * 1e6))$x
     load(file = system.file("wrld_simpl.RData",
                             package = "fishi"))
+
+    if (ocean == 1) {
       maps::map(wrld_simpl,
                 main = "",
                 resolution = 0.1,
@@ -233,60 +235,158 @@ map_catch_previous <- function(data_connection,
                         3,
                         2),
                 border = 0)
-    graphics::axis(1,
-                   at = seq(-40,
-                            15,
-                            5),
-                   labels = c("40W",
-                              "35W",
-                              "30W",
-                              "25W",
-                              "20W",
-                              "15W",
-                              "10W",
-                              "5W",
-                              "0",
-                              "5E",
-                              "10E",
-                              "15E"),
-                   tick = TRUE)
-    graphics::axis(2,
-                   at = seq(-25,
-                            25,
-                            5),
-                   labels = c("25S",
-                              "20S",
-                              "15S",
-                              "10S",
-                              "5S",
-                              "0",
-                              "5N",
-                              "10N",
-                              "15N",
-                              "20N",
-                              "25N"),
-                   las = 1,
-                   tick = TRUE)
-    graphics::axis(3,
-                   labels = FALSE,
-                   at = seq(-40,
-                            15,
-                            5))
-    graphics::axis(4,
-                   labels = FALSE,
-                   at = seq(-25,
-                            25,
-                            5))
-    graphics::abline(v = seq(-30,
-                             30,
-                             10),
-                     col = "darkgrey",
-                     lty = 3)
-    graphics::abline(h = seq(-30,
-                             30,
-                             10),
-                     col = "darkgrey",
-                     lty = 3)
+      graphics::axis(1,
+                     at = seq(-40,
+                              15,
+                              5),
+                     labels = c("40W",
+                                "35W",
+                                "30W",
+                                "25W",
+                                "20W",
+                                "15W",
+                                "10W",
+                                "5W",
+                                "0",
+                                "5E",
+                                "10E",
+                                "15E"),
+                     tick = TRUE)
+      graphics::axis(2,
+                     at = seq(-25,
+                              25,
+                              5),
+                     labels = c("25S",
+                                "20S",
+                                "15S",
+                                "10S",
+                                "5S",
+                                "0",
+                                "5N",
+                                "10N",
+                                "15N",
+                                "20N",
+                                "25N"),
+                     las = 1,
+                     tick = TRUE)
+      graphics::axis(3,
+                     labels = FALSE,
+                     at = seq(-40,
+                              15,
+                              5))
+      graphics::axis(4,
+                     labels = FALSE,
+                     at = seq(-25,
+                              25,
+                              5))
+      graphics::abline(v = seq(-30,
+                               30,
+                               10),
+                       col = "darkgrey",
+                       lty = 3)
+      graphics::abline(h = seq(-30,
+                               30,
+                               10),
+                       col = "darkgrey",
+                       lty = 3)
+      angles <- plotrix::floating.pie(-20,
+                                      -12.5,
+                                      c(1,
+                                        1,
+                                        1),
+                                      radius = 1,
+                                      edge = 25,
+                                      col = c("yellow",
+                                              "red",
+                                              "blue"))
+      plotrix::pie.labels(-20,
+                          -12.5,
+                          angles,
+                          c("YFT",
+                            "SKJ",
+                            "BET"),
+                          cex = 0.7,
+                          border = 0,
+                          bg = 0,
+                          radius = c(2.4,
+                                     2.4,
+                                     2.4))
+      graphics::text(-17,
+                     -12.5,
+                     paste(2000, " t", sep = ""),
+                     cex = .9)
+    } else if (ocean == 2) {
+      maps::map(wrld_simpl,
+                main = "",
+                resolution = 0.1,
+                add = FALSE,
+                col = "lightgrey",
+                fill = TRUE,
+                xlim = c(30,
+                         90),
+                ylim = c(-30,
+                         20),
+                xaxs = "i",
+                mar = c(4,
+                        4.1,
+                        3,
+                        2),
+                border = 0)
+      graphics::axis(1,
+                     at = seq(30,
+                              120,
+                              20),
+                     labels= paste(seq(30, 120, 20),
+                                   "E",
+                                   sep = ""),
+                     tick = TRUE)
+      axis(2,
+           at = seq(-40, 40, 10),
+           labels = c(NA, "30S", "20S", "1S", "0", "10N", "20N", "30N", NA),
+           las = 1,
+           tick = TRUE)
+      axis(3,
+           at = seq(30, 120, 20),
+           labels = FALSE)
+      axis(4,
+           labels = FALSE,
+           at = seq(-40, 40, 10))
+      abline(v = seq(30, 100, 10),
+             col = "darkgrey",
+             lty = 3)
+      abline(h = seq(-30, 30, 10),
+             col = "darkgrey",
+             lty = 3)
+      angles <- plotrix::floating.pie(80,
+                                      -12.5,
+                                      c(1,
+                                        1,
+                                        1),
+                                      radius = 1,
+                                      edge = 25,
+                                      col = c("yellow",
+                                              "red",
+                                              "blue"))
+      plotrix::pie.labels(80,
+                          -12.5,
+                          angles,
+                          c("YFT",
+                            "SKJ",
+                            "BET"),
+                          cex = 0.7,
+                          border = 0,
+                          bg = 0,
+                          radius = c(2.4,
+                                     2.4,
+                                     2.4))
+      graphics::text(85,
+                     -12.5,
+                     paste(2000, " t", sep = ""),
+                     cex = .9)
+
+    }
+
+
     if (title == TRUE) {
       title(main = paste0("Spatial distribution of tuna catches of the ",
                           country_legend, " ",
@@ -314,32 +414,6 @@ map_catch_previous <- function(data_connection,
                                     "firebrick2",
                                     "cornflowerblue"))
     }
-    angles <- plotrix::floating.pie(-20,
-                                    -12.5,
-                                    c(1,
-                                      1,
-                                      1),
-                                    radius = 1,
-                                    edge = 25,
-                                    col = c("yellow",
-                                            "red",
-                                            "blue"))
-    plotrix::pie.labels(-20,
-                        -12.5,
-                        angles,
-                        c("YFT",
-                          "SKJ",
-                          "BET"),
-                        cex = 0.7,
-                        border = 0,
-                        bg = 0,
-                        radius = c(2.4,
-                                   2.4,
-                                   2.4))
-    graphics::text(-17,
-                   -12.5,
-                   paste(2000, " t", sep = ""),
-                   cex = .9)
   } else if (graph_type == "plotly") {
     datafile$lat <- quad2pos(as.numeric(datafile$cwp11_act + 5 * 1e6))$y
     datafile$long <- quad2pos(as.numeric(datafile$cwp11_act + 5 * 1e6))$x
@@ -354,21 +428,39 @@ map_catch_previous <- function(data_connection,
                                       names_to = "specie",
                                       values_to = "catch (t)")
     data_pivot$`catch (t)` <- round(data_pivot$`catch (t)`, 3)
-    map <- ggplot2::ggplot() +
-      ggplot2::geom_sf(data = world_boundaries) +
-      ggspatial::coord_sf(xlim = c(-40,
-                                   15),
-                          ylim = c(-25,
-                                   25)) +
-      ggplot2::geom_point(data = datafile,
-                          ggplot2::aes(x     = long,
-                                       y     = lat,
-                                       color = total,
-                                       size  = total,
-                                       text  = paste("yft :", yft, "\n",
-                                                    "skj :", skj, "\n",
-                                                    "bet:", bet))) +
-      ggplot2::scale_color_viridis_c(option = "plasma")
+    if (ocean == 1) {
+      map <- ggplot2::ggplot() +
+        ggplot2::geom_sf(data = world_boundaries) +
+        ggspatial::coord_sf(xlim = c(-40,
+                                     15),
+                            ylim = c(-25,
+                                     25)) +
+        ggplot2::geom_point(data = datafile,
+                            ggplot2::aes(x     = long,
+                                         y     = lat,
+                                         color = total,
+                                         size  = total,
+                                         text  = paste("yft :", yft, "\n",
+                                                       "skj :", skj, "\n",
+                                                       "bet:", bet))) +
+        ggplot2::scale_color_viridis_c(option = "plasma")
+    } else if (ocean == 2) {
+      map <- ggplot2::ggplot() +
+        ggplot2::geom_sf(data = world_boundaries) +
+        ggspatial::coord_sf(xlim = c(30,
+                                     90),
+                            ylim = c(-30,
+                                     20)) +
+        ggplot2::geom_point(data = datafile,
+                            ggplot2::aes(x     = long,
+                                         y     = lat,
+                                         color = total,
+                                         size  = total,
+                                         text  = paste("yft :", yft, "\n",
+                                                       "skj :", skj, "\n",
+                                                       "bet:", bet))) +
+        ggplot2::scale_color_viridis_c(option = "plasma")
+    }
     # Plotly
     plotly_map <- plotly::ggplotly(map)
     # Add a title
