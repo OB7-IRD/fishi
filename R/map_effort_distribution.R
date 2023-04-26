@@ -21,12 +21,12 @@
 #' @importFrom rnaturalearth ne_countries
 #' @importFrom ggspatial coord_sf
 map_effort_distribution <- function(data_connection,
-                               time_period,
-                               country = as.integer(x = c(1, 41)),
-                               vessel_type = as.integer(x = 1),
-                               ocean = as.integer(x = 1),
-                               graph_type = "plot",
-                               title = FALSE) {
+                                    time_period,
+                                    country = as.integer(x = c(1, 41)),
+                                    vessel_type = as.integer(x = 1),
+                                    ocean = as.integer(x = 1),
+                                    graph_type = "plot",
+                                    title = FALSE) {
   # 0 - Global variables assignement ----
   cwp11_act <- NULL
   v_tpec <- NULL
@@ -96,14 +96,14 @@ map_effort_distribution <- function(data_connection,
                                                                            collapse = ", ")),
                                               country     = DBI::SQL(paste(country,
                                                                            collapse = ", ")),
-                                               ocean       = DBI::SQL(paste(ocean,
-                                                                            collapse = ", ")),
+                                              ocean       = DBI::SQL(paste(ocean,
+                                                                           collapse = ", ")),
                                               vessel_type = DBI::SQL(paste(vessel_type,
                                                                            collapse = ", ")))
   map_effort_sql_data <- dplyr::tibble(DBI::dbGetQuery(conn      = data_connection[[2]],
                                                        statement = map_effort_sql_final))
   # 3 - Data design ----
-   t1 <- map_effort_sql_data %>%
+  t1 <- map_effort_sql_data %>%
     dplyr::group_by(cwp11_act,
                     v_tpec,
                     v_dur_cal) %>%
@@ -115,7 +115,7 @@ map_effort_distribution <- function(data_connection,
                      .groups = "drop")
 
   datafile <- t2 %>%
-    dplyr::mutate(effort = effort /12)
+    dplyr::mutate(effort = effort / 12)
   datafile[datafile == 0] <- 1e-8
   # 4 - Legend design ----
   # Define fuction quad2pos
@@ -158,12 +158,11 @@ map_effort_distribution <- function(data_connection,
     long <- quad2pos(as.numeric(datafile$cwp11_act + 5 * 1e6))$x
     load(file = system.file("wrld_simpl.RData",
                             package = "fishi"))
-    y.ref <- 50                   #Effort of the reference circle (t)
-    ryref <- sqrt(y.ref)		#Radius of the reference effort
+    ryref <- sqrt(50)		#Radius of the reference effort
     y <- datafile$effort
     ry <- sqrt(y)			#Square root of total effort
-    ry[is.na(ry)]=0
-    ry.rel <- ry/ryref
+    ry[is.na(ry)] <- 0
+    ryrel <- ry / ryref
     if (ocean == 1) {
       maps::map(wrld_simpl,
                 main = "",
@@ -240,18 +239,18 @@ map_effort_distribution <- function(data_connection,
         floating.pie(long[i],
                      lat[i],
                      c(datafile$effort[i]),
-                     radius = ry.rel[i],
+                     radius = ryrel[i],
                      edges = 100,
                      col = c("orange"),
                      border = NA)
       }
-      angles <- floating.pie(80,
-                             -20,
-                             c(1),
-                             radius = 1,
-                             edges = 100,
-                             col = c("orange"),
-                             border = NA)
+      floating.pie(80,
+                   -20,
+                   c(1),
+                   radius = 1,
+                   edges = 100,
+                   col = c("orange"),
+                   border = NA)
       text(82.5,
            -20,
            paste(y.ref,
@@ -279,7 +278,7 @@ map_effort_distribution <- function(data_connection,
                      at = seq(30,
                               120,
                               20),
-                     labels= paste(seq(30, 120, 20),
+                     labels = paste(seq(30, 120, 20),
                                    "E",
                                    sep = ""),
                      tick = TRUE)
@@ -305,18 +304,18 @@ map_effort_distribution <- function(data_connection,
         floating.pie(long[i],
                      lat[i],
                      c(datafile$effort[i]),
-                     radius = ry.rel[i],
+                     radius = ryrel[i],
                      edges = 100,
                      col = c("orange"),
                      border = NA)
       }
-      angles <- floating.pie(80,
-                             -20,
-                             c(1),
-                             radius = 1,
-                             edges = 100,
-                             col = c("orange"),
-                             border = NA)
+      floating.pie(80,
+                   -20,
+                   c(1),
+                   radius = 1,
+                   edges = 100,
+                   col = c("orange"),
+                   border = NA)
       text(82.5,
            -20,
            paste(y.ref,

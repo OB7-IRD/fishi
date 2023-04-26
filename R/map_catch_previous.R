@@ -336,7 +336,7 @@ map_catch_previous <- function(data_connection,
                      at = seq(30,
                               120,
                               20),
-                     labels= paste(seq(30, 120, 20),
+                     labels = paste(seq(30, 120, 20),
                                    "E",
                                    sep = ""),
                      tick = TRUE)
