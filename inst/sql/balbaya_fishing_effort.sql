@@ -21,6 +21,7 @@ FROM
 where
 	EXTRACT(year FROM activite.d_act) IN (?time_period)
 	AND bateau.c_pav_b  IN (?country)
-	AND activite.c_engin IN (?vessel_type)
+--	AND activite.c_engin IN (?vessel_type)
+	AND bateau.c_typ_b IN (?vessel_type)
 	AND activite.c_ocea IN (?ocean)
 ;

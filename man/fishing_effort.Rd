@@ -9,7 +9,7 @@ fishing_effort(
   time_period,
   ocean,
   country = as.integer(x = 1),
-  vessel_type = as.integer(x = 1),
+  vessel_type = as.integer(x = c(4, 5, 6)),
   graph_type = "plot",
   title = FALSE
 )

@@ -25,7 +25,7 @@ fishing_capacity <- function(data_connection,
                              time_period,
                              ocean,
                              country = as.integer(x = 1),
-                             vessel_type = as.integer(x = 1),
+                             vessel_type = as.integer(x = c(4,5,6)),
                              graph_type = "plot",
                              figure = "vessel",
                              title = FALSE) {
@@ -221,10 +221,9 @@ fishing_capacity <- function(data_connection,
                                                max(fishing_capacity_data$Nb_vessels * 1.1)),
                                       las = 1,
                                       xaxt = "n",
+                                      #xlim = c(0, 37.6),
                                       col = RColorBrewer::brewer.pal(5,
-                                                                     "Greys"),
-                                      xlim = c(0,
-                                               37.6))
+                                                                     "Greys"))
     }
     graphics::axis(1,
                    at = barvessels,
