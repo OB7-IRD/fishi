@@ -5,6 +5,7 @@
 #' @param time_period {\link[base]{integer}} expected. Period identification in year.
 #' @param ocean {\link[base]{integer}} expected. Ocean codes identification.
 #' @param country {\link[base]{integer}} expected. Country codes identification. 1 by default.
+#' @param vessel_type_select {\link[base]{character}} expected. Vessel for c_engin or vessel_accuracy for c_typ_bat.
 #' @param vessel_type {\link[base]{integer}} expected. Vessel type codes identification. 1 by default.
 #' @param graph_type {\link[base]{character}} expected. plot, plotly or table. Plot by default.
 #' @param title TRUE or FALSE expected. False by default.
@@ -21,6 +22,7 @@ fishing_effort <- function(data_connection,
                            time_period,
                            ocean,
                            country = as.integer(x = 1),
+                           vessel_type_select = "vessel_accuracy",
                            vessel_type = as.integer(x = c(4, 5, 6)),
                            graph_type = "plot",
                            title = FALSE) {
@@ -101,6 +103,17 @@ fishing_effort <- function(data_connection,
                 format = "%Y-%m-%d %H:%M:%S"),
          " - Indicator not developed yet for this \"data_connection\" argument.\n",
          sep = "")
+  }
+  if (vessel_type_select == "vessel") {
+    fishing_effort_sql <- sub(pattern = "\n\tAND bateau.c_typ_b IN (?vessel_type)",
+                                replacement = "",
+                                x = fishing_effort_sql,
+                                fixed = TRUE)
+  } else if (vessel_type_select == "vessel_accuracy") {
+    fishing_effort_sql <- sub(pattern = "\n\tAND activite.c_engin IN (?vessel_type)",
+                                replacement = "",
+                                x = fishing_effort_sql,
+                                fixed = TRUE)
   }
   fishing_effort_sql_final <- DBI::sqlInterpolate(conn = data_connection[[2]],
                                                   sql  = fishing_effort_sql,

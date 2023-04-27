@@ -13,7 +13,7 @@ FROM
 WHERE
 	EXTRACT(year FROM a.d_act) IN (?time_period)
 	AND b.c_pav_b  IN (?country)
---	AND a.c_engin IN (?vessel_type)
+	AND a.c_engin IN (?vessel_type)
 	AND b.c_typ_b IN (?vessel_type)
 	AND a.c_ocea IN (?ocean)
 ;

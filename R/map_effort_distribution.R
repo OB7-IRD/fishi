@@ -253,7 +253,7 @@ map_effort_distribution <- function(data_connection,
                    border = NA)
       text(82.5,
            -20,
-           paste(y.ref,
+           paste(50,
                  " d",
                  sep = ""),
            cex = .9)
@@ -318,7 +318,7 @@ map_effort_distribution <- function(data_connection,
                    border = NA)
       text(82.5,
            -20,
-           paste(y.ref,
+           paste(50,
                  " d",
                  sep = ""),
            cex = .9)
