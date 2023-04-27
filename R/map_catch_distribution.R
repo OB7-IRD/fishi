@@ -1,7 +1,7 @@
-#' @name map_catch_previous
-#' @title Map catch all previous year
+#' @name map_catch_distribution
+#' @title Map catch distribution
 #' @description Spatial distribution of tuna catches of the French purse seine fishing fleet.
-#' @param data_connection {\link[base]{list}} expected. Output of the function {\link[furdeb]{postgresql_dbconnection}}, which must be done before using the map_catch_previous() function.
+#' @param data_connection {\link[base]{list}} expected. Output of the function {\link[furdeb]{postgresql_dbconnection}}, which must be done before using the map_catch_distribution() function.
 #' @param time_period {\link[base]{integer}} expected. Period identification in year.
 #' @param country {\link[base]{integer}} expected. Country codes identification.
 #' @param vessel_type {\link[base]{integer}} expected. Vessel type codes identification.
@@ -21,14 +21,14 @@
 #' @importFrom scatterpie geom_scatterpie
 #' @importFrom rnaturalearth ne_countries
 #' @importFrom ggspatial coord_sf
-map_catch_previous <- function(data_connection,
-                               time_period,
-                               country = as.integer(x = 1),
-                               vessel_type = as.integer(x = 1),
-                               ocean = as.integer(x = 1),
-                               fishing_type = "ALL",
-                               graph_type = "plot",
-                               title = FALSE) {
+map_catch_distribution <- function(data_connection,
+                                   time_period,
+                                   country = as.integer(x = 1),
+                                   vessel_type = as.integer(x = 1),
+                                   ocean = as.integer(x = 1),
+                                   fishing_type = "ALL",
+                                   graph_type = "plot",
+                                   title = FALSE) {
   # 0 - Global variables assignement ----
   n_act <- NULL
   d_act <- NULL
@@ -337,8 +337,8 @@ map_catch_previous <- function(data_connection,
                               120,
                               20),
                      labels = paste(seq(30, 120, 20),
-                                   "E",
-                                   sep = ""),
+                                    "E",
+                                    sep = ""),
                      tick = TRUE)
       axis(2,
            at = seq(-40, 40, 10),
