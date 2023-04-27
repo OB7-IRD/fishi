@@ -5,6 +5,7 @@
 #' @param time_period {\link[base]{integer}} expected. Period identification in year.
 #' @param ocean {\link[base]{integer}} expected. Ocean codes identification.
 #' @param country {\link[base]{integer}} expected. Country codes identification. 1 by default.
+#' @param vessel_type_select {\link[base]{character}} expected. Vessel for c_engin or vessel_accuracy for c_typ_bat.
 #' @param vessel_type {\link[base]{integer}} expected. Vessel type codes identification. 1 by default.
 #' @param graph_type {\link[base]{character}} expected. plot, plotly or table. Plot by default.
 #' @param title TRUE or FALSE expected. False by default.
@@ -21,7 +22,8 @@ spatial_occupancy <- function(data_connection,
                               time_period,
                               ocean,
                               country = as.integer(x = 1),
-                              vessel_type = as.integer(x = 1),
+                              vessel_type_select = "vessel_accuracy",
+                              vessel_type = as.integer(x = c(4, 5, 6)),
                               graph_type = "plot",
                               title = FALSE) {
   # 0 - Global variables assignement ----
@@ -92,6 +94,17 @@ spatial_occupancy <- function(data_connection,
                 format = "%Y-%m-%d %H:%M:%S"),
          " - Indicator not developed yet for this \"data_connection\" argument.\n",
          sep = "")
+  }
+  if (vessel_type_select == "vessel") {
+    spatial_occupancy_sql <- sub(pattern = "\n\tAND b.c_typ_b IN (?vessel_type)",
+                                replacement = "",
+                                x = spatial_occupancy_sql,
+                                fixed = TRUE)
+  } else if (vessel_type_select == "vessel_accuracy") {
+    spatial_occupancy_sql <- sub(pattern = "\n\tAND a.c_engin IN (?vessel_type)",
+                                replacement = "",
+                                x = spatial_occupancy_sql,
+                                fixed = TRUE)
   }
   spatial_occupancy_sql_final <- DBI::sqlInterpolate(conn = data_connection[[2]],
                                                      sql  = spatial_occupancy_sql,
@@ -235,7 +248,7 @@ spatial_occupancy <- function(data_connection,
                     type = "b",
                     lty = 2,
                     pch = 17)
-    graphics::legend("bottomleft",
+    graphics::legend("topright",
                      legend = c("total",
                                 "With # sets > 1",
                                 "With catch > 0",

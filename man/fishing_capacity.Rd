@@ -9,7 +9,8 @@ fishing_capacity(
   time_period,
   ocean,
   country = as.integer(x = 1),
-  vessel_type = as.integer(x = 1),
+  vessel_type_select = "vessel_accuracy",
+  vessel_type = as.integer(x = c(4, 5, 6)),
   graph_type = "plot",
   figure = "vessel",
   title = FALSE
@@ -23,6 +24,8 @@ fishing_capacity(
 \item{ocean}{{\link[base]{integer}} expected. Ocean codes identification.}
 
 \item{country}{{\link[base]{integer}} expected. Country codes identification. 1 by default.}
+
+\item{vessel_type_select}{{\link[base]{character}} expected. Vessel for c_engin or vessel_accuracy for c_typ_bat.}
 
 \item{vessel_type}{{\link[base]{integer}} expected. Vessel type codes identification. 1 by default.}
 

@@ -37,13 +37,13 @@ fishery_production <- function(data_connection,
   fleet <- NULL
   flag <- NULL
   school_type <- NULL
-  yft <- NULL
-  skj <- NULL
-  bet <- NULL
-  alb <- NULL
-  oth <- NULL
-  dsc <- NULL
-  total_with_dsc <- NULL
+  YFT <- NULL
+  SKJ <- NULL
+  BET <- NULL
+  ALB <- NULL
+  OTH <- NULL
+  DSC <- NULL
+  total_with_DSC <- NULL
   total <- NULL
   count <- NULL
   specie <- NULL
@@ -131,19 +131,19 @@ fishery_production <- function(data_connection,
                                                  l4c_tban == "BL"  ~ "free",
                                                  l4c_tban == "BO"  ~ "log",
                                                  TRUE ~ "und"),
-                  yft = dplyr::case_when(c_esp == 1 ~ v_poids_capt * rf3,
+                  YFT = dplyr::case_when(c_esp == 1 ~ v_poids_capt * rf3,
                                          TRUE ~ 0),
-                  skj = dplyr::case_when(c_esp == 2 ~ v_poids_capt * rf3,
+                  SKJ = dplyr::case_when(c_esp == 2 ~ v_poids_capt * rf3,
                                          TRUE ~ 0),
-                  bet = dplyr::case_when(c_esp == 3 ~ v_poids_capt * rf3,
+                  BET = dplyr::case_when(c_esp == 3 ~ v_poids_capt * rf3,
                                          TRUE ~ 0),
-                  alb = dplyr::case_when(c_esp == 4 ~ v_poids_capt * rf3,
+                  ALB = dplyr::case_when(c_esp == 4 ~ v_poids_capt * rf3,
                                          TRUE ~ 0),
-                  dsc = dplyr::case_when(c_esp == 8 | (c_esp >= 800 & c_esp <= 899) ~ v_poids_capt * rf3,
+                  DSC = dplyr::case_when(c_esp == 8 | (c_esp >= 800 & c_esp <= 899) ~ v_poids_capt * rf3,
                                          TRUE ~ 0),
-                  oth = dplyr::case_when(c_esp == 1 | c_esp == 2 | c_esp == 3 | c_esp == 4 | c_esp == 8 | (c_esp >= 800 & c_esp <= 899) ~ 0,
+                  OTH = dplyr::case_when(c_esp == 1 | c_esp == 2 | c_esp == 3 | c_esp == 4 | c_esp == 8 | (c_esp >= 800 & c_esp <= 899) ~ 0,
                                          TRUE ~ v_poids_capt * rf3),
-                  total_with_dsc = v_poids_capt * rf3)
+                  total_with_DSC = v_poids_capt * rf3)
   # Sum columns species
   fishery_production_t2 <- fishery_production_t1 %>%
     dplyr::group_by(ocean_name,
@@ -152,24 +152,24 @@ fishery_production <- function(data_connection,
                     fleet,
                     flag,
                     school_type) %>%
-    dplyr::summarise(yft = sum(yft, na.rm = TRUE),
-                     skj = sum(skj, na.rm = TRUE),
-                     bet = sum(bet, na.rm = TRUE),
-                     alb = sum(alb, na.rm = TRUE),
-                     dsc = sum(dsc, na.rm = TRUE),
-                     oth = sum(oth, na.rm = TRUE),
-                     total = sum(total_with_dsc, na.rm = TRUE) - sum(dsc, na.rm = TRUE),
+    dplyr::summarise(YFT = sum(YFT, na.rm = TRUE),
+                     SKJ = sum(SKJ, na.rm = TRUE),
+                     BET = sum(BET, na.rm = TRUE),
+                     ALB = sum(ALB, na.rm = TRUE),
+                     DSC = sum(DSC, na.rm = TRUE),
+                     OTH = sum(OTH, na.rm = TRUE),
+                     total = sum(total_with_DSC, na.rm = TRUE) - sum(DSC, na.rm = TRUE),
                      .groups = "drop")
   if (fishing_type == "ALL") {
     ### Percentage of catches by species on all fishing mode
     # Group results by year
     table_catch_all <- fishery_production_t2 %>%
       dplyr::group_by(year) %>%
-      dplyr::summarise(yft = sum(yft, na.rm = TRUE),
-                       skj = sum(skj, na.rm = TRUE),
-                       bet = sum(bet, na.rm = TRUE),
-                       alb = sum(alb, na.rm = TRUE),
-                       oth = sum(oth, na.rm = TRUE),
+      dplyr::summarise(YFT = sum(YFT, na.rm = TRUE),
+                       SKJ = sum(SKJ, na.rm = TRUE),
+                       BET = sum(BET, na.rm = TRUE),
+                       ALB = sum(ALB, na.rm = TRUE),
+                       OTH = sum(OTH, na.rm = TRUE),
                        total = sum(total, na.rm = TRUE),
                        .groups = "drop")
   } else if (fishing_type == "FSC") {
@@ -178,11 +178,11 @@ fishery_production <- function(data_connection,
     table_catch_all <- fishery_production_t2 %>%
       dplyr::filter(school_type == "free") %>%
       dplyr::group_by(year) %>%
-      dplyr::summarise(yft = sum(yft, na.rm = TRUE),
-                       skj = sum(skj, na.rm = TRUE),
-                       bet = sum(bet, na.rm = TRUE),
-                       alb = sum(alb, na.rm = TRUE),
-                       oth = sum(oth, na.rm = TRUE),
+      dplyr::summarise(YFT = sum(YFT, na.rm = TRUE),
+                       SKJ = sum(SKJ, na.rm = TRUE),
+                       BET = sum(BET, na.rm = TRUE),
+                       ALB = sum(ALB, na.rm = TRUE),
+                       OTH = sum(OTH, na.rm = TRUE),
                        total = sum(total, na.rm = TRUE),
                        .groups = "drop")
   } else if (fishing_type == "FOB") {
@@ -191,11 +191,11 @@ fishery_production <- function(data_connection,
     table_catch_all <- fishery_production_t2 %>%
       dplyr::filter(school_type == "log") %>%
       dplyr::group_by(year) %>%
-      dplyr::summarise(yft = sum(yft, na.rm = TRUE),
-                       skj = sum(skj, na.rm = TRUE),
-                       bet = sum(bet, na.rm = TRUE),
-                       alb = sum(alb, na.rm = TRUE),
-                       oth = sum(oth, na.rm = TRUE),
+      dplyr::summarise(YFT = sum(YFT, na.rm = TRUE),
+                       SKJ = sum(SKJ, na.rm = TRUE),
+                       BET = sum(BET, na.rm = TRUE),
+                       ALB = sum(ALB, na.rm = TRUE),
+                       OTH = sum(OTH, na.rm = TRUE),
                        total = sum(total, na.rm = TRUE),
                        .groups = "drop")
   }
@@ -221,7 +221,7 @@ fishery_production <- function(data_connection,
       plotrix::stackpoly(x = matrix(table_catch_all$year,
                                     nrow = length(table_catch_all$year),
                                     ncol = 3),
-                         y = table_catch_all[, c("yft", "skj", "bet")] / 1000,
+                         y = table_catch_all[, c("YFT", "SKJ", "BET")] / 1000,
                          stack = TRUE,
                          cex.axis = 1.3,
                          cex.lab = 1.3,
@@ -241,7 +241,7 @@ fishery_production <- function(data_connection,
       plotrix::stackpoly(x = matrix(table_catch_all$year,
                                     nrow = length(table_catch_all$year),
                                     ncol = 3),
-                         y = table_catch_all[, c("yft", "skj", "bet")] / 1000,
+                         y = table_catch_all[, c("YFT", "SKJ", "BET")] / 1000,
                          stack = TRUE,
                          cex.axis = 1.3,
                          cex.lab = 1.3,
@@ -263,9 +263,9 @@ fishery_production <- function(data_connection,
                      col = "lightgrey",
                      lty = 2)
     graphics::legend("topright",
-                     legend = c("bet",
-                                "skj",
-                                "yft"),
+                     legend = c("BET",
+                                "SKJ",
+                                "YFT"),
                      bty = "n",
                      fill = c("khaki1",
                               "firebrick2",
@@ -305,7 +305,7 @@ fishery_production <- function(data_connection,
     if (title == TRUE) {
       plotly_graph <- plotly_graph %>%
         plotly::layout(title = list(text = paste0("Fishery production by ", fishing_type, " fishing mode. Catch by species of the ", country_legend, " ", vessel_type_legend, " fishing",
-                                                 "\n", "fleet during ", min(time_period), "-", max(time_period), ", in the ", ocean_legend, " ocean."),
+                                                  "\n", "fleet during ", min(time_period), "-", max(time_period), ", in the ", ocean_legend, " ocean."),
                                     font = list(size = 17)),
                        margin = list(t = 120))
 
@@ -320,21 +320,21 @@ fishery_production <- function(data_connection,
     table_catch_all <- round(table_catch_all, 0)
     table_catch_all <- table_catch_all %>%
       dplyr::summarise(Year = year,
-                       YFT = yft,
-                       SKJ = skj,
-                       BET = bet,
-                       ALB = alb,
-                       OTH = oth,
+                       YFT = YFT,
+                       SKJ = SKJ,
+                       BET = BET,
+                       ALB = ALB,
+                       OTH = OTH,
                        TOTAL = total)
     as.data.frame(table_catch_all)
   } else if (graph_type == "percentage") {
     table_catch_all <- table_catch_all %>%
       dplyr::summarise(Year = year,
-                       YFT = yft / total * 100,
-                       SKJ = skj / total * 100,
-                       BET = bet / total * 100,
-                       ALB = alb / total * 100,
-                       OTH = oth / total * 100,
+                       YFT = YFT / total * 100,
+                       SKJ = SKJ / total * 100,
+                       BET = BET / total * 100,
+                       ALB = ALB / total * 100,
+                       OTH = OTH / total * 100,
                        TOTAL = total)
     table_catch_all <- round(table_catch_all, 1)
     table_catch_all$TOTAL <- round(table_catch_all$TOTAL, 0)

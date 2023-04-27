@@ -5,6 +5,7 @@
 #' @param time_period {\link[base]{integer}} expected. Period identification in year.
 #' @param ocean {\link[base]{integer}} expected. Ocean codes identification.
 #' @param country {\link[base]{integer}} expected. Country codes identification. 1 by default.
+#' @param vessel_type_select {\link[base]{character}} expected. Vessel for c_engin or vessel_accuracy for c_typ_bat.
 #' @param vessel_type {\link[base]{integer}} expected. Vessel type codes identification. 1 by default.
 #' @param graph_type {\link[base]{character}} expected. plot, plotly or table. Plot by default.
 #' @param figure {\link[base]{character}} expected. vessel (for number of vessels graph) or capacity (for carrying capacity graph). Vessel by default.
@@ -25,7 +26,8 @@ fishing_capacity <- function(data_connection,
                              time_period,
                              ocean,
                              country = as.integer(x = 1),
-                             vessel_type = as.integer(x = 1),
+                             vessel_type_select = "vessel_accuracy",
+                             vessel_type = as.integer(x = c(4, 5, 6)),
                              graph_type = "plot",
                              figure = "vessel",
                              title = FALSE) {
@@ -103,6 +105,17 @@ fishing_capacity <- function(data_connection,
          " - Indicator not developed yet for this \"data_connection\" argument.\n",
          sep = "")
   }
+  if (vessel_type_select == "vessel") {
+    fishing_capacity_sql <- sub(pattern = "\n\tand b.c_typ_b in (?vessel_type)",
+                                replacement = "",
+                                x = fishing_capacity_sql,
+                                fixed = TRUE)
+  } else if (vessel_type_select == "vessel_accuracy") {
+    fishing_capacity_sql <- sub(pattern = "\n\tAND a.c_engin IN (?vessel_type)",
+                                replacement = "",
+                                x = fishing_capacity_sql,
+                                fixed = TRUE)
+  }
   fishing_capacity_sql_final <- DBI::sqlInterpolate(conn        = data_connection[[2]],
                                                     sql         = fishing_capacity_sql,
                                                     time_period = DBI::SQL(paste(time_period,
@@ -114,7 +127,7 @@ fishing_capacity <- function(data_connection,
                                                     ocean       = DBI::SQL(paste(ocean,
                                                                                  collapse = ", ")))
   fishing_capacity_final <- dplyr::tibble(DBI::dbGetQuery(conn      = data_connection[[2]],
-                                                         statement = fishing_capacity_sql_final))
+                                                          statement = fishing_capacity_sql_final))
   # 3 - Data design ----
   #  Add columns catches in tonnes and catches in tonnes per month
   fishing_capacity_t1 <- fishing_capacity_final %>%
@@ -207,9 +220,7 @@ fishing_capacity <- function(data_connection,
                                       las = 1,
                                       xaxt = "n",
                                       col = RColorBrewer::brewer.pal(5,
-                                                                     "Greys"),
-                                      xlim = c(0,
-                                               37.6))
+                                                                     "Greys"))
     } else {
       barvessels <- graphics::barplot(t(fishing_capacity_data[, 2:6]),
                                       xlab = "",
@@ -222,9 +233,7 @@ fishing_capacity <- function(data_connection,
                                       las = 1,
                                       xaxt = "n",
                                       col = RColorBrewer::brewer.pal(5,
-                                                                     "Greys"),
-                                      xlim = c(0,
-                                               37.6))
+                                                                     "Greys"))
     }
     graphics::axis(1,
                    at = barvessels,
@@ -263,7 +272,7 @@ fishing_capacity <- function(data_connection,
          yaxs = "i",
          xlim = c(0, 37.6))
     graphics::axis(4,
-                   at = seq(0, 20 ,5),
+                   at = seq(0, 20, 5),
                    tick = TRUE,
                    labels = TRUE,
                    las = 1,
