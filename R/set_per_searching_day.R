@@ -90,29 +90,13 @@ set_per_searching_day <- function(data_connection,
                                    output = "message"))
   }
   # 2 - Data extraction ----
-  if (data_connection[[1]] == "balbaya") {
-    time_serie_catch_nb_set_sql <- paste(readLines(con = system.file("sql",
-                                                                     "balbaya_fishing_activity.sql",
-                                                                     package = "fishi")),
-                                         collapse = "\n")
-  } else {
-    stop(format(x = Sys.time(),
-                format = "%Y-%m-%d %H:%M:%S"),
-         " - Indicator not developed yet for this \"data_connection\" argument.\n",
-         sep = "")
-  }
-  annual_catch_rate_nb_set <- DBI::sqlInterpolate(conn = data_connection[[2]],
-                                                  sql  = time_serie_catch_nb_set_sql,
-                                                  time_period = DBI::SQL(paste(time_period,
-                                                                               collapse = ", ")),
-                                                  country     = DBI::SQL(paste(country,
-                                                                               collapse = ", ")),
-                                                  vessel_type = DBI::SQL(paste(vessel_type,
-                                                                               collapse = ", ")),
-                                                  ocean = DBI::SQL(paste(ocean,
-                                                                         collapse = ", ")))
-  time_serie_catch_nb_set_data <- dplyr::tibble(DBI::dbGetQuery(conn      = data_connection[[2]],
-                                                                statement = annual_catch_rate_nb_set))
+  time_serie_catch_nb_set_data <- data_extraction(type = "database",
+                                         data_connection = data_connection,
+                                         sql_name = "balbaya_fishing_activity.sql",
+                                         time_period = time_period,
+                                         country = country,
+                                         vessel_type = vessel_type,
+                                         ocean = ocean)
   # 3 - Data design ----
   time_serie_catch_nb_set_data <-  time_serie_catch_nb_set_data %>%
     dplyr::mutate(year = lubridate::year(x = activity_date))

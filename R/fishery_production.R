@@ -100,29 +100,13 @@ fishery_production <- function(data_connection,
                                    output = "message"))
   }
   # 2 - Data extraction ----
-  if (data_connection[[1]] == "balbaya") {
-    fishery_production_sql <- paste(readLines(con = system.file("sql",
-                                                                "balbaya_fishery_production.sql",
-                                                                package = "fishi")),
-                                    collapse = "\n")
-  } else {
-    stop(format(x = Sys.time(),
-                format = "%Y-%m-%d %H:%M:%S"),
-         " - Indicator not developed yet for this \"data_connection\" argument.\n",
-         sep = "")
-  }
-  fishery_production_sql_final <- DBI::sqlInterpolate(conn = data_connection[[2]],
-                                                      sql  = fishery_production_sql,
-                                                      time_period = DBI::SQL(paste(time_period,
-                                                                                   collapse = ", ")),
-                                                      country     = DBI::SQL(paste(country,
-                                                                                   collapse = ", ")),
-                                                      vessel_type = DBI::SQL(paste(vessel_type,
-                                                                                   collapse = ", ")),
-                                                      ocean = DBI::SQL(paste(ocean,
-                                                                             collapse = ", ")))
-  fishery_production_data <- dplyr::tibble(DBI::dbGetQuery(conn      = data_connection[[2]],
-                                                           statement = fishery_production_sql_final))
+  fishery_production_data <- data_extraction(type = "database",
+                                            data_connection = data_connection,
+                                            sql_name = "balbaya_fishery_production.sql",
+                                            time_period = time_period,
+                                            country = country,
+                                            vessel_type = vessel_type,
+                                            ocean = ocean)
   # 3 - Data design ----
   # Add columns year, school type and species
   fishery_production_t1 <- fishery_production_data %>%

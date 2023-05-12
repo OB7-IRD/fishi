@@ -96,29 +96,13 @@ map_catch_distribution <- function(data_connection,
                                    output = "message"))
   }
   # 2 - Data extraction ----
-  if (data_connection[[1]] == "balbaya") {
-    map_catch_previous_sql <- paste(readLines(con = system.file("sql",
-                                                                "balbaya_map_catch_previous.sql",
-                                                                package = "fishi")),
-                                    collapse = "\n")
-  } else {
-    stop(format(x = Sys.time(),
-                format = "%Y-%m-%d %H:%M:%S"),
-         " - Indicator not developed yet for this \"data_connection\" argument.\n",
-         sep = "")
-  }
-  map_catch_previous_sql_final <- DBI::sqlInterpolate(conn        = data_connection[[2]],
-                                                      sql         = map_catch_previous_sql,
-                                                      time_period = DBI::SQL(paste(time_period,
-                                                                                   collapse = ", ")),
-                                                      country     = DBI::SQL(paste(country,
-                                                                                   collapse = ", ")),
-                                                      vessel_type = DBI::SQL(paste(vessel_type,
-                                                                                   collapse = ", ")),
-                                                      ocean       = DBI::SQL(paste(ocean,
-                                                                                   collapse = ", ")))
-  map_catch_previous_sql_final <- dplyr::tibble(DBI::dbGetQuery(conn      = data_connection[[2]],
-                                                                statement = map_catch_previous_sql_final))
+  map_catch_previous_sql_final <- data_extraction(type = "database",
+                                             data_connection = data_connection,
+                                             sql_name = "balbaya_map_catch_previous.sql",
+                                             time_period = time_period,
+                                             country = country,
+                                             vessel_type = vessel_type,
+                                             ocean = ocean)
   # 3 - Data design ----
   t1 <- map_catch_previous_sql_final %>%
     dplyr::group_by(n_act,

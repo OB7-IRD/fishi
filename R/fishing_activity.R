@@ -91,29 +91,13 @@ fishing_activity <- function(data_connection,
                                    output = "message"))
   }
   # 2 - Data extraction ----
-  if (data_connection[[1]] == "balbaya") {
-    fishing_activity_sql <- paste(readLines(con = system.file("sql",
-                                                              "balbaya_fishing_activity.sql",
-                                                              package = "fishi")),
-                                  collapse = "\n")
-  } else {
-    stop(format(x = Sys.time(),
-                format = "%Y-%m-%d %H:%M:%S"),
-         " - Indicator not developed yet for this \"data_connection\" argument.\n",
-         sep = "")
-  }
-  fishing_activity_sql_final <- DBI::sqlInterpolate(conn = data_connection[[2]],
-                                                    sql  = fishing_activity_sql,
-                                                    time_period = DBI::SQL(paste(time_period,
-                                                                                 collapse = ", ")),
-                                                    country     = DBI::SQL(paste(country,
-                                                                                 collapse = ", ")),
-                                                    vessel_type = DBI::SQL(paste(vessel_type,
-                                                                                 collapse = ", ")),
-                                                    ocean = DBI::SQL(paste(ocean,
-                                                                           collapse = ", ")))
-  fishing_activity_data <- dplyr::tibble(DBI::dbGetQuery(conn      = data_connection[[2]],
-                                                         statement = fishing_activity_sql_final))
+  fishing_activity_data <- data_extraction(type = "database",
+                                             data_connection = data_connection,
+                                             sql_name = "balbaya_fishing_activity.sql",
+                                             time_period = time_period,
+                                             country = country,
+                                             vessel_type = vessel_type,
+                                             ocean = ocean)
   # 3 - Data design ----
   fishing_activity_t1 <- fishing_activity_data %>%
     dplyr::mutate(year = lubridate::year(x = activity_date))

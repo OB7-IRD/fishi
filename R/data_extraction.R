@@ -39,22 +39,38 @@ data_extraction <- function(type,
                                                           sql_name,
                                                           package = "fishi")),
                               collapse = "\n")
+    } else if (data_connection[[1]] == "sardara") {
+      extraction_sql <- paste(readLines(con = system.file("sql",
+                                                             sql_name,
+                                                             package = "fishi")),
+                                 collapse = "\n")
     } else {
       stop(format(x = Sys.time(),
                   format = "%Y-%m-%d %H:%M:%S"),
            " - Indicator not developed yet for this \"data_connection\" argument.\n",
            sep = "")
     }
-    extraction_sql_final <- DBI::sqlInterpolate(conn        = data_connection[[2]],
-                                                sql         = extraction_sql,
-                                                time_period = DBI::SQL(paste(time_period,
-                                                                             collapse = ", ")),
-                                                country     = DBI::SQL(paste(country,
-                                                                             collapse = ", ")),
-                                                vessel_type = DBI::SQL(paste(vessel_type,
-                                                                             collapse = ", ")),
-                                                ocean       = DBI::SQL(paste(ocean,
-                                                                             collapse = ", ")))
+    if (data_connection[[1]] == "sardara") {
+      extraction_sql_final <- DBI::sqlInterpolate(conn        = data_connection[[2]],
+                                                  sql         = extraction_sql,
+                                                  time_period = DBI::SQL(paste(time_period,
+                                                                               collapse = ", ")),
+                                                  country     = DBI::SQL(paste(country,
+                                                                               collapse = ", ")),
+                                                  ocean       = DBI::SQL(paste(ocean,
+                                                                               collapse = ", ")))
+    } else {
+      extraction_sql_final <- DBI::sqlInterpolate(conn        = data_connection[[2]],
+                                                  sql         = extraction_sql,
+                                                  time_period = DBI::SQL(paste(time_period,
+                                                                               collapse = ", ")),
+                                                  country     = DBI::SQL(paste(country,
+                                                                               collapse = ", ")),
+                                                  vessel_type = DBI::SQL(paste(vessel_type,
+                                                                               collapse = ", ")),
+                                                  ocean       = DBI::SQL(paste(ocean,
+                                                                               collapse = ", ")))
+      }
     database <- dplyr::tibble(DBI::dbGetQuery(conn      = data_connection[[2]],
                                               statement = extraction_sql_final))
 
