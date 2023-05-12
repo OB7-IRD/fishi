@@ -164,7 +164,7 @@ catch_per_searching_day <- function(data_connection,
   table_cpue_fad_set <- merge(t0, t1, by = "year")
   #final table
   table_cpue_fad_set <- table_cpue_fad_set %>%
-    dplyr::summarise(year = year,
+    dplyr::reframe(year = year,
                      yft = (yft / nb_sets_pos),
                      skj = (skj / nb_sets_pos),
                      bet = (bet / nb_sets_pos),
@@ -200,7 +200,7 @@ catch_per_searching_day <- function(data_connection,
   table_cpue_fsc_set <- merge(t2, t3, by = "year")
   #final table
   table_cpue_fsc_set <- table_cpue_fsc_set %>%
-    dplyr::summarise(year = year,
+    dplyr::reframe(year = year,
                      yft = (yft / nb_sets_pos),
                      skj = (skj / nb_sets_pos),
                      bet = (bet / nb_sets_pos),

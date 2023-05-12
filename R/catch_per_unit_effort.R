@@ -143,22 +143,22 @@ catch_per_unit_effort <- function(data_connection,
   #Creation of t1 database from annual_catch_rate_nb_set_data
   t1 <- annual_catch_rate_data %>%
     dplyr::group_by(year) %>%
-    dplyr::summarise(yft = sum(dplyr::case_when(c_tban == 1 & c_esp == 1 ~ v_poids_capt, #OK
+    dplyr::summarise(yft = sum(dplyr::case_when(c_tban == 1 & c_esp == 1 ~ v_poids_capt,
                                             TRUE ~ 0), na.rm = TRUE),
-                     skj = sum(dplyr::case_when(c_tban == 1 & c_esp == 2 ~ v_poids_capt, #OK
+                     skj = sum(dplyr::case_when(c_tban == 1 & c_esp == 2 ~ v_poids_capt,
                                             TRUE ~ 0), na.rm = TRUE),
-                     bet = sum(dplyr::case_when(c_tban == 1 & c_esp == 3 ~ v_poids_capt, #OK
+                     bet = sum(dplyr::case_when(c_tban == 1 & c_esp == 3 ~ v_poids_capt,
                                             TRUE ~ 0), na.rm = TRUE),
-                     alb = sum(dplyr::case_when(c_tban == 1 & c_esp == 4 ~ v_poids_capt, #OK
+                     alb = sum(dplyr::case_when(c_tban == 1 & c_esp == 4 ~ v_poids_capt,
                                             TRUE ~ 0), na.rm = TRUE),
-                     total = sum(dplyr::case_when(c_tban == 1 ~ v_poids_capt, #OK
+                     total = sum(dplyr::case_when(c_tban == 1 ~ v_poids_capt,
                                               TRUE ~ 0), na.rm = TRUE),
                      .groups = "drop")
   #merge t0 and t1
   table_cpue_fad <- merge(t0, t1, by = "year")
   #final table
   table_cpue_fad <- table_cpue_fad %>%
-    dplyr::summarise(year = year,
+    dplyr::reframe(year = year,
                      yft = (yft / (t_recherche / 12)),
                      skj = (skj / (t_recherche / 12)),
                      bet = (bet / (t_recherche / 12)),
@@ -190,7 +190,7 @@ catch_per_unit_effort <- function(data_connection,
   table_cpue_fsc <- merge(t2, t3, by = "year")
   #final table
   table_cpue_fsc <- table_cpue_fsc %>%
-    dplyr::summarise(year = year,
+    dplyr::reframe(year = year,
                      yft = (yft / (t_recherche / 12)),
                      skj = (skj / (t_recherche / 12)),
                      bet = (bet / (t_recherche / 12)),

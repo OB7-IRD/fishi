@@ -164,13 +164,12 @@ fishing_effort <- function(data_connection,
                     v_tmer,
                     v_tpec,
                     v_dur_cal) %>%
-    dplyr::summarise(nb_landings_in_activity_year = nb_landings_in_activity_year,
-                     nb_days = nb_days,
-                     .groups = "drop")
+    dplyr::reframe(nb_landings_in_activity_year = nb_landings_in_activity_year,
+                     nb_days = nb_days)
   #Adding columns by years (daysatsea, fishingdays, ...)
   fishing_effort_t3 <- fishing_effort_t2b %>%
     dplyr::group_by(year) %>%
-    dplyr::summarise("days_at_sea" = round(sum(v_tmer / 24,
+    dplyr::reframe("days_at_sea" = round(sum(v_tmer / 24,
                                                na.rm = TRUE)),
                      "nb_landings_in_activity_year" = sum(nb_landings_in_activity_year, na.rm = TRUE),
                      "average_nb_days_by_trip" = mean(nb_days, 0),
@@ -188,11 +187,9 @@ fishing_effort <- function(data_connection,
                                                     yes = round(sum((v_tpec - v_dur_cal) / 12,
 
                                                                     na.rm = TRUE)),
-                                                    no = round(sum((v_tpec - v_dur_cal) / 13, na.rm = TRUE))),
-                     .groups = "drop")
+                                                    no = round(sum((v_tpec - v_dur_cal) / 13, na.rm = TRUE))))
 
   #remove duplicates
-
   fishing_effort_t4 <- unique(fishing_effort_t3[, c("year",
                                                     "nb_landings_in_activity_year",
                                                     "average_nb_days_by_trip",

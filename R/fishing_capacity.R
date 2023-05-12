@@ -132,11 +132,11 @@ fishing_capacity <- function(data_connection,
   #  Add columns catches in tonnes and catches in tonnes per month
   fishing_capacity_t1 <- fishing_capacity_final %>%
     dplyr::group_by(c_quille) %>%
-    dplyr::summarise(year = lubridate::year(x = activity_date),
+    dplyr::reframe(year = lubridate::year(x = activity_date),
                      month = lubridate::month(x = activity_date),
                      tons_month = (catch * 0.7) / 12,
-                     tons = catch * 0.7,
-                     .groups = "drop")
+                     tons = catch * 0.7)
+
   # Remove duplicates
   fishing_capacity_t1 <- unique(fishing_capacity_t1[, c("year",
                                                         "month",
@@ -149,15 +149,14 @@ fishing_capacity <- function(data_connection,
                     c_quille,
                     tons,
                     tons_month) %>%
-    dplyr::summarise("cc" = sum(tons_month,
+    dplyr::reframe("cc" = sum(tons_month,
                                 na.rm = TRUE),
                      "c_quille_nb_months" = dplyr::n_distinct(month,
-                                                              na.rm = TRUE),
-                     .groups = "drop")
+                                                              na.rm = TRUE))
   # Number of ships per category
   fishing_capacity_t3 <- fishing_capacity_t2 %>%
     dplyr::group_by(year) %>%
-    dplyr::summarise("50-400" = sum(tons > 50 & tons <= 400, na.rm = TRUE),
+    dplyr::reframe("50-400" = sum(tons > 50 & tons <= 400, na.rm = TRUE),
                      "401-600" = sum(tons > 401 & tons <= 600, na.rm = TRUE),
                      "601-800" = sum(tons > 601 & tons <= 800, na.rm = TRUE),
                      "801-1200" = sum(tons > 801 & tons <= 1200, na.rm = TRUE),
@@ -165,8 +164,7 @@ fishing_capacity <- function(data_connection,
                      "> 2000" = sum(tons > 2000, na.rm = TRUE),
                      "Nb_vessels" = dplyr::n_distinct(c_quille, na.rm = TRUE),
                      "Nb_vessels_weighted" = sum(c_quille_nb_months / 12, na.rm = TRUE),
-                     "CC" = sum(cc, na.rm = TRUE),
-                     .groups = "drop")
+                     "CC" = sum(cc, na.rm = TRUE))
   fishing_capacity_data <- fishing_capacity_t3 %>%
     dplyr::mutate("fishing_capacity" = CC / 1000)
   # Pivot wider for ggplot
@@ -269,8 +267,8 @@ fishing_capacity <- function(data_connection,
          xlab = "",
          ylab = "",
          ylim = c(0, max(fishing_capacity_data$CC / 1000) * 1.1),
-         yaxs = "i",
-         xlim = c(0, 37.6))
+         #xlim = c(0, 37.6),
+         yaxs = "i")
     graphics::axis(4,
                    at = seq(0, 20, 5),
                    tick = TRUE,
