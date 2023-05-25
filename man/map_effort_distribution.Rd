@@ -10,6 +10,7 @@ map_effort_distribution(
   country = as.integer(x = c(1, 41)),
   vessel_type = as.integer(x = 1),
   ocean = as.integer(x = 1),
+  vessel_type_select = "engin",
   graph_type = "plot",
   title = FALSE
 )
@@ -24,6 +25,8 @@ map_effort_distribution(
 \item{vessel_type}{{\link[base]{integer}} expected. Vessel type codes identification.}
 
 \item{ocean}{{\link[base]{integer}} expected. Ocean codes identification.}
+
+\item{vessel_type_select}{{\link[base]{character}} expected. engin or vessel_type.}
 
 \item{graph_type}{{\link[base]{character}} expected. plot or plotly. Plot by default.}
 

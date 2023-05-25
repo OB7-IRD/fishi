@@ -13,6 +13,7 @@ data_extraction(
   time_period = NULL,
   country = NULL,
   vessel_type = NULL,
+  vessel_type_select = NULL,
   ocean = NULL
 )
 }
@@ -32,6 +33,8 @@ data_extraction(
 \item{country}{{\link[base]{integer}} expected. Country codes identification.}
 
 \item{vessel_type}{{\link[base]{integer}} expected. Vessel type codes identification.}
+
+\item{vessel_type_select}{{\link[base]{character}} expected. engin or vessel_type.}
 
 \item{ocean}{{\link[base]{integer}} expected. Ocean codes identification.}
 }

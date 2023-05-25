@@ -22,7 +22,7 @@ spatial_occupancy <- function(data_connection,
                               time_period,
                               ocean,
                               country = as.integer(x = 1),
-                              vessel_type_select = "vessel_accuracy",
+                              vessel_type_select = "vessel_type",
                               vessel_type = as.integer(x = c(4, 5, 6)),
                               graph_type = "plot",
                               title = FALSE) {
@@ -84,40 +84,14 @@ spatial_occupancy <- function(data_connection,
                                    output = "message"))
   }
   # 2 - Data extraction ----
-  if (data_connection[[1]] == "balbaya") {
-    spatial_occupancy_sql <- paste(readLines(con = system.file("sql",
-                                                               "balbaya_spatial_occupancy.sql",
-                                                               package = "fishi")),
-                                   collapse = "\n")
-  } else {
-    stop(format(x = Sys.time(),
-                format = "%Y-%m-%d %H:%M:%S"),
-         " - Indicator not developed yet for this \"data_connection\" argument.\n",
-         sep = "")
-  }
-  if (vessel_type_select == "vessel") {
-    spatial_occupancy_sql <- sub(pattern = "\n\tAND b.c_typ_b IN (?vessel_type)",
-                                replacement = "",
-                                x = spatial_occupancy_sql,
-                                fixed = TRUE)
-  } else if (vessel_type_select == "vessel_accuracy") {
-    spatial_occupancy_sql <- sub(pattern = "\n\tAND a.c_engin IN (?vessel_type)",
-                                replacement = "",
-                                x = spatial_occupancy_sql,
-                                fixed = TRUE)
-  }
-  spatial_occupancy_sql_final <- DBI::sqlInterpolate(conn = data_connection[[2]],
-                                                     sql  = spatial_occupancy_sql,
-                                                     time_period = DBI::SQL(paste(time_period,
-                                                                                  collapse = ", ")),
-                                                     country     = DBI::SQL(paste(country,
-                                                                                  collapse = ", ")),
-                                                     vessel_type = DBI::SQL(paste(vessel_type,
-                                                                                  collapse = ", ")),
-                                                     ocean = DBI::SQL(paste(ocean,
-                                                                            collapse = ", ")))
-  spatial_occupancy_data <- dplyr::tibble(DBI::dbGetQuery(conn      = data_connection[[2]],
-                                                          statement = spatial_occupancy_sql_final))
+  spatial_occupancy_data <- data_extraction(type = "database",
+                                            data_connection = data_connection,
+                                            sql_name = "balbaya_spatial_occupancy.sql",
+                                            time_period = time_period,
+                                            country = country,
+                                            vessel_type = vessel_type,
+                                            vessel_type_select = vessel_type_select,
+                                            ocean = ocean)
   # 3 - Data design ----
   spatial_occupancy_t1 <- spatial_occupancy_data %>%
     dplyr::mutate(year = lubridate::year(x = activity_date))

@@ -25,6 +25,6 @@
 		WHERE
 			EXTRACT(year FROM a.d_act) IN (?time_period)
 			AND o.c_ocea IN (?ocean)
-			AND e.c_engin IN (?vessel_type)
+			AND e.c_engin IN (?engin)
 			AND p.c_pav_b IN (?country)
 ;

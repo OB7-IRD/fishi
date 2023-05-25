@@ -5,6 +5,7 @@
 #' @param time_period {\link[base]{integer}} expected. Period identification in year.
 #' @param country {\link[base]{integer}} expected. Country codes identification.
 #' @param vessel_type {\link[base]{integer}} expected. Vessel type codes identification.
+#' @param vessel_type_select {\link[base]{character}} expected. engin or vessel_type.
 #' @param ocean {\link[base]{integer}} expected. Ocean codes identification.
 #' @param fishing_type {\link[base]{character}} expected. FOB or FSC.
 #' @param graph_type {\link[base]{character}} expected. plot, plotly or table. Plot by default.
@@ -25,6 +26,7 @@ catch_per_unit_effort <- function(data_connection,
                                   vessel_type = as.integer(x = 1),
                                   ocean = as.integer(x = 1),
                                   fishing_type,
+                                  vessel_type_select = "engin",
                                   graph_type = "plot",
                                   title = FALSE) {
   # 0 - Global variables assignement ----
@@ -96,6 +98,7 @@ catch_per_unit_effort <- function(data_connection,
                                             time_period = time_period,
                                             country = country,
                                             vessel_type = vessel_type,
+                                            vessel_type_select = vessel_type_select,
                                             ocean = ocean)
   annual_catch_rate_nb_set_data <- data_extraction(type = "database",
                                                    data_connection = data_connection,
@@ -103,6 +106,7 @@ catch_per_unit_effort <- function(data_connection,
                                                    time_period = time_period,
                                                    country = country,
                                                    vessel_type = vessel_type,
+                                                   vessel_type_select = vessel_type_select,
                                                    ocean = ocean)
   # 3.a - Data design for FOB----
   annual_catch_rate_nb_set_data <-  annual_catch_rate_nb_set_data %>%

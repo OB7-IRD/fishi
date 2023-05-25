@@ -5,6 +5,7 @@
 #' @param time_period {\link[base]{integer}} expected. Period identification in year.
 #' @param country {\link[base]{integer}} expected. Country codes identification.
 #' @param vessel_type {\link[base]{integer}} expected. Vessel type codes identification.
+#' @param vessel_type_select {\link[base]{character}} expected. engin or vessel_type.
 #' @param ocean {\link[base]{integer}} expected. Ocean codes identification.
 #' @param fishing_type {\link[base]{character}} expected. FOB, FSC or ALL. ALL by default.
 #' @param graph_type {\link[base]{character}} expected. plot or plotly. Plot by default.
@@ -26,6 +27,7 @@ map_catch_distribution <- function(data_connection,
                                    country = as.integer(x = 1),
                                    vessel_type = as.integer(x = 1),
                                    ocean = as.integer(x = 1),
+                                   vessel_type_select = "engin",
                                    fishing_type = "ALL",
                                    graph_type = "plot",
                                    title = FALSE) {
@@ -102,6 +104,7 @@ map_catch_distribution <- function(data_connection,
                                              time_period = time_period,
                                              country = country,
                                              vessel_type = vessel_type,
+                                             vessel_type_select = vessel_type_select,
                                              ocean = ocean)
   # 3 - Data design ----
   t1 <- map_catch_previous_sql_final %>%

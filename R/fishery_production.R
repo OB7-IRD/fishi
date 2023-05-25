@@ -6,6 +6,7 @@
 #' @param ocean {\link[base]{integer}} expected. Ocean codes identification.
 #' @param country {\link[base]{integer}} expected. Country codes identification. 1 by default.
 #' @param vessel_type {\link[base]{integer}} expected. Vessel type codes identification. 1 by default.
+#' @param vessel_type_select {\link[base]{character}} expected. engin or vessel_type.
 #' @param fishing_type  {\link[base]{character}} expected. FSC, FOB or ALL.
 #' @param graph_type {\link[base]{character}} expected. plot, plotly, table or percentage. Plot by default.
 #' @param title TRUE or FALSE expected. False by default.
@@ -25,6 +26,7 @@ fishery_production <- function(data_connection,
                                ocean,
                                country = as.integer(x = 1),
                                vessel_type = as.integer(x = 1),
+                               vessel_type_select = "engin",
                                fishing_type = "ALL",
                                graph_type = "plot",
                                title = FALSE) {
@@ -106,6 +108,7 @@ fishery_production <- function(data_connection,
                                             time_period = time_period,
                                             country = country,
                                             vessel_type = vessel_type,
+                                            vessel_type_select = vessel_type_select,
                                             ocean = ocean)
   # 3 - Data design ----
   # Add columns year, school type and species

@@ -7,6 +7,7 @@
 #' @param fishing_type {\link[base]{character}} expected. FOB and FSC.
 #' @param country {\link[base]{integer}} expected. Country codes identification. 1 by default.
 #' @param vessel_type {\link[base]{integer}} expected. Vessel type codes identification. 1 by default.
+#' @param vessel_type_select {\link[base]{character}} expected. engin or vessel_type.
 #' @param graph_type {\link[base]{character}} expected. plot, plotly or table. Plot by default.
 #' @param title TRUE or FALSE expected. False by default.
 #' @return The function return ggplot R plot.
@@ -24,6 +25,7 @@ catch_per_searching_day <- function(data_connection,
                                fishing_type,
                                country = as.integer(x = 1),
                                vessel_type = as.integer(x = 1),
+                               vessel_type_select = "engin",
                                graph_type = "plot",
                                title = FALSE) {
   # 0 - Global variables assignement ----
@@ -96,6 +98,7 @@ catch_per_searching_day <- function(data_connection,
                                            time_period = time_period,
                                            country = country,
                                            vessel_type = vessel_type,
+                                           vessel_type_select = vessel_type_select,
                                            ocean = ocean)
   time_serie_catch_nb_set_data <- data_extraction(type = "database",
                                                   data_connection = data_connection,
@@ -103,6 +106,7 @@ catch_per_searching_day <- function(data_connection,
                                                   time_period = time_period,
                                                   country = country,
                                                   vessel_type = vessel_type,
+                                                  vessel_type_select = vessel_type_select,
                                                   ocean = ocean)
   # 3 - Data design ----
   time_serie_catch_nb_set_data <-  time_serie_catch_nb_set_data %>%

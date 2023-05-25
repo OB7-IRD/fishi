@@ -6,6 +6,7 @@
 #' @param ocean {\link[base]{integer}} expected. Ocean codes identification.
 #' @param country {\link[base]{integer}} expected. Country codes identification. 1 by default.
 #' @param vessel_type {\link[base]{integer}} expected. Vessel type codes identification. 1 by default.
+#' @param vessel_type_select {\link[base]{character}} expected. engin or vessel_type.
 #' @param graph_type {\link[base]{character}} expected. plot, plotly or table. Plot by default.
 #' @param figure {\link[base]{character}} expected. set (for number of sets graph) or log (for percentage FOB-associated sets graph).
 #' @param title TRUE or FALSE expected. False by default.
@@ -24,6 +25,7 @@ fishing_activity <- function(data_connection,
                              ocean,
                              country = as.integer(x = 1),
                              vessel_type = as.integer(x = 1),
+                             vessel_type_select = "engin",
                              graph_type = "plot",
                              figure = "set",
                              title = FALSE) {
@@ -92,12 +94,13 @@ fishing_activity <- function(data_connection,
   }
   # 2 - Data extraction ----
   fishing_activity_data <- data_extraction(type = "database",
-                                             data_connection = data_connection,
-                                             sql_name = "balbaya_fishing_activity.sql",
-                                             time_period = time_period,
-                                             country = country,
-                                             vessel_type = vessel_type,
-                                             ocean = ocean)
+                                           data_connection = data_connection,
+                                           sql_name = "balbaya_fishing_activity.sql",
+                                           time_period = time_period,
+                                           country = country,
+                                           vessel_type = vessel_type,
+                                           vessel_type_select = vessel_type_select,
+                                           ocean = ocean)
   # 3 - Data design ----
   fishing_activity_t1 <- fishing_activity_data %>%
     dplyr::mutate(year = lubridate::year(x = activity_date))
@@ -202,12 +205,12 @@ fishing_activity <- function(data_connection,
                    tick = TRUE,
                    labels = FALSE)
     graphics::text(x = fig_sets,
-         y = -100,
-         labels = table_sets$year,
-         srt = 45,
-         adj = 1,
-         xpd = TRUE,
-         cex = 1.1)
+                   y = -100,
+                   labels = table_sets$year,
+                   srt = 45,
+                   adj = 1,
+                   xpd = TRUE,
+                   cex = 1.1)
     graphics::legend("topleft",
                      legend = c("FOB-associated schools",
                                 "Free swimming schools"),
@@ -267,11 +270,11 @@ fishing_activity <- function(data_connection,
       if (title == TRUE) {
         plotly_graph <- plotly_graph %>%
           plotly::layout(title = list(text = paste0("Fishing operations. Annual number of fishing sets in the ",
-                                                   country_legend, " ",
-                                                   vessel_type_legend,
-                                                   " fishery on FOB-associated", "\n",
-                                                   "and free-swimming tuna schools during ", min(time_period), "-", max(time_period), " (high panel), in the ", ocean_legend, " ocean.", "\n",
-                                                   "Line with solid circles indicates the percentage of sets on FOB-associated schools (low panel)."),
+                                                    country_legend, " ",
+                                                    vessel_type_legend,
+                                                    " fishery on FOB-associated", "\n",
+                                                    "and free-swimming tuna schools during ", min(time_period), "-", max(time_period), " (high panel), in the ", ocean_legend, " ocean.", "\n",
+                                                    "Line with solid circles indicates the percentage of sets on FOB-associated schools (low panel)."),
                                       font = list(size = 17)),
                          margin = list(t = 120))
 

@@ -9,6 +9,7 @@
 #' @param time_period {\link[base]{integer}} expected. Period identification in year.
 #' @param country {\link[base]{integer}} expected. Country codes identification.
 #' @param vessel_type {\link[base]{integer}} expected. Vessel type codes identification.
+#' @param vessel_type_select {\link[base]{character}} expected. engin or vessel_type.
 #' @param ocean {\link[base]{integer}} expected. Ocean codes identification.
 #' @return The function return ggplot R plot.
 #' @export
@@ -27,8 +28,10 @@ data_extraction <- function(type,
                             time_period = NULL,
                             country = NULL,
                             vessel_type = NULL,
+                            vessel_type_select = NULL,
                             ocean = NULL) {
   if (type == "database") {
+    # Choose database
     if (data_connection[[1]] == "balbaya") {
       extraction_sql <- paste(readLines(con = system.file("sql",
                                                           sql_name,
@@ -44,12 +47,18 @@ data_extraction <- function(type,
                                                              sql_name,
                                                              package = "fishi")),
                                  collapse = "\n")
+    } else if (data_connection[[1]] == "observe_9a") {
+      extraction_sql <- paste(readLines(con = system.file("sql",
+                                                          sql_name,
+                                                          package = "fishi")),
+                              collapse = "\n")
     } else {
       stop(format(x = Sys.time(),
                   format = "%Y-%m-%d %H:%M:%S"),
            " - Indicator not developed yet for this \"data_connection\" argument.\n",
            sep = "")
     }
+    # Extraction sql final
     if (data_connection[[1]] == "sardara") {
       extraction_sql_final <- DBI::sqlInterpolate(conn        = data_connection[[2]],
                                                   sql         = extraction_sql,
@@ -60,16 +69,43 @@ data_extraction <- function(type,
                                                   ocean       = DBI::SQL(paste(ocean,
                                                                                collapse = ", ")))
     } else {
-      extraction_sql_final <- DBI::sqlInterpolate(conn        = data_connection[[2]],
-                                                  sql         = extraction_sql,
-                                                  time_period = DBI::SQL(paste(time_period,
-                                                                               collapse = ", ")),
-                                                  country     = DBI::SQL(paste(country,
-                                                                               collapse = ", ")),
-                                                  vessel_type = DBI::SQL(paste(vessel_type,
-                                                                               collapse = ", ")),
-                                                  ocean       = DBI::SQL(paste(ocean,
-                                                                               collapse = ", ")))
+      # Vessel type select
+      if (vessel_type_select == "engin") {
+        extraction_sql <- gsub(pattern = "\n\t.*\\(\\?vessel_type\\)",
+                               replacement = "",
+                               x = extraction_sql,
+                               perl = TRUE)
+        extraction_sql_final <- DBI::sqlInterpolate(conn        = data_connection[[2]],
+                                                    sql         = extraction_sql,
+                                                    time_period = DBI::SQL(paste(time_period,
+                                                                                 collapse = ", ")),
+                                                    country     = DBI::SQL(paste(country,
+                                                                                 collapse = ", ")),
+                                                    engin = DBI::SQL(paste(vessel_type,
+                                                                                 collapse = ", ")),
+                                                    ocean       = DBI::SQL(paste(ocean,
+                                                                                 collapse = ", ")))
+      } else if (vessel_type_select == "vessel_type") {
+        extraction_sql <- gsub(pattern = "\n\t.*\\(\\?engin\\)",
+                              replacement = "",
+                              x = extraction_sql,
+                              perl = TRUE)
+        extraction_sql_final <- DBI::sqlInterpolate(conn        = data_connection[[2]],
+                                                    sql         = extraction_sql,
+                                                    time_period = DBI::SQL(paste(time_period,
+                                                                                 collapse = ", ")),
+                                                    country     = DBI::SQL(paste(country,
+                                                                                 collapse = ", ")),
+                                                    vessel_type = DBI::SQL(paste(vessel_type,
+                                                                                 collapse = ", ")),
+                                                    ocean       = DBI::SQL(paste(ocean,
+                                                                                 collapse = ", ")))
+      }  else {
+        stop(format(x = Sys.time(),
+                    format = "%Y-%m-%d %H:%M:%S"),
+             " - Indicator not developed yet for this \"vessel_type_select\" argument.\n",
+             sep = "")
+      }
       }
     database <- dplyr::tibble(DBI::dbGetQuery(conn      = data_connection[[2]],
                                               statement = extraction_sql_final))
