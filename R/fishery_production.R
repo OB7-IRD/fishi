@@ -6,7 +6,6 @@
 #' @param ocean {\link[base]{integer}} expected. Ocean codes identification.
 #' @param country {\link[base]{integer}} expected. Country codes identification. 1 by default.
 #' @param vessel_type {\link[base]{integer}} expected. Vessel type codes identification. 1 by default.
-#' @param vessel_type_select {\link[base]{character}} expected. engin or vessel_type.
 #' @param fishing_type  {\link[base]{character}} expected. FSC, FOB or ALL.
 #' @param graph_type {\link[base]{character}} expected. plot, plotly, table or percentage. Plot by default.
 #' @param title TRUE or FALSE expected. False by default.
@@ -26,7 +25,6 @@ fishery_production <- function(data_connection,
                                ocean,
                                country = as.integer(x = 1),
                                vessel_type = as.integer(x = 1),
-                               vessel_type_select = "engin",
                                fishing_type = "ALL",
                                graph_type = "plot",
                                title = FALSE) {
@@ -102,14 +100,29 @@ fishery_production <- function(data_connection,
                                    output = "message"))
   }
   # 2 - Data extraction ----
-  fishery_production_data <- data_extraction(type = "database",
-                                            data_connection = data_connection,
-                                            sql_name = "balbaya_fishery_production.sql",
-                                            time_period = time_period,
-                                            country = country,
-                                            vessel_type = vessel_type,
-                                            vessel_type_select = vessel_type_select,
-                                            ocean = ocean)
+  if (data_connection[[1]] == "balbaya") {
+    fishery_production_sql <- paste(readLines(con = system.file("sql",
+                                                                "balbaya_fishery_production.sql",
+                                                                package = "fishi")),
+                                    collapse = "\n")
+  } else {
+    stop(format(x = Sys.time(),
+                format = "%Y-%m-%d %H:%M:%S"),
+         " - Indicator not developed yet for this \"data_connection\" argument.\n",
+         sep = "")
+  }
+  fishery_production_sql_final <- DBI::sqlInterpolate(conn = data_connection[[2]],
+                                                      sql  = fishery_production_sql,
+                                                      time_period = DBI::SQL(paste(time_period,
+                                                                                   collapse = ", ")),
+                                                      country     = DBI::SQL(paste(country,
+                                                                                   collapse = ", ")),
+                                                      vessel_type = DBI::SQL(paste(vessel_type,
+                                                                                   collapse = ", ")),
+                                                      ocean = DBI::SQL(paste(ocean,
+                                                                             collapse = ", ")))
+  fishery_production_data <- dplyr::tibble(DBI::dbGetQuery(conn      = data_connection[[2]],
+                                                           statement = fishery_production_sql_final))
   # 3 - Data design ----
   # Add columns year, school type and species
   fishery_production_t1 <- fishery_production_data %>%
@@ -118,19 +131,19 @@ fishery_production <- function(data_connection,
                                                  l4c_tban == "BL"  ~ "free",
                                                  l4c_tban == "BO"  ~ "log",
                                                  TRUE ~ "und"),
-                  YFT = dplyr::case_when(c_esp == 1 ~ v_poids_capt,
+                  YFT = dplyr::case_when(c_esp == 1 ~ v_poids_capt * rf3,
                                          TRUE ~ 0),
-                  SKJ = dplyr::case_when(c_esp == 2 ~ v_poids_capt,
+                  SKJ = dplyr::case_when(c_esp == 2 ~ v_poids_capt * rf3,
                                          TRUE ~ 0),
-                  BET = dplyr::case_when(c_esp == 3 ~ v_poids_capt,
+                  BET = dplyr::case_when(c_esp == 3 ~ v_poids_capt * rf3,
                                          TRUE ~ 0),
-                  ALB = dplyr::case_when(c_esp == 4 ~ v_poids_capt,
+                  ALB = dplyr::case_when(c_esp == 4 ~ v_poids_capt * rf3,
                                          TRUE ~ 0),
-                  DSC = dplyr::case_when(c_esp == 8 | (c_esp >= 800 & c_esp <= 899) ~ v_poids_capt,
+                  DSC = dplyr::case_when(c_esp == 8 | (c_esp >= 800 & c_esp <= 899) ~ v_poids_capt * rf3,
                                          TRUE ~ 0),
                   OTH = dplyr::case_when(c_esp == 1 | c_esp == 2 | c_esp == 3 | c_esp == 4 | c_esp == 8 | (c_esp >= 800 & c_esp <= 899) ~ 0,
-                                         TRUE ~ v_poids_capt),
-                  total_with_DSC = v_poids_capt)
+                                         TRUE ~ v_poids_capt * rf3),
+                  total_with_DSC = v_poids_capt * rf3)
   # Sum columns species
   fishery_production_t2 <- fishery_production_t1 %>%
     dplyr::group_by(ocean_name,

@@ -9,7 +9,7 @@ spatial_occupancy(
   time_period,
   ocean,
   country = as.integer(x = 1),
-  vessel_type_select = "vessel_type",
+  vessel_type_select = "vessel_accuracy",
   vessel_type = as.integer(x = c(4, 5, 6)),
   graph_type = "plot",
   title = FALSE

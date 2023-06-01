@@ -11,7 +11,6 @@ catch_per_unit_effort(
   vessel_type = as.integer(x = 1),
   ocean = as.integer(x = 1),
   fishing_type,
-  vessel_type_select = "engin",
   graph_type = "plot",
   title = FALSE
 )
@@ -28,8 +27,6 @@ catch_per_unit_effort(
 \item{ocean}{{\link[base]{integer}} expected. Ocean codes identification.}
 
 \item{fishing_type}{{\link[base]{character}} expected. FOB or FSC.}
-
-\item{vessel_type_select}{{\link[base]{character}} expected. engin or vessel_type.}
 
 \item{graph_type}{{\link[base]{character}} expected. plot, plotly or table. Plot by default.}
 

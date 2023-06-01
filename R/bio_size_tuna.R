@@ -78,12 +78,27 @@ bio_size_tuna <- function(data_connection,
   five_previous <- c((report_year - 1):(report_year - 5))
   time_period <- c((report_year):(report_year - 5))
   # Data extraction
-  bio_size_tuna_sql_data <- data_extraction(type = "database",
-                                            data_connection = data_connection,
-                                            sql_name = "sardara_bio_tuna.sql",
-                                            time_period = time_period,
-                                            country = country,
-                                            ocean = ocean)
+  if (data_connection[[1]] == "sardara") {
+    bio_size_tuna_sql <- paste(readLines(con = system.file("sql",
+                                                           "sardara_bio_tuna.sql",
+                                                           package = "fishi")),
+                               collapse = "\n")
+  } else {
+    stop(format(x = Sys.time(),
+                format = "%Y-%m-%d %H:%M:%S"),
+         " - Indicator not developed yet for this \"data_connection\" argument.\n",
+         sep = "")
+  }
+  bio_size_tuna_sql_final <- DBI::sqlInterpolate(conn        = data_connection[[2]],
+                                                 sql         = bio_size_tuna_sql,
+                                                 time_period = DBI::SQL(paste(time_period,
+                                                                              collapse = ", ")),
+                                                 country     = DBI::SQL(paste(country,
+                                                                              collapse = ", ")),
+                                                 ocean       = DBI::SQL(paste(ocean,
+                                                                              collapse = ", ")))
+  bio_size_tuna_sql_data <- dplyr::tibble(DBI::dbGetQuery(conn      = data_connection[[2]],
+                                                          statement = bio_size_tuna_sql_final))
   # 3.a - Data design for SKJ ----
   bio_size_tuna_sql_data <- bio_size_tuna_sql_data %>%
     dplyr::rename("size_class" = "cl")

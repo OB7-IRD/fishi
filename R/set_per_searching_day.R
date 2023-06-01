@@ -7,7 +7,6 @@
 #' @param fishing_type {\link[base]{character}} expected. FOB and FSC.
 #' @param country {\link[base]{integer}} expected. Country codes identification. 1 by default.
 #' @param vessel_type {\link[base]{integer}} expected. Vessel type codes identification. 1 by default.
-#' @param vessel_type_select {\link[base]{character}} expected. engin or vessel_type.
 #' @param graph_type {\link[base]{character}} expected. plot, plotly or table. Plot by default.
 #' @param title TRUE or FALSE expected. False by default.
 #' @return The function return ggplot R plot.
@@ -26,7 +25,6 @@ set_per_searching_day <- function(data_connection,
                                   fishing_type,
                                   country = as.integer(x = 1),
                                   vessel_type = as.integer(x = 1),
-                                  vessel_type_select = "engin",
                                   graph_type = "plot",
                                   title = FALSE) {
   # 0 - Global variables assignement ----
@@ -92,14 +90,29 @@ set_per_searching_day <- function(data_connection,
                                    output = "message"))
   }
   # 2 - Data extraction ----
-  time_serie_catch_nb_set_data <- data_extraction(type = "database",
-                                         data_connection = data_connection,
-                                         sql_name = "balbaya_fishing_activity.sql",
-                                         time_period = time_period,
-                                         country = country,
-                                         vessel_type = vessel_type,
-                                         vessel_type_select = vessel_type_select,
-                                         ocean = ocean)
+  if (data_connection[[1]] == "balbaya") {
+    time_serie_catch_nb_set_sql <- paste(readLines(con = system.file("sql",
+                                                                     "balbaya_fishing_activity.sql",
+                                                                     package = "fishi")),
+                                         collapse = "\n")
+  } else {
+    stop(format(x = Sys.time(),
+                format = "%Y-%m-%d %H:%M:%S"),
+         " - Indicator not developed yet for this \"data_connection\" argument.\n",
+         sep = "")
+  }
+  annual_catch_rate_nb_set <- DBI::sqlInterpolate(conn = data_connection[[2]],
+                                                  sql  = time_serie_catch_nb_set_sql,
+                                                  time_period = DBI::SQL(paste(time_period,
+                                                                               collapse = ", ")),
+                                                  country     = DBI::SQL(paste(country,
+                                                                               collapse = ", ")),
+                                                  vessel_type = DBI::SQL(paste(vessel_type,
+                                                                               collapse = ", ")),
+                                                  ocean = DBI::SQL(paste(ocean,
+                                                                         collapse = ", ")))
+  time_serie_catch_nb_set_data <- dplyr::tibble(DBI::dbGetQuery(conn      = data_connection[[2]],
+                                                                statement = annual_catch_rate_nb_set))
   # 3 - Data design ----
   time_serie_catch_nb_set_data <-  time_serie_catch_nb_set_data %>%
     dplyr::mutate(year = lubridate::year(x = activity_date))
@@ -125,11 +138,13 @@ set_per_searching_day <- function(data_connection,
   # Create columns sets_per_day for ALL, FOB and FSC
   table_cpue_set_per_day <- table_cpue_set_per_day %>%
     dplyr::group_by(year) %>%
-    dplyr::reframe(sets_per_day_all = dplyr::case_when(c_tban == 1 | c_tban == 2 | c_tban == 3 ~ nb_sets / (t_recherche / 12),
+    dplyr::summarise(sets_per_day_all = dplyr::case_when(c_tban == 1 | c_tban == 2 | c_tban == 3 ~ nb_sets / (t_recherche / 12),
                                                          TRUE ~ 0),
                      sets_per_day_fad = dplyr::case_when(c_tban == 1 ~ nb_sets / (t_recherche / 12),
                                                          TRUE ~ 0),
-                     sets_per_day_fsc = dplyr::case_when(c_tban %in% c(2:3) ~ nb_sets / (t_recherche / 12)))
+                     sets_per_day_fsc = dplyr::case_when(c_tban %in% c(2:3) ~ nb_sets / (t_recherche / 12),
+                                                         TRUE ~ 0),
+                     .groups = "drop")
   # Sum columns sets_per_day for ALL, FOB and FSC
   table_cpue_set_per_day <- table_cpue_set_per_day %>%
     dplyr::group_by(year) %>%

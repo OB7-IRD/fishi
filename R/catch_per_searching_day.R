@@ -7,7 +7,6 @@
 #' @param fishing_type {\link[base]{character}} expected. FOB and FSC.
 #' @param country {\link[base]{integer}} expected. Country codes identification. 1 by default.
 #' @param vessel_type {\link[base]{integer}} expected. Vessel type codes identification. 1 by default.
-#' @param vessel_type_select {\link[base]{character}} expected. engin or vessel_type.
 #' @param graph_type {\link[base]{character}} expected. plot, plotly or table. Plot by default.
 #' @param title TRUE or FALSE expected. False by default.
 #' @return The function return ggplot R plot.
@@ -25,7 +24,6 @@ catch_per_searching_day <- function(data_connection,
                                fishing_type,
                                country = as.integer(x = 1),
                                vessel_type = as.integer(x = 1),
-                               vessel_type_select = "engin",
                                graph_type = "plot",
                                title = FALSE) {
   # 0 - Global variables assignement ----
@@ -92,22 +90,47 @@ catch_per_searching_day <- function(data_connection,
                                    output = "message"))
   }
   # 2 - Data extraction ----
-  time_serie_catch_data <- data_extraction(type = "database",
-                                           data_connection = data_connection,
-                                           sql_name = "balbaya_time_serie_catch.sql",
-                                           time_period = time_period,
-                                           country = country,
-                                           vessel_type = vessel_type,
-                                           vessel_type_select = vessel_type_select,
-                                           ocean = ocean)
-  time_serie_catch_nb_set_data <- data_extraction(type = "database",
-                                                  data_connection = data_connection,
-                                                  sql_name = "balbaya_fishing_activity.sql",
-                                                  time_period = time_period,
-                                                  country = country,
-                                                  vessel_type = vessel_type,
-                                                  vessel_type_select = vessel_type_select,
-                                                  ocean = ocean)
+  if (data_connection[[1]] == "balbaya") {
+    time_serie_catch_sql <- paste(readLines(con = system.file("sql",
+                                                              "balbaya_time_serie_catch.sql",
+                                                              package = "fishi")),
+                                  collapse = "\n")
+    time_serie_catch_nb_set_sql <- paste(readLines(con = system.file("sql",
+                                                                     "balbaya_fishing_activity.sql",
+                                                                     package = "fishi")),
+                                         collapse = "\n")
+  } else {
+    stop(format(x = Sys.time(),
+                format = "%Y-%m-%d %H:%M:%S"),
+         " - Indicator not developed yet for this \"data_connection\" argument.\n",
+         sep = "")
+  }
+  # TIME SERIE CATCH SQL
+  time_serie_catch_sql_final <- DBI::sqlInterpolate(conn = data_connection[[2]],
+                                                    sql  = time_serie_catch_sql,
+                                                    time_period = DBI::SQL(paste(time_period,
+                                                                                 collapse = ", ")),
+                                                    country     = DBI::SQL(paste(country,
+                                                                                 collapse = ", ")),
+                                                    vessel_type = DBI::SQL(paste(vessel_type,
+                                                                                 collapse = ", ")),
+                                                    ocean = DBI::SQL(paste(ocean,
+                                                                           collapse = ", ")))
+  time_serie_catch_data <- dplyr::tibble(DBI::dbGetQuery(conn      = data_connection[[2]],
+                                                         statement = time_serie_catch_sql_final))
+  # NB SETS SQL
+  time_serie_catch_nb_set <- DBI::sqlInterpolate(conn = data_connection[[2]],
+                                                           sql  = time_serie_catch_nb_set_sql,
+                                                           time_period = DBI::SQL(paste(time_period,
+                                                                                        collapse = ", ")),
+                                                           country     = DBI::SQL(paste(country,
+                                                                                        collapse = ", ")),
+                                                           vessel_type = DBI::SQL(paste(vessel_type,
+                                                                                        collapse = ", ")),
+                                                           ocean = DBI::SQL(paste(ocean,
+                                                                                  collapse = ", ")))
+  time_serie_catch_nb_set_data <- dplyr::tibble(DBI::dbGetQuery(conn      = data_connection[[2]],
+                                                                statement = time_serie_catch_nb_set))
   # 3 - Data design ----
   time_serie_catch_nb_set_data <-  time_serie_catch_nb_set_data %>%
     dplyr::mutate(year = lubridate::year(x = activity_date))
@@ -141,7 +164,7 @@ catch_per_searching_day <- function(data_connection,
   table_cpue_fad_set <- merge(t0, t1, by = "year")
   #final table
   table_cpue_fad_set <- table_cpue_fad_set %>%
-    dplyr::reframe(year = year,
+    dplyr::summarise(year = year,
                      yft = (yft / nb_sets_pos),
                      skj = (skj / nb_sets_pos),
                      bet = (bet / nb_sets_pos),
@@ -177,7 +200,7 @@ catch_per_searching_day <- function(data_connection,
   table_cpue_fsc_set <- merge(t2, t3, by = "year")
   #final table
   table_cpue_fsc_set <- table_cpue_fsc_set %>%
-    dplyr::reframe(year = year,
+    dplyr::summarise(year = year,
                      yft = (yft / nb_sets_pos),
                      skj = (skj / nb_sets_pos),
                      bet = (bet / nb_sets_pos),

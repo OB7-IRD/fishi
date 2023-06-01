@@ -10,7 +10,6 @@ map_catch_distribution(
   country = as.integer(x = 1),
   vessel_type = as.integer(x = 1),
   ocean = as.integer(x = 1),
-  vessel_type_select = "engin",
   fishing_type = "ALL",
   graph_type = "plot",
   title = FALSE
@@ -26,8 +25,6 @@ map_catch_distribution(
 \item{vessel_type}{{\link[base]{integer}} expected. Vessel type codes identification.}
 
 \item{ocean}{{\link[base]{integer}} expected. Ocean codes identification.}
-
-\item{vessel_type_select}{{\link[base]{character}} expected. engin or vessel_type.}
 
 \item{fishing_type}{{\link[base]{character}} expected. FOB, FSC or ALL. ALL by default.}
 

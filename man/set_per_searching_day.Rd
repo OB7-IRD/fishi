@@ -11,7 +11,6 @@ set_per_searching_day(
   fishing_type,
   country = as.integer(x = 1),
   vessel_type = as.integer(x = 1),
-  vessel_type_select = "engin",
   graph_type = "plot",
   title = FALSE
 )
@@ -28,8 +27,6 @@ set_per_searching_day(
 \item{country}{{\link[base]{integer}} expected. Country codes identification. 1 by default.}
 
 \item{vessel_type}{{\link[base]{integer}} expected. Vessel type codes identification. 1 by default.}
-
-\item{vessel_type_select}{{\link[base]{character}} expected. engin or vessel_type.}
 
 \item{graph_type}{{\link[base]{character}} expected. plot, plotly or table. Plot by default.}
 
