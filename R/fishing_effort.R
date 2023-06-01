@@ -22,7 +22,7 @@ fishing_effort <- function(data_connection,
                            time_period,
                            ocean,
                            country = as.integer(x = 1),
-                           vessel_type_select = "vessel_accuracy",
+                           vessel_type_select = "vessel_type",
                            vessel_type = as.integer(x = c(4, 5, 6)),
                            graph_type = "plot",
                            title = FALSE) {
@@ -93,40 +93,14 @@ fishing_effort <- function(data_connection,
                                    output = "message"))
   }
   # 2 - Data extraction ----
-  if (data_connection[[1]] == "balbaya") {
-    fishing_effort_sql <- paste(readLines(con = system.file("sql",
-                                                            "balbaya_fishing_effort.sql",
-                                                            package = "fishi")),
-                                collapse = "\n")
-  } else {
-    stop(format(x = Sys.time(),
-                format = "%Y-%m-%d %H:%M:%S"),
-         " - Indicator not developed yet for this \"data_connection\" argument.\n",
-         sep = "")
-  }
-  if (vessel_type_select == "vessel") {
-    fishing_effort_sql <- sub(pattern = "\n\tAND bateau.c_typ_b IN (?vessel_type)",
-                                replacement = "",
-                                x = fishing_effort_sql,
-                                fixed = TRUE)
-  } else if (vessel_type_select == "vessel_accuracy") {
-    fishing_effort_sql <- sub(pattern = "\n\tAND activite.c_engin IN (?vessel_type)",
-                                replacement = "",
-                                x = fishing_effort_sql,
-                                fixed = TRUE)
-  }
-  fishing_effort_sql_final <- DBI::sqlInterpolate(conn = data_connection[[2]],
-                                                  sql  = fishing_effort_sql,
-                                                  time_period = DBI::SQL(paste(time_period,
-                                                                               collapse = ", ")),
-                                                  country     = DBI::SQL(paste(country,
-                                                                               collapse = ", ")),
-                                                  vessel_type = DBI::SQL(paste(vessel_type,
-                                                                               collapse = ", ")),
-                                                  ocean = DBI::SQL(paste(ocean,
-                                                                         collapse = ", ")))
-  fishing_effort_data <- dplyr::tibble(DBI::dbGetQuery(conn      = data_connection[[2]],
-                                                       statement = fishing_effort_sql_final))
+  fishing_effort_data <- data_extraction(type = "database",
+                                         data_connection = data_connection,
+                                         sql_name = "balbaya_fishing_effort.sql",
+                                         time_period = time_period,
+                                         country = country,
+                                         vessel_type = vessel_type,
+                                         vessel_type_select = vessel_type_select,
+                                         ocean = ocean)
   # 3 - Data design ----
   #Adding columns years
   fishing_effort_t1 <- fishing_effort_data %>%
@@ -164,35 +138,32 @@ fishing_effort <- function(data_connection,
                     v_tmer,
                     v_tpec,
                     v_dur_cal) %>%
-    dplyr::summarise(nb_landings_in_activity_year = nb_landings_in_activity_year,
-                     nb_days = nb_days,
-                     .groups = "drop")
+    dplyr::reframe(nb_landings_in_activity_year = nb_landings_in_activity_year,
+                   nb_days = nb_days)
   #Adding columns by years (daysatsea, fishingdays, ...)
   fishing_effort_t3 <- fishing_effort_t2b %>%
     dplyr::group_by(year) %>%
-    dplyr::summarise("days_at_sea" = round(sum(v_tmer / 24,
-                                               na.rm = TRUE)),
-                     "nb_landings_in_activity_year" = sum(nb_landings_in_activity_year, na.rm = TRUE),
-                     "average_nb_days_by_trip" = mean(nb_days, 0),
-                     "fishing_days_1000" = ifelse(test = ocean_id == 1,
-                                                  yes = round(sum(v_tpec / 12,
-                                                                  na.rm = TRUE)),
-                                                  no = round(sum(v_tpec / 13,
-                                                                 na.rm = TRUE))),
-                     "set_duration_in_days" = ifelse(test = ocean_id == 1,
-                                                     yes = round(sum(v_dur_cal / 12,
-                                                                     na.rm = TRUE)),
-                                                     no = round(sum(v_dur_cal / 13,
-                                                                    na.rm = TRUE))),
-                     "searching_days_1000" = ifelse(test = ocean_id == 1,
-                                                    yes = round(sum((v_tpec - v_dur_cal) / 12,
+    dplyr::reframe("days_at_sea" = round(sum(v_tmer / 24,
+                                             na.rm = TRUE)),
+                   "nb_landings_in_activity_year" = sum(nb_landings_in_activity_year, na.rm = TRUE),
+                   "average_nb_days_by_trip" = mean(nb_days, 0),
+                   "fishing_days_1000" = ifelse(test = ocean_id == 1,
+                                                yes = round(sum(v_tpec / 12,
+                                                                na.rm = TRUE)),
+                                                no = round(sum(v_tpec / 13,
+                                                               na.rm = TRUE))),
+                   "set_duration_in_days" = ifelse(test = ocean_id == 1,
+                                                   yes = round(sum(v_dur_cal / 12,
+                                                                   na.rm = TRUE)),
+                                                   no = round(sum(v_dur_cal / 13,
+                                                                  na.rm = TRUE))),
+                   "searching_days_1000" = ifelse(test = ocean_id == 1,
+                                                  yes = round(sum((v_tpec - v_dur_cal) / 12,
 
-                                                                    na.rm = TRUE)),
-                                                    no = round(sum((v_tpec - v_dur_cal) / 13, na.rm = TRUE))),
-                     .groups = "drop")
+                                                                  na.rm = TRUE)),
+                                                  no = round(sum((v_tpec - v_dur_cal) / 13, na.rm = TRUE))))
 
   #remove duplicates
-
   fishing_effort_t4 <- unique(fishing_effort_t3[, c("year",
                                                     "nb_landings_in_activity_year",
                                                     "average_nb_days_by_trip",
