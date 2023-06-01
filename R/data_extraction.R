@@ -10,6 +10,7 @@
 #' @param vessel_type {\link[base]{integer}} expected. Vessel type codes identification.
 #' @param vessel_type_select {\link[base]{character}} expected. engin or vessel_type.
 #' @param ocean {\link[base]{integer}} expected. Ocean codes identification.
+#' @param csv_output TRUE to obtain a csv document. FALSE by default.
 #' @return The function return ggplot R plot.
 #' @export
 #' @importFrom DBI dbGetQuery sqlInterpolate SQL
@@ -19,6 +20,8 @@
 #' @importFrom plotly ggplotly layout
 #' @importFrom graphics par plot axis lines abline legend text
 #' @importFrom codama r_type_checking
+#' @importFrom utils write.csv2
+#' @importFrom readr read_delim
 data_extraction <- function(type,
                             data_connection = NULL,
                             sql_name = NULL,
@@ -29,6 +32,11 @@ data_extraction <- function(type,
                             vessel_type_select = NULL,
                             ocean = NULL,
                             csv_output = FALSE) {
+  # 0 - Global variables assignement ---
+  ocean_id <- NULL
+  country_id <- NULL
+  vessel_type_id <- NULL
+  # 1 - Function ----
   if (type == "database") {
     # Choose database
     if (data_connection[[1]] == "balbaya") {
@@ -110,11 +118,11 @@ data_extraction <- function(type,
     database <- dplyr::tibble(DBI::dbGetQuery(conn      = data_connection[[2]],
                                               statement = extraction_sql_final))
     if (csv_output == TRUE) {
-      write.csv2(database,
-                 file= 'database_fishi.csv',
+      utils::write.csv2(database,
+                 file = "database_fishi.csv",
                  row.names = FALSE)
     }
-
+    return(database)
   } else if (type == "csv") {
     extraction_csv <- readr::read_delim(csv_path)
     if ("activity_date" %in% colnames(extraction_csv)) {

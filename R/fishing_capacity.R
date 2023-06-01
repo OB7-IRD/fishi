@@ -95,13 +95,13 @@ fishing_capacity <- function(data_connection,
   }
   # 2 - Data extraction ----
   fishing_capacity_final <- data_extraction(type = "database",
-                                           data_connection = data_connection,
-                                           sql_name = "balbaya_fishing_capacity.sql",
-                                           time_period = time_period,
-                                           country = country,
-                                           vessel_type = vessel_type,
-                                           vessel_type_select = vessel_type_select,
-                                           ocean = ocean)
+                                            data_connection = data_connection,
+                                            sql_name = "balbaya_fishing_capacity.sql",
+                                            time_period = time_period,
+                                            country = country,
+                                            vessel_type = vessel_type,
+                                            vessel_type_select = vessel_type_select,
+                                            ocean = ocean)
   # 3 - Data design ----
   #  Add columns catches in tonnes and catches in tonnes per month
   fishing_capacity_t1 <- fishing_capacity_final %>%

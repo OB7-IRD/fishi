@@ -35,6 +35,8 @@ data_extraction(
 \item{vessel_type_select}{{\link[base]{character}} expected. engin or vessel_type.}
 
 \item{ocean}{{\link[base]{integer}} expected. Ocean codes identification.}
+
+\item{csv_output}{TRUE to obtain a csv document. FALSE by default.}
 }
 \value{
 The function return ggplot R plot.
