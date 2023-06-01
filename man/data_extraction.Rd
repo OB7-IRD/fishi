@@ -7,22 +7,20 @@
 data_extraction(
   type,
   data_connection = NULL,
-  database_name = NULL,
   sql_name = NULL,
   csv_path = NULL,
   time_period = NULL,
   country = NULL,
   vessel_type = NULL,
   vessel_type_select = NULL,
-  ocean = NULL
+  ocean = NULL,
+  csv_output = FALSE
 )
 }
 \arguments{
 \item{type}{{\link[base]{character}} expected. dabase or csv.}
 
 \item{data_connection}{{\link[base]{list}} expected. Output of the function {\link[furdeb]{postgresql_dbconnection}}, which must be done before using the fishing_effort function.}
-
-\item{database_name}{{\link[base]{character}}. Name of the database.}
 
 \item{sql_name}{{\link[base]{character}}. Name of the sql file, in fishi.}
 
