@@ -5,6 +5,7 @@
 #' @param time_period {\link[base]{integer}} expected. Period identification in year.
 #' @param country {\link[base]{integer}} expected. Country codes identification.
 #' @param vessel_type {\link[base]{integer}} expected. Vessel type codes identification.
+#' @param vessel_type_select {\link[base]{character}} expected. engin or vessel_type.
 #' @param ocean {\link[base]{integer}} expected. Ocean codes identification.
 #' @param fishing_type {\link[base]{character}} expected. FOB, FSC or ALL. ALL by default.
 #' @param graph_type {\link[base]{character}} expected. plot or plotly. Plot by default.
@@ -26,6 +27,7 @@ map_catch_distribution <- function(data_connection,
                                    country = as.integer(x = 1),
                                    vessel_type = as.integer(x = 1),
                                    ocean = as.integer(x = 1),
+                                   vessel_type_select = "engin",
                                    fishing_type = "ALL",
                                    graph_type = "plot",
                                    title = FALSE) {
@@ -96,29 +98,14 @@ map_catch_distribution <- function(data_connection,
                                    output = "message"))
   }
   # 2 - Data extraction ----
-  if (data_connection[[1]] == "balbaya") {
-    map_catch_previous_sql <- paste(readLines(con = system.file("sql",
-                                                                "balbaya_map_catch_previous.sql",
-                                                                package = "fishi")),
-                                    collapse = "\n")
-  } else {
-    stop(format(x = Sys.time(),
-                format = "%Y-%m-%d %H:%M:%S"),
-         " - Indicator not developed yet for this \"data_connection\" argument.\n",
-         sep = "")
-  }
-  map_catch_previous_sql_final <- DBI::sqlInterpolate(conn        = data_connection[[2]],
-                                                      sql         = map_catch_previous_sql,
-                                                      time_period = DBI::SQL(paste(time_period,
-                                                                                   collapse = ", ")),
-                                                      country     = DBI::SQL(paste(country,
-                                                                                   collapse = ", ")),
-                                                      vessel_type = DBI::SQL(paste(vessel_type,
-                                                                                   collapse = ", ")),
-                                                      ocean       = DBI::SQL(paste(ocean,
-                                                                                   collapse = ", ")))
-  map_catch_previous_sql_final <- dplyr::tibble(DBI::dbGetQuery(conn      = data_connection[[2]],
-                                                                statement = map_catch_previous_sql_final))
+  map_catch_previous_sql_final <- data_extraction(type = "database",
+                                             data_connection = data_connection,
+                                             sql_name = "balbaya_map_catch_previous.sql",
+                                             time_period = time_period,
+                                             country = country,
+                                             vessel_type = vessel_type,
+                                             vessel_type_select = vessel_type_select,
+                                             ocean = ocean)
   # 3 - Data design ----
   t1 <- map_catch_previous_sql_final %>%
     dplyr::group_by(n_act,

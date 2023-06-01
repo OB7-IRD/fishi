@@ -10,6 +10,7 @@ fishery_production(
   ocean,
   country = as.integer(x = 1),
   vessel_type = as.integer(x = 1),
+  vessel_type_select = "engin",
   fishing_type = "ALL",
   graph_type = "plot",
   title = FALSE
@@ -25,6 +26,8 @@ fishery_production(
 \item{country}{{\link[base]{integer}} expected. Country codes identification. 1 by default.}
 
 \item{vessel_type}{{\link[base]{integer}} expected. Vessel type codes identification. 1 by default.}
+
+\item{vessel_type_select}{{\link[base]{character}} expected. engin or vessel_type.}
 
 \item{fishing_type}{{\link[base]{character}} expected. FSC, FOB or ALL.}
 
