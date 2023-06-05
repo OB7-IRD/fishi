@@ -23,7 +23,7 @@ library(readr)
 library(kableExtra)
 ```
 
-# Referentials
+# 
 
 ### Country
 
@@ -109,7 +109,9 @@ kable(data, "html") %>%
                 font_size = 14)
 ```
 
-# Tableaux de données
+## 
+
+# Database / csv
 
 The databases and csv used by fishi contain a large number of columns. To be able to use the functions, you need to provide a dataset with identical column names. Here's what they correspond to :
 
@@ -153,9 +155,9 @@ The databases and csv used by fishi contain a large number of columns. To be abl
 
 **v_dur_cal** : set duration calculated using several parameters: fishing method, tonnage and fishing year
 
-v_nb_calees : total number of sets during the activity.
+**v_nb_calees** : total number of sets during the activity.
 
-v_nb_calee_pos : total number of positive sets during the activity.
+**v_nb_calee_pos** : total number of positive sets during the activity.
 
 **vessel_type_id** : Code for type of vessel used
 

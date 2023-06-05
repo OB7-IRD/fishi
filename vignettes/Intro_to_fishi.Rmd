@@ -32,7 +32,41 @@ balbaya_con <- postgresql_dbconnection(db_user = config[["databases_configuratio
                                                           db_port = config[["databases_configuration"]][["balbaya_vmot5"]][["port"]])
 ```
 
-# Indicators
+# List of all the indicators
+
+## Biologic
+
+**bio_size_tuna**() : Size distribution of major tuna catches in percentage of the total number of fishes.
+
+**bio_weight_tuna**() : weight distribution of major tuna catches in percentage of the total number of fishes.
+
+## Catches
+
+**fishery_production**() : total fishery production. Catch by species of the French purse seine fishing fleet.
+
+**catch_per_searching_day**() : Annual number of catch per positive set on FOB-associated and free-swimming schools.
+
+**catch_per_unit_effort**() : Annual catch rates (in t per searching day) on FOB- associated and free-swimming tuna schools (FSC).
+
+**map_catch_distribution**() : Spatial distribution of tuna catches.
+
+## Effort
+
+**fishing_effort**() : Changes in nominal effort over time. Annual total number of fishing and searching days.
+
+**map_effort_distribution**() : Spatial distribution of tuna effort.
+
+**set_per_searching_day**() : Annual number of sets per searching day on FOB-associated and free-swimming schools
+
+**spatial_occupancy**() : Changes in the spatial extent of the fishery over time. Annual number of 1-degree squares explored by each vessel.
+
+**fishing_activity**() : Fishing operations. Annual number of fishing sets on FOB- associated and free-swimming tuna schools.
+
+**fishing_capacity**() : Fishing capacity. Annual changes in the number of purse seiners by tonnage categories (barplots) and total carrying capacity (dashed line with circles).
+
+# 
+
+# Arguments
 
 All the fishi indicators work in the same way. Each function has several arguments :
 
@@ -48,9 +82,15 @@ All the fishi indicators work in the same way. Each function has several argumen
 
 -   **vessel_type_select:** to select the precision of the vessels
 
--   **vessel_type:** vessel code (for seiners, if vessel_type_select = "engin" choose 1, if vessel_type_select = "vessel_type" choose 4, 5, 6.\
+-   **vessel_type:** vessel code (for seiners, if vessel_type_select = "engin" choose 1, if vessel_type_select = "vessel_type" choose 4, 5, 6.
 
-## Fishing capacity : Atlantic Ocean, 1991-2022
+# 
+
+# Example  :
+
+For each indicator, all the arguments can be modified as required. Take fishing_capacity, for example, to obtain a graph of the Atlantic Ocean between 1991 and 2022 and a second graph of the Indian Ocean between 1981 and 2022. The arguments to change are time_period and ocean.
+
+#### Fishing capacity : Atlantic Ocean, 1991-2022
 
 ```{r, message=FALSE, warning=FALSE, fig.width = 8, fig.height = 8}
 fishing_capacity(data_connection = balbaya_con,
@@ -62,7 +102,9 @@ fishing_capacity(data_connection = balbaya_con,
                  figure = "vessel")
 ```
 
-## Fishing capacity : Indian ocean, 1981-2022
+#### 
+
+#### Fishing capacity : Indian ocean, 1981-2022
 
 ```{r, message=FALSE, warning=FALSE, fig.width = 8, fig.height = 8}
 fishing_capacity(data_connection = balbaya_con,
