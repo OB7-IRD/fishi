@@ -32,7 +32,7 @@ data_extraction <- function(type,
                             vessel_type_select = NULL,
                             ocean = NULL,
                             csv_output = FALSE) {
-  # 0 - Global variables assignement ---
+  # 0 - Global variables assignment ---
   ocean_id <- NULL
   country_id <- NULL
   vessel_type_id <- NULL
