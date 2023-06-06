@@ -1,6 +1,6 @@
 #' @name set_per_searching_day
-#' @title Set per searching day
-#' @description Annual number of sets per searching day on FOB-associated and free-swimming schools for the French purse seine fishing fleet in the Atlantic Ocean
+#' @title Annual number of sets per searching day
+#' @description Annual number of sets per searching day on FOB-associated and free-swimming schools.
 #' @param data_connection {\link[base]{list}} expected. Output of the function {\link[furdeb]{postgresql_dbconnection}}, which must be done before using the set_per_searching_day() function.
 #' @param time_period {\link[base]{integer}} expected. Period identification in year.
 #' @param ocean {\link[base]{integer}} expected. Ocean codes identification.

@@ -1,6 +1,6 @@
 #' @name catch_per_unit_effort
-#' @title Catch per unit effort
-#' @description Annual catch rates (in t per searching day) of the French purse seine fishing fleet on FOB- associated and free-swimming tuna schools (FSC) in the Atlantic Ocean.
+#' @title  Annual catch rates (in t per searching day)
+#' @description Annual catch rates (in t per searching day) on FOB- associated and free-swimming tuna schools (FSC).
 #' @param data_connection {\link[base]{list}} expected. Output of the function {\link[furdeb]{postgresql_dbconnection}}, which must be done before using the catch_per_unit_effort() function.
 #' @param time_period {\link[base]{integer}} expected. Period identification in year.
 #' @param country {\link[base]{integer}} expected. Country codes identification.

@@ -1,6 +1,6 @@
 #' @name fishing_effort
-#' @title Fishing effort
-#' @description Changes in nominal effort over time. Annual total number of fishing and searching days for the French purse seine fishing fleet in the Atlantic Ocean.
+#' @title Annual total number of fishing and searching days
+#' @description Changes in nominal effort over time. Annual total number of fishing and searching days.
 #' @param data_connection {\link[base]{list}} expected. Output of the function {\link[furdeb]{postgresql_dbconnection}}, which must be done before using the fishing_effort function.
 #' @param time_period {\link[base]{integer}} expected. Period identification in year.
 #' @param ocean {\link[base]{integer}} expected. Ocean codes identification.

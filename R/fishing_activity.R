@@ -1,6 +1,6 @@
 #' @name fishing_activity
-#' @title Fishing activity
-#' @description Fishing operations. Annual number of fishing sets in the French purse seine fishery on FOB- associated and free-swimming tuna schools.
+#' @title Annual number of fishing sets
+#' @description Fishing operations. Annual number of fishing sets on FOB-associated and free-swimming tuna schools.
 #' @param data_connection {\link[base]{list}} expected. Output of the function {\link[furdeb]{postgresql_dbconnection}}, which must be done before using the fishing_activity() function.
 #' @param time_period {\link[base]{integer}} expected. Period identification in year.
 #' @param ocean {\link[base]{integer}} expected. Ocean codes identification.

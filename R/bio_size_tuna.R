@@ -1,6 +1,6 @@
 #' @name bio_size_tuna
-#' @title Bio size tuna
-#' @description Size distribution of major tuna catches (in percentage of the total number of fishes) for the French purse seine fleet.
+#' @title Size distribution of major tuna catches
+#' @description Size distribution of major tuna catches (in percentage of the total number of fishes).
 #' @param data_connection {\link[base]{list}} expected. Output of the function {\link[furdeb]{postgresql_dbconnection}}, which must be done before using the bio_size_tuna() function.
 #' @param report_year {\link[base]{integer}} expected. Year of the statistical report.
 #' @param ocean {\link[base]{integer}} expected. Ocean codes identification.

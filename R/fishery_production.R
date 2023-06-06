@@ -1,6 +1,6 @@
 #' @name fishery_production
-#' @title Fishery production
-#' @description total fishery production. Catch by species of the French purse seine fishing fleet.
+#' @title Total fishery production
+#' @description total fishery production (catch by species).
 #' @param data_connection {\link[base]{list}} expected. Output of the function {\link[furdeb]{postgresql_dbconnection}}, which must be done before using the fishery_production() function.
 #' @param time_period {\link[base]{integer}} expected. Period identification in year.
 #' @param ocean {\link[base]{integer}} expected. Ocean codes identification.
@@ -33,7 +33,6 @@ fishery_production <- function(data_connection,
   # 0 - Global variables assignement ----
   activity_date <- NULL
   v_poids_capt <- NULL
-  rf3 <- NULL
   ocean_name <- NULL
   gear <- NULL
   fleet <- NULL
@@ -103,13 +102,13 @@ fishery_production <- function(data_connection,
   }
   # 2 - Data extraction ----
   fishery_production_data <- data_extraction(type = "database",
-                                            data_connection = data_connection,
-                                            sql_name = "balbaya_fishery_production.sql",
-                                            time_period = time_period,
-                                            country = country,
-                                            vessel_type = vessel_type,
-                                            vessel_type_select = vessel_type_select,
-                                            ocean = ocean)
+                                             data_connection = data_connection,
+                                             sql_name = "balbaya_fishery_production.sql",
+                                             time_period = time_period,
+                                             country = country,
+                                             vessel_type = vessel_type,
+                                             vessel_type_select = vessel_type_select,
+                                             ocean = ocean)
   # 3 - Data design ----
   # Add columns year, school type and species
   fishery_production_t1 <- fishery_production_data %>%

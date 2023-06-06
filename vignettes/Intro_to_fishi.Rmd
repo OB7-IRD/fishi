@@ -86,7 +86,7 @@ All the fishi indicators work in the same way. Each function has several argumen
 
 # 
 
-# Example  :
+# Example :
 
 For each indicator, all the arguments can be modified as required. Take fishing_capacity, for example, to obtain a graph of the Atlantic Ocean between 1991 and 2022 and a second graph of the Indian Ocean between 1981 and 2022. The arguments to change are time_period and ocean.
 

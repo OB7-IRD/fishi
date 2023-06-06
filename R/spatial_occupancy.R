@@ -1,6 +1,6 @@
 #' @name spatial_occupancy
 #' @title Spatial occupancy
-#' @description Changes in the spatial extent of the fishery over time. Annual number of 1-degree squares explored by each vessel of the French purse seine fishing fleet.
+#' @description Changes in the spatial extent of the fishery over time. Annual number of 1-degree squares explored by each vessel.
 #' @param data_connection {\link[base]{list}} expected. Output of the function {\link[furdeb]{postgresql_dbconnection}}, which must be done before using the spatial_occupancy() function.
 #' @param time_period {\link[base]{integer}} expected. Period identification in year.
 #' @param ocean {\link[base]{integer}} expected. Ocean codes identification.

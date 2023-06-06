@@ -1,6 +1,6 @@
 #' @name map_catch_distribution
-#' @title Map catch distribution
-#' @description Spatial distribution of tuna catches of the French purse seine fishing fleet.
+#' @title Spatial distribution of tuna catches
+#' @description Spatial distribution of tuna catches.
 #' @param data_connection {\link[base]{list}} expected. Output of the function {\link[furdeb]{postgresql_dbconnection}}, which must be done before using the map_catch_distribution() function.
 #' @param time_period {\link[base]{integer}} expected. Period identification in year.
 #' @param country {\link[base]{integer}} expected. Country codes identification.
