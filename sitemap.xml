@@ -7,6 +7,12 @@
     <loc>https://ob7-ird.github.io/fishi/LICENSE-text.html</loc>
   </url>
   <url>
+    <loc>https://ob7-ird.github.io/fishi/articles/Referentials.html</loc>
+  </url>
+  <url>
+    <loc>https://ob7-ird.github.io/fishi/articles/index.html</loc>
+  </url>
+  <url>
     <loc>https://ob7-ird.github.io/fishi/authors.html</loc>
   </url>
   <url>
@@ -32,6 +38,9 @@
   </url>
   <url>
     <loc>https://ob7-ird.github.io/fishi/reference/code_manipulation.html</loc>
+  </url>
+  <url>
+    <loc>https://ob7-ird.github.io/fishi/reference/data_extraction.html</loc>
   </url>
   <url>
     <loc>https://ob7-ird.github.io/fishi/reference/fishery_production.html</loc>
