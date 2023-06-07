@@ -2,7 +2,7 @@
 % Please edit documentation in R/catch_per_searching_day.R
 \name{catch_per_searching_day}
 \alias{catch_per_searching_day}
-\title{Catch per searching day}
+\title{Annual number of catch per positive set}
 \usage{
 catch_per_searching_day(
   data_connection,
@@ -39,5 +39,5 @@ catch_per_searching_day(
 The function return ggplot R plot.
 }
 \description{
-Annual number of catch per positive set on FOB-associated and free-swimming schools for the French purse seine fishing fleet in the Atlantic Ocean
+Annual number of catch per positive set on FOB-associated and free-swimming schools.
 }

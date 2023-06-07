@@ -2,7 +2,7 @@
 % Please edit documentation in R/fishing_effort.R
 \name{fishing_effort}
 \alias{fishing_effort}
-\title{Fishing effort}
+\title{Annual total number of fishing and searching days}
 \usage{
 fishing_effort(
   data_connection,
@@ -36,5 +36,5 @@ fishing_effort(
 The function return ggplot R plot.
 }
 \description{
-Changes in nominal effort over time. Annual total number of fishing and searching days for the French purse seine fishing fleet in the Atlantic Ocean.
+Changes in nominal effort over time. Annual total number of fishing and searching days.
 }

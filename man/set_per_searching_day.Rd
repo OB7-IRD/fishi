@@ -2,7 +2,7 @@
 % Please edit documentation in R/set_per_searching_day.R
 \name{set_per_searching_day}
 \alias{set_per_searching_day}
-\title{Set per searching day}
+\title{Annual number of sets per searching day}
 \usage{
 set_per_searching_day(
   data_connection,
@@ -39,5 +39,5 @@ set_per_searching_day(
 The function return ggplot R plot.
 }
 \description{
-Annual number of sets per searching day on FOB-associated and free-swimming schools for the French purse seine fishing fleet in the Atlantic Ocean
+Annual number of sets per searching day on FOB-associated and free-swimming schools.
 }

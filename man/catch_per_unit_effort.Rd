@@ -2,7 +2,7 @@
 % Please edit documentation in R/catch_per_unit_effort.R
 \name{catch_per_unit_effort}
 \alias{catch_per_unit_effort}
-\title{Catch per unit effort}
+\title{Annual catch rates (in t per searching day)}
 \usage{
 catch_per_unit_effort(
   data_connection,
@@ -39,5 +39,5 @@ catch_per_unit_effort(
 The function return ggplot R plot.
 }
 \description{
-Annual catch rates (in t per searching day) of the French purse seine fishing fleet on FOB- associated and free-swimming tuna schools (FSC) in the Atlantic Ocean.
+Annual catch rates (in t per searching day) on FOB- associated and free-swimming tuna schools (FSC).
 }

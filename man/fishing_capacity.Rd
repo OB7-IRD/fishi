@@ -2,7 +2,7 @@
 % Please edit documentation in R/fishing_capacity.R
 \name{fishing_capacity}
 \alias{fishing_capacity}
-\title{Fishing capacity}
+\title{Annual changes in the number of vessels}
 \usage{
 fishing_capacity(
   data_connection,
@@ -39,5 +39,5 @@ fishing_capacity(
 The function return ggplot R plot.
 }
 \description{
-Fishing capacity of the French purse seine fishing fleet in the Atlantic Ocean. Annual changes in the number of purse seiners by tonnage categories (barplots) and total carrying capacity (dashed line with circles).
+Fishing capacity. Annual changes in the number of purse seiners by tonnage categories (barplots) and total carrying capacity (dashed line with circles).
 }

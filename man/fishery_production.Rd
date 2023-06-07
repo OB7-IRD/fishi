@@ -2,7 +2,7 @@
 % Please edit documentation in R/fishery_production.R
 \name{fishery_production}
 \alias{fishery_production}
-\title{Fishery production}
+\title{Total fishery production}
 \usage{
 fishery_production(
   data_connection,
@@ -39,5 +39,5 @@ fishery_production(
 The function return ggplot R plot.
 }
 \description{
-total fishery production. Catch by species of the French purse seine fishing fleet.
+total fishery production (catch by species).
 }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/map_effort_distribution.R
 \name{map_effort_distribution}
 \alias{map_effort_distribution}
-\title{Map effort distribution}
+\title{Spatial distribution of tuna effort}
 \usage{
 map_effort_distribution(
   data_connection,
@@ -36,5 +36,5 @@ map_effort_distribution(
 The function return ggplot R plot.
 }
 \description{
-Spatial distribution of tuna effort of the French purse seine fishing fleet.
+Spatial distribution of tuna effort.
 }

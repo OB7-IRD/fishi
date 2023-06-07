@@ -2,7 +2,7 @@
 % Please edit documentation in R/fishing_activity.R
 \name{fishing_activity}
 \alias{fishing_activity}
-\title{Fishing activity}
+\title{Annual number of fishing sets}
 \usage{
 fishing_activity(
   data_connection,
@@ -39,5 +39,5 @@ fishing_activity(
 The function return ggplot R plot.
 }
 \description{
-Fishing operations. Annual number of fishing sets in the French purse seine fishery on FOB- associated and free-swimming tuna schools.
+Fishing operations. Annual number of fishing sets on FOB-associated and free-swimming tuna schools.
 }

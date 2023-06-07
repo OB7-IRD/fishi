@@ -2,7 +2,7 @@
 % Please edit documentation in R/bio_size_tuna.R
 \name{bio_size_tuna}
 \alias{bio_size_tuna}
-\title{Bio size tuna}
+\title{Size distribution of major tuna catches}
 \usage{
 bio_size_tuna(
   data_connection,
@@ -30,5 +30,5 @@ bio_size_tuna(
 The function return ggplot R plot.
 }
 \description{
-Size distribution of major tuna catches (in percentage of the total number of fishes) for the French purse seine fleet.
+Size distribution of major tuna catches (in percentage of the total number of fishes).
 }

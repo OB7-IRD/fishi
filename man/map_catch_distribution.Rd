@@ -2,7 +2,7 @@
 % Please edit documentation in R/map_catch_distribution.R
 \name{map_catch_distribution}
 \alias{map_catch_distribution}
-\title{Map catch distribution}
+\title{Spatial distribution of tuna catches}
 \usage{
 map_catch_distribution(
   data_connection,
@@ -39,5 +39,5 @@ map_catch_distribution(
 The function return ggplot R plot.
 }
 \description{
-Spatial distribution of tuna catches of the French purse seine fishing fleet.
+Spatial distribution of tuna catches.
 }
