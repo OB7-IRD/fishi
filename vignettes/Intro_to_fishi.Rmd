@@ -15,17 +15,14 @@ knitr::opts_chunk$set(
 ```
 
 ```{r setup, message = FALSE, warning = FALSE, include = FALSE}
-library(fishi)
-library(codama)
-library(furdeb)
-library(readxl)
-library(readr)
-library(kableExtra)
+require(fishi)
+require(codama)
+require(furdeb)
 
 # Database connection
-config <- configuration_file(path_file = paste0(path.expand("~"),"/.appconfig/indicator_glossary/configuration_file_fishi.yml"),
+config <- furdeb::configuration_file(path_file = paste0(path.expand("~"), "/.appconfig/indicator_glossary/configuration_file_fishi.yml"),
                              silent = TRUE)
-balbaya_con <- postgresql_dbconnection(db_user = config[["databases_configuration"]][["balbaya_vmot5"]][["login"]],
+balbaya_con <- furdeb::postgresql_dbconnection(db_user = config[["databases_configuration"]][["balbaya_vmot5"]][["login"]],
                                                           db_password = config[["databases_configuration"]][["balbaya_vmot5"]][["password"]],
                                                           db_dbname = config[["databases_configuration"]][["balbaya_vmot5"]][["dbname"]],
                                                           db_host = config[["databases_configuration"]][["balbaya_vmot5"]][["host"]],
@@ -94,7 +91,7 @@ For each indicator, all the arguments can be modified as required. Take fishing_
 
 ```{r, message=FALSE, warning=FALSE, fig.width = 8, fig.height = 8}
 fishing_capacity(data_connection = balbaya_con,
-                 time_period = as.integer(c(1991:2022)), 
+                 time_period = as.integer(c(1991:2022)),
                  ocean = as.integer(1),
                  graph_type = "plot",
                  vessel_type_select = "vessel_type",
@@ -108,7 +105,7 @@ fishing_capacity(data_connection = balbaya_con,
 
 ```{r, message=FALSE, warning=FALSE, fig.width = 8, fig.height = 8}
 fishing_capacity(data_connection = balbaya_con,
-                 time_period = as.integer(c(1981:2022)), 
+                 time_period = as.integer(c(1981:2022)),
                  ocean = as.integer(2),
                  graph_type = "plot",
                  vessel_type_select = "vessel_type",

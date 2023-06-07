@@ -12,18 +12,10 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
+require(fishi)
+require(codama)
+require(kableExtra)
 ```
-
-```{r setup, message = FALSE, warning = FALSE, include = FALSE}
-library(fishi)
-library(codama)
-library(furdeb)
-library(readxl)
-library(readr)
-library(kableExtra)
-```
-
-# 
 
 ### Country
 
@@ -33,80 +25,80 @@ country <- c("French", "Mayotte")
 color <- c("#a6cee3", "#1f78b4")
 tableau <- data.frame(code, country, color)
 
-kable(tableau, "html") %>%
-  kable_classic(c("hover",
-                  "condensed"), 
-                font_size = 14) %>%
-  row_spec(1, color = "white", background = "#a6cee3") %>%
-  row_spec(2, color = "white", background = "#1f78b4")
+kableExtra::kable(tableau, "html") %>%
+  kableExtra::kable_classic(c("hover",
+                              "condensed"),
+                            font_size = 14) %>%
+  kableExtra::row_spec(1, color = "white", background = "#a6cee3") %>%
+  kableExtra::row_spec(2, color = "white", background = "#1f78b4")
 ```
 
 ### Ocean
 
 ```{r, echo = FALSE}
-code <- c(1, 2, 3, 4, 5) 
-ocean <- c("Atlantic", "Indian", "Western Pacific", "East Pacific", "Pacific") 
-color <- c("#a6cee3", "#1f78b4", "#b2df8a", "#33a02c", "#fb9a99") 
-tableau <- data.frame(code, ocean, color)  
+code <- c(1, 2, 3, 4, 5)
+ocean <- c("Atlantic", "Indian", "Western Pacific", "East Pacific", "Pacific")
+color <- c("#a6cee3", "#1f78b4", "#b2df8a", "#33a02c", "#fb9a99")
+tableau <- data.frame(code, ocean, color)
 
-kable(tableau, "html") %>%   
-  kable_classic(c("hover",    
-                  "condensed"), 
-                font_size = 14) %>%  
-  row_spec(1, color = "white", background = "#a6cee3") %>% 
-  row_spec(2, color = "white", background = "#1f78b4") %>% 
-  row_spec(3, color = "white", background = "#b2df8a") %>%  
-  row_spec(4, color = "white", background = "#33a02c") %>%   
-  row_spec(5, color = "white", background = "#fb9a99")
+kableExtra::kable(tableau, "html") %>%
+  kableExtra::kable_classic(c("hover",
+                              "condensed"),
+                            font_size = 14) %>%
+  kableExtra::row_spec(1, color = "white", background = "#a6cee3") %>%
+  kableExtra::row_spec(2, color = "white", background = "#1f78b4") %>%
+  kableExtra::row_spec(3, color = "white", background = "#b2df8a") %>%
+  kableExtra::row_spec(4, color = "white", background = "#33a02c") %>%
+  kableExtra::row_spec(5, color = "white", background = "#fb9a99")
 ```
 
 ### Specie
 
 ```{r, echo = FALSE}
-data <- data.frame(code = c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 18, 100), 
+data <- data.frame(code = c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 18, 100),
                    name = c("YFT", "SKJ", "BET", "ALB", "LTA", "FRI", "SHX", "DSC",
-                            "MIX", "KAW", "FRZ", "Other"),   
+                            "MIX", "KAW", "FRZ", "Other"),
                    full_name = c("Yellowfin tuna", "Skipjack tuna", "Bigeye tuna",
                                  "Albacore tuna", "Little tuna", "Frigate tuna",
                                  "Sharks", "Discard tuna", "Mixed species of tuna",
                                  "Mackerel tuna", "Ray-finned bony fish", "Other"),
                    color = c("#FFD700", "#00688b", "#ee2c2c", "#f4a261", "#332288",
                              "#44AA99", "#661100", "#AA4499", "#ff9f1c", "#6699CC",
-                             "#999933", "#8d99ae") )  
+                             "#999933", "#8d99ae"))
 
-kable(data, "html") %>%  
-  kable_classic(c("hover",
-                  "condensed"), 
-                font_size = 14) %>% 
-  row_spec(1, color = "white", background = "#FFD700") %>%
-  row_spec(2, color = "white", background = "#00688b") %>%
-  row_spec(3, color = "white", background = "#ee2c2c") %>%
-  row_spec(4, color = "white", background = "#f4a261") %>%
-  row_spec(5, color = "white", background = "#332288") %>%
-  row_spec(6, color = "white", background = "#44AA99") %>%
-  row_spec(7, color = "white", background = "#661100") %>% 
-  row_spec(8, color = "white", background = "#AA4499") %>% 
-  row_spec(9, color = "white", background = "#ff9f1c") %>% 
-  row_spec(10, color = "white", background = "#6699CC") %>%
-  row_spec(11, color = "white", background = "#999933") %>%
-  row_spec(12, color = "white", background = "#8d99ae")
+kableExtra::kable(data, "html") %>%
+  kableExtra::kable_classic(c("hover",
+                              "condensed"),
+                            font_size = 14) %>%
+  kableExtra::row_spec(1, color = "white", background = "#FFD700") %>%
+  kableExtra::row_spec(2, color = "white", background = "#00688b") %>%
+  kableExtra::row_spec(3, color = "white", background = "#ee2c2c") %>%
+  kableExtra::row_spec(4, color = "white", background = "#f4a261") %>%
+  kableExtra::row_spec(5, color = "white", background = "#332288") %>%
+  kableExtra::row_spec(6, color = "white", background = "#44AA99") %>%
+  kableExtra::row_spec(7, color = "white", background = "#661100") %>%
+  kableExtra::row_spec(8, color = "white", background = "#AA4499") %>%
+  kableExtra::row_spec(9, color = "white", background = "#ff9f1c") %>%
+  kableExtra::row_spec(10, color = "white", background = "#6699CC") %>%
+  kableExtra::row_spec(11, color = "white", background = "#999933") %>%
+  kableExtra::row_spec(12, color = "white", background = "#8d99ae")
 ```
 
 ### Boat
 
 ```{r, echo = FALSE}
 data <- data.frame(code_vessel_type = c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 99),
-                   code_engin = c(2, 2, 5, 1, 1, 1, 3, 4, 4, 4, 4, 2, 0),   
-                   name = c("Canne/glacier", "Canne/congélateur", "Mixte", 
+                   code_engin = c(2, 2, 5, 1, 1, 1, 3, 4, 4, 4, 4, 2, 0),
+                   name = c("Canne/glacier", "Canne/congélateur", "Mixte",
                             "Senneur avec appât", "Senneur sans appât",
-                            "Grand senneur", "Palangrier", "Bateau Mère", 
+                            "Grand senneur", "Palangrier", "Bateau Mère",
                             "Bateau Usine", "Supply", "Cargo", "Canneur/supply",
-                            "Inconnu"))  
+                            "Inconnu"))
 
-kable(data, "html") %>%  
-  kable_classic(c("hover", 
-                  "condensed"),                  
-                font_size = 14)
+kableExtra::kable(data, "html") %>%
+  kableExtra::kable_classic(c("hover",
+                              "condensed"),
+                            font_size = 14)
 ```
 
 ## 
