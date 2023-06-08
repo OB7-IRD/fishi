@@ -130,11 +130,11 @@ fishing_capacity <- function(data_connection,
   # Number of ships per category
   fishing_capacity_t3 <- fishing_capacity_t2 %>%
     dplyr::group_by(year) %>%
-    dplyr::reframe("50-400" = sum(tons > 50 & tons <= 400, na.rm = TRUE),
-                   "401-600" = sum(tons > 401 & tons <= 600, na.rm = TRUE),
-                   "601-800" = sum(tons > 601 & tons <= 800, na.rm = TRUE),
-                   "801-1200" = sum(tons > 801 & tons <= 1200, na.rm = TRUE),
-                   "1201-2000" = sum(tons > 1201 & tons <= 2000, na.rm = TRUE),
+    dplyr::reframe("50-400" = sum(tons >= 50 & tons <= 400, na.rm = TRUE),
+                   "400-600" = sum(tons > 400 & tons <= 600, na.rm = TRUE),
+                   "600-800" = sum(tons > 600 & tons <= 800, na.rm = TRUE),
+                   "800-1200" = sum(tons > 800 & tons <= 1200, na.rm = TRUE),
+                   "1200-2000" = sum(tons > 1200 & tons <= 2000, na.rm = TRUE),
                    "> 2000" = sum(tons > 2000, na.rm = TRUE),
                    "Nb_vessels" = dplyr::n_distinct(c_quille, na.rm = TRUE),
                    "Nb_vessels_weighted" = sum(c_quille_nb_months / 12, na.rm = TRUE),
@@ -148,10 +148,10 @@ fishing_capacity <- function(data_connection,
                                     values_to = "nb_vessels")
   data_pivot <- data_pivot %>%
     dplyr::mutate(tons = forcats::fct_relevel(tons,
-                                              "1201-2000",
-                                              "801-1200",
-                                              "601-800",
-                                              "401-600",
+                                              "1200-2000",
+                                              "800-1200",
+                                              "600-800",
+                                              "400-600",
                                               "50-400"))
   # 4 - Legend design ----
   #Ocean
