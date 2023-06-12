@@ -1,18 +1,12 @@
 #' @name map_catch_distribution
 #' @title Spatial distribution of tuna catches
 #' @description Spatial distribution of tuna catches.
-#' @param data_connection {\link[base]{list}} expected. Output of the function {\link[furdeb]{postgresql_dbconnection}}, which must be done before using the map_catch_distribution() function.
-#' @param time_period {\link[base]{integer}} expected. Period identification in year.
-#' @param country {\link[base]{integer}} expected. Country codes identification.
-#' @param vessel_type {\link[base]{integer}} expected. Vessel type codes identification.
-#' @param vessel_type_select {\link[base]{character}} expected. engin or vessel_type.
-#' @param ocean {\link[base]{integer}} expected. Ocean codes identification.
+#' @param dataframe {\link[base]{data.frame}} expected. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the fishing_capacity function.
 #' @param fishing_type {\link[base]{character}} expected. FOB, FSC or ALL. ALL by default.
 #' @param graph_type {\link[base]{character}} expected. plot or plotly. Plot by default.
 #' @param title TRUE or FALSE expected. False by default.
 #' @return The function return ggplot R plot.
 #' @export
-#' @importFrom DBI dbGetQuery sqlInterpolate SQL
 #' @importFrom dplyr tibble group_by summarise case_when filter
 #' @importFrom plotrix floating.pie pie.labels
 #' @importFrom maps map
@@ -22,12 +16,7 @@
 #' @importFrom scatterpie geom_scatterpie
 #' @importFrom rnaturalearth ne_countries
 #' @importFrom ggspatial coord_sf
-map_catch_distribution <- function(data_connection,
-                                   time_period,
-                                   country = as.integer(x = 1),
-                                   vessel_type = as.integer(x = 1),
-                                   ocean = as.integer(x = 1),
-                                   vessel_type_select = "engin",
+map_catch_distribution <- function(dataframe,
                                    fishing_type = "ALL",
                                    graph_type = "plot",
                                    title = FALSE) {
@@ -46,43 +35,6 @@ map_catch_distribution <- function(data_connection,
   skj <- NULL
   bet <- NULL
   # 1 - Arguments verification ----
-  if (codama::r_type_checking(r_object = data_connection,
-                              type = "list",
-                              length = 2L,
-                              output = "logical") != TRUE) {
-    return(codama::r_type_checking(r_object = data_connection,
-                                   type = "list",
-                                   length = 2L,
-                                   output = "message"))
-  }
-  if (codama::r_type_checking(r_object = time_period,
-                              type = "integer",
-                              output = "logical") != TRUE) {
-    return(codama::r_type_checking(r_object = time_period,
-                                   type = "integer",
-                                   output = "message"))
-  }
-  if (codama::r_type_checking(r_object = country,
-                              type = "integer",
-                              output = "logical") != TRUE) {
-    return(codama::r_type_checking(r_object = country,
-                                   type = "integer",
-                                   output = "message"))
-  }
-  if (codama::r_type_checking(r_object = ocean,
-                              type = "integer",
-                              output = "logical") != TRUE) {
-    return(codama::r_type_checking(r_object = ocean,
-                                   type = "integer",
-                                   output = "message"))
-  }
-  if (codama::r_type_checking(r_object = vessel_type,
-                              type = "integer",
-                              output = "logical") != TRUE) {
-    return(codama::r_type_checking(r_object = vessel_type,
-                                   type = "integer",
-                                   output = "message"))
-  }
   if (codama::r_type_checking(r_object = fishing_type,
                               type = "character",
                               output = "logical") != TRUE) {
@@ -97,17 +49,8 @@ map_catch_distribution <- function(data_connection,
                                    type = "integer",
                                    output = "message"))
   }
-  # 2 - Data extraction ----
-  map_catch_previous_sql_final <- data_extraction(type = "database",
-                                             data_connection = data_connection,
-                                             sql_name = "balbaya_map_catch_previous.sql",
-                                             time_period = time_period,
-                                             country = country,
-                                             vessel_type = vessel_type,
-                                             vessel_type_select = vessel_type_select,
-                                             ocean = ocean)
-  # 3 - Data design ----
-  t1 <- map_catch_previous_sql_final %>%
+  # 2 - Data design ----
+  t1 <- dataframe %>%
     dplyr::group_by(n_act,
                     d_act,
                     c_bat,
@@ -117,7 +60,6 @@ map_catch_distribution <- function(data_connection,
                     cwp11_act) %>%
     dplyr::summarise(poids = sum(v_poids_capt, na.rm = TRUE),
                      .groups = "drop")
-
   if (fishing_type == "ALL") {
     datafile <- t1  %>%
       dplyr::filter(v_nb_calee_pos > 0) %>%
@@ -163,7 +105,7 @@ map_catch_distribution <- function(data_connection,
          sep = "")
   }
   datafile[datafile == 0] <- 1e-8
-  # 4 - Legend design ----
+  # 3 - Legend design ----
   # Define fuction quad2pos
   quad2pos <- function(id) {
     latsiz <- c(5, 10, 10, 20, 1, 5)
@@ -187,18 +129,18 @@ map_catch_distribution <- function(data_connection,
                    sizelon = lonsiz[siz]))
   }
   #Ocean
-  ocean_legend <- code_manipulation(data         = map_catch_previous_sql_final$ocean_id,
+  ocean_legend <- code_manipulation(data         = dataframe$ocean_id,
                                     referential  = "ocean",
                                     manipulation = "legend")
   #vessel
-  vessel_type_legend <- code_manipulation(data         = map_catch_previous_sql_final$vessel_type_id,
+  vessel_type_legend <- code_manipulation(data         = dataframe$vessel_type_id,
                                           referential  = "vessel_simple_type",
                                           manipulation = "legend")
   #country
-  country_legend <- code_manipulation(data         = map_catch_previous_sql_final$country_id,
+  country_legend <- code_manipulation(data         = dataframe$country_id,
                                       referential  = "country",
                                       manipulation = "legend")
-  # 5 - Graphic design ----
+  # 4 - Graphic design ----
   if (graph_type == "plot") {
     lat <- quad2pos(as.numeric(datafile$cwp11_act + 5 * 1e6))$y
     long <- quad2pos(as.numeric(datafile$cwp11_act + 5 * 1e6))$x

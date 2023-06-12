@@ -4,36 +4,18 @@
 \alias{fishing_capacity}
 \title{Annual changes in the number of vessels}
 \usage{
-fishing_capacity(
-  data_connection,
-  time_period,
-  ocean,
-  country = as.integer(x = 1),
-  vessel_type_select = "vessel_type",
-  vessel_type = as.integer(x = c(4, 5, 6)),
-  graph_type = "plot",
-  figure = "vessel",
-  title = FALSE
-)
+fishing_capacity(dataframe, graph_type = "plot", figure = NULL, title = FALSE)
 }
 \arguments{
-\item{data_connection}{{\link[base]{list}} expected. Output of the function {\link[furdeb]{postgresql_dbconnection}}, which must be done before using the fishing_capacity function.}
-
-\item{time_period}{{\link[base]{integer}} expected. Period identification in year.}
-
-\item{ocean}{{\link[base]{integer}} expected. Ocean codes identification.}
-
-\item{country}{{\link[base]{integer}} expected. Country codes identification. 1 by default.}
-
-\item{vessel_type_select}{{\link[base]{character}} expected. engin or vessel_type.}
-
-\item{vessel_type}{{\link[base]{integer}} expected. Vessel type codes identification. 1 by default.}
+\item{dataframe}{{\link[base]{data.frame}} expected. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the fishing_capacity function.}
 
 \item{graph_type}{{\link[base]{character}} expected. plot, plotly or table. Plot by default.}
 
-\item{figure}{{\link[base]{character}} expected. vessel (for number of vessels graph) or capacity (for carrying capacity graph). Vessel by default.}
+\item{figure}{{\link[base]{character}} expected. For plotly figure: vessel (for number of vessels graph) or capacity (for carrying capacity graph). NULL by default.}
 
 \item{title}{TRUE or FALSE expected. False by default.}
+
+\item{time_period}{{\link[base]{integer}} expected. Period identification in year.}
 }
 \value{
 The function return ggplot R plot.

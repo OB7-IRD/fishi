@@ -4,34 +4,14 @@
 \alias{fishing_activity}
 \title{Annual number of fishing sets}
 \usage{
-fishing_activity(
-  data_connection,
-  time_period,
-  ocean,
-  country = as.integer(x = 1),
-  vessel_type = as.integer(x = 1),
-  vessel_type_select = "engin",
-  graph_type = "plot",
-  figure = "set",
-  title = FALSE
-)
+fishing_activity(dataframe, graph_type = "plot", figure = NULL, title = FALSE)
 }
 \arguments{
-\item{data_connection}{{\link[base]{list}} expected. Output of the function {\link[furdeb]{postgresql_dbconnection}}, which must be done before using the fishing_activity() function.}
-
-\item{time_period}{{\link[base]{integer}} expected. Period identification in year.}
-
-\item{ocean}{{\link[base]{integer}} expected. Ocean codes identification.}
-
-\item{country}{{\link[base]{integer}} expected. Country codes identification. 1 by default.}
-
-\item{vessel_type}{{\link[base]{integer}} expected. Vessel type codes identification. 1 by default.}
-
-\item{vessel_type_select}{{\link[base]{character}} expected. engin or vessel_type.}
+\item{dataframe}{{\link[base]{data.frame}} expected. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the fishing_capacity function.}
 
 \item{graph_type}{{\link[base]{character}} expected. plot, plotly or table. Plot by default.}
 
-\item{figure}{{\link[base]{character}} expected. set (for number of sets graph) or log (for percentage FOB-associated sets graph).}
+\item{figure}{{\link[base]{character}} expected. For plotly figure: set (for number of sets graph) or log (for percentage FOB-associated sets graph). NULL by default.}
 
 \item{title}{TRUE or FALSE expected. False by default.}
 }

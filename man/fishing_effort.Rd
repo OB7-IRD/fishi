@@ -4,29 +4,10 @@
 \alias{fishing_effort}
 \title{Annual total number of fishing and searching days}
 \usage{
-fishing_effort(
-  data_connection,
-  time_period,
-  ocean,
-  country = as.integer(x = 1),
-  vessel_type_select = "vessel_type",
-  vessel_type = as.integer(x = c(4, 5, 6)),
-  graph_type = "plot",
-  title = FALSE
-)
+fishing_effort(dataframe, graph_type = "plot", title = FALSE)
 }
 \arguments{
-\item{data_connection}{{\link[base]{list}} expected. Output of the function {\link[furdeb]{postgresql_dbconnection}}, which must be done before using the fishing_effort function.}
-
-\item{time_period}{{\link[base]{integer}} expected. Period identification in year.}
-
-\item{ocean}{{\link[base]{integer}} expected. Ocean codes identification.}
-
-\item{country}{{\link[base]{integer}} expected. Country codes identification. 1 by default.}
-
-\item{vessel_type_select}{{\link[base]{character}} expected. Vessel for c_engin or vessel_accuracy for c_typ_bat.}
-
-\item{vessel_type}{{\link[base]{integer}} expected. Vessel type codes identification. 1 by default.}
+\item{dataframe}{{\link[base]{data.frame}} expected. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the fishing_capacity function.}
 
 \item{graph_type}{{\link[base]{character}} expected. plot, plotly or table. Plot by default.}
 

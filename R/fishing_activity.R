@@ -1,18 +1,12 @@
 #' @name fishing_activity
 #' @title Annual number of fishing sets
 #' @description Fishing operations. Annual number of fishing sets on FOB-associated and free-swimming tuna schools.
-#' @param data_connection {\link[base]{list}} expected. Output of the function {\link[furdeb]{postgresql_dbconnection}}, which must be done before using the fishing_activity() function.
-#' @param time_period {\link[base]{integer}} expected. Period identification in year.
-#' @param ocean {\link[base]{integer}} expected. Ocean codes identification.
-#' @param country {\link[base]{integer}} expected. Country codes identification. 1 by default.
-#' @param vessel_type {\link[base]{integer}} expected. Vessel type codes identification. 1 by default.
-#' @param vessel_type_select {\link[base]{character}} expected. engin or vessel_type.
+#' @param dataframe {\link[base]{data.frame}} expected. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the fishing_capacity function.
 #' @param graph_type {\link[base]{character}} expected. plot, plotly or table. Plot by default.
-#' @param figure {\link[base]{character}} expected. set (for number of sets graph) or log (for percentage FOB-associated sets graph).
+#' @param figure {\link[base]{character}} expected. For plotly figure: set (for number of sets graph) or log (for percentage FOB-associated sets graph). NULL by default.
 #' @param title TRUE or FALSE expected. False by default.
 #' @return The function return ggplot R plot.
 #' @export
-#' @importFrom DBI dbGetQuery sqlInterpolate SQL
 #' @importFrom dplyr mutate tibble group_by summarise
 #' @importFrom lubridate year
 #' @importFrom graphics par plot axis lines abline legend text
@@ -20,14 +14,9 @@
 #' @importFrom plotly ggplotly layout
 #' @importFrom tidyr pivot_longer
 #' @importFrom codama r_type_checking
-fishing_activity <- function(data_connection,
-                             time_period,
-                             ocean,
-                             country = as.integer(x = 1),
-                             vessel_type = as.integer(x = 1),
-                             vessel_type_select = "engin",
+fishing_activity <- function(dataframe,
                              graph_type = "plot",
-                             figure = "set",
+                             figure = NULL,
                              title = FALSE) {
   # 0 - Global variables assignement ----
   activity_date <- NULL
@@ -41,43 +30,6 @@ fishing_activity <- function(data_connection,
   type <- NULL
   `%_log` <- NULL
   # 1 - Arguments verification ----
-  if (codama::r_type_checking(r_object = data_connection,
-                              type = "list",
-                              length = 2L,
-                              output = "logical") != TRUE) {
-    return(codama::r_type_checking(r_object = data_connection,
-                                   type = "list",
-                                   length = 2L,
-                                   output = "message"))
-  }
-  if (codama::r_type_checking(r_object = time_period,
-                              type = "integer",
-                              output = "logical") != TRUE) {
-    return(codama::r_type_checking(r_object = time_period,
-                                   type = "integer",
-                                   output = "message"))
-  }
-  if (codama::r_type_checking(r_object = ocean,
-                              type = "integer",
-                              output = "logical") != TRUE) {
-    return(codama::r_type_checking(r_object = ocean,
-                                   type = "integer",
-                                   output = "message"))
-  }
-  if (codama::r_type_checking(r_object = country,
-                              type = "integer",
-                              output = "logical") != TRUE) {
-    return(codama::r_type_checking(r_object = country,
-                                   type = "integer",
-                                   output = "message"))
-  }
-  if (codama::r_type_checking(r_object = vessel_type,
-                              type = "integer",
-                              output = "logical") != TRUE) {
-    return(codama::r_type_checking(r_object = vessel_type,
-                                   type = "integer",
-                                   output = "message"))
-  }
   if (codama::r_type_checking(r_object = graph_type,
                               type = "character",
                               output = "logical") != TRUE) {
@@ -85,24 +37,8 @@ fishing_activity <- function(data_connection,
                                    type = "character",
                                    output = "message"))
   }
-  if (codama::r_type_checking(r_object = figure,
-                              type = "character",
-                              output = "logical") != TRUE) {
-    return(codama::r_type_checking(r_object = figure,
-                                   type = "character",
-                                   output = "message"))
-  }
-  # 2 - Data extraction ----
-  fishing_activity_data <- data_extraction(type = "database",
-                                           data_connection = data_connection,
-                                           sql_name = "balbaya_fishing_activity.sql",
-                                           time_period = time_period,
-                                           country = country,
-                                           vessel_type = vessel_type,
-                                           vessel_type_select = vessel_type_select,
-                                           ocean = ocean)
-  # 3 - Data design ----
-  fishing_activity_t1 <- fishing_activity_data %>%
+  # 2 - Data design ----
+  fishing_activity_t1 <- dataframe %>%
     dplyr::mutate(year = lubridate::year(x = activity_date))
   # db a1 - Add : Number of total, positive, and null sets by ALL
   a1 <- fishing_activity_t1 %>%
@@ -152,20 +88,20 @@ fishing_activity <- function(data_connection,
                                      cols = c(2:3),
                                      names_to = "type",
                                      values_to = "nb_sets")
-  # 4 - Legend design ----
+  # 3 - Legend design ----
   #Ocean
-  ocean_legend <- code_manipulation(data         = fishing_activity_data$ocean_id,
+  ocean_legend <- code_manipulation(data         = dataframe$ocean_id,
                                     referential  = "ocean",
                                     manipulation = "legend")
   #country
-  country_legend <- code_manipulation(data         = fishing_activity_data$country_id,
+  country_legend <- code_manipulation(data         = dataframe$country_id,
                                       referential  = "country",
                                       manipulation = "legend")
   #vessel
-  vessel_type_legend <- code_manipulation(data         = fishing_activity_data$vessel_type_id,
+  vessel_type_legend <- code_manipulation(data         = dataframe$vessel_type_id,
                                           referential  = "vessel_simple_type",
                                           manipulation = "legend")
-  # 5 - Graphic design ----
+  # 4 - Graphic design ----
   if (graph_type == "plot") {
     graphics::par(mar = c(5, 4, 4, 4))
     set <- as.matrix(table_sets[, c(5,

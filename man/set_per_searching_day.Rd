@@ -5,31 +5,16 @@
 \title{Annual number of sets per searching day}
 \usage{
 set_per_searching_day(
-  data_connection,
-  time_period,
-  ocean,
+  dataframe,
   fishing_type,
-  country = as.integer(x = 1),
-  vessel_type = as.integer(x = 1),
-  vessel_type_select = "engin",
   graph_type = "plot",
   title = FALSE
 )
 }
 \arguments{
-\item{data_connection}{{\link[base]{list}} expected. Output of the function {\link[furdeb]{postgresql_dbconnection}}, which must be done before using the set_per_searching_day() function.}
-
-\item{time_period}{{\link[base]{integer}} expected. Period identification in year.}
-
-\item{ocean}{{\link[base]{integer}} expected. Ocean codes identification.}
+\item{dataframe}{{\link[base]{data.frame}} expected. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the fishing_capacity function.}
 
 \item{fishing_type}{{\link[base]{character}} expected. FOB and FSC.}
-
-\item{country}{{\link[base]{integer}} expected. Country codes identification. 1 by default.}
-
-\item{vessel_type}{{\link[base]{integer}} expected. Vessel type codes identification. 1 by default.}
-
-\item{vessel_type_select}{{\link[base]{character}} expected. engin or vessel_type.}
 
 \item{graph_type}{{\link[base]{character}} expected. plot, plotly or table. Plot by default.}
 

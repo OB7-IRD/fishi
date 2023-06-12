@@ -1,29 +1,18 @@
 #' @name fishing_effort
 #' @title Annual total number of fishing and searching days
 #' @description Changes in nominal effort over time. Annual total number of fishing and searching days.
-#' @param data_connection {\link[base]{list}} expected. Output of the function {\link[furdeb]{postgresql_dbconnection}}, which must be done before using the fishing_effort function.
-#' @param time_period {\link[base]{integer}} expected. Period identification in year.
-#' @param ocean {\link[base]{integer}} expected. Ocean codes identification.
-#' @param country {\link[base]{integer}} expected. Country codes identification. 1 by default.
-#' @param vessel_type_select {\link[base]{character}} expected. Vessel for c_engin or vessel_accuracy for c_typ_bat.
-#' @param vessel_type {\link[base]{integer}} expected. Vessel type codes identification. 1 by default.
+#' @param dataframe {\link[base]{data.frame}} expected. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the fishing_capacity function.
 #' @param graph_type {\link[base]{character}} expected. plot, plotly or table. Plot by default.
 #' @param title TRUE or FALSE expected. False by default.
 #' @return The function return ggplot R plot.
 #' @export
-#' @importFrom DBI dbGetQuery sqlInterpolate SQL
 #' @importFrom dplyr mutate tibble group_by summarise
 #' @importFrom lubridate year
 #' @importFrom ggplot2 ggplot aes geom_line scale_color_manual geom_point labs ylim theme_bw
 #' @importFrom plotly ggplotly layout
 #' @importFrom graphics par plot axis lines abline legend text
 #' @importFrom codama r_type_checking
-fishing_effort <- function(data_connection,
-                           time_period,
-                           ocean,
-                           country = as.integer(x = 1),
-                           vessel_type_select = "vessel_type",
-                           vessel_type = as.integer(x = c(4, 5, 6)),
+fishing_effort <- function(dataframe,
                            graph_type = "plot",
                            title = FALSE) {
   # 0 - Global variables assignement ----
@@ -48,43 +37,6 @@ fishing_effort <- function(data_connection,
   nb_landings_in_activity_year <- NULL
   nb_days <- NULL
   # 1 - Arguments verification ----
-  if (codama::r_type_checking(r_object = data_connection,
-                              type = "list",
-                              length = 2L,
-                              output = "logical") != TRUE) {
-    return(codama::r_type_checking(r_object = data_connection,
-                                   type = "list",
-                                   length = 2L,
-                                   output = "message"))
-  }
-  if (codama::r_type_checking(r_object = time_period,
-                              type = "integer",
-                              output = "logical") != TRUE) {
-    return(codama::r_type_checking(r_object = time_period,
-                                   type = "integer",
-                                   output = "message"))
-  }
-  if (codama::r_type_checking(r_object = ocean,
-                              type = "integer",
-                              output = "logical") != TRUE) {
-    return(codama::r_type_checking(r_object = ocean,
-                                   type = "integer",
-                                   output = "message"))
-  }
-  if (codama::r_type_checking(r_object = country,
-                              type = "integer",
-                              output = "logical") != TRUE) {
-    return(codama::r_type_checking(r_object = country,
-                                   type = "integer",
-                                   output = "message"))
-  }
-  if (codama::r_type_checking(r_object = vessel_type,
-                              type = "integer",
-                              output = "logical") != TRUE) {
-    return(codama::r_type_checking(r_object = vessel_type,
-                                   type = "integer",
-                                   output = "message"))
-  }
   if (codama::r_type_checking(r_object = graph_type,
                               type = "character",
                               output = "logical") != TRUE) {
@@ -92,18 +44,9 @@ fishing_effort <- function(data_connection,
                                    type = "character",
                                    output = "message"))
   }
-  # 2 - Data extraction ----
-  fishing_effort_data <- data_extraction(type = "database",
-                                         data_connection = data_connection,
-                                         sql_name = "balbaya_fishing_effort.sql",
-                                         time_period = time_period,
-                                         country = country,
-                                         vessel_type = vessel_type,
-                                         vessel_type_select = vessel_type_select,
-                                         ocean = ocean)
-  # 3 - Data design ----
+  # 2 - Data design ----
   #Adding columns years
-  fishing_effort_t1 <- fishing_effort_data %>%
+  fishing_effort_t1 <- dataframe %>%
     dplyr::mutate(year = lubridate::year(x = activity_date),
                   landing_in_activity_year = dplyr::case_when(landing_date == activity_date ~ 1,
                                                               TRUE ~ 0))
@@ -175,7 +118,7 @@ fishing_effort <- function(data_connection,
   table_effort <- fishing_effort_t4 %>%
     dplyr::mutate("fishing_days" = fishing_days_1000 / 1000,
                   "searching_days" = searching_days_1000 / 1000)
-  # 4 - Legend design ----
+  # 3 - Legend design ----
   #Ocean
   ocean_legend <- code_manipulation(data         = fishing_effort_data$ocean_id,
                                     referential  = "ocean",
@@ -188,7 +131,7 @@ fishing_effort <- function(data_connection,
   vessel_type_legend <- code_manipulation(data         = fishing_effort_data$vessel_type_id,
                                           referential  = "vessel_simple_type",
                                           manipulation = "legend")
-  # 5 - Graphic design ----
+  # 4 - Graphic design ----
   if (graph_type == "plot") {
     par(mar = c(4, 4.7, 4.1, 1.5))
     # Define the positions of the x-axis tick marks

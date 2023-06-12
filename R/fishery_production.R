@@ -1,18 +1,12 @@
 #' @name fishery_production
 #' @title Total fishery production
 #' @description total fishery production (catch by species).
-#' @param data_connection {\link[base]{list}} expected. Output of the function {\link[furdeb]{postgresql_dbconnection}}, which must be done before using the fishery_production() function.
-#' @param time_period {\link[base]{integer}} expected. Period identification in year.
-#' @param ocean {\link[base]{integer}} expected. Ocean codes identification.
-#' @param country {\link[base]{integer}} expected. Country codes identification. 1 by default.
-#' @param vessel_type {\link[base]{integer}} expected. Vessel type codes identification. 1 by default.
-#' @param vessel_type_select {\link[base]{character}} expected. engin or vessel_type.
+#' @param dataframe {\link[base]{data.frame}} expected. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the fishing_capacity function.
 #' @param fishing_type  {\link[base]{character}} expected. FSC, FOB or ALL.
 #' @param graph_type {\link[base]{character}} expected. plot, plotly, table or percentage. Plot by default.
 #' @param title TRUE or FALSE expected. False by default.
 #' @return The function return ggplot R plot.
 #' @export
-#' @importFrom DBI dbGetQuery sqlInterpolate SQL
 #' @importFrom dplyr mutate tibble group_by summarise case_when
 #' @importFrom lubridate year
 #' @importFrom plotrix stackpoly
@@ -21,12 +15,7 @@
 #' @importFrom graphics par plot axis lines abline legend
 #' @importFrom tidyr pivot_longer
 #' @importFrom codama r_type_checking
-fishery_production <- function(data_connection,
-                               time_period,
-                               ocean,
-                               country = as.integer(x = 1),
-                               vessel_type = as.integer(x = 1),
-                               vessel_type_select = "engin",
+fishery_production <- function(dataframe,
                                fishing_type = "ALL",
                                graph_type = "plot",
                                title = FALSE) {
@@ -49,43 +38,6 @@ fishery_production <- function(data_connection,
   count <- NULL
   specie <- NULL
   # 1 - Arguments verification ----
-  if (codama::r_type_checking(r_object = data_connection,
-                              type = "list",
-                              length = 2L,
-                              output = "logical") != TRUE) {
-    return(codama::r_type_checking(r_object = data_connection,
-                                   type = "list",
-                                   length = 2L,
-                                   output = "message"))
-  }
-  if (codama::r_type_checking(r_object = time_period,
-                              type = "integer",
-                              output = "logical") != TRUE) {
-    return(codama::r_type_checking(r_object = time_period,
-                                   type = "integer",
-                                   output = "message"))
-  }
-  if (codama::r_type_checking(r_object = ocean,
-                              type = "integer",
-                              output = "logical") != TRUE) {
-    return(codama::r_type_checking(r_object = ocean,
-                                   type = "integer",
-                                   output = "message"))
-  }
-  if (codama::r_type_checking(r_object = country,
-                              type = "integer",
-                              output = "logical") != TRUE) {
-    return(codama::r_type_checking(r_object = country,
-                                   type = "integer",
-                                   output = "message"))
-  }
-  if (codama::r_type_checking(r_object = vessel_type,
-                              type = "integer",
-                              output = "logical") != TRUE) {
-    return(codama::r_type_checking(r_object = vessel_type,
-                                   type = "integer",
-                                   output = "message"))
-  }
   if (codama::r_type_checking(r_object = fishing_type,
                               type = "character",
                               output = "logical") != TRUE) {
@@ -100,18 +52,9 @@ fishery_production <- function(data_connection,
                                    type = "character",
                                    output = "message"))
   }
-  # 2 - Data extraction ----
-  fishery_production_data <- data_extraction(type = "database",
-                                             data_connection = data_connection,
-                                             sql_name = "balbaya_fishery_production.sql",
-                                             time_period = time_period,
-                                             country = country,
-                                             vessel_type = vessel_type,
-                                             vessel_type_select = vessel_type_select,
-                                             ocean = ocean)
-  # 3 - Data design ----
+  # 2 - Data design ----
   # Add columns year, school type and species
-  fishery_production_t1 <- fishery_production_data %>%
+  fishery_production_t1 <- dataframe %>%
     dplyr::mutate(year = lubridate::year(x = activity_date),
                   school_type = dplyr::case_when(l4c_tban == "IND" ~ "free",
                                                  l4c_tban == "BL"  ~ "free",
@@ -185,20 +128,20 @@ fishery_production <- function(data_connection,
                        total = sum(total, na.rm = TRUE),
                        .groups = "drop")
   }
-  # 4 - Legend design ----
+  # 3 - Legend design ----
   #Ocean
-  ocean_legend <- code_manipulation(data         = fishery_production_data$ocean_id,
+  ocean_legend <- code_manipulation(data         = dataframe$ocean_id,
                                     referential  = "ocean",
                                     manipulation = "legend")
   #country
-  country_legend <- code_manipulation(data         = fishery_production_data$country_id,
+  country_legend <- code_manipulation(data         = dataframe$country_id,
                                       referential  = "country",
                                       manipulation = "legend")
   #vessel
-  vessel_type_legend <- code_manipulation(data         = fishery_production_data$vessel_type_id,
+  vessel_type_legend <- code_manipulation(data         = dataframe$vessel_type_id,
                                           referential  = "vessel_simple_type",
                                           manipulation = "legend")
-  # 5 - Graphic design ----
+  # 4 - Graphic design ----
   if (graph_type == "plot") {
     graphics::par(cex.axis = 1.4,
                   cex.lab = 1.4,
@@ -253,9 +196,9 @@ fishery_production <- function(data_connection,
                                 "SKJ",
                                 "YFT"),
                      bty = "n",
-                     fill = c("khaki1",
+                     fill = c("cornflowerblue",
                               "firebrick2",
-                              "cornflowerblue"),
+                              "khaki1"),
                      cex = 1.3)
     if (fishing_type == "FSC") {
       graphics::legend("topleft",
