@@ -5,31 +5,19 @@
 \title{Annual catch rates (in t per searching day)}
 \usage{
 catch_per_unit_effort(
-  data_connection,
-  time_period,
-  country = as.integer(x = 1),
-  vessel_type = as.integer(x = 1),
-  ocean = as.integer(x = 1),
+  dataframe1,
+  dataframe2,
   fishing_type,
-  vessel_type_select = "engin",
   graph_type = "plot",
   title = FALSE
 )
 }
 \arguments{
-\item{data_connection}{{\link[base]{list}} expected. Output of the function {\link[furdeb]{postgresql_dbconnection}}, which must be done before using the catch_per_unit_effort() function.}
+\item{dataframe1}{{\link[base]{data.frame}} expected. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the catch_per_searching_day() function.}
 
-\item{time_period}{{\link[base]{integer}} expected. Period identification in year.}
-
-\item{country}{{\link[base]{integer}} expected. Country codes identification.}
-
-\item{vessel_type}{{\link[base]{integer}} expected. Vessel type codes identification.}
-
-\item{ocean}{{\link[base]{integer}} expected. Ocean codes identification.}
+\item{dataframe2}{{\link[base]{data.frame}} expected. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the catch_per_searching_day() function.}
 
 \item{fishing_type}{{\link[base]{character}} expected. FOB or FSC.}
-
-\item{vessel_type_select}{{\link[base]{character}} expected. engin or vessel_type.}
 
 \item{graph_type}{{\link[base]{character}} expected. plot, plotly or table. Plot by default.}
 

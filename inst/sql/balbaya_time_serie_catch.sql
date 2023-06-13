@@ -13,7 +13,7 @@ select
 FROM 
 		public.activite a
 		join public.bateau b on (a.c_bat = b.c_bat)
-	JOIN public.capture c on (a.c_bat = c.c_bat and a.d_act = c.d_act and a.n_act = c.n_act)
+		JOIN public.capture c on (a.c_bat = c.c_bat and a.d_act = c.d_act and a.n_act = c.n_act)
 where
 		EXTRACT(year FROM a.d_act) IN (?time_period)
 		AND b.c_pav_b  IN (?country)

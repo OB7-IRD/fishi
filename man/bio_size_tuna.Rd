@@ -4,23 +4,12 @@
 \alias{bio_size_tuna}
 \title{Size distribution of major tuna catches}
 \usage{
-bio_size_tuna(
-  data_connection,
-  report_year,
-  ocean,
-  country = as.integer(x = 1),
-  graph_type = "plot",
-  title = FALSE
-)
+bio_size_tuna(dataframe, report_year, graph_type = "plot", title = FALSE)
 }
 \arguments{
-\item{data_connection}{{\link[base]{list}} expected. Output of the function {\link[furdeb]{postgresql_dbconnection}}, which must be done before using the bio_size_tuna() function.}
+\item{dataframe}{{\link[base]{data.frame}} expected. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the bio_size_tuna() function.}
 
 \item{report_year}{{\link[base]{integer}} expected. Year of the statistical report.}
-
-\item{ocean}{{\link[base]{integer}} expected. Ocean codes identification.}
-
-\item{country}{{\link[base]{integer}} expected. Country codes identification. 1 by default.}
 
 \item{graph_type}{{\link[base]{character}} expected. plot or plotly. Plot by default.}
 

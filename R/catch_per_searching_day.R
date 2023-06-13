@@ -1,33 +1,24 @@
 #' @name catch_per_searching_day
 #' @title Annual number of catch per positive set
 #' @description Annual number of catch per positive set on FOB-associated and free-swimming schools.
-#' @param data_connection {\link[base]{list}} expected. Output of the function {\link[furdeb]{postgresql_dbconnection}}, which must be done before using the catch_per_searching_day() function.
-#' @param time_period {\link[base]{integer}} expected. Period identification in year.
-#' @param ocean {\link[base]{integer}} expected. Ocean codes identification.
+#' @param dataframe1 {\link[base]{data.frame}} expected. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the catch_per_searching_day() function.
+#' @param dataframe2 {\link[base]{data.frame}} expected. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the catch_per_searching_day() function.
 #' @param fishing_type {\link[base]{character}} expected. FOB and FSC.
-#' @param country {\link[base]{integer}} expected. Country codes identification. 1 by default.
-#' @param vessel_type {\link[base]{integer}} expected. Vessel type codes identification. 1 by default.
-#' @param vessel_type_select {\link[base]{character}} expected. engin or vessel_type.
 #' @param graph_type {\link[base]{character}} expected. plot, plotly or table. Plot by default.
 #' @param title TRUE or FALSE expected. False by default.
 #' @return The function return ggplot R plot.
 #' @export
-#' @importFrom DBI dbGetQuery sqlInterpolate SQL
 #' @importFrom dplyr mutate tibble group_by summarise case_when filter
 #' @importFrom lubridate year
 #' @importFrom ggplot2 ggplot aes geom_line scale_color_manual geom_point labs ylim theme_bw ggtitle
 #' @importFrom plotly ggplotly
 #' @importFrom graphics par plot axis lines abline legend text
 #' @importFrom codama r_type_checking
-catch_per_searching_day <- function(data_connection,
-                               time_period,
-                               ocean,
-                               fishing_type,
-                               country = as.integer(x = 1),
-                               vessel_type = as.integer(x = 1),
-                               vessel_type_select = "engin",
-                               graph_type = "plot",
-                               title = FALSE) {
+catch_per_searching_day <- function(dataframe1,
+                                    dataframe2,
+                                    fishing_type,
+                                    graph_type = "plot",
+                                    title = FALSE) {
   # 0 - Global variables assignement ----
   activity_date <- NULL
   yft <- NULL
@@ -40,43 +31,6 @@ catch_per_searching_day <- function(data_connection,
   v_nb_calees <- NULL
   nb_sets_pos <- NULL
   # 1 - Arguments verification ----
-  if (codama::r_type_checking(r_object = data_connection,
-                              type = "list",
-                              length = 2L,
-                              output = "logical") != TRUE) {
-    return(codama::r_type_checking(r_object = data_connection,
-                                   type = "list",
-                                   length = 2L,
-                                   output = "message"))
-  }
-  if (codama::r_type_checking(r_object = time_period,
-                              type = "integer",
-                              output = "logical") != TRUE) {
-    return(codama::r_type_checking(r_object = time_period,
-                                   type = "integer",
-                                   output = "message"))
-  }
-  if (codama::r_type_checking(r_object = ocean,
-                              type = "integer",
-                              output = "logical") != TRUE) {
-    return(codama::r_type_checking(r_object = ocean,
-                                   type = "integer",
-                                   output = "message"))
-  }
-  if (codama::r_type_checking(r_object = country,
-                              type = "integer",
-                              output = "logical") != TRUE) {
-    return(codama::r_type_checking(r_object = country,
-                                   type = "integer",
-                                   output = "message"))
-  }
-  if (codama::r_type_checking(r_object = vessel_type,
-                              type = "integer",
-                              output = "logical") != TRUE) {
-    return(codama::r_type_checking(r_object = vessel_type,
-                                   type = "integer",
-                                   output = "message"))
-  }
   if (codama::r_type_checking(r_object = fishing_type,
                               type = "character",
                               output = "logical") != TRUE) {
@@ -91,30 +45,13 @@ catch_per_searching_day <- function(data_connection,
                                    type = "character",
                                    output = "message"))
   }
-  # 2 - Data extraction ----
-  time_serie_catch_data <- data_extraction(type = "database",
-                                           data_connection = data_connection,
-                                           sql_name = "balbaya_time_serie_catch.sql",
-                                           time_period = time_period,
-                                           country = country,
-                                           vessel_type = vessel_type,
-                                           vessel_type_select = vessel_type_select,
-                                           ocean = ocean)
-  time_serie_catch_nb_set_data <- data_extraction(type = "database",
-                                                  data_connection = data_connection,
-                                                  sql_name = "balbaya_fishing_activity.sql",
-                                                  time_period = time_period,
-                                                  country = country,
-                                                  vessel_type = vessel_type,
-                                                  vessel_type_select = vessel_type_select,
-                                                  ocean = ocean)
-  # 3 - Data design ----
-  time_serie_catch_nb_set_data <-  time_serie_catch_nb_set_data %>%
-    dplyr::mutate(year = lubridate::year(x = activity_date))
-  #FOB
-  # Creation of t0 database from time_serie_catch_nb_set_data
+  # 2 - Data extraction ---
+  # 2 - Data design ----
+  # Creation of t0 database from dataframe2
   # Add columns nb_sets_pos and nb_sets
-  t0 <- time_serie_catch_nb_set_data %>%
+  dataframe2 <-  dataframe2 %>%
+    dplyr::mutate(year = lubridate::year(x = activity_date))
+  t0 <- dataframe2 %>%
     dplyr::filter(c_tban == 1) %>%
     dplyr::group_by(year) %>%
     dplyr::summarise(nb_sets_pos = sum(v_nb_calee_pos,
@@ -122,9 +59,10 @@ catch_per_searching_day <- function(data_connection,
                      nb_sets = sum(v_nb_calees,
                                    na.rm = TRUE),
                      .groups = "drop")
-  # Creation of t1 database from time_serie_catch_data
+  #FOB
+  # Creation of t1 database from dataframe1
   # Add columns species from fob school (c_tban 1)
-  t1 <- time_serie_catch_data %>%
+  t1 <- dataframe1 %>%
     dplyr::group_by(year) %>%
     dplyr::summarise(yft = sum(dplyr::case_when(c_tban == 1 & c_esp == 1 ~ v_poids_capt,
                                                 TRUE ~ 0), na.rm = TRUE),
@@ -148,9 +86,9 @@ catch_per_searching_day <- function(data_connection,
                      ALB = (alb / nb_sets_pos),
                      total = (total / nb_sets_pos))
   #FSC
-  #Creation of t2 database from time_serie_catch_nb_set_data
+  #Creation of t2 database from dataframe2
   # Add columns nb_sets_pos and nb_sets
-  t2 <- time_serie_catch_nb_set_data %>%
+  t2 <- dataframe2 %>%
     dplyr::filter(c_tban == 2 | c_tban == 3) %>%
     dplyr::group_by(year) %>%
     dplyr::summarise(nb_sets_pos = sum(v_nb_calee_pos,
@@ -158,9 +96,9 @@ catch_per_searching_day <- function(data_connection,
                      nb_sets = sum(v_nb_calees,
                                    na.rm = TRUE),
                      .groups = "drop")
-  #Creation of t1 database from time_serie_catch_data
+  #Creation of t1 database from dataframe1
   # Add columns species from fsc school (c_tban 2 et 3)
-  t3 <- time_serie_catch_data %>%
+  t3 <- dataframe1 %>%
     dplyr::group_by(year) %>%
     dplyr::summarise(yft = sum(dplyr::case_when(c_tban %in% c(2, 3) & c_esp == 1 ~ v_poids_capt,
                                                 TRUE ~ 0), na.rm = TRUE),
@@ -183,20 +121,21 @@ catch_per_searching_day <- function(data_connection,
                      bet = (bet / nb_sets_pos),
                      ALB = (alb / nb_sets_pos),
                      total = (total / nb_sets_pos))
-  # 4 - Legend design ----
+
+  # 3 - Legend design ----
   #Ocean
-  ocean_legend <- code_manipulation(data         = time_serie_catch_data$ocean_id,
+  ocean_legend <- code_manipulation(data         = dataframe1$ocean_id,
                                     referential  = "ocean",
                                     manipulation = "legend")
   #country
-  country_legend <- code_manipulation(data         = time_serie_catch_data$country_id,
+  country_legend <- code_manipulation(data         = dataframe1$country_id,
                                       referential  = "country",
                                       manipulation = "legend")
   #vessel
-  vessel_type_legend <- code_manipulation(data         = time_serie_catch_data$vessel_type_id,
+  vessel_type_legend <- code_manipulation(data         = dataframe1$vessel_type_id,
                                           referential  = "vessel_simple_type",
                                           manipulation = "legend")
-  # 5 - Graphic design ----
+  # 4 - Graphic design ----
   graphics::par(mar = c(4, 4.7, 4.1, 1.5))
   # Define the positions of the x-axis tick marks
   x_tick_pos <- seq(min(table_cpue_fad_set$year), max(table_cpue_fad_set$year))
@@ -210,8 +149,19 @@ catch_per_searching_day <- function(data_connection,
                        ylab = "Catch (t) per positive set",
                        cex.axis = 1.4,
                        cex.lab = 1.4,
-                       main = paste0("Annual number of catch per positive set on ", fishing_type, " fishing mode schools for the ", country_legend, "\n",
-                                     vessel_type_legend, " fishing fleet in the ", ocean_legend, " ocean during ", min(time_period), "-", max(time_period), "."),
+                       main = paste0("Annual number of catch per positive set on ",
+                                     fishing_type,
+                                     " fishing mode schools for the ",
+                                     country_legend,
+                                     "\n",
+                                     vessel_type_legend,
+                                     " fishing fleet in the ",
+                                     ocean_legend,
+                                     " ocean during ",
+                                     min(time_period),
+                                     "-",
+                                     max(time_period),
+                                     "."),
                        ylim = c(0,
                                 max(table_cpue_fad_set$total) * 1.05),
                        las = 1,
@@ -339,8 +289,21 @@ catch_per_searching_day <- function(data_connection,
       # Add a title
       if (title == TRUE) {
         plotly_graph <- plotly_graph %>%
-          plotly::layout(title = list(text = paste0("Annual number of catch per positive set on ", fishing_type, " fishing mode schools", "\n",
-                                                   "for the ", country_legend, " ", vessel_type_legend, "fishing fleet in the ", ocean_legend, " ocean during ", min(time_period), "-", max(time_period), "."),
+          plotly::layout(title = list(text = paste0("Annual number of catch per positive set on ",
+                                                    fishing_type,
+                                                    " fishing mode schools",
+                                                    "\n",
+                                                   "for the ",
+                                                   country_legend,
+                                                   " ",
+                                                   vessel_type_legend,
+                                                   "fishing fleet in the ",
+                                                   ocean_legend,
+                                                   " ocean during ",
+                                                   min(time_period),
+                                                   "-",
+                                                   max(time_period),
+                                                   "."),
                                       font = list(size = 17)),
                          margin = list(t = 120))
 
@@ -370,8 +333,19 @@ catch_per_searching_day <- function(data_connection,
                        ylab = "Catch (t) per positive set",
                        cex.axis = 1.4,
                        cex.lab = 1.4,
-                       main = paste0("Annual number of catch per positive set on ", fishing_type, " fishing mode schools for the ", country_legend, "\n",
-                                     vessel_type_legend, " fishing fleet in the ", ocean_legend, " ocean during ", min(time_period), "-", max(time_period), "."),
+                       main = paste0("Annual number of catch per positive set on ",
+                                     fishing_type,
+                                     " fishing mode schools for the ",
+                                     country_legend,
+                                     "\n",
+                                     vessel_type_legend,
+                                     " fishing fleet in the ",
+                                     ocean_legend,
+                                     " ocean during ",
+                                     min(time_period),
+                                     "-",
+                                     max(time_period),
+                                     "."),
                        ylim = c(0,
                                 max(table_cpue_fad_set$total) * 1.05),
                        las = 1,
@@ -573,8 +547,19 @@ catch_per_searching_day <- function(data_connection,
       # Add a title
       if (title == TRUE) {
         plotly_graph <- plotly_graph %>%
-          plotly::layout(title = list(text = paste0("Annual number of catch per positive set on ", fishing_type, " fishing mode schools for the ", country_legend, "\n",
-                                                    vessel_type_legend, " fishing fleet in the ", ocean_legend, " ocean during ", min(time_period), "-", max(time_period), "."),
+          plotly::layout(title = list(text = paste0("Annual number of catch per positive set on ",
+                                                    fishing_type,
+                                                    " fishing mode schools for the ",
+                                                    country_legend,
+                                                    "\n",
+                                                    vessel_type_legend,
+                                                    " fishing fleet in the ",
+                                                    ocean_legend,
+                                                    " ocean during ",
+                                                    min(time_period),
+                                                    "-",
+                                                    max(time_period),
+                                                    "."),
                                       font = list(size = 17)),
                          margin = list(t = 120))
 

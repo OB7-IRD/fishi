@@ -1,12 +1,8 @@
 #' @name catch_per_unit_effort
 #' @title  Annual catch rates (in t per searching day)
 #' @description Annual catch rates (in t per searching day) on FOB- associated and free-swimming tuna schools (FSC).
-#' @param data_connection {\link[base]{list}} expected. Output of the function {\link[furdeb]{postgresql_dbconnection}}, which must be done before using the catch_per_unit_effort() function.
-#' @param time_period {\link[base]{integer}} expected. Period identification in year.
-#' @param country {\link[base]{integer}} expected. Country codes identification.
-#' @param vessel_type {\link[base]{integer}} expected. Vessel type codes identification.
-#' @param vessel_type_select {\link[base]{character}} expected. engin or vessel_type.
-#' @param ocean {\link[base]{integer}} expected. Ocean codes identification.
+#' @param dataframe1 {\link[base]{data.frame}} expected. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the catch_per_searching_day() function.
+#' @param dataframe2 {\link[base]{data.frame}} expected. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the catch_per_searching_day() function.
 #' @param fishing_type {\link[base]{character}} expected. FOB or FSC.
 #' @param graph_type {\link[base]{character}} expected. plot, plotly or table. Plot by default.
 #' @param title TRUE or FALSE expected. False by default.
@@ -20,13 +16,9 @@
 #' @importFrom plotly ggplotly
 #' @importFrom graphics par plot axis lines abline legend text
 #' @importFrom codama r_type_checking
-catch_per_unit_effort <- function(data_connection,
-                                  time_period,
-                                  country = as.integer(x = 1),
-                                  vessel_type = as.integer(x = 1),
-                                  ocean = as.integer(x = 1),
+catch_per_unit_effort <- function(dataframe1,
+                                  dataframe2,
                                   fishing_type,
-                                  vessel_type_select = "engin",
                                   graph_type = "plot",
                                   title = FALSE) {
   # 0 - Global variables assignement ----
@@ -40,43 +32,6 @@ catch_per_unit_effort <- function(data_connection,
   alb <- NULL
   total <- NULL
   # 1 - Arguments verification ----
-  if (codama::r_type_checking(r_object = data_connection,
-                              type = "list",
-                              length = 2L,
-                              output = "logical") != TRUE) {
-    return(codama::r_type_checking(r_object = data_connection,
-                                   type = "list",
-                                   length = 2L,
-                                   output = "message"))
-  }
-  if (codama::r_type_checking(r_object = time_period,
-                              type = "integer",
-                              output = "logical") != TRUE) {
-    return(codama::r_type_checking(r_object = time_period,
-                                   type = "integer",
-                                   output = "message"))
-  }
-  if (codama::r_type_checking(r_object = ocean,
-                              type = "integer",
-                              output = "logical") != TRUE) {
-    return(codama::r_type_checking(r_object = ocean,
-                                   type = "integer",
-                                   output = "message"))
-  }
-  if (codama::r_type_checking(r_object = country,
-                              type = "integer",
-                              output = "logical") != TRUE) {
-    return(codama::r_type_checking(r_object = country,
-                                   type = "integer",
-                                   output = "message"))
-  }
-  if (codama::r_type_checking(r_object = vessel_type,
-                              type = "integer",
-                              output = "logical") != TRUE) {
-    return(codama::r_type_checking(r_object = vessel_type,
-                                   type = "integer",
-                                   output = "message"))
-  }
   if (codama::r_type_checking(r_object = fishing_type,
                               type = "character",
                               output = "logical") != TRUE) {
@@ -92,33 +47,17 @@ catch_per_unit_effort <- function(data_connection,
                                    output = "message"))
   }
   # 2 - Data extraction ----
-  annual_catch_rate_data <- data_extraction(type = "database",
-                                            data_connection = data_connection,
-                                            sql_name = "balbaya_time_serie_catch.sql",
-                                            time_period = time_period,
-                                            country = country,
-                                            vessel_type = vessel_type,
-                                            vessel_type_select = vessel_type_select,
-                                            ocean = ocean)
-  annual_catch_rate_nb_set_data <- data_extraction(type = "database",
-                                                   data_connection = data_connection,
-                                                   sql_name = "balbaya_fishing_activity.sql",
-                                                   time_period = time_period,
-                                                   country = country,
-                                                   vessel_type = vessel_type,
-                                                   vessel_type_select = vessel_type_select,
-                                                   ocean = ocean)
   # 3.a - Data design for FOB----
-  annual_catch_rate_nb_set_data <-  annual_catch_rate_nb_set_data %>%
+  #Creation of t0
+  dataframe2 <-  dataframe2 %>%
     dplyr::mutate(year = lubridate::year(x = activity_date))
-  #Creation of t0 database from annual_catch_rate_data
-  t0 <- annual_catch_rate_nb_set_data %>%
+  t0 <- dataframe2 %>%
     dplyr::group_by(year) %>%
     dplyr::summarise(t_peche = sum(v_tpec, na.rm = TRUE),
                      t_recherche = sum(v_tpec - v_dur_cal, na.rm = TRUE),
                      .groups = "drop")
-  #Creation of t1 database from annual_catch_rate_nb_set_data
-  t1 <- annual_catch_rate_data %>%
+  #Creation of t1 database from dataframe2
+  t1 <- dataframe1 %>%
     dplyr::group_by(year) %>%
     dplyr::summarise(yft = sum(dplyr::case_when(c_tban == 1 & c_esp == 1 ~ v_poids_capt,
                                                 TRUE ~ 0), na.rm = TRUE),
@@ -142,15 +81,15 @@ catch_per_unit_effort <- function(data_connection,
                    ALB = (alb / (t_recherche / 12)),
                    total = (total / (t_recherche / 12)))
   # 3.b - Data design for FSC----
-  #Creation of t2 database from annual_catch_rate_data
-  t2 <- annual_catch_rate_nb_set_data %>%
+  #Creation of t2 database from dataframe1
+  t2 <- dataframe2 %>%
     dplyr::group_by(year) %>%
     dplyr::summarise(t_peche = sum(v_tpec, na.rm = TRUE),
                      t_recherche = sum(v_tpec - v_dur_cal,
                                        na.rm = TRUE),
                      .groups = "drop")
-  #Creation of t3 database from annual_catch_rate_nb_set_data
-  t3 <- annual_catch_rate_data %>%
+  #Creation of t3 database from dataframe2
+  t3 <- dataframe1 %>%
     dplyr::group_by(year) %>%
     dplyr::summarise(yft = sum(dplyr::case_when(c_tban %in% c(2, 3) & c_esp == 1 ~ v_poids_capt,
                                                 TRUE ~ 0), na.rm = TRUE),
@@ -175,15 +114,15 @@ catch_per_unit_effort <- function(data_connection,
                    total = (total / (t_recherche / 12)))
   # 4 - Legend design ----
   #Ocean
-  ocean_legend <- code_manipulation(data         = annual_catch_rate_data$ocean_id,
+  ocean_legend <- code_manipulation(data         = dataframe1$ocean_id,
                                     referential  = "ocean",
                                     manipulation = "legend")
   #country
-  country_legend <- code_manipulation(data         = annual_catch_rate_data$country_id,
+  country_legend <- code_manipulation(data         = dataframe1$country_id,
                                       referential  = "country",
                                       manipulation = "legend")
   #vessel
-  vessel_type_legend <- code_manipulation(data         = annual_catch_rate_data$vessel_type_id,
+  vessel_type_legend <- code_manipulation(data         = dataframe1$vessel_type_id,
                                           referential  = "vessel_simple_type",
                                           manipulation = "legend")
   # 5 - Graphic design ----
@@ -204,8 +143,20 @@ catch_per_unit_effort <- function(data_connection,
                                                ")")),
                        cex.axis = 1.4,
                        cex.lab = 1.4,
-                       main = paste0("Annual catch rates (in t per searching day) of the ", country_legend, " ", vessel_type_legend, " fishing fleet on ", "\n",
-                                     fishing_type, " fishing mode schools in the ", ocean_legend, " ocean during ", min(time_period), "-", max(time_period), "."),
+                       main = paste0("Annual catch rates (in t per searching day) of the ",
+                                     country_legend,
+                                     " ",
+                                     vessel_type_legend,
+                                     " fishing fleet on ",
+                                     "\n",
+                                     fishing_type,
+                                     " fishing mode schools in the ",
+                                     ocean_legend,
+                                     " ocean during ",
+                                     min(time_period),
+                                     "-",
+                                     max(time_period),
+                                     "."),
                        ylim = c(0,
                                 20),
                        las = 1,
@@ -334,8 +285,21 @@ catch_per_unit_effort <- function(data_connection,
       # Add a title
       if (title == TRUE) {
         plotly_graph <- plotly_graph %>%
-          plotly::layout(title = list(text = paste0("Annual catch rates (in t per searching day) of the ", country_legend, " ", vessel_type_legend, " fishing fleet on ", fishing_type, " fishing", "\n",
-                                                    "mode schools in the ", ocean_legend, " ocean during ", min(time_period), "-", max(time_period), "."),
+          plotly::layout(title = list(text = paste0("Annual catch rates (in t per searching day) of the ",
+                                                    country_legend,
+                                                    " ",
+                                                    vessel_type_legend,
+                                                    " fishing fleet on ",
+                                                    fishing_type,
+                                                    " fishing",
+                                                    "\n",
+                                                    "mode schools in the ",
+                                                    ocean_legend,
+                                                    " ocean during ",
+                                                    min(time_period),
+                                                    "-",
+                                                    max(time_period),
+                                                    "."),
                                       font = list(size = 17)),
                          margin = list(t = 120))
 
@@ -369,8 +333,20 @@ catch_per_unit_effort <- function(data_connection,
                                                ")")),
                        cex.axis = 1.4,
                        cex.lab = 1.4,
-                       main = paste0("Annual catch rates (in t per searching day) of the ", country_legend, " ", vessel_type_legend, " fishing fleet on ", "\n",
-                                     fishing_type, " fishing mode schools in the", ocean_legend,  " ocean during ", min(time_period), "-", max(time_period), "."),
+                       main = paste0("Annual catch rates (in t per searching day) of the ",
+                                     country_legend,
+                                     " ",
+                                     vessel_type_legend,
+                                     " fishing fleet on ",
+                                     "\n",
+                                     fishing_type,
+                                     " fishing mode schools in the",
+                                     ocean_legend,
+                                     " ocean during ",
+                                     min(time_period),
+                                     "-",
+                                     max(time_period),
+                                     "."),
                        ylim = c(0,
                                 20),
                        las = 1,
@@ -499,8 +475,21 @@ catch_per_unit_effort <- function(data_connection,
       # Add a title
       if (title == TRUE) {
         plotly_graph <- plotly_graph %>%
-          plotly::layout(title = list(text = paste0("Annual catch rates (in t per searching day) of the ", country_legend, " ", vessel_type_legend, " fishing fleet on ", fishing_type, " fishing", "\n",
-                                                    "mode schools in the", ocean_legend,  " ocean during ", min(time_period), "-", max(time_period), "."),
+          plotly::layout(title = list(text = paste0("Annual catch rates (in t per searching day) of the ",
+                                                    country_legend,
+                                                    " ",
+                                                    vessel_type_legend,
+                                                    " fishing fleet on ",
+                                                    fishing_type,
+                                                    " fishing",
+                                                    "\n",
+                                                    "mode schools in the",
+                                                    ocean_legend,
+                                                    " ocean during ",
+                                                    min(time_period),
+                                                    "-",
+                                                    max(time_period),
+                                                    "."),
                                       font = list(size = 17)),
                          margin = list(t = 120))
 
