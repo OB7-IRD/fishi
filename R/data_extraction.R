@@ -2,14 +2,14 @@
 #' @title Data extraction
 #' @description Extracts a dataset from a database or csv
 #' @param type {\link[base]{character}} expected. dabase or csv.
-#' @param data_connection {\link[base]{list}} expected. Output of the function {\link[furdeb]{postgresql_dbconnection}}, which must be done before using the fishing_effort function.
+#' @param data_connection {\link[base]{list}} expected. Output of the function {\link[furdeb]{postgresql_dbconnection}}, which must be done before using the data_extraction function.
 #' @param sql_name {\link[base]{character}}. Name of the sql file, in fishi.
 #' @param csv_path {\link[base]{character}}. Path of the csv.
 #' @param time_period {\link[base]{integer}} expected. Period identification in year.
-#' @param country {\link[base]{integer}} expected. Country codes identification.
-#' @param vessel_type {\link[base]{integer}} expected. Vessel type codes identification.
+#' @param country {\link[base]{integer}} expected. Country codes identification. [\href{https://ob7-ird.github.io/fishi/articles/Referentials.html}{Country referentials}]
+#' @param vessel_type {\link[base]{integer}} expected. Vessel type codes identification. [\href{https://ob7-ird.github.io/fishi/articles/Referentials.html}{Vessel_type referentials}]
 #' @param vessel_type_select {\link[base]{character}} expected. engin or vessel_type.
-#' @param ocean {\link[base]{integer}} expected. Ocean codes identification.
+#' @param ocean {\link[base]{integer}} expected. Ocean codes identification. [\href{https://ob7-ird.github.io/fishi/articles/Referentials.html}{Oscean referentials}]
 #' @param csv_output TRUE to obtain a csv document. FALSE by default.
 #' @return The function return ggplot R plot.
 #' @export
@@ -67,6 +67,7 @@ data_extraction <- function(type,
     }
     # Extraction sql final
     if (data_connection[[1]] == "sardara") {
+      time_period <- c((time_period):(time_period - 5))
       extraction_sql_final <- DBI::sqlInterpolate(conn        = data_connection[[2]],
                                                   sql         = extraction_sql,
                                                   time_period = DBI::SQL(paste(time_period,

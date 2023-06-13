@@ -7,15 +7,13 @@
 fishing_capacity(dataframe, graph_type = "plot", figure = NULL, title = FALSE)
 }
 \arguments{
-\item{dataframe}{{\link[base]{data.frame}} expected. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the fishing_capacity function.}
+\item{dataframe}{{\link[base]{data.frame}} expected. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the fishing_capacity() function.}
 
 \item{graph_type}{{\link[base]{character}} expected. plot, plotly or table. Plot by default.}
 
 \item{figure}{{\link[base]{character}} expected. For plotly figure: vessel (for number of vessels graph) or capacity (for carrying capacity graph). NULL by default.}
 
 \item{title}{TRUE or FALSE expected. False by default.}
-
-\item{time_period}{{\link[base]{integer}} expected. Period identification in year.}
 }
 \value{
 The function return ggplot R plot.

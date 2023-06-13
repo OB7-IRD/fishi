@@ -1,8 +1,9 @@
 #' @name fishery_production
 #' @title Total fishery production
-#' @description total fishery production (catch by species).
-#' @param dataframe {\link[base]{data.frame}} expected. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the fishing_capacity function.
-#' @param fishing_type  {\link[base]{character}} expected. FSC, FOB or ALL.
+#' @description Total fishery production (catch by species).
+#' Generates a figure for catches (x 1000 t) of the three main tunas: BET, SKJ and YFT.
+#' @param dataframe {\link[base]{data.frame}} expected. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the fishery_production() function.
+#' @param fishing_type  {\link[base]{character}} expected. FSC, FOB or ALL. ALL by default.
 #' @param graph_type {\link[base]{character}} expected. plot, plotly, table or percentage. Plot by default.
 #' @param title TRUE or FALSE expected. False by default.
 #' @return The function return ggplot R plot.
@@ -156,8 +157,21 @@ fishery_production <- function(dataframe,
                          cex.lab = 1.3,
                          xlab = "",
                          ylab = "Catch (x1000 t)",
-                         main = paste0("Fishery production by ", fishing_type, " fishing mode. Catch by species of the ", country_legend, " ", vessel_type_legend, " fishing",
-                                       "\n", "fleet during ", min(time_period), "-", max(time_period), ", in the ", ocean_legend, " ocean."),
+                         main = paste0("Fishery production by ",
+                                       fishing_type,
+                                       " fishing mode. Catch by species of the ",
+                                       country_legend,
+                                       " ",
+                                       vessel_type_legend,
+                                       " fishing",
+                                       "\n",
+                                       "fleet during ",
+                                       min(time_period),
+                                       "-",
+                                       max(time_period),
+                                       ", in the ",
+                                       ocean_legend,
+                                       " ocean."),
                          axis4 = FALSE,
                          col = c("khaki1",
                                  "firebrick2",
@@ -224,7 +238,9 @@ fishery_production <- function(dataframe,
                                                                    y = count,
                                                                    fill = specie)) +
       ggplot2::geom_area() +
-      ggplot2::scale_fill_manual(values = c("cornflowerblue", "firebrick2", "khaki1")) +
+      ggplot2::scale_fill_manual(values = c("cornflowerblue",
+                                            "firebrick2",
+                                            "khaki1")) +
       ggplot2::scale_y_continuous(name = "Catch (x1000 t)") +
       ggplot2::theme_bw() +
       ggplot2::labs(fill = "")
@@ -233,8 +249,21 @@ fishery_production <- function(dataframe,
     # Add a title
     if (title == TRUE) {
       plotly_graph <- plotly_graph %>%
-        plotly::layout(title = list(text = paste0("Fishery production by ", fishing_type, " fishing mode. Catch by species of the ", country_legend, " ", vessel_type_legend, " fishing",
-                                                  "\n", "fleet during ", min(time_period), "-", max(time_period), ", in the ", ocean_legend, " ocean."),
+        plotly::layout(title = list(text = paste0("Fishery production by ",
+                                                  fishing_type,
+                                                  " fishing mode. Catch by species of the ",
+                                                  country_legend,
+                                                  " ",
+                                                  vessel_type_legend,
+                                                  " fishing",
+                                                  "\n",
+                                                  "fleet during ",
+                                                  min(time_period),
+                                                  "-",
+                                                  max(time_period),
+                                                  ", in the ",
+                                                  ocean_legend,
+                                                  " ocean."),
                                     font = list(size = 17)),
                        margin = list(t = 120))
 

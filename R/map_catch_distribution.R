@@ -1,7 +1,7 @@
 #' @name map_catch_distribution
 #' @title Spatial distribution of tuna catches
 #' @description Spatial distribution of tuna catches.
-#' @param dataframe {\link[base]{data.frame}} expected. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the fishing_capacity function.
+#' @param dataframe {\link[base]{data.frame}} expected. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the map_catch_distribution() function.
 #' @param fishing_type {\link[base]{character}} expected. FOB, FSC or ALL. ALL by default.
 #' @param graph_type {\link[base]{character}} expected. plot or plotly. Plot by default.
 #' @param title TRUE or FALSE expected. False by default.
@@ -58,7 +58,8 @@ map_catch_distribution <- function(dataframe,
                     v_nb_calee_pos,
                     c_tban,
                     cwp11_act) %>%
-    dplyr::summarise(poids = sum(v_poids_capt, na.rm = TRUE),
+    dplyr::summarise(poids = sum(v_poids_capt,
+                                 na.rm = TRUE),
                      .groups = "drop")
   if (fishing_type == "ALL") {
     datafile <- t1  %>%
@@ -104,7 +105,6 @@ map_catch_distribution <- function(dataframe,
          " - Indicator not developed yet for this \"fishing_type\" argument.\n",
          sep = "")
   }
-  datafile[datafile == 0] <- 1e-8
   # 3 - Legend design ----
   # Define fuction quad2pos
   quad2pos <- function(id) {

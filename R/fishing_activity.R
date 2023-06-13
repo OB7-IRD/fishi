@@ -1,7 +1,7 @@
 #' @name fishing_activity
 #' @title Annual number of fishing sets
 #' @description Fishing operations. Annual number of fishing sets on FOB-associated and free-swimming tuna schools.
-#' @param dataframe {\link[base]{data.frame}} expected. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the fishing_capacity function.
+#' @param dataframe {\link[base]{data.frame}} expected. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the fishing_activity() function.
 #' @param graph_type {\link[base]{character}} expected. plot, plotly or table. Plot by default.
 #' @param figure {\link[base]{character}} expected. For plotly figure: set (for number of sets graph) or log (for percentage FOB-associated sets graph). NULL by default.
 #' @param title TRUE or FALSE expected. False by default.
@@ -208,8 +208,16 @@ fishing_activity <- function(dataframe,
           plotly::layout(title = list(text = paste0("Fishing operations. Annual number of fishing sets in the ",
                                                     country_legend, " ",
                                                     vessel_type_legend,
-                                                    " fishery on FOB-associated", "\n",
-                                                    "and free-swimming tuna schools during ", min(time_period), "-", max(time_period), " (high panel), in the ", ocean_legend, " ocean.", "\n",
+                                                    " fishery on FOB-associated",
+                                                    "\n",
+                                                    "and free-swimming tuna schools during ",
+                                                    min(time_period),
+                                                    "-",
+                                                    max(time_period),
+                                                    " (high panel), in the ",
+                                                    ocean_legend,
+                                                    " ocean.",
+                                                    "\n",
                                                     "Line with solid circles indicates the percentage of sets on FOB-associated schools (low panel)."),
                                       font = list(size = 17)),
                          margin = list(t = 120))

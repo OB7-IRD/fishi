@@ -1,7 +1,7 @@
 #' @name set_per_searching_day
 #' @title Annual number of sets per searching day
 #' @description Annual number of sets per searching day on FOB-associated and free-swimming schools.
-#' @param dataframe {\link[base]{data.frame}} expected. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the fishing_capacity function.
+#' @param dataframe {\link[base]{data.frame}} expected. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the set_per_searching_day() function.
 #' @param fishing_type {\link[base]{character}} expected. FOB and FSC.
 #' @param graph_type {\link[base]{character}} expected. plot, plotly or table. Plot by default.
 #' @param title TRUE or FALSE expected. False by default.
@@ -103,7 +103,8 @@ set_per_searching_day <- function(dataframe,
                         1.5))
   if (graph_type == "plot") {
     # Define the positions of the x-axis tick marks
-    x_tick_pos <- seq(min(table_cpue_set_per_day$year), max(table_cpue_set_per_day$year))
+    x_tick_pos <- seq(min(table_cpue_set_per_day$year),
+                      max(table_cpue_set_per_day$year))
     if (fishing_type == "FOB") {
       graphics::plot(table_cpue_set_per_day$year,
                      table_cpue_set_per_day$sets_per_day_fad,
@@ -196,8 +197,19 @@ set_per_searching_day <- function(dataframe,
       # Add a title
       if (title == TRUE) {
         plotly_graph <- plotly_graph %>%
-          plotly::layout(title = list(text = paste0("Annual number of sets per searching day on ", fishing_type, " fishing mode schools for the ", country_legend, "\n",
-                                                   vessel_type_legend, " fishing fleet in the Atlantic Ocean during ", min(time_period), "-", max(time_period), ", in the ", ocean_legend, " ocean."),
+          plotly::layout(title = list(text = paste0("Annual number of sets per searching day on ",
+                                                    fishing_type,
+                                                    " fishing mode schools for the ",
+                                                    country_legend,
+                                                    "\n",
+                                                    vessel_type_legend,
+                                                    " fishing fleet in the Atlantic Ocean during ",
+                                                    min(time_period),
+                                                    "-",
+                                                    max(time_period),
+                                                    ", in the ",
+                                                    ocean_legend,
+                                                    " ocean."),
                                       font = list(size = 17)),
                          margin = list(t = 120))
 
@@ -225,8 +237,19 @@ set_per_searching_day <- function(dataframe,
       # Add a title
       if (title == TRUE) {
         plotly_graph <- plotly_graph %>%
-          plotly::layout(title = list(text = paste0("Annual number of sets per searching day on ", fishing_type, " fishing mode schoolsfor the ", country_legend, "\n",
-                                                    vessel_type_legend, " fishing fleet in the Atlantic Ocean during ", min(time_period), "-", max(time_period), ", in the ", ocean_legend, " ocean."),
+          plotly::layout(title = list(text = paste0("Annual number of sets per searching day on ",
+                                                    fishing_type,
+                                                    " fishing mode schoolsfor the ",
+                                                    country_legend,
+                                                    "\n",
+                                                    vessel_type_legend,
+                                                    " fishing fleet in the Atlantic Ocean during ",
+                                                    min(time_period),
+                                                    "-",
+                                                    max(time_period),
+                                                    ", in the ",
+                                                    ocean_legend,
+                                                    " ocean."),
                                       font = list(size = 17)),
                          margin = list(t = 120))
 

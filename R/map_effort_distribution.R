@@ -1,12 +1,7 @@
 #' @name map_effort_distribution
 #' @title Spatial distribution of tuna effort
 #' @description Spatial distribution of tuna effort.
-#' @param data_connection {\link[base]{list}} expected. Output of the function {\link[furdeb]{postgresql_dbconnection}}, which must be done before using the map_effort_distribution() function.
-#' @param time_period {\link[base]{integer}} expected. Period identification in year.
-#' @param country {\link[base]{integer}} expected. Country codes identification.
-#' @param vessel_type {\link[base]{integer}} expected. Vessel type codes identification.
-#' @param vessel_type_select {\link[base]{character}} expected. engin or vessel_type.
-#' @param ocean {\link[base]{integer}} expected. Ocean codes identification.
+#' @param dataframe {\link[base]{data.frame}} expected. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the map_effort_distribution() function.
 #' @param graph_type {\link[base]{character}} expected. plot or plotly. Plot by default.
 #' @param title TRUE or FALSE expected. False by default.
 #' @return The function return ggplot R plot.
@@ -21,12 +16,7 @@
 #' @importFrom scatterpie geom_scatterpie
 #' @importFrom rnaturalearth ne_countries
 #' @importFrom ggspatial coord_sf
-map_effort_distribution <- function(data_connection,
-                                    time_period,
-                                    country = as.integer(x = c(1, 41)),
-                                    vessel_type = as.integer(x = 1),
-                                    ocean = as.integer(x = 1),
-                                    vessel_type_select = "engin",
+map_effort_distribution <- function(dataframe,
                                     graph_type = "plot",
                                     title = FALSE) {
   # 0 - Global variables assignement ----
@@ -36,43 +26,6 @@ map_effort_distribution <- function(data_connection,
   effort <- NULL
   wrld_simpl <- NULL
   # 1 - Arguments verification ----
-  if (codama::r_type_checking(r_object = data_connection,
-                              type = "list",
-                              length = 2L,
-                              output = "logical") != TRUE) {
-    return(codama::r_type_checking(r_object = data_connection,
-                                   type = "list",
-                                   length = 2L,
-                                   output = "message"))
-  }
-  if (codama::r_type_checking(r_object = time_period,
-                              type = "integer",
-                              output = "logical") != TRUE) {
-    return(codama::r_type_checking(r_object = time_period,
-                                   type = "integer",
-                                   output = "message"))
-  }
-  if (codama::r_type_checking(r_object = country,
-                              type = "integer",
-                              output = "logical") != TRUE) {
-    return(codama::r_type_checking(r_object = country,
-                                   type = "integer",
-                                   output = "message"))
-  }
-  if (codama::r_type_checking(r_object = ocean,
-                              type = "integer",
-                              output = "logical") != TRUE) {
-    return(codama::r_type_checking(r_object = ocean,
-                                   type = "integer",
-                                   output = "message"))
-  }
-  if (codama::r_type_checking(r_object = vessel_type,
-                              type = "integer",
-                              output = "logical") != TRUE) {
-    return(codama::r_type_checking(r_object = vessel_type,
-                                   type = "integer",
-                                   output = "message"))
-  }
   if (codama::r_type_checking(r_object = graph_type,
                               type = "character",
                               output = "logical") != TRUE) {
@@ -80,17 +33,8 @@ map_effort_distribution <- function(data_connection,
                                    type = "integer",
                                    output = "message"))
   }
-  # 2 - Data extraction ----
-  map_effort_sql_data <- data_extraction(type = "database",
-                                         data_connection = data_connection,
-                                         sql_name = "balbaya_effort_distribution.sql",
-                                         time_period = time_period,
-                                         country = country,
-                                         vessel_type = vessel_type,
-                                         vessel_type_select = vessel_type_select,
-                                         ocean = ocean)
-  # 3 - Data design ----
-  t1 <- map_effort_sql_data %>%
+  # 2 - Data design ----
+  t1 <- dataframe %>%
     dplyr::group_by(cwp11_act,
                     v_tpec,
                     v_dur_cal) %>%
@@ -104,7 +48,7 @@ map_effort_distribution <- function(data_connection,
   datafile <- t2 %>%
     dplyr::mutate(effort = effort / 12)
   datafile[datafile == 0] <- 1e-8
-  # 4 - Legend design ----
+  # 3 - Legend design ----
   # Define fuction quad2pos
   quad2pos <- function(id) {
     latsiz <- c(5, 10, 10, 20, 1, 5)
@@ -128,18 +72,18 @@ map_effort_distribution <- function(data_connection,
                    sizelon = lonsiz[siz]))
   }
   #Ocean
-  ocean_legend <- code_manipulation(data         = map_effort_sql_data$ocean_id,
+  ocean_legend <- code_manipulation(data         = dataframe$ocean_id,
                                     referential  = "ocean",
                                     manipulation = "legend")
   #vessel
-  vessel_type_legend <- code_manipulation(data         = map_effort_sql_data$vessel_type_id,
+  vessel_type_legend <- code_manipulation(data         = dataframe$vessel_type_id,
                                           referential  = "vessel_simple_type",
                                           manipulation = "legend")
   #country
-  country_legend <- code_manipulation(data         = map_effort_sql_data$country_id,
+  country_legend <- code_manipulation(data         = dataframe$country_id,
                                       referential  = "country",
                                       manipulation = "legend")
-  # 5 - Graphic design ----
+  # 4 - Graphic design ----
   if (graph_type == "plot") {
     lat <- quad2pos(as.numeric(datafile$cwp11_act + 5 * 1e6))$y
     long <- quad2pos(as.numeric(datafile$cwp11_act + 5 * 1e6))$x

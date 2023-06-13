@@ -4,29 +4,10 @@
 \alias{map_effort_distribution}
 \title{Spatial distribution of tuna effort}
 \usage{
-map_effort_distribution(
-  data_connection,
-  time_period,
-  country = as.integer(x = c(1, 41)),
-  vessel_type = as.integer(x = 1),
-  ocean = as.integer(x = 1),
-  vessel_type_select = "engin",
-  graph_type = "plot",
-  title = FALSE
-)
+map_effort_distribution(dataframe, graph_type = "plot", title = FALSE)
 }
 \arguments{
-\item{data_connection}{{\link[base]{list}} expected. Output of the function {\link[furdeb]{postgresql_dbconnection}}, which must be done before using the map_effort_distribution() function.}
-
-\item{time_period}{{\link[base]{integer}} expected. Period identification in year.}
-
-\item{country}{{\link[base]{integer}} expected. Country codes identification.}
-
-\item{vessel_type}{{\link[base]{integer}} expected. Vessel type codes identification.}
-
-\item{ocean}{{\link[base]{integer}} expected. Ocean codes identification.}
-
-\item{vessel_type_select}{{\link[base]{character}} expected. engin or vessel_type.}
+\item{dataframe}{{\link[base]{data.frame}} expected. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the map_effort_distribution() function.}
 
 \item{graph_type}{{\link[base]{character}} expected. plot or plotly. Plot by default.}
 

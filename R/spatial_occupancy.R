@@ -1,7 +1,7 @@
 #' @name spatial_occupancy
 #' @title Spatial occupancy
 #' @description Changes in the spatial extent of the fishery over time. Annual number of 1-degree squares explored by each vessel.
-#' @param dataframe {\link[base]{data.frame}} expected. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the fishing_capacity function.
+#' @param dataframe {\link[base]{data.frame}} expected. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the spatial_occupancy function.
 #' @param graph_type {\link[base]{character}} expected. plot, plotly or table. Plot by default.
 #' @param title TRUE or FALSE expected. False by default.
 #' @return The function return ggplot R plot.
@@ -106,7 +106,8 @@ spatial_occupancy <- function(dataframe,
                      ylab = "Spatial occupancy",
                      cex.axis = 1.4,
                      cex.lab = 1.4,
-                     main = paste0("Changes in the spatial extent of the fishery over time. Annual number of 1 degree squares explored", "\n",
+                     main = paste0("Changes in the spatial extent of the fishery over time. Annual number of 1 degree squares explored",
+                                   "\n",
                                    "by each vessel of the ",
                                    country_legend,
                                    " ",
@@ -228,8 +229,19 @@ spatial_occupancy <- function(dataframe,
     # Add a title
     if (title == TRUE) {
       plotly_graph <- plotly_graph %>%
-        plotly::layout(title = list(text = paste0("Changes in the spatial extent of the fishery over time. Annual number of 1-degree squares explored by ", "\n",
-                                                  "each vessel of the ", country_legend, " ", vessel_type_legend, " fishing fleet during ", min(time_period), "-", max(time_period), " in the ", ocean_legend, " ocean."),
+        plotly::layout(title = list(text = paste0("Changes in the spatial extent of the fishery over time. Annual number of 1-degree squares explored by ",
+                                                  "\n",
+                                                  "each vessel of the ",
+                                                  country_legend,
+                                                  " ",
+                                                  vessel_type_legend,
+                                                  " fishing fleet during ",
+                                                  min(time_period),
+                                                  "-",
+                                                  max(time_period),
+                                                  " in the ",
+                                                  ocean_legend,
+                                                  " ocean."),
                                     font = list(size = 17)),
                        margin = list(t = 120))
 

@@ -20,7 +20,7 @@ data_extraction(
 \arguments{
 \item{type}{{\link[base]{character}} expected. dabase or csv.}
 
-\item{data_connection}{{\link[base]{list}} expected. Output of the function {\link[furdeb]{postgresql_dbconnection}}, which must be done before using the fishing_effort function.}
+\item{data_connection}{{\link[base]{list}} expected. Output of the function {\link[furdeb]{postgresql_dbconnection}}, which must be done before using the data_extraction function.}
 
 \item{sql_name}{{\link[base]{character}}. Name of the sql file, in fishi.}
 
@@ -28,13 +28,13 @@ data_extraction(
 
 \item{time_period}{{\link[base]{integer}} expected. Period identification in year.}
 
-\item{country}{{\link[base]{integer}} expected. Country codes identification.}
+\item{country}{{\link[base]{integer}} expected. Country codes identification. [\href{https://ob7-ird.github.io/fishi/articles/Referentials.html}{Country referentials}]}
 
-\item{vessel_type}{{\link[base]{integer}} expected. Vessel type codes identification.}
+\item{vessel_type}{{\link[base]{integer}} expected. Vessel type codes identification. [\href{https://ob7-ird.github.io/fishi/articles/Referentials.html}{Vessel_type referentials}]}
 
 \item{vessel_type_select}{{\link[base]{character}} expected. engin or vessel_type.}
 
-\item{ocean}{{\link[base]{integer}} expected. Ocean codes identification.}
+\item{ocean}{{\link[base]{integer}} expected. Ocean codes identification. [\href{https://ob7-ird.github.io/fishi/articles/Referentials.html}{Oscean referentials}]}
 
 \item{csv_output}{TRUE to obtain a csv document. FALSE by default.}
 }
