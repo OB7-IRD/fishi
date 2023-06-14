@@ -1,9 +1,9 @@
 select
-	cl_taille.v_classe_t as cl
+	cl_taille.v_classe_t as size_class
 	,mensur.v_mensur
 	,mensur.c_banc
 	,mensur.c_esp
-	,temps.an
+	,temps.an AS activity_date
 	,mensur.c_ocean AS ocean_id
 	,mensur.c_pav AS country_id
 from

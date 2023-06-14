@@ -5,6 +5,17 @@
 #' @param report_year {\link[base]{integer}} expected. Year of the statistical report.
 #' @param graph_type {\link[base]{character}} expected. plot or plotly. Plot by default.
 #' @param title TRUE or FALSE expected. False by default.
+#' @details
+#' The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Referentials.html}{see referentials}]:
+#' \itemize{
+#'  \item{\code{ - size_class}}
+#'  \item{\code{  - v_mensur}}
+#'  \item{\code{  - c_banc}}
+#'  \item{\code{  - c_esp}}
+#'  \item{\code{  - activity_date}}
+#'  \item{\code{  - ocean_id}}
+#'  \item{\code{  - country_id}}
+#' }
 #' @return The function return ggplot R plot.
 #' @export
 #' @importFrom dplyr tibble group_by summarise filter mutate
@@ -19,7 +30,7 @@ bio_size_tuna <- function(dataframe,
   # 0 - Global variables assignement ----
   c_esp <- NULL
   c_banc <- NULL
-  an <- NULL
+  activity_date <- NULL
   v_mensur <- NULL
   size_class <- NULL
   numbers_total <- NULL
@@ -42,13 +53,11 @@ bio_size_tuna <- function(dataframe,
   # Report_year
   five_previous <- c((report_year - 1):(report_year - 5))
   # 3.a - Data design for SKJ ----
-  dataframe <- dataframe %>%
-    dplyr::rename("size_class" = "cl")
   # Dataframe - Mode : LOG, Year : Report year
   t0 <- dataframe %>%
     dplyr::filter(c_esp %in% 2,
                   c_banc %in% 1,
-                  an %in% report_year) %>%
+                  activity_date %in% report_year) %>%
     dplyr::mutate(numbers_total = sum(v_mensur, na.rm = TRUE)) %>%
     dplyr::group_by(size_class,
                     numbers_total) %>%
@@ -61,7 +70,7 @@ bio_size_tuna <- function(dataframe,
   t1 <- dataframe %>%
     dplyr::filter(c_esp %in% 2,
                   c_banc %in% 1,
-                  an %in% five_previous) %>%
+                  activity_date %in% five_previous) %>%
     dplyr::mutate(numbers_total = sum(v_mensur / 5, na.rm = TRUE)) %>%
     dplyr::group_by(size_class,
                     numbers_total) %>%
@@ -74,7 +83,7 @@ bio_size_tuna <- function(dataframe,
   t2 <- dataframe %>%
     dplyr::filter(c_esp %in% 2,
                   c_banc %in% c(2, 3, 9),
-                  an %in% report_year) %>%
+                  activity_date %in% report_year) %>%
     dplyr::mutate(numbers_total = sum(v_mensur, na.rm = TRUE)) %>%
     dplyr::group_by(size_class,
                     numbers_total) %>%
@@ -87,7 +96,7 @@ bio_size_tuna <- function(dataframe,
   t3 <- dataframe %>%
     dplyr::filter(c_esp %in% 2,
                   c_banc %in% c(2, 3, 9),
-                  an %in% five_previous) %>%
+                  activity_date %in% five_previous) %>%
     dplyr::mutate(numbers_total = sum(v_mensur / 5, na.rm = TRUE)) %>%
     dplyr::group_by(size_class,
                     numbers_total) %>%
@@ -99,7 +108,7 @@ bio_size_tuna <- function(dataframe,
   # Dataframe - Mode : ALL, Year : Report year
   t4 <- dataframe %>%
     dplyr::filter(c_esp %in% 2,
-                  an %in% report_year) %>%
+                  activity_date %in% report_year) %>%
     dplyr::mutate(numbers_total = sum(v_mensur, na.rm = TRUE)) %>%
     dplyr::group_by(size_class,
                     numbers_total) %>%
@@ -111,7 +120,7 @@ bio_size_tuna <- function(dataframe,
   # Dataframe - Mode : ALL, Year : Five previous
   t5 <- dataframe %>%
     dplyr::filter(c_esp %in% 2,
-                  an %in% five_previous) %>%
+                  activity_date %in% five_previous) %>%
     dplyr::mutate(numbers_total = sum(v_mensur / 5, na.rm = TRUE)) %>%
     dplyr::group_by(size_class,
                     numbers_total) %>%
@@ -131,7 +140,7 @@ bio_size_tuna <- function(dataframe,
   t0 <- dataframe %>%
     dplyr::filter(c_esp %in% 3,
                   c_banc %in% 1,
-                  an %in% report_year) %>%
+                  activity_date %in% report_year) %>%
     dplyr::mutate(numbers_total = sum(v_mensur,
                                       na.rm = TRUE)) %>%
     dplyr::group_by(size_class,
@@ -146,7 +155,7 @@ bio_size_tuna <- function(dataframe,
   t1 <- dataframe %>%
     dplyr::filter(c_esp %in% 3,
                   c_banc %in% 1,
-                  an %in% five_previous) %>%
+                  activity_date %in% five_previous) %>%
     dplyr::mutate(numbers_total = sum(v_mensur / 5,
                                       na.rm = TRUE)) %>%
     dplyr::group_by(size_class,
@@ -161,7 +170,7 @@ bio_size_tuna <- function(dataframe,
   t2 <- dataframe %>%
     dplyr::filter(c_esp %in% 3,
                   c_banc %in% c(2, 3, 9),
-                  an %in% report_year) %>%
+                  activity_date %in% report_year) %>%
     dplyr::mutate(numbers_total = sum(v_mensur,
                                       na.rm = TRUE)) %>%
     dplyr::group_by(size_class,
@@ -176,7 +185,7 @@ bio_size_tuna <- function(dataframe,
   t3 <- dataframe %>%
     dplyr::filter(c_esp %in% 3,
                   c_banc %in% c(2, 3, 9),
-                  an %in% five_previous) %>%
+                  activity_date %in% five_previous) %>%
     dplyr::mutate(numbers_total = sum(v_mensur / 5,
                                       na.rm = TRUE)) %>%
     dplyr::group_by(size_class,
@@ -190,7 +199,7 @@ bio_size_tuna <- function(dataframe,
   # Dataframe - Mode : ALL, Year : Report year
   t4 <- dataframe %>%
     dplyr::filter(c_esp %in% 3,
-                  an %in% report_year) %>%
+                  activity_date %in% report_year) %>%
     dplyr::mutate(numbers_total = sum(v_mensur,
                                       na.rm = TRUE)) %>%
     dplyr::group_by(size_class,
@@ -204,7 +213,7 @@ bio_size_tuna <- function(dataframe,
   # Dataframe - Mode : ALL, Year : Previous years
   t5 <- dataframe %>%
     dplyr::filter(c_esp %in% 3,
-                  an %in% five_previous) %>%
+                  activity_date %in% five_previous) %>%
     dplyr::mutate(numbers_total = sum(v_mensur / 5,
                                       na.rm = TRUE)) %>%
     dplyr::group_by(size_class,
@@ -226,7 +235,7 @@ bio_size_tuna <- function(dataframe,
   t0 <- dataframe %>%
     dplyr::filter(c_esp %in% 1,
                   c_banc %in% 1,
-                  an %in% report_year) %>%
+                  activity_date %in% report_year) %>%
     dplyr::mutate(numbers_total = sum(v_mensur,
                                       na.rm = TRUE)) %>%
     dplyr::group_by(size_class,
@@ -241,7 +250,7 @@ bio_size_tuna <- function(dataframe,
   t1 <- dataframe %>%
     dplyr::filter(c_esp %in% 1,
                   c_banc %in% 1,
-                  an %in% five_previous) %>%
+                  activity_date %in% five_previous) %>%
     dplyr::mutate(numbers_total = sum(v_mensur / 5,
                                       na.rm = TRUE)) %>%
     dplyr::group_by(size_class,
@@ -256,7 +265,7 @@ bio_size_tuna <- function(dataframe,
   t2 <- dataframe %>%
     dplyr::filter(c_esp %in% 1,
                   c_banc %in% c(2, 3, 9),
-                  an %in% report_year) %>%
+                  activity_date %in% report_year) %>%
     dplyr::mutate(numbers_total = sum(v_mensur, na.rm = TRUE)) %>%
     dplyr::group_by(size_class,
                     numbers_total) %>%
@@ -269,7 +278,7 @@ bio_size_tuna <- function(dataframe,
   t3 <- dataframe %>%
     dplyr::filter(c_esp %in% 1,
                   c_banc %in% c(2, 3, 9),
-                  an %in% five_previous) %>%
+                  activity_date %in% five_previous) %>%
     dplyr::mutate(numbers_total = sum(v_mensur / 5,
                                       na.rm = TRUE)) %>%
     dplyr::group_by(size_class,
@@ -283,7 +292,7 @@ bio_size_tuna <- function(dataframe,
   # Dataframe - Mode : ALL, Year : Report year
   t4 <- dataframe %>%
     dplyr::filter(c_esp %in% 1,
-                  an %in% report_year) %>%
+                  activity_date %in% report_year) %>%
     dplyr::mutate(numbers_total = sum(v_mensur, na.rm = TRUE)) %>%
     dplyr::group_by(size_class,
                     numbers_total) %>%
@@ -296,7 +305,7 @@ bio_size_tuna <- function(dataframe,
   # Dataframe - Mode : ALL, Year : Previous years
   t5 <- dataframe %>%
     dplyr::filter(c_esp %in% 1,
-                  an %in% five_previous) %>%
+                  activity_date %in% five_previous) %>%
     dplyr::mutate(numbers_total = sum(v_mensur / 5,
                                       na.rm = TRUE)) %>%
     dplyr::group_by(size_class,
@@ -455,7 +464,7 @@ bio_size_tuna <- function(dataframe,
                    " purse seine fleet in ",
                    report_year,
                    "\n",
-                   " (solid line) and for an average year representing the period ",
+                   " (solid line) and for activity_date average year representing the period ",
                    min(five_previous),
                    "-",
                    max(five_previous),
@@ -678,7 +687,7 @@ bio_size_tuna <- function(dataframe,
                                                country_legend,
                                                " purse seine fleet in ",
                                                report_year,
-                                               " (solid line) and for an average year ",
+                                               " (solid line) and for activity_date average year ",
                                                "\n",
                                                "representing the period ",
                                                min(five_previous),

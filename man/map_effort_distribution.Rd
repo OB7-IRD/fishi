@@ -19,3 +19,17 @@ The function return ggplot R plot.
 \description{
 Spatial distribution of tuna effort.
 }
+\details{
+The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Referentials.html}{see referentials}]:
+\itemize{
+ \item{\code{  - activity_date}}
+ \item{\code{  - cwp11_act}}
+ \item{\code{  - v_tpec}}
+ \item{\code{  - v_dur_cal}}
+ \item{\code{  - n_act}}
+ \item{\code{  - c_bat}}
+ \item{\code{  - ocean_id}}
+ \item{\code{  - country_id}}
+ \item{\code{  - vessel_type_id}}
+}
+}

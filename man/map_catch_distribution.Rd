@@ -26,3 +26,20 @@ The function return ggplot R plot.
 \description{
 Spatial distribution of tuna catches.
 }
+\details{
+The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Referentials.html}{see referentials}]:
+\itemize{
+ \item{\code{  - cwp11_act}}
+ \item{\code{  - n_act}}
+ \item{\code{  - activity_date}}
+ \item{\code{  - c_bat}}
+ \item{\code{  - c_esp}}
+ \item{\code{  - v_poids_capt}}
+ \item{\code{  - v_nb_calee_pos}}
+ \item{\code{  - c_ocea}}
+ \item{\code{  - c_tban}}
+ \item{\code{  - ocean_id}}
+ \item{\code{  - country_id}}
+ \item{\code{  - vessel_type_id}}
+}
+}

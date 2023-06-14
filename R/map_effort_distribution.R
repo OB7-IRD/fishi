@@ -4,6 +4,19 @@
 #' @param dataframe {\link[base]{data.frame}} expected. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the map_effort_distribution() function.
 #' @param graph_type {\link[base]{character}} expected. plot or plotly. Plot by default.
 #' @param title TRUE or FALSE expected. False by default.
+#' @details
+#' The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Referentials.html}{see referentials}]:
+#' \itemize{
+#'  \item{\code{  - activity_date}}
+#'  \item{\code{  - cwp11_act}}
+#'  \item{\code{  - v_tpec}}
+#'  \item{\code{  - v_dur_cal}}
+#'  \item{\code{  - n_act}}
+#'  \item{\code{  - c_bat}}
+#'  \item{\code{  - ocean_id}}
+#'  \item{\code{  - country_id}}
+#'  \item{\code{  - vessel_type_id}}
+#' }
 #' @return The function return ggplot R plot.
 #' @export
 #' @importFrom DBI dbGetQuery sqlInterpolate SQL
@@ -25,6 +38,8 @@ map_effort_distribution <- function(dataframe,
   v_dur_cal <- NULL
   effort <- NULL
   wrld_simpl <- NULL
+  time_period <- NULL
+  ocean <- NULL
   # 1 - Arguments verification ----
   if (codama::r_type_checking(r_object = graph_type,
                               type = "character",

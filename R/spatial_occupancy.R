@@ -4,6 +4,18 @@
 #' @param dataframe {\link[base]{data.frame}} expected. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the spatial_occupancy function.
 #' @param graph_type {\link[base]{character}} expected. plot, plotly or table. Plot by default.
 #' @param title TRUE or FALSE expected. False by default.
+#' @details
+#' The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Referentials.html}{see referentials}]:
+#' \itemize{
+#'  \item{\code{  - activity_date}}
+#'  \item{\code{  - cwp11_act}}
+#'  \item{\code{  - v_nb_calees}}
+#'  \item{\code{  - v_nb_calee_pos}}
+#'  \item{\code{  - v_tpec}}
+#'  \item{\code{  - ocean_id}}
+#'  \item{\code{  - country_id}}
+#'  \item{\code{  - vessel_type_id}}
+#' }
 #' @return The function return ggplot R plot.
 #' @export
 #' @importFrom dplyr mutate tibble group_by summarise n_distinct filter
@@ -27,6 +39,7 @@ spatial_occupancy <- function(dataframe,
   `Catch > 0` <- NULL
   `Effort > 1 d` <- NULL
   `#sets` <- NULL
+  time_period <- NULL
   # 1 - Arguments verification ----
   if (codama::r_type_checking(r_object = graph_type,
                               type = "character",

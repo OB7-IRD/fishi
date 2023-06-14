@@ -6,6 +6,32 @@
 #' @param fishing_type {\link[base]{character}} expected. FOB and FSC.
 #' @param graph_type {\link[base]{character}} expected. plot, plotly or table. Plot by default.
 #' @param title TRUE or FALSE expected. False by default.
+#' @details
+#' The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Referentials.html}{see referentials}]:
+#' \itemize{
+#'  \item{dataframe 1:}
+#'  \item{\code{  - activity_date}}
+#'  \item{\code{  - c_tban}}
+#'  \item{\code{  - v_nb_calee_pos}}
+#'  \item{\code{  - v_nb_calees}}
+#'  \item{\code{  - v_tpec}}
+#'  \item{\code{  - v_dur_cal}}
+#'  \item{\code{  - v_poids_capt}}
+#'  \item{\code{  - c_esp}}
+#'  \item{\code{  - ocean_id}}
+#'  \item{\code{  - country_id}}
+#'  \item{\code{  - vessel_type_id}}
+#'  \item{dataframe 2:}
+#'  \item{\code{  - activity_date}}
+#'  \item{\code{  - v_nb_calees}}
+#'  \item{\code{  - v_nb_calee_pos}}
+#'  \item{\code{  - v_tpec}}
+#'  \item{\code{  - v_dur_cal}}
+#'  \item{\code{  - c_tban}}
+#'  \item{\code{  - ocean_id}}
+#'  \item{\code{  - country_id}}
+#'  \item{\code{  - vessel_type_id}}
+#' }
 #' @return The function return ggplot R plot.
 #' @export
 #' @importFrom dplyr mutate tibble group_by summarise case_when filter
@@ -30,6 +56,7 @@ catch_per_searching_day <- function(dataframe1,
   v_nb_calee_pos <- NULL
   v_nb_calees <- NULL
   nb_sets_pos <- NULL
+  time_period <- NULL
   # 1 - Arguments verification ----
   if (codama::r_type_checking(r_object = fishing_type,
                               type = "character",
@@ -49,6 +76,8 @@ catch_per_searching_day <- function(dataframe1,
   # 2 - Data design ----
   # Creation of t0 database from dataframe2
   # Add columns nb_sets_pos and nb_sets
+  dataframe1 <-  dataframe1 %>%
+    dplyr::mutate(year = lubridate::year(x = activity_date))
   dataframe2 <-  dataframe2 %>%
     dplyr::mutate(year = lubridate::year(x = activity_date))
   t0 <- dataframe2 %>%

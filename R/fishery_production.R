@@ -6,6 +6,21 @@
 #' @param fishing_type  {\link[base]{character}} expected. FSC, FOB or ALL. ALL by default.
 #' @param graph_type {\link[base]{character}} expected. plot, plotly, table or percentage. Plot by default.
 #' @param title TRUE or FALSE expected. False by default.
+#' @details
+#' The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Referentials.html}{see referentials}]:
+#' \itemize{
+#'  \item{\code{  - activity_date}}
+#'  \item{\code{  - ocean_name}}
+#'  \item{\code{  - gear}}
+#'  \item{\code{  - fleet}}
+#'  \item{\code{  - flag}}
+#'  \item{\code{  - c_esp}}
+#'  \item{\code{  - v_poids_capt}}
+#'  \item{\code{  - l4c_tban}}
+#'  \item{\code{  - ocean_id}}
+#'  \item{\code{  - country_id}}
+#'  \item{\code{  - vessel_type_id}}
+#' }
 #' @return The function return ggplot R plot.
 #' @export
 #' @importFrom dplyr mutate tibble group_by summarise case_when
@@ -38,6 +53,7 @@ fishery_production <- function(dataframe,
   total <- NULL
   count <- NULL
   specie <- NULL
+  time_period <- NULL
   # 1 - Arguments verification ----
   if (codama::r_type_checking(r_object = fishing_type,
                               type = "character",

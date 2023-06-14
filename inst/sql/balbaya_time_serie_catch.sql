@@ -1,5 +1,5 @@
 select
-		date_part('year'::text, a.d_act) as year
+		a.d_act::date as activity_date
 		,a.c_tban
 		,a.v_nb_calee_pos
 		,a.v_nb_calees

@@ -5,6 +5,22 @@
 #' @param fishing_type {\link[base]{character}} expected. FOB, FSC or ALL. ALL by default.
 #' @param graph_type {\link[base]{character}} expected. plot or plotly. Plot by default.
 #' @param title TRUE or FALSE expected. False by default.
+#' @details
+#' The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Referentials.html}{see referentials}]:
+#' \itemize{
+#'  \item{\code{  - cwp11_act}}
+#'  \item{\code{  - n_act}}
+#'  \item{\code{  - activity_date}}
+#'  \item{\code{  - c_bat}}
+#'  \item{\code{  - c_esp}}
+#'  \item{\code{  - v_poids_capt}}
+#'  \item{\code{  - v_nb_calee_pos}}
+#'  \item{\code{  - c_ocea}}
+#'  \item{\code{  - c_tban}}
+#'  \item{\code{  - ocean_id}}
+#'  \item{\code{  - country_id}}
+#'  \item{\code{  - vessel_type_id}}
+#' }
 #' @return The function return ggplot R plot.
 #' @export
 #' @importFrom dplyr tibble group_by summarise case_when filter
@@ -22,7 +38,7 @@ map_catch_distribution <- function(dataframe,
                                    title = FALSE) {
   # 0 - Global variables assignement ----
   n_act <- NULL
-  d_act <- NULL
+  activity_date <- NULL
   c_bat <- NULL
   c_esp <- NULL
   v_nb_calee_pos <- NULL
@@ -34,6 +50,8 @@ map_catch_distribution <- function(dataframe,
   yft <- NULL
   skj <- NULL
   bet <- NULL
+  time_period <- NULL
+  ocean <- NULL
   # 1 - Arguments verification ----
   if (codama::r_type_checking(r_object = fishing_type,
                               type = "character",
@@ -52,7 +70,7 @@ map_catch_distribution <- function(dataframe,
   # 2 - Data design ----
   t1 <- dataframe %>%
     dplyr::group_by(n_act,
-                    d_act,
+                    activity_date,
                     c_bat,
                     c_esp,
                     v_nb_calee_pos,

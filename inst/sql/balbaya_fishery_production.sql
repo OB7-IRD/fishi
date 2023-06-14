@@ -1,5 +1,5 @@
 select
-	a.d_act as activity_date
+	a.d_act::date as activity_date
 	,o.l_ocea AS ocean_name
 	,e.c_engin_4l as gear
 	,p.l_pav_b as fleet

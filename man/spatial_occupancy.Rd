@@ -19,3 +19,16 @@ The function return ggplot R plot.
 \description{
 Changes in the spatial extent of the fishery over time. Annual number of 1-degree squares explored by each vessel.
 }
+\details{
+The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Referentials.html}{see referentials}]:
+\itemize{
+ \item{\code{  - activity_date}}
+ \item{\code{  - cwp11_act}}
+ \item{\code{  - v_nb_calees}}
+ \item{\code{  - v_nb_calee_pos}}
+ \item{\code{  - v_tpec}}
+ \item{\code{  - ocean_id}}
+ \item{\code{  - country_id}}
+ \item{\code{  - vessel_type_id}}
+}
+}

@@ -1,14 +1,13 @@
 select
 	a.cwp11_act
 	,c.n_act
-	,c.d_act
+	,c.d_act::date AS activity_date
 	,b.c_bat
 	,c.c_esp
 	,c.v_poids_capt
 	,a.v_nb_calee_pos
 	,a.c_ocea
 	,a.c_tban
-	,b.c_pav_b
 	,b.c_pav_b::numeric as country_id
 	,tb.c_engin::numeric as vessel_type_id
 	,b.c_pav_b::NUMERIC AS ocean_id

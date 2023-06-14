@@ -24,6 +24,7 @@ Useful links:
 Authors:
 \itemize{
   \item Mathieu Depetris \email{mathieu.depetris@ird.fr} (\href{https://orcid.org/0000-0001-8080-0531}{ORCID})
+  \item Julien Lebranchu \email{julien.lebranchu@ird.fr} (\href{https://orcid.org/0000-0002-7759-0534}{ORCID})
 }
 
 Other contributors:

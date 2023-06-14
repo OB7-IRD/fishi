@@ -4,6 +4,23 @@
 #' @param dataframe {\link[base]{data.frame}} expected. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the fishing_effort() function.
 #' @param graph_type {\link[base]{character}} expected. plot, plotly or table. Plot by default.
 #' @param title TRUE or FALSE expected. False by default.
+#' @details
+#' The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Referentials.html}{see referentials}]:
+#' \itemize{
+#'  \item{\code{  - ocean_id}}
+#'  \item{\code{  - vessel_type_id}}
+#'  \item{\code{  - country_id}}
+#'  \item{\code{  - fleet}}
+#'  \item{\code{  - flag}}
+#'  \item{\code{  - c_bat}}
+#'  \item{\code{  - l_bat}}
+#'  \item{\code{  - port}}
+#'  \item{\code{  - activity_date}}
+#'  \item{\code{  - landing_date}}
+#'  \item{\code{  - v_tmer}}
+#'  \item{\code{  - v_tpec}}
+#'  \item{\code{  - v_dur_cal}}
+#' }
 #' @return The function return ggplot R plot.
 #' @export
 #' @importFrom dplyr mutate tibble group_by summarise
@@ -36,6 +53,8 @@ fishing_effort <- function(dataframe,
   landing_in_activity_year <- NULL
   nb_landings_in_activity_year <- NULL
   nb_days <- NULL
+  vessel_type <- NULL
+  time_period <- NULL
   # 1 - Arguments verification ----
   if (codama::r_type_checking(r_object = graph_type,
                               type = "character",
@@ -120,15 +139,15 @@ fishing_effort <- function(dataframe,
                   "searching_days" = searching_days_1000 / 1000)
   # 3 - Legend design ----
   #Ocean
-  ocean_legend <- code_manipulation(data         = fishing_effort_data$ocean_id,
+  ocean_legend <- code_manipulation(data         = dataframe$ocean_id,
                                     referential  = "ocean",
                                     manipulation = "legend")
   #country
-  country_legend <- code_manipulation(data         = fishing_effort_data$country_id,
+  country_legend <- code_manipulation(data         = dataframe$country_id,
                                       referential  = "country",
                                       manipulation = "legend")
   #vessel
-  vessel_type_legend <- code_manipulation(data         = fishing_effort_data$vessel_type_id,
+  vessel_type_legend <- code_manipulation(data         = dataframe$vessel_type_id,
                                           referential  = "vessel_simple_type",
                                           manipulation = "legend")
   # 4 - Graphic design ----
