@@ -30,7 +30,7 @@ kableExtra::kable(tableau, "html", longtable = TRUE, booktabs = TRUE) %>%
                               "condensed"),
                             font_size = 14) %>%
   kableExtra::row_spec(1, color = "white", background = "#a6cee3") %>%
-  kableExtra::row_spec(2, color = "white", background = "#1f78b4") %>% 
+  kableExtra::row_spec(2, color = "white", background = "#1f78b4") %>%
   kableExtra::kable_styling(latex_options = "scale_down")
 ```
 
@@ -50,7 +50,7 @@ kableExtra::kable(tableau, "html") %>%
   kableExtra::row_spec(2, color = "white", background = "#1f78b4") %>%
   kableExtra::row_spec(3, color = "white", background = "#b2df8a") %>%
   kableExtra::row_spec(4, color = "white", background = "#33a02c") %>%
-  kableExtra::row_spec(5, color = "white", background = "#fb9a99") %>% 
+  kableExtra::row_spec(5, color = "white", background = "#fb9a99") %>%
   kableExtra::kable_styling(latex_options = "scale_down")
 ```
 
@@ -83,7 +83,7 @@ kableExtra::kable(data, "html") %>%
   kableExtra::row_spec(9, color = "white", background = "#ff9f1c") %>%
   kableExtra::row_spec(10, color = "white", background = "#6699CC") %>%
   kableExtra::row_spec(11, color = "white", background = "#999933") %>%
-  kableExtra::row_spec(12, color = "white", background = "#8d99ae") %>% 
+  kableExtra::row_spec(12, color = "white", background = "#8d99ae") %>%
   kableExtra::kable_styling(latex_options = "scale_down")
 ```
 
@@ -101,6 +101,6 @@ data <- data.frame(code_vessel_type = c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 9
 kableExtra::kable(data, "html") %>%
   kableExtra::kable_classic(c("hover",
                               "condensed"),
-                            font_size = 14) %>% 
+                            font_size = 14) %>%
   kableExtra::kable_styling(latex_options = "scale_down")
 ```

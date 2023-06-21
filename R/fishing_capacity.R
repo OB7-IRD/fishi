@@ -189,7 +189,6 @@ fishing_capacity <- function(dataframe,
                    xlab = "",
                    ylab = "",
                    ylim = c(0, max(fishing_capacity_data$CC / 1000) * 1.1),
-                   #xlim = c(0, 37.6),
                    yaxs = "i")
     graphics::axis(4,
                    at = seq(0, 20, 5),

@@ -30,7 +30,7 @@ bio_weight_tuna <- function(dataframe,
   # 0 - Global variables assignement ----
   c_esp <- NULL
   c_banc <- NULL
-  activity_date<- NULL
+  activity_date <- NULL
   v_mensur <- NULL
   size_class <- NULL
   log_avg_5_years <- NULL
@@ -62,7 +62,7 @@ bio_weight_tuna <- function(dataframe,
   t0 <- dataframe %>%
     dplyr::filter(c_esp %in% 2,
                   c_banc %in% 1,
-                  activity_date%in% report_year) %>%
+                  activity_date %in% report_year) %>%
     dplyr::group_by(size_class) %>%
     dplyr::summarise(log_current_year = (unique(0.00000748 * (size_class + 0.5)^3.2526) * sum(v_mensur,
                                                                                               na.rm = TRUE)) / 1000,
@@ -71,7 +71,7 @@ bio_weight_tuna <- function(dataframe,
   t1 <- dataframe %>%
     dplyr::filter(c_esp %in% 2,
                   c_banc %in% 1,
-                  activity_date%in% five_previous) %>%
+                  activity_date %in% five_previous) %>%
     dplyr::group_by(size_class) %>%
     dplyr::summarise(log_avg_5_years = (unique(0.00000748 * (size_class + 0.5)^3.2526) * sum(v_mensur / 5,
                                                                                              na.rm = TRUE)) / 1000,
@@ -80,7 +80,7 @@ bio_weight_tuna <- function(dataframe,
   t2 <- dataframe %>%
     dplyr::filter(c_esp %in% 2,
                   c_banc %in% c(2, 3, 9),
-                  activity_date%in% report_year) %>%
+                  activity_date %in% report_year) %>%
     dplyr::group_by(size_class) %>%
     dplyr::summarise(free_current_year = (unique(0.00000748 * (size_class + 0.5)^3.2526) * sum(v_mensur,
                                                                                                na.rm = TRUE)) / 1000,
@@ -89,7 +89,7 @@ bio_weight_tuna <- function(dataframe,
   t3 <- dataframe %>%
     dplyr::filter(c_esp %in% 2,
                   c_banc %in% c(2, 3, 9),
-                  activity_date%in% five_previous) %>%
+                  activity_date %in% five_previous) %>%
     dplyr::group_by(size_class) %>%
     dplyr::summarise(free_avg_5_years = (unique(0.00000748 * (size_class + 0.5)^3.2526) * sum(v_mensur / 5,
                                                                                               na.rm = TRUE)) / 1000,
@@ -97,7 +97,7 @@ bio_weight_tuna <- function(dataframe,
   # Dataframe - Mode : ALL, Year : Report year
   t4 <- dataframe %>%
     dplyr::filter(c_esp %in% 2,
-                  activity_date%in% report_year) %>%
+                  activity_date %in% report_year) %>%
     dplyr::group_by(size_class) %>%
     dplyr::summarise(all_current_year = (unique(0.00000748 * (size_class + 0.5)^3.2526) * sum(v_mensur,
                                                                                               na.rm = TRUE)) / 1000,
@@ -105,7 +105,7 @@ bio_weight_tuna <- function(dataframe,
   # Dataframe - Mode : ALL, Year : Previous years
   t5 <- dataframe %>%
     dplyr::filter(c_esp %in% 2,
-                  activity_date%in% five_previous) %>%
+                  activity_date %in% five_previous) %>%
     dplyr::group_by(size_class) %>%
     dplyr::summarise(all_avg_5_years = (unique(0.00000748 * (size_class + 0.5)^3.2526) * sum(v_mensur / 5,
                                                                                              na.rm = TRUE)) / 1000,
@@ -122,7 +122,7 @@ bio_weight_tuna <- function(dataframe,
   t0 <- dataframe %>%
     dplyr::filter(c_esp %in% 3,
                   c_banc %in% 1,
-                  activity_date%in% report_year) %>%
+                  activity_date %in% report_year) %>%
     dplyr::group_by(size_class) %>%
     dplyr::summarise(log_current_year = (unique(0.00002396 * (size_class + 1)^2.9774) * sum(v_mensur,
                                                                                             na.rm = TRUE)) / 1000,
@@ -131,7 +131,7 @@ bio_weight_tuna <- function(dataframe,
   t1 <- dataframe %>%
     dplyr::filter(c_esp %in% 3,
                   c_banc %in% 1,
-                  activity_date%in% five_previous) %>%
+                  activity_date %in% five_previous) %>%
     dplyr::group_by(size_class) %>%
     dplyr::summarise(log_avg_5_years = (unique(0.00002396 * (size_class + 1)^2.9774) * sum(v_mensur / 5,
                                                                                            na.rm = TRUE)) / 1000,
@@ -140,7 +140,7 @@ bio_weight_tuna <- function(dataframe,
   t2 <- dataframe %>%
     dplyr::filter(c_esp %in% 3,
                   c_banc %in% c(2, 3, 9),
-                  activity_date%in% report_year) %>%
+                  activity_date %in% report_year) %>%
     dplyr::group_by(size_class) %>%
     dplyr::summarise(free_current_year = (unique(0.00002396 * (size_class + 1)^2.9774) * sum(v_mensur,
                                                                                              na.rm = TRUE)) / 1000,
@@ -149,7 +149,7 @@ bio_weight_tuna <- function(dataframe,
   t3 <- dataframe %>%
     dplyr::filter(c_esp %in% 3,
                   c_banc %in% c(2, 3, 9),
-                  activity_date%in% five_previous) %>%
+                  activity_date %in% five_previous) %>%
     dplyr::group_by(size_class) %>%
     dplyr::summarise(free_avg_5_years = (unique(0.00002396 * (size_class + 1)^2.9774) * sum(v_mensur / 5,
                                                                                             na.rm = TRUE)) / 1000,
@@ -157,7 +157,7 @@ bio_weight_tuna <- function(dataframe,
   # Dataframe - Mode : ALL, Year : Report year
   t4 <- dataframe %>%
     dplyr::filter(c_esp %in% 3,
-                  activity_date%in% report_year) %>%
+                  activity_date %in% report_year) %>%
     dplyr::group_by(size_class) %>%
     dplyr::summarise(all_current_year = (unique(0.00002396 * (size_class + 1)^2.9774) * sum(v_mensur,
                                                                                             na.rm = TRUE)) / 1000,
@@ -165,7 +165,7 @@ bio_weight_tuna <- function(dataframe,
   # Dataframe - Mode : ALL, Year : Previous yearss
   t5 <- dataframe %>%
     dplyr::filter(c_esp %in% 3,
-                  activity_date%in% five_previous) %>%
+                  activity_date %in% five_previous) %>%
     dplyr::group_by(size_class) %>%
     dplyr::summarise(all_avg_5_years = (unique(0.00002396 * (size_class + 1)^2.9774) * sum(v_mensur / 5,
                                                                                            na.rm = TRUE)) / 1000,
@@ -181,7 +181,7 @@ bio_weight_tuna <- function(dataframe,
   t0 <- dataframe %>%
     dplyr::filter(c_esp %in% 1,
                   c_banc %in% 1,
-                  activity_date%in% report_year) %>%
+                  activity_date %in% report_year) %>%
     dplyr::group_by(size_class) %>%
     dplyr::summarise(log_current_year = (unique(0.000021527 * (size_class + 1)^2.976) * sum(v_mensur,
                                                                                             na.rm = TRUE)) / 1000,
@@ -190,7 +190,7 @@ bio_weight_tuna <- function(dataframe,
   t1 <- dataframe %>%
     dplyr::filter(c_esp %in% 1,
                   c_banc %in% 1,
-                  activity_date%in% five_previous) %>%
+                  activity_date %in% five_previous) %>%
     dplyr::group_by(size_class) %>%
     dplyr::summarise(log_avg_5_years = (unique(0.000021527 * (size_class + 1)^2.976) * sum(v_mensur / 5,
                                                                                            na.rm = TRUE)) / 1000,
@@ -199,7 +199,7 @@ bio_weight_tuna <- function(dataframe,
   t2 <- dataframe %>%
     dplyr::filter(c_esp %in% 1,
                   c_banc %in% c(2, 3, 9),
-                  activity_date== report_year) %>%
+                  activity_date == report_year) %>%
     dplyr::group_by(size_class) %>%
     dplyr::summarise(free_current_year = (unique(0.000021527 * (size_class + 1)^2.976) * sum(v_mensur,
                                                                                              na.rm = TRUE)) / 1000,
@@ -208,7 +208,7 @@ bio_weight_tuna <- function(dataframe,
   t3 <- dataframe %>%
     dplyr::filter(c_esp %in% 1,
                   c_banc %in% c(2, 3, 9),
-                  activity_date%in% five_previous) %>%
+                  activity_date %in% five_previous) %>%
     dplyr::group_by(size_class) %>%
     dplyr::summarise(free_avg_5_years = (unique(0.000021527 * (size_class + 1)^2.976) * sum(v_mensur / 5,
                                                                                             na.rm = TRUE)) / 1000,
@@ -216,7 +216,7 @@ bio_weight_tuna <- function(dataframe,
   # Dataframe - Mode : ALL, Year : Report year
   t4 <- dataframe %>%
     dplyr::filter(c_esp %in% 1,
-                  activity_date%in% report_year) %>%
+                  activity_date %in% report_year) %>%
     dplyr::group_by(size_class) %>%
     dplyr::summarise(all_current_year = (unique(0.000021527 * (size_class + 1)^2.976) * sum(v_mensur,
                                                                                             na.rm = TRUE)) / 1000,
@@ -224,7 +224,7 @@ bio_weight_tuna <- function(dataframe,
   # Dataframe - Mode : ALL, Year : Previous years
   t5 <- dataframe %>%
     dplyr::filter(c_esp %in% 1,
-                  activity_date%in% five_previous) %>%
+                  activity_date %in% five_previous) %>%
     dplyr::group_by(size_class) %>%
     dplyr::summarise(all_avg_5_years = (unique(0.000021527 * (size_class + 1)^2.976) * sum(v_mensur / 5,
                                                                                            na.rm = TRUE)) / 1000,

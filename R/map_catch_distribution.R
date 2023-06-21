@@ -67,7 +67,7 @@ map_catch_distribution <- function(dataframe,
   }
   # 2 - Data design ----
   # time period and ocean
-  dataframe <-dataframe %>%
+  dataframe <- dataframe %>%
     dplyr::mutate(year = lubridate::year(x = activity_date))
   time_period <- c(unique(min(dataframe$year):max(dataframe$year)))
   ocean <- dataframe$c_ocea[1]
