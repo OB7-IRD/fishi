@@ -50,8 +50,6 @@ map_catch_distribution <- function(dataframe,
   yft <- NULL
   skj <- NULL
   bet <- NULL
-  time_period <- NULL
-  ocean <- NULL
   # 1 - Arguments verification ----
   if (codama::r_type_checking(r_object = fishing_type,
                               type = "character",
@@ -68,6 +66,12 @@ map_catch_distribution <- function(dataframe,
                                    output = "message"))
   }
   # 2 - Data design ----
+  # time period and ocean
+  dataframe <-dataframe %>%
+    dplyr::mutate(year = lubridate::year(x = activity_date))
+  time_period <- c(unique(min(dataframe$year):max(dataframe$year)))
+  ocean <- dataframe$c_ocea[1]
+  # dataframe
   t1 <- dataframe %>%
     dplyr::group_by(n_act,
                     activity_date,
@@ -146,6 +150,8 @@ map_catch_distribution <- function(dataframe,
                    sizelat = latsiz[siz],
                    sizelon = lonsiz[siz]))
   }
+  lat <- quad2pos(as.numeric(datafile$cwp11_act + 5 * 1e6))$y
+  long <- quad2pos(as.numeric(datafile$cwp11_act + 5 * 1e6))$x
   #Ocean
   ocean_legend <- code_manipulation(data         = dataframe$ocean_id,
                                     referential  = "ocean",
@@ -160,8 +166,6 @@ map_catch_distribution <- function(dataframe,
                                       manipulation = "legend")
   # 4 - Graphic design ----
   if (graph_type == "plot") {
-    lat <- quad2pos(as.numeric(datafile$cwp11_act + 5 * 1e6))$y
-    long <- quad2pos(as.numeric(datafile$cwp11_act + 5 * 1e6))$x
     load(file = system.file("wrld_simpl.RData",
                             package = "fishi"))
 
@@ -332,8 +336,6 @@ map_catch_distribution <- function(dataframe,
                      cex = .9)
 
     }
-
-
     if (title == TRUE) {
       title(main = paste0("Spatial distribution of tuna catches of the ",
                           country_legend, " ",

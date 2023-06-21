@@ -39,7 +39,7 @@ map_effort_distribution <- function(dataframe,
   effort <- NULL
   wrld_simpl <- NULL
   time_period <- NULL
-  ocean <- NULL
+  activity_date <- NULL
   # 1 - Arguments verification ----
   if (codama::r_type_checking(r_object = graph_type,
                               type = "character",
@@ -49,6 +49,12 @@ map_effort_distribution <- function(dataframe,
                                    output = "message"))
   }
   # 2 - Data design ----
+  # time period and ocean
+  dataframe <-dataframe %>%
+    dplyr::mutate(year = lubridate::year(x = activity_date))
+  time_period <- c(unique(min(dataframe$year):max(dataframe$year)))
+  ocean <- dataframe$c_ocea[1]
+  # dataframe
   t1 <- dataframe %>%
     dplyr::group_by(cwp11_act,
                     v_tpec,

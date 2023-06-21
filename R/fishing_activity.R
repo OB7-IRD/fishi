@@ -115,6 +115,8 @@ fishing_activity <- function(dataframe,
   vessel_type_legend <- code_manipulation(data         = dataframe$vessel_type_id,
                                           referential  = "vessel_simple_type",
                                           manipulation = "legend")
+  # time_period
+  time_period <- c(unique(min(fishing_activity_t1$year):max(fishing_activity_t1$year)))
   # 4 - Graphic design ----
   if (graph_type == "plot") {
     graphics::par(mar = c(5, 4, 4, 4))

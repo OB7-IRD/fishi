@@ -154,6 +154,7 @@ catch_per_unit_effort <- function(dataframe1,
   vessel_type_legend <- code_manipulation(data         = dataframe1$vessel_type_id,
                                           referential  = "vessel_simple_type",
                                           manipulation = "legend")
+  time_period <- c(unique(min(dataframe1$year):max(dataframe1$year)))
   # 5 - Graphic design ----
   par(mar = c(4, 4.7, 4.1, 1.5))
   # Define the positions of the x-axis tick marks

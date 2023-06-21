@@ -56,7 +56,6 @@ fishing_capacity <- function(dataframe,
                    month = lubridate::month(x = activity_date),
                    tons_month = (catch * 0.7) / 12,
                    tons = catch * 0.7)
-
   # Remove duplicates
   fishing_capacity_t1 <- unique(fishing_capacity_t1[, c("year",
                                                         "month",
@@ -112,6 +111,8 @@ fishing_capacity <- function(dataframe,
   vessel_type_legend <- code_manipulation(data         = dataframe$vessel_type_id,
                                           referential  = "vessel_simple_type",
                                           manipulation = "legend")
+  # time_period
+  time_period <- c(unique(min(fishing_capacity_t1$year):max(fishing_capacity_t1$year)))
   # 4 - Graphic design ----
   par(mar = c(5.1, 4.1, 4.1, 4.1))
   if (graph_type == "plot") {

@@ -110,6 +110,8 @@ set_per_searching_day <- function(dataframe,
   vessel_type_legend <- code_manipulation(data         = dataframe$vessel_type_id,
                                           referential  = "vessel_simple_type",
                                           manipulation = "legend")
+  # time_period
+  time_period <- c(unique(min(dataframe$year):max(dataframe$year)))
   # 5 - Graphic design ----
   graphics::par(mar = c(4,
                         4.7,
