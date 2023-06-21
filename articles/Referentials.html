@@ -59,6 +59,9 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
+      <a href="../articles/Db_and_csv.html">Database and csv</a>
+    </li>
+    <li>
       <a href="../articles/Referentials.html">Referentials</a>
     </li>
   </ul>
@@ -101,10 +104,10 @@
 
     
     
-<div class="section level4">
-<h4 id="country">Country<a class="anchor" aria-label="anchor" href="#country"></a>
-</h4>
-<table class="table  lightable-classic lightable-hover" style='font-size: 14px; font-family: "Arial Narrow", "Source Sans Pro", sans-serif; margin-left: auto; margin-right: auto;'>
+<div class="section level3">
+<h3 id="country">Country<a class="anchor" aria-label="anchor" href="#country"></a>
+</h3>
+<table class="table  lightable-classic lightable-hover table" style='font-size: 14px; font-family: "Arial Narrow", "Source Sans Pro", sans-serif; margin-left: auto; margin-right: auto; margin-left: auto; margin-right: auto;'>
 <thead><tr>
 <th style="text-align:right;">
 code
@@ -142,10 +145,10 @@ Mayotte
 </tbody>
 </table>
 </div>
-<div class="section level4">
-<h4 id="ocean">Ocean<a class="anchor" aria-label="anchor" href="#ocean"></a>
-</h4>
-<table class="table  lightable-classic lightable-hover" style='font-size: 14px; font-family: "Arial Narrow", "Source Sans Pro", sans-serif; margin-left: auto; margin-right: auto;'>
+<div class="section level3">
+<h3 id="ocean">Ocean<a class="anchor" aria-label="anchor" href="#ocean"></a>
+</h3>
+<table class="table  lightable-classic lightable-hover table" style='font-size: 14px; font-family: "Arial Narrow", "Source Sans Pro", sans-serif; margin-left: auto; margin-right: auto; margin-left: auto; margin-right: auto;'>
 <thead><tr>
 <th style="text-align:right;">
 code
@@ -216,10 +219,10 @@ Pacific
 </tbody>
 </table>
 </div>
-<div class="section level4">
-<h4 id="specie">Specie<a class="anchor" aria-label="anchor" href="#specie"></a>
-</h4>
-<table class="table  lightable-classic lightable-hover" style='font-size: 14px; font-family: "Arial Narrow", "Source Sans Pro", sans-serif; margin-left: auto; margin-right: auto;'>
+<div class="section level3">
+<h3 id="specie">Specie<a class="anchor" aria-label="anchor" href="#specie"></a>
+</h3>
+<table class="table  lightable-classic lightable-hover table" style='font-size: 14px; font-family: "Arial Narrow", "Source Sans Pro", sans-serif; margin-left: auto; margin-right: auto; margin-left: auto; margin-right: auto;'>
 <thead><tr>
 <th style="text-align:right;">
 code
@@ -406,10 +409,10 @@ Other
 </tbody>
 </table>
 </div>
-<div class="section level4">
-<h4 id="boat">Boat<a class="anchor" aria-label="anchor" href="#boat"></a>
-</h4>
-<table class="table  lightable-classic lightable-hover" style='font-size: 14px; font-family: "Arial Narrow", "Source Sans Pro", sans-serif; margin-left: auto; margin-right: auto;'>
+<div class="section level3">
+<h3 id="boat">Boat<a class="anchor" aria-label="anchor" href="#boat"></a>
+</h3>
+<table class="table  lightable-classic lightable-hover table" style='font-size: 14px; font-family: "Arial Narrow", "Source Sans Pro", sans-serif; margin-left: auto; margin-right: auto; margin-left: auto; margin-right: auto;'>
 <thead><tr>
 <th style="text-align:right;">
 code_vessel_type
@@ -568,70 +571,11 @@ Inconnu
 </tbody>
 </table>
 </div>
-<div class="section level3">
-<h3 id="section"></h3>
-</div>
-<div class="section level2">
-<h2 id="database-csv">Database / csv<a class="anchor" aria-label="anchor" href="#database-csv"></a>
-</h2>
-<p>The databases and csv used by fishi contain a large number of
-columns. To be able to use the functions, you need to provide a dataset
-with identical column names. Here’s what they correspond to :</p>
-<p><strong>activity_date</strong> : Date of activity (boat out of
-service, transit, catch+ and catch+ weight, etc.). It is entered in
-dd/mm/yyyy format. The first record should correspond to the departure
-date for a trip.</p>
-<p><strong>catch</strong> : Weight of fish caught during the current
-activity (commercial or non-commercial species, stored in tanks or
-dumped at sea).</p>
-<p><strong>c_bat</strong> : The boat’s internal code (note that the same
-boat may have several different codes when changing flag, etc.).</p>
-<p><strong>c_esp</strong> : Internal species code</p>
-<p><strong>country_id</strong> : Code of the country</p>
-<p><strong>c_tban</strong> : School type code.</p>
-<p><strong>c_quille</strong> : Keel coding (unique throughout the ship’s
-life).</p>
-<p><strong>cwp11_act</strong> : code of the 1x1 square in which the
-activity is located</p>
-<p><strong>fleet</strong> : Country’s fleet.</p>
-<p><strong>flag</strong> : Country’s flag.</p>
-<p><strong>gear</strong> : Name for type of vessel used.</p>
-<p><strong>landing_date</strong> : Boat landing date (dd/mm/yyyy
-format).</p>
-<p><strong>l_bat</strong> : Name of the ship.</p>
-<p><strong>n_act</strong> : Numeric identifier of the activity (from 1
-to n). This is the only field that can be used to differentiate one
-activity from another for the same day of the week. Note that an
-increasing range of numbers does not necessarily correspond to the
-chronological range.</p>
-<p><strong>ocean_id</strong> : Code of the ocean in which the
-geographical area is located</p>
-<p><strong>ocean_name</strong> : Name of the ocean in which the
-geographical area is located</p>
-<p><strong>port</strong> : Port designation (ORSTOM)</p>
-<p><strong>v_tpec</strong> : Total hours fished during the activity (=
-set +search +transit etc.). Approximately 12h in OA and 13h in OI. Note
-that if several activities take place on the same date, the first will
-take the total hours and the others 0.</p>
-<p><strong>v_tmer</strong> : Total hours at sea for the activity (from 0
-to 24h). Note that if several activities take place on the same date,
-the first will take 24h and the others 0.</p>
-<p><strong>v_dur_cal</strong> : set duration calculated using several
-parameters: fishing method, tonnage and fishing year</p>
-<p><strong>v_nb_calees</strong> : total number of sets during the
-activity.</p>
-<p><strong>v_nb_calee_pos</strong> : total number of positive sets
-during the activity.</p>
-<p><strong>vessel_type_id</strong> : Code for type of vessel used</p>
-<p><strong>l4c_tban</strong> : Abbreviated name of school type</p>
-</div>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
 
-        <nav id="toc" data-toggle="toc"><h2 data-toc-skip>Contents</h2>
-    </nav>
-</div>
+      </div>
 
 </div>
 
@@ -639,7 +583,7 @@ during the activity.</p>
 
       <footer><div class="copyright">
   <p></p>
-<p>Developed by Ob7 - Observatory of Exploited Tropical Pelagic Ecosystems, Mathieu Depetris, Clara Lerebourg.</p>
+<p>Developed by Mathieu Depetris, Julien Lebranchu, Clara Lerebourg, IRD - Ob7 Observatory of Exploited Tropical Pelagic Ecosystems.</p>
 </div>
 
 <div class="pkgdown">

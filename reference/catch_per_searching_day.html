@@ -32,6 +32,9 @@
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu"><li>
+      <a href="../articles/Db_and_csv.html">Database and csv</a>
+    </li>
+    <li>
       <a href="../articles/Referentials.html">Referentials</a>
     </li>
   </ul></li>
@@ -66,13 +69,9 @@
 
     <div id="ref-usage">
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">catch_per_searching_day</span><span class="op">(</span></span>
-<span>  <span class="va">data_connection</span>,</span>
-<span>  <span class="va">time_period</span>,</span>
-<span>  <span class="va">ocean</span>,</span>
+<span>  <span class="va">dataframe1</span>,</span>
+<span>  <span class="va">dataframe2</span>,</span>
 <span>  <span class="va">fishing_type</span>,</span>
-<span>  country <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">as.integer</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>,</span>
-<span>  vessel_type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">as.integer</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>,</span>
-<span>  vessel_type_select <span class="op">=</span> <span class="st">"engin"</span>,</span>
 <span>  graph_type <span class="op">=</span> <span class="st">"plot"</span>,</span>
 <span>  title <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -80,32 +79,16 @@
 
     <div id="arguments">
     <h2>Arguments</h2>
-    <dl><dt>data_connection</dt>
-<dd><p><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a> expected. Output of the function <a href="https://rdrr.io/pkg/furdeb/man/postgresql_dbconnection.html" class="external-link">postgresql_dbconnection</a>, which must be done before using the catch_per_searching_day() function.</p></dd>
+    <dl><dt>dataframe1</dt>
+<dd><p><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a> expected. Csv or output of the function <a href="data_extraction.html">data_extraction</a>, which must be done before using the catch_per_searching_day() function.</p></dd>
 
 
-<dt>time_period</dt>
-<dd><p><a href="https://rdrr.io/r/base/integer.html" class="external-link">integer</a> expected. Period identification in year.</p></dd>
-
-
-<dt>ocean</dt>
-<dd><p><a href="https://rdrr.io/r/base/integer.html" class="external-link">integer</a> expected. Ocean codes identification.</p></dd>
+<dt>dataframe2</dt>
+<dd><p><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a> expected. Csv or output of the function <a href="data_extraction.html">data_extraction</a>, which must be done before using the catch_per_searching_day() function.</p></dd>
 
 
 <dt>fishing_type</dt>
 <dd><p><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a> expected. FOB and FSC.</p></dd>
-
-
-<dt>country</dt>
-<dd><p><a href="https://rdrr.io/r/base/integer.html" class="external-link">integer</a> expected. Country codes identification. 1 by default.</p></dd>
-
-
-<dt>vessel_type</dt>
-<dd><p><a href="https://rdrr.io/r/base/integer.html" class="external-link">integer</a> expected. Vessel type codes identification. 1 by default.</p></dd>
-
-
-<dt>vessel_type_select</dt>
-<dd><p><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a> expected. engin or vessel_type.</p></dd>
 
 
 <dt>graph_type</dt>
@@ -122,6 +105,31 @@
 
 <p>The function return ggplot R plot.</p>
     </div>
+    <div id="details">
+    <h2>Details</h2>
+    <p>The input dataframe must contain all these columns for the function to work [<a href="https://ob7-ird.github.io/fishi/articles/Referentials.html">see referentials</a>]:</p><ul><li><p>dataframe 1:</p></li>
+<li><p><code>  - activity_date</code></p></li>
+<li><p><code>  - c_tban</code></p></li>
+<li><p><code>  - v_nb_calee_pos</code></p></li>
+<li><p><code>  - v_nb_calees</code></p></li>
+<li><p><code>  - v_tpec</code></p></li>
+<li><p><code>  - v_dur_cal</code></p></li>
+<li><p><code>  - v_poids_capt</code></p></li>
+<li><p><code>  - c_esp</code></p></li>
+<li><p><code>  - ocean_id</code></p></li>
+<li><p><code>  - country_id</code></p></li>
+<li><p><code>  - vessel_type_id</code></p></li>
+<li><p>dataframe 2:</p></li>
+<li><p><code>  - activity_date</code></p></li>
+<li><p><code>  - v_nb_calees</code></p></li>
+<li><p><code>  - v_nb_calee_pos</code></p></li>
+<li><p><code>  - v_tpec</code></p></li>
+<li><p><code>  - v_dur_cal</code></p></li>
+<li><p><code>  - c_tban</code></p></li>
+<li><p><code>  - ocean_id</code></p></li>
+<li><p><code>  - country_id</code></p></li>
+<li><p><code>  - vessel_type_id</code></p></li>
+</ul></div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -131,7 +139,7 @@
 
 
       <footer><div class="copyright">
-  <p></p><p>Developed by Ob7 - Observatory of Exploited Tropical Pelagic Ecosystems, Mathieu Depetris, Clara Lerebourg.</p>
+  <p></p><p>Developed by Mathieu Depetris, Julien Lebranchu, Clara Lerebourg, IRD - Ob7 Observatory of Exploited Tropical Pelagic Ecosystems.</p>
 </div>
 
 <div class="pkgdown">
