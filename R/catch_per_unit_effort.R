@@ -11,26 +11,26 @@
 #' \itemize{
 #'  \item{dataframe 1:}
 #'  \item{\code{  - activity_date}}
+#'  \item{\code{  - c_esp}}
+#'  \item{\code{  - country_id}}
 #'  \item{\code{  - c_tban}}
+#'  \item{\code{  - ocean_id}}
+#'  \item{\code{  - v_dur_cal}}
+#'  \item{\code{  - vessel_type_id}}
 #'  \item{\code{  - v_nb_calee_pos}}
 #'  \item{\code{  - v_nb_calees}}
-#'  \item{\code{  - v_tpec}}
-#'  \item{\code{  - v_dur_cal}}
 #'  \item{\code{  - v_poids_capt}}
-#'  \item{\code{  - c_esp}}
-#'  \item{\code{  - ocean_id}}
-#'  \item{\code{  - country_id}}
-#'  \item{\code{  - vessel_type_id}}
+#'  \item{\code{  - v_tpec}}
 #'  \item{dataframe 2:}
 #'  \item{\code{  - activity_date}}
-#'  \item{\code{  - v_nb_calees}}
-#'  \item{\code{  - v_nb_calee_pos}}
-#'  \item{\code{  - v_tpec}}
-#'  \item{\code{  - v_dur_cal}}
+#'  \item{\code{  - country_id}}
 #'  \item{\code{  - c_tban}}
 #'  \item{\code{  - ocean_id}}
-#'  \item{\code{  - country_id}}
+#'  \item{\code{  - v_dur_cal}}
 #'  \item{\code{  - vessel_type_id}}
+#'  \item{\code{  - v_nb_calee_pos}}
+#'  \item{\code{  - v_nb_calees}}
+#'  \item{\code{  - v_tpec}}
 #' }
 #' @return The function return ggplot R plot.
 #' @export

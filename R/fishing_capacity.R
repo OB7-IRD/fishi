@@ -9,8 +9,8 @@
 #' The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Referentials.html}{see referentials}]:
 #' \itemize{
 #'  \item{\code{  - activity_date}}
-#'  \item{\code{  - c_quille}}
 #'  \item{\code{  - catch}}
+#'  \item{\code{  - c_quille}}
 #'  \item{\code{  - ocean_id}}
 #'  \item{\code{  - vessel_type_id}}
 #' }

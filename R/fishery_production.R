@@ -10,16 +10,16 @@
 #' The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Referentials.html}{see referentials}]:
 #' \itemize{
 #'  \item{\code{  - activity_date}}
-#'  \item{\code{  - ocean_name}}
-#'  \item{\code{  - gear}}
-#'  \item{\code{  - fleet}}
-#'  \item{\code{  - flag}}
 #'  \item{\code{  - c_esp}}
-#'  \item{\code{  - v_poids_capt}}
+#'  \item{\code{  - country_id}}
+#'  \item{\code{  - flag}}
+#'  \item{\code{  - fleet}}
+#'  \item{\code{  - gear}}
 #'  \item{\code{  - l4c_tban}}
 #'  \item{\code{  - ocean_id}}
-#'  \item{\code{  - country_id}}
+#'  \item{\code{  - ocean_name}}
 #'  \item{\code{  - vessel_type_id}}
+#'  \item{\code{  - v_poids_capt}}
 #' }
 #' @return The function return ggplot R plot.
 #' @export

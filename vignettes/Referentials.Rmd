@@ -19,7 +19,7 @@ require(kableExtra)
 
 ### Country
 
-```{r, echo = FALSE}
+```{r, echo = FALSE, fig.width = 10, fig.height = 10}
 code <- c(1, 41)
 country <- c("French", "Mayotte")
 color <- c("#a6cee3", "#1f78b4")
@@ -36,7 +36,7 @@ kableExtra::kable(tableau, "html", longtable = TRUE, booktabs = TRUE) %>%
 
 ### Ocean
 
-```{r, echo = FALSE}
+```{r, echo = FALSE, fig.width = 10, fig.height = 10}
 code <- c(1, 2, 3, 4, 5)
 ocean <- c("Atlantic", "Indian", "Western Pacific", "East Pacific", "Pacific")
 color <- c("#a6cee3", "#1f78b4", "#b2df8a", "#33a02c", "#fb9a99")
@@ -56,7 +56,7 @@ kableExtra::kable(tableau, "html") %>%
 
 ### Specie
 
-```{r, echo = FALSE}
+```{r, echo = FALSE, fig.width = 10, fig.height = 10}
 data <- data.frame(code = c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 18, 100),
                    name = c("YFT", "SKJ", "BET", "ALB", "LTA", "FRI", "SHX", "DSC",
                             "MIX", "KAW", "FRZ", "Other"),
@@ -89,7 +89,7 @@ kableExtra::kable(data, "html") %>%
 
 ### Boat
 
-```{r, echo = FALSE}
+```{r, echo = FALSE, fig.width = 10, fig.height = 10}
 data <- data.frame(code_vessel_type = c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 99),
                    code_engin = c(2, 2, 5, 1, 1, 1, 3, 4, 4, 4, 4, 2, 0),
                    name = c("Canne/glacier", "Canne/congélateur", "Mixte",

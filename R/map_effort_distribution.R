@@ -8,14 +8,14 @@
 #' The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Referentials.html}{see referentials}]:
 #' \itemize{
 #'  \item{\code{  - activity_date}}
-#'  \item{\code{  - cwp11_act}}
-#'  \item{\code{  - v_tpec}}
-#'  \item{\code{  - v_dur_cal}}
-#'  \item{\code{  - n_act}}
 #'  \item{\code{  - c_bat}}
-#'  \item{\code{  - ocean_id}}
 #'  \item{\code{  - country_id}}
+#'  \item{\code{  - cwp11_act}}
+#'  \item{\code{  - n_act}}
+#'  \item{\code{  - ocean_id}}
+#'  \item{\code{  - v_dur_cal}}
 #'  \item{\code{  - vessel_type_id}}
+#'  \item{\code{  - v_tpec}}
 #' }
 #' @return The function return ggplot R plot.
 #' @export
@@ -53,7 +53,7 @@ map_effort_distribution <- function(dataframe,
   dataframe <- dataframe %>%
     dplyr::mutate(year = lubridate::year(x = activity_date))
   time_period <- c(unique(min(dataframe$year):max(dataframe$year)))
-  ocean <- dataframe$c_ocea[1]
+  ocean <- dataframe$ocean_id[1]
   # dataframe
   t1 <- dataframe %>%
     dplyr::group_by(cwp11_act,
@@ -92,6 +92,8 @@ map_effort_distribution <- function(dataframe,
                    sizelat = latsiz[siz],
                    sizelon = lonsiz[siz]))
   }
+  lat <- quad2pos(as.numeric(datafile$cwp11_act + 5 * 1e6))$y
+  long <- quad2pos(as.numeric(datafile$cwp11_act + 5 * 1e6))$x
   #Ocean
   ocean_legend <- code_manipulation(data         = dataframe$ocean_id,
                                     referential  = "ocean",
@@ -106,8 +108,6 @@ map_effort_distribution <- function(dataframe,
                                       manipulation = "legend")
   # 4 - Graphic design ----
   if (graph_type == "plot") {
-    lat <- quad2pos(as.numeric(datafile$cwp11_act + 5 * 1e6))$y
-    long <- quad2pos(as.numeric(datafile$cwp11_act + 5 * 1e6))$x
     load(file = system.file("wrld_simpl.RData",
                             package = "fishi"))
     ryref <- sqrt(50)		#Radius of the reference effort

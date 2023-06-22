@@ -8,13 +8,13 @@
 #' @details
 #' The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Referentials.html}{see referentials}]:
 #' \itemize{
-#'  \item{\code{ - size_class}}
-#'  \item{\code{  - v_mensur}}
+#'  \item{\code{  - activity_date}}
 #'  \item{\code{  - c_banc}}
 #'  \item{\code{  - c_esp}}
-#'  \item{\code{  - activity_date}}
-#'  \item{\code{  - ocean_id}}
 #'  \item{\code{  - country_id}}
+#'  \item{\code{  - ocean_id}}
+#'  \item{\code{  - size_class}}
+#'  \item{\code{  - v_mensur}}
 #' }
 #' @return The function return ggplot R plot.
 #' @export
