@@ -2,33 +2,16 @@
 % Please edit documentation in R/fishing_activity.R
 \name{fishing_activity}
 \alias{fishing_activity}
-\title{Fishing activity}
+\title{Annual number of fishing sets}
 \usage{
-fishing_activity(
-  data_connection,
-  time_period,
-  ocean,
-  country = as.integer(x = 1),
-  vessel_type = as.integer(x = 1),
-  graph_type = "plot",
-  figure = "set",
-  title = FALSE
-)
+fishing_activity(dataframe, graph_type = "plot", figure = NULL, title = FALSE)
 }
 \arguments{
-\item{data_connection}{{\link[base]{list}} expected. Output of the function {\link[furdeb]{postgresql_dbconnection}}, which must be done before using the fishing_activity() function.}
-
-\item{time_period}{{\link[base]{integer}} expected. Period identification in year.}
-
-\item{ocean}{{\link[base]{integer}} expected. Ocean codes identification.}
-
-\item{country}{{\link[base]{integer}} expected. Country codes identification. 1 by default.}
-
-\item{vessel_type}{{\link[base]{integer}} expected. Vessel type codes identification. 1 by default.}
+\item{dataframe}{{\link[base]{data.frame}} expected. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the fishing_activity() function.}
 
 \item{graph_type}{{\link[base]{character}} expected. plot, plotly or table. Plot by default.}
 
-\item{figure}{{\link[base]{character}} expected. set (for number of sets graph) or log (for percentage FOB-associated sets graph).}
+\item{figure}{{\link[base]{character}} expected. For plotly figure: set (for number of sets graph) or log (for percentage FOB-associated sets graph). NULL by default.}
 
 \item{title}{TRUE or FALSE expected. False by default.}
 }
@@ -36,5 +19,19 @@ fishing_activity(
 The function return ggplot R plot.
 }
 \description{
-Fishing operations. Annual number of fishing sets in the French purse seine fishery on FOB- associated and free-swimming tuna schools.
+Fishing operations. Annual number of fishing sets on FOB-associated and free-swimming tuna schools.
+}
+\details{
+The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Referentials.html}{see referentials}]:
+\itemize{
+ \item{\code{  - activity_date}}
+ \item{\code{  - c_tban}}
+ \item{\code{  - country_id}}
+ \item{\code{  - ocean_id}}
+ \item{\code{  - v_dur_cal}}
+ \item{\code{  - vessel_type_id}}
+ \item{\code{  - v_nb_calee_pos}}
+ \item{\code{  - v_nb_calees}}
+ \item{\code{  - v_tpec}}
+}
 }

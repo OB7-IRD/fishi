@@ -1,14 +1,37 @@
 #' @name catch_per_unit_effort
-#' @title Catch per unit effort
-#' @description Annual catch rates (in t per searching day) of the French purse seine fishing fleet on FOB- associated and free-swimming tuna schools (FSC) in the Atlantic Ocean.
-#' @param data_connection {\link[base]{list}} expected. Output of the function {\link[furdeb]{postgresql_dbconnection}}, which must be done before using the catch_per_unit_effort() function.
-#' @param time_period {\link[base]{integer}} expected. Period identification in year.
-#' @param country {\link[base]{integer}} expected. Country codes identification.
-#' @param vessel_type {\link[base]{integer}} expected. Vessel type codes identification.
-#' @param ocean {\link[base]{integer}} expected. Ocean codes identification.
+#' @title  Annual catch rates (in t per searching day)
+#' @description Annual catch rates (in t per searching day) on FOB- associated and free-swimming tuna schools (FSC).
+#' @param dataframe1 {\link[base]{data.frame}} expected. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the catch_per_searching_day() function.
+#' @param dataframe2 {\link[base]{data.frame}} expected. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the catch_per_searching_day() function.
 #' @param fishing_type {\link[base]{character}} expected. FOB or FSC.
 #' @param graph_type {\link[base]{character}} expected. plot, plotly or table. Plot by default.
 #' @param title TRUE or FALSE expected. False by default.
+#' @details
+#' The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Referentials.html}{see referentials}]:
+#' \itemize{
+#'  \item{dataframe 1:}
+#'  \item{\code{  - activity_date}}
+#'  \item{\code{  - c_esp}}
+#'  \item{\code{  - country_id}}
+#'  \item{\code{  - c_tban}}
+#'  \item{\code{  - ocean_id}}
+#'  \item{\code{  - v_dur_cal}}
+#'  \item{\code{  - vessel_type_id}}
+#'  \item{\code{  - v_nb_calee_pos}}
+#'  \item{\code{  - v_nb_calees}}
+#'  \item{\code{  - v_poids_capt}}
+#'  \item{\code{  - v_tpec}}
+#'  \item{dataframe 2:}
+#'  \item{\code{  - activity_date}}
+#'  \item{\code{  - country_id}}
+#'  \item{\code{  - c_tban}}
+#'  \item{\code{  - ocean_id}}
+#'  \item{\code{  - v_dur_cal}}
+#'  \item{\code{  - vessel_type_id}}
+#'  \item{\code{  - v_nb_calee_pos}}
+#'  \item{\code{  - v_nb_calees}}
+#'  \item{\code{  - v_tpec}}
+#' }
 #' @return The function return ggplot R plot.
 #' @export
 #' @importFrom DBI dbGetQuery sqlInterpolate SQL
@@ -19,14 +42,11 @@
 #' @importFrom plotly ggplotly
 #' @importFrom graphics par plot axis lines abline legend text
 #' @importFrom codama r_type_checking
-catch_per_unit_effort <- function(data_connection,
-                               time_period,
-                               country = as.integer(x = 1),
-                               vessel_type = as.integer(x = 1),
-                               ocean = as.integer(x = 1),
-                               fishing_type,
-                               graph_type = "plot",
-                               title = FALSE) {
+catch_per_unit_effort <- function(dataframe1,
+                                  dataframe2,
+                                  fishing_type,
+                                  graph_type = "plot",
+                                  title = FALSE) {
   # 0 - Global variables assignement ----
   activity_date <- NULL
   v_tpec <- NULL
@@ -37,44 +57,8 @@ catch_per_unit_effort <- function(data_connection,
   bet <- NULL
   alb <- NULL
   total <- NULL
+  time_period <- NULL
   # 1 - Arguments verification ----
-  if (codama::r_type_checking(r_object = data_connection,
-                              type = "list",
-                              length = 2L,
-                              output = "logical") != TRUE) {
-    return(codama::r_type_checking(r_object = data_connection,
-                                   type = "list",
-                                   length = 2L,
-                                   output = "message"))
-  }
-  if (codama::r_type_checking(r_object = time_period,
-                              type = "integer",
-                              output = "logical") != TRUE) {
-    return(codama::r_type_checking(r_object = time_period,
-                                   type = "integer",
-                                   output = "message"))
-  }
-  if (codama::r_type_checking(r_object = ocean,
-                              type = "integer",
-                              output = "logical") != TRUE) {
-    return(codama::r_type_checking(r_object = ocean,
-                                   type = "integer",
-                                   output = "message"))
-  }
-  if (codama::r_type_checking(r_object = country,
-                              type = "integer",
-                              output = "logical") != TRUE) {
-    return(codama::r_type_checking(r_object = country,
-                                   type = "integer",
-                                   output = "message"))
-  }
-  if (codama::r_type_checking(r_object = vessel_type,
-                              type = "integer",
-                              output = "logical") != TRUE) {
-    return(codama::r_type_checking(r_object = vessel_type,
-                                   type = "integer",
-                                   output = "message"))
-  }
   if (codama::r_type_checking(r_object = fishing_type,
                               type = "character",
                               output = "logical") != TRUE) {
@@ -90,90 +74,51 @@ catch_per_unit_effort <- function(data_connection,
                                    output = "message"))
   }
   # 2 - Data extraction ----
-  if (data_connection[[1]] == "balbaya") {
-    annual_catch_rate_sql <- paste(readLines(con = system.file("sql",
-                                                              "balbaya_time_serie_catch.sql",
-                                                              package = "fishi")),
-                                  collapse = "\n")
-    annual_catch_rate_nb_set_sql <- paste(readLines(con = system.file("sql",
-                                                                     "balbaya_fishing_activity.sql",
-                                                                     package = "fishi")),
-                                         collapse = "\n")
-  } else {
-    stop(format(x = Sys.time(),
-                format = "%Y-%m-%d %H:%M:%S"),
-         " - Indicator not developed yet for this \"data_connection\" argument.\n",
-         sep = "")
-  }
-  #ANNUAL CATCH RATE SQL
-  annual_catch_rate_sql_final <- DBI::sqlInterpolate(conn = data_connection[[2]],
-                                                     sql  = annual_catch_rate_sql,
-                                                     time_period = DBI::SQL(paste(time_period,
-                                                                                  collapse = ", ")),
-                                                     country     = DBI::SQL(paste(country,
-                                                                                  collapse = ", ")),
-                                                     vessel_type = DBI::SQL(paste(vessel_type,
-                                                                                  collapse = ", ")),
-                                                     ocean = DBI::SQL(paste(ocean,
-                                                                            collapse = ", ")))
-  annual_catch_rate_data <- dplyr::tibble(DBI::dbGetQuery(conn      = data_connection[[2]],
-                                                          statement  = annual_catch_rate_sql_final))
-  #ANNUAL CATCH RATE NB SETS SQL
-  annual_catch_rate_nb_set <- DBI::sqlInterpolate(conn = data_connection[[2]],
-                                                     sql  = annual_catch_rate_nb_set_sql,
-                                                     time_period = DBI::SQL(paste(time_period,
-                                                                                  collapse = ", ")),
-                                                     country     = DBI::SQL(paste(country,
-                                                                                  collapse = ", ")),
-                                                     vessel_type = DBI::SQL(paste(vessel_type,
-                                                                                  collapse = ", ")),
-                                                     ocean = DBI::SQL(paste(ocean,
-                                                                            collapse = ", ")))
-  annual_catch_rate_nb_set_data <- dplyr::tibble(DBI::dbGetQuery(conn      = data_connection[[2]],
-                                                          statement  = annual_catch_rate_nb_set))
   # 3.a - Data design for FOB----
-  annual_catch_rate_nb_set_data <-  annual_catch_rate_nb_set_data %>%
+  #Creation of t0
+  dataframe1 <-  dataframe1 %>%
     dplyr::mutate(year = lubridate::year(x = activity_date))
-  #Creation of t0 database from annual_catch_rate_data
-  t0 <- annual_catch_rate_nb_set_data %>%
+  dataframe2 <-  dataframe2 %>%
+    dplyr::mutate(year = lubridate::year(x = activity_date))
+  t0 <- dataframe2 %>%
     dplyr::group_by(year) %>%
     dplyr::summarise(t_peche = sum(v_tpec, na.rm = TRUE),
                      t_recherche = sum(v_tpec - v_dur_cal, na.rm = TRUE),
                      .groups = "drop")
-  #Creation of t1 database from annual_catch_rate_nb_set_data
-  t1 <- annual_catch_rate_data %>%
+  #Creation of t1 database from dataframe2
+  t1 <- dataframe1 %>%
     dplyr::group_by(year) %>%
-    dplyr::summarise(yft = sum(dplyr::case_when(c_tban == 1 & c_esp == 1 ~ v_poids_capt, #OK
-                                            TRUE ~ 0), na.rm = TRUE),
-                     skj = sum(dplyr::case_when(c_tban == 1 & c_esp == 2 ~ v_poids_capt, #OK
-                                            TRUE ~ 0), na.rm = TRUE),
-                     bet = sum(dplyr::case_when(c_tban == 1 & c_esp == 3 ~ v_poids_capt, #OK
-                                            TRUE ~ 0), na.rm = TRUE),
-                     alb = sum(dplyr::case_when(c_tban == 1 & c_esp == 4 ~ v_poids_capt, #OK
-                                            TRUE ~ 0), na.rm = TRUE),
-                     total = sum(dplyr::case_when(c_tban == 1 ~ v_poids_capt, #OK
-                                              TRUE ~ 0), na.rm = TRUE),
+    dplyr::summarise(yft = sum(dplyr::case_when(c_tban == 1 & c_esp == 1 ~ v_poids_capt,
+                                                TRUE ~ 0), na.rm = TRUE),
+                     skj = sum(dplyr::case_when(c_tban == 1 & c_esp == 2 ~ v_poids_capt,
+                                                TRUE ~ 0), na.rm = TRUE),
+                     bet = sum(dplyr::case_when(c_tban == 1 & c_esp == 3 ~ v_poids_capt,
+                                                TRUE ~ 0), na.rm = TRUE),
+                     alb = sum(dplyr::case_when(c_tban == 1 & c_esp == 4 ~ v_poids_capt,
+                                                TRUE ~ 0), na.rm = TRUE),
+                     total = sum(dplyr::case_when(c_tban == 1 ~ v_poids_capt,
+                                                  TRUE ~ 0), na.rm = TRUE),
                      .groups = "drop")
   #merge t0 and t1
   table_cpue_fad <- merge(t0, t1, by = "year")
   #final table
   table_cpue_fad <- table_cpue_fad %>%
-    dplyr::summarise(year = year,
-                     yft = (yft / (t_recherche / 12)),
-                     skj = (skj / (t_recherche / 12)),
-                     bet = (bet / (t_recherche / 12)),
-                     ALB = (alb / (t_recherche / 12)),
-                     total = (total / (t_recherche / 12)))
+    dplyr::reframe(year = year,
+                   yft = (yft / (t_recherche / 12)),
+                   skj = (skj / (t_recherche / 12)),
+                   bet = (bet / (t_recherche / 12)),
+                   ALB = (alb / (t_recherche / 12)),
+                   total = (total / (t_recherche / 12)))
   # 3.b - Data design for FSC----
-  #Creation of t2 database from annual_catch_rate_data
-  t2 <- annual_catch_rate_nb_set_data %>%
+  #Creation of t2 database from dataframe1
+  t2 <- dataframe2 %>%
     dplyr::group_by(year) %>%
     dplyr::summarise(t_peche = sum(v_tpec, na.rm = TRUE),
                      t_recherche = sum(v_tpec - v_dur_cal,
                                        na.rm = TRUE),
                      .groups = "drop")
-  #Creation of t3 database from annual_catch_rate_nb_set_data
-  t3 <- annual_catch_rate_data %>%
+  #Creation of t3 database from dataframe2
+  t3 <- dataframe1 %>%
     dplyr::group_by(year) %>%
     dplyr::summarise(yft = sum(dplyr::case_when(c_tban %in% c(2, 3) & c_esp == 1 ~ v_poids_capt,
                                                 TRUE ~ 0), na.rm = TRUE),
@@ -190,25 +135,26 @@ catch_per_unit_effort <- function(data_connection,
   table_cpue_fsc <- merge(t2, t3, by = "year")
   #final table
   table_cpue_fsc <- table_cpue_fsc %>%
-    dplyr::summarise(year = year,
-                     yft = (yft / (t_recherche / 12)),
-                     skj = (skj / (t_recherche / 12)),
-                     bet = (bet / (t_recherche / 12)),
-                     ALB = (alb / (t_recherche / 12)),
-                     total = (total / (t_recherche / 12)))
+    dplyr::reframe(year = year,
+                   yft = (yft / (t_recherche / 12)),
+                   skj = (skj / (t_recherche / 12)),
+                   bet = (bet / (t_recherche / 12)),
+                   ALB = (alb / (t_recherche / 12)),
+                   total = (total / (t_recherche / 12)))
   # 4 - Legend design ----
   #Ocean
-  ocean_legend <- code_manipulation(data         = annual_catch_rate_data$ocean_id,
+  ocean_legend <- code_manipulation(data         = dataframe1$ocean_id,
                                     referential  = "ocean",
                                     manipulation = "legend")
   #country
-  country_legend <- code_manipulation(data         = annual_catch_rate_data$country_id,
+  country_legend <- code_manipulation(data         = dataframe1$country_id,
                                       referential  = "country",
                                       manipulation = "legend")
   #vessel
-  vessel_type_legend <- code_manipulation(data         = annual_catch_rate_data$vessel_type_id,
+  vessel_type_legend <- code_manipulation(data         = dataframe1$vessel_type_id,
                                           referential  = "vessel_simple_type",
                                           manipulation = "legend")
+  time_period <- c(unique(min(dataframe1$year):max(dataframe1$year)))
   # 5 - Graphic design ----
   par(mar = c(4, 4.7, 4.1, 1.5))
   # Define the positions of the x-axis tick marks
@@ -227,8 +173,20 @@ catch_per_unit_effort <- function(data_connection,
                                                ")")),
                        cex.axis = 1.4,
                        cex.lab = 1.4,
-                       main = paste0("Annual catch rates (in t per searching day) of the ", country_legend, " ", vessel_type_legend, " fishing fleet on ", "\n",
-                                     fishing_type, " fishing mode schools in the ", ocean_legend, " ocean during ", min(time_period), "-", max(time_period), "."),
+                       main = paste0("Annual catch rates (in t per searching day) of the ",
+                                     country_legend,
+                                     " ",
+                                     vessel_type_legend,
+                                     " fishing fleet on ",
+                                     "\n",
+                                     fishing_type,
+                                     " fishing mode schools in the ",
+                                     ocean_legend,
+                                     " ocean during ",
+                                     min(time_period),
+                                     "-",
+                                     max(time_period),
+                                     "."),
                        ylim = c(0,
                                 20),
                        las = 1,
@@ -255,61 +213,61 @@ catch_per_unit_effort <- function(data_connection,
                        pch = 22,
                        bg = "grey")
       }
-    # Add the x-axis tick marks without labels
-    graphics::axis(1,
-                   at = x_tick_pos,
-                   tick = TRUE,
-                   labels = FALSE)
-    graphics::text(x = x_tick_pos,
-         y = par("usr")[3] - 0.6,
-         labels = table_cpue_fad$year,
-         srt = 45,
-         adj = 1,
-         xpd = TRUE,
-         cex = 1.2)
-    graphics::lines(table_cpue_fad$year,
-                    table_cpue_fad$skj,
-                    type = "b",
-                    lty = 1,
-                    pch = 23)
-    graphics::lines(table_cpue_fad$year,
-                    table_cpue_fad$bet,
-                    type = "b",
-                    lty = 1,
-                    pch = 24)
-    graphics::lines(table_cpue_fad$year,
-                    table_cpue_fad$total,
-                    type = "b",
-                    lty = 1,
-                    pch = 19)
-    graphics::abline(h = seq(5,
-                             35,
-                             5),
-                     col = "lightgrey",
-                     lty = 2)
-    graphics::legend("topleft",
-                     legend = c("total",
-                                "Skipjack",
-                                "Yellowfin",
-                                "Bigeye"),
-                     pch = c(19,
-                             23,
-                             22,
-                             24),
-                     bty = "n",
-                     lty = c(1,
-                             1,
-                             1,
-                             1),
-                     pt.bg = c("black",
-                               "white",
-                               "grey",
-                               "white"),
-                     cex = 1.3)
-    graphics::legend("topright",
-                     legend = "(FOB)",
-                     bty = "n",
-                     cex = 2)
+      # Add the x-axis tick marks without labels
+      graphics::axis(1,
+                     at = x_tick_pos,
+                     tick = TRUE,
+                     labels = FALSE)
+      graphics::text(x = x_tick_pos,
+                     y = par("usr")[3] - 0.6,
+                     labels = table_cpue_fad$year,
+                     srt = 45,
+                     adj = 1,
+                     xpd = TRUE,
+                     cex = 1.2)
+      graphics::lines(table_cpue_fad$year,
+                      table_cpue_fad$skj,
+                      type = "b",
+                      lty = 1,
+                      pch = 23)
+      graphics::lines(table_cpue_fad$year,
+                      table_cpue_fad$bet,
+                      type = "b",
+                      lty = 1,
+                      pch = 24)
+      graphics::lines(table_cpue_fad$year,
+                      table_cpue_fad$total,
+                      type = "b",
+                      lty = 1,
+                      pch = 19)
+      graphics::abline(h = seq(5,
+                               35,
+                               5),
+                       col = "lightgrey",
+                       lty = 2)
+      graphics::legend("topleft",
+                       legend = c("total",
+                                  "Skipjack",
+                                  "Yellowfin",
+                                  "Bigeye"),
+                       pch = c(19,
+                               23,
+                               22,
+                               24),
+                       bty = "n",
+                       lty = c(1,
+                               1,
+                               1,
+                               1),
+                       pt.bg = c("black",
+                                 "white",
+                                 "grey",
+                                 "white"),
+                       cex = 1.3)
+      graphics::legend("topright",
+                       legend = "(FOB)",
+                       bty = "n",
+                       cex = 2)
     } else if (graph_type == "plotly") {
       # round values
       table_cpue_fad$yft <- round(table_cpue_fad$yft, 3)
@@ -357,8 +315,21 @@ catch_per_unit_effort <- function(data_connection,
       # Add a title
       if (title == TRUE) {
         plotly_graph <- plotly_graph %>%
-          plotly::layout(title = list(text = paste0("Annual catch rates (in t per searching day) of the ", country_legend, " ", vessel_type_legend, " fishing fleet on ", fishing_type, " fishing", "\n",
-                                                   "mode schools in the ", ocean_legend, " ocean during ", min(time_period), "-", max(time_period), "."),
+          plotly::layout(title = list(text = paste0("Annual catch rates (in t per searching day) of the ",
+                                                    country_legend,
+                                                    " ",
+                                                    vessel_type_legend,
+                                                    " fishing fleet on ",
+                                                    fishing_type,
+                                                    " fishing",
+                                                    "\n",
+                                                    "mode schools in the ",
+                                                    ocean_legend,
+                                                    " ocean during ",
+                                                    min(time_period),
+                                                    "-",
+                                                    max(time_period),
+                                                    "."),
                                       font = list(size = 17)),
                          margin = list(t = 120))
 
@@ -388,12 +359,24 @@ catch_per_unit_effort <- function(data_connection,
                        ylab = expression(paste("Catch per unit effort (t ",
                                                d^ {
                                                  -1
-                                                 },
+                                               },
                                                ")")),
                        cex.axis = 1.4,
                        cex.lab = 1.4,
-                       main = paste0("Annual catch rates (in t per searching day) of the ", country_legend, " ", vessel_type_legend, " fishing fleet on ", "\n",
-                                     fishing_type, " fishing mode schools in the", ocean_legend,  " ocean during ", min(time_period), "-", max(time_period), "."),
+                       main = paste0("Annual catch rates (in t per searching day) of the ",
+                                     country_legend,
+                                     " ",
+                                     vessel_type_legend,
+                                     " fishing fleet on ",
+                                     "\n",
+                                     fishing_type,
+                                     " fishing mode schools in the",
+                                     ocean_legend,
+                                     " ocean during ",
+                                     min(time_period),
+                                     "-",
+                                     max(time_period),
+                                     "."),
                        ylim = c(0,
                                 20),
                        las = 1,
@@ -408,7 +391,7 @@ catch_per_unit_effort <- function(data_connection,
                        ylab = expression(paste("Catch per unit effort (t ",
                                                d^ {
                                                  -1
-                                                 },
+                                               },
                                                ")")),
                        cex.axis = 1.4,
                        cex.lab = 1.4,
@@ -426,12 +409,12 @@ catch_per_unit_effort <- function(data_connection,
                      tick = TRUE,
                      labels = FALSE)
       graphics::text(x = x_tick_pos,
-           y = par("usr")[3] - 0.6,
-           labels = table_cpue_fsc$year,
-           srt = 45,
-           adj = 1,
-           xpd = TRUE,
-           cex = 1.2)
+                     y = par("usr")[3] - 0.6,
+                     labels = table_cpue_fsc$year,
+                     srt = 45,
+                     adj = 1,
+                     xpd = TRUE,
+                     cex = 1.2)
       graphics::lines(table_cpue_fsc$year,
                       table_cpue_fsc$skj,
                       type = "b",
@@ -522,8 +505,21 @@ catch_per_unit_effort <- function(data_connection,
       # Add a title
       if (title == TRUE) {
         plotly_graph <- plotly_graph %>%
-          plotly::layout(title = list(text = paste0("Annual catch rates (in t per searching day) of the ", country_legend, " ", vessel_type_legend, " fishing fleet on ", fishing_type, " fishing", "\n",
-                                                   "mode schools in the", ocean_legend,  " ocean during ", min(time_period), "-", max(time_period), "."),
+          plotly::layout(title = list(text = paste0("Annual catch rates (in t per searching day) of the ",
+                                                    country_legend,
+                                                    " ",
+                                                    vessel_type_legend,
+                                                    " fishing fleet on ",
+                                                    fishing_type,
+                                                    " fishing",
+                                                    "\n",
+                                                    "mode schools in the",
+                                                    ocean_legend,
+                                                    " ocean during ",
+                                                    min(time_period),
+                                                    "-",
+                                                    max(time_period),
+                                                    "."),
                                       font = list(size = 17)),
                          margin = list(t = 120))
 

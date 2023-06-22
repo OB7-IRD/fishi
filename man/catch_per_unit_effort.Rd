@@ -2,29 +2,20 @@
 % Please edit documentation in R/catch_per_unit_effort.R
 \name{catch_per_unit_effort}
 \alias{catch_per_unit_effort}
-\title{Catch per unit effort}
+\title{Annual catch rates (in t per searching day)}
 \usage{
 catch_per_unit_effort(
-  data_connection,
-  time_period,
-  country = as.integer(x = 1),
-  vessel_type = as.integer(x = 1),
-  ocean = as.integer(x = 1),
+  dataframe1,
+  dataframe2,
   fishing_type,
   graph_type = "plot",
   title = FALSE
 )
 }
 \arguments{
-\item{data_connection}{{\link[base]{list}} expected. Output of the function {\link[furdeb]{postgresql_dbconnection}}, which must be done before using the catch_per_unit_effort() function.}
+\item{dataframe1}{{\link[base]{data.frame}} expected. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the catch_per_searching_day() function.}
 
-\item{time_period}{{\link[base]{integer}} expected. Period identification in year.}
-
-\item{country}{{\link[base]{integer}} expected. Country codes identification.}
-
-\item{vessel_type}{{\link[base]{integer}} expected. Vessel type codes identification.}
-
-\item{ocean}{{\link[base]{integer}} expected. Ocean codes identification.}
+\item{dataframe2}{{\link[base]{data.frame}} expected. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the catch_per_searching_day() function.}
 
 \item{fishing_type}{{\link[base]{character}} expected. FOB or FSC.}
 
@@ -36,5 +27,32 @@ catch_per_unit_effort(
 The function return ggplot R plot.
 }
 \description{
-Annual catch rates (in t per searching day) of the French purse seine fishing fleet on FOB- associated and free-swimming tuna schools (FSC) in the Atlantic Ocean.
+Annual catch rates (in t per searching day) on FOB- associated and free-swimming tuna schools (FSC).
+}
+\details{
+The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Referentials.html}{see referentials}]:
+\itemize{
+ \item{dataframe 1:}
+ \item{\code{  - activity_date}}
+ \item{\code{  - c_esp}}
+ \item{\code{  - country_id}}
+ \item{\code{  - c_tban}}
+ \item{\code{  - ocean_id}}
+ \item{\code{  - v_dur_cal}}
+ \item{\code{  - vessel_type_id}}
+ \item{\code{  - v_nb_calee_pos}}
+ \item{\code{  - v_nb_calees}}
+ \item{\code{  - v_poids_capt}}
+ \item{\code{  - v_tpec}}
+ \item{dataframe 2:}
+ \item{\code{  - activity_date}}
+ \item{\code{  - country_id}}
+ \item{\code{  - c_tban}}
+ \item{\code{  - ocean_id}}
+ \item{\code{  - v_dur_cal}}
+ \item{\code{  - vessel_type_id}}
+ \item{\code{  - v_nb_calee_pos}}
+ \item{\code{  - v_nb_calees}}
+ \item{\code{  - v_tpec}}
+}
 }

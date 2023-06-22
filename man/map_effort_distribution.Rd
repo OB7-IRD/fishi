@@ -2,28 +2,12 @@
 % Please edit documentation in R/map_effort_distribution.R
 \name{map_effort_distribution}
 \alias{map_effort_distribution}
-\title{Map effort distribution}
+\title{Spatial distribution of tuna effort}
 \usage{
-map_effort_distribution(
-  data_connection,
-  time_period,
-  country = as.integer(x = c(1, 41)),
-  vessel_type = as.integer(x = 1),
-  ocean = as.integer(x = 1),
-  graph_type = "plot",
-  title = FALSE
-)
+map_effort_distribution(dataframe, graph_type = "plot", title = FALSE)
 }
 \arguments{
-\item{data_connection}{{\link[base]{list}} expected. Output of the function {\link[furdeb]{postgresql_dbconnection}}, which must be done before using the map_effort_distribution() function.}
-
-\item{time_period}{{\link[base]{integer}} expected. Period identification in year.}
-
-\item{country}{{\link[base]{integer}} expected. Country codes identification.}
-
-\item{vessel_type}{{\link[base]{integer}} expected. Vessel type codes identification.}
-
-\item{ocean}{{\link[base]{integer}} expected. Ocean codes identification.}
+\item{dataframe}{{\link[base]{data.frame}} expected. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the map_effort_distribution() function.}
 
 \item{graph_type}{{\link[base]{character}} expected. plot or plotly. Plot by default.}
 
@@ -33,5 +17,19 @@ map_effort_distribution(
 The function return ggplot R plot.
 }
 \description{
-Spatial distribution of tuna effort of the French purse seine fishing fleet.
+Spatial distribution of tuna effort.
+}
+\details{
+The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Referentials.html}{see referentials}]:
+\itemize{
+ \item{\code{  - activity_date}}
+ \item{\code{  - c_bat}}
+ \item{\code{  - country_id}}
+ \item{\code{  - cwp11_act}}
+ \item{\code{  - n_act}}
+ \item{\code{  - ocean_id}}
+ \item{\code{  - v_dur_cal}}
+ \item{\code{  - vessel_type_id}}
+ \item{\code{  - v_tpec}}
+}
 }

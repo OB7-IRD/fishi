@@ -1,29 +1,35 @@
 #' @name fishing_effort
-#' @title Fishing effort
-#' @description Changes in nominal effort over time. Annual total number of fishing and searching days for the French purse seine fishing fleet in the Atlantic Ocean.
-#' @param data_connection {\link[base]{list}} expected. Output of the function {\link[furdeb]{postgresql_dbconnection}}, which must be done before using the fishing_effort function.
-#' @param time_period {\link[base]{integer}} expected. Period identification in year.
-#' @param ocean {\link[base]{integer}} expected. Ocean codes identification.
-#' @param country {\link[base]{integer}} expected. Country codes identification. 1 by default.
-#' @param vessel_type_select {\link[base]{character}} expected. Vessel for c_engin or vessel_accuracy for c_typ_bat.
-#' @param vessel_type {\link[base]{integer}} expected. Vessel type codes identification. 1 by default.
+#' @title Annual total number of fishing and searching days
+#' @description Changes in nominal effort over time. Annual total number of fishing and searching days.
+#' @param dataframe {\link[base]{data.frame}} expected. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the fishing_effort() function.
 #' @param graph_type {\link[base]{character}} expected. plot, plotly or table. Plot by default.
 #' @param title TRUE or FALSE expected. False by default.
+#' @details
+#' The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Referentials.html}{see referentials}]:
+#' \itemize{
+#'  \item{\code{  - activity_date}}
+#'  \item{\code{  - c_bat}}
+#'  \item{\code{  - country_id}}
+#'  \item{\code{  - flag}}
+#'  \item{\code{  - fleet}}
+#'  \item{\code{  - l_bat}}
+#'  \item{\code{  - landing_date}}
+#'  \item{\code{  - ocean_id}}
+#'  \item{\code{  - port}}
+#'  \item{\code{  - v_dur_cal}}
+#'  \item{\code{  - vessel_type_id}}
+#'  \item{\code{  - v_tmer}}
+#'  \item{\code{  - v_tpec}}
+#' }
 #' @return The function return ggplot R plot.
 #' @export
-#' @importFrom DBI dbGetQuery sqlInterpolate SQL
 #' @importFrom dplyr mutate tibble group_by summarise
 #' @importFrom lubridate year
 #' @importFrom ggplot2 ggplot aes geom_line scale_color_manual geom_point labs ylim theme_bw
 #' @importFrom plotly ggplotly layout
 #' @importFrom graphics par plot axis lines abline legend text
 #' @importFrom codama r_type_checking
-fishing_effort <- function(data_connection,
-                           time_period,
-                           ocean,
-                           country = as.integer(x = 1),
-                           vessel_type_select = "vessel_accuracy",
-                           vessel_type = as.integer(x = c(4, 5, 6)),
+fishing_effort <- function(dataframe,
                            graph_type = "plot",
                            title = FALSE) {
   # 0 - Global variables assignement ----
@@ -47,44 +53,9 @@ fishing_effort <- function(data_connection,
   landing_in_activity_year <- NULL
   nb_landings_in_activity_year <- NULL
   nb_days <- NULL
+  vessel_type <- NULL
+  time_period <- NULL
   # 1 - Arguments verification ----
-  if (codama::r_type_checking(r_object = data_connection,
-                              type = "list",
-                              length = 2L,
-                              output = "logical") != TRUE) {
-    return(codama::r_type_checking(r_object = data_connection,
-                                   type = "list",
-                                   length = 2L,
-                                   output = "message"))
-  }
-  if (codama::r_type_checking(r_object = time_period,
-                              type = "integer",
-                              output = "logical") != TRUE) {
-    return(codama::r_type_checking(r_object = time_period,
-                                   type = "integer",
-                                   output = "message"))
-  }
-  if (codama::r_type_checking(r_object = ocean,
-                              type = "integer",
-                              output = "logical") != TRUE) {
-    return(codama::r_type_checking(r_object = ocean,
-                                   type = "integer",
-                                   output = "message"))
-  }
-  if (codama::r_type_checking(r_object = country,
-                              type = "integer",
-                              output = "logical") != TRUE) {
-    return(codama::r_type_checking(r_object = country,
-                                   type = "integer",
-                                   output = "message"))
-  }
-  if (codama::r_type_checking(r_object = vessel_type,
-                              type = "integer",
-                              output = "logical") != TRUE) {
-    return(codama::r_type_checking(r_object = vessel_type,
-                                   type = "integer",
-                                   output = "message"))
-  }
   if (codama::r_type_checking(r_object = graph_type,
                               type = "character",
                               output = "logical") != TRUE) {
@@ -92,44 +63,9 @@ fishing_effort <- function(data_connection,
                                    type = "character",
                                    output = "message"))
   }
-  # 2 - Data extraction ----
-  if (data_connection[[1]] == "balbaya") {
-    fishing_effort_sql <- paste(readLines(con = system.file("sql",
-                                                            "balbaya_fishing_effort.sql",
-                                                            package = "fishi")),
-                                collapse = "\n")
-  } else {
-    stop(format(x = Sys.time(),
-                format = "%Y-%m-%d %H:%M:%S"),
-         " - Indicator not developed yet for this \"data_connection\" argument.\n",
-         sep = "")
-  }
-  if (vessel_type_select == "vessel") {
-    fishing_effort_sql <- sub(pattern = "\n\tAND bateau.c_typ_b IN (?vessel_type)",
-                                replacement = "",
-                                x = fishing_effort_sql,
-                                fixed = TRUE)
-  } else if (vessel_type_select == "vessel_accuracy") {
-    fishing_effort_sql <- sub(pattern = "\n\tAND activite.c_engin IN (?vessel_type)",
-                                replacement = "",
-                                x = fishing_effort_sql,
-                                fixed = TRUE)
-  }
-  fishing_effort_sql_final <- DBI::sqlInterpolate(conn = data_connection[[2]],
-                                                  sql  = fishing_effort_sql,
-                                                  time_period = DBI::SQL(paste(time_period,
-                                                                               collapse = ", ")),
-                                                  country     = DBI::SQL(paste(country,
-                                                                               collapse = ", ")),
-                                                  vessel_type = DBI::SQL(paste(vessel_type,
-                                                                               collapse = ", ")),
-                                                  ocean = DBI::SQL(paste(ocean,
-                                                                         collapse = ", ")))
-  fishing_effort_data <- dplyr::tibble(DBI::dbGetQuery(conn      = data_connection[[2]],
-                                                       statement = fishing_effort_sql_final))
-  # 3 - Data design ----
+  # 2 - Data design ----
   #Adding columns years
-  fishing_effort_t1 <- fishing_effort_data %>%
+  fishing_effort_t1 <- dataframe %>%
     dplyr::mutate(year = lubridate::year(x = activity_date),
                   landing_in_activity_year = dplyr::case_when(landing_date == activity_date ~ 1,
                                                               TRUE ~ 0))
@@ -164,35 +100,32 @@ fishing_effort <- function(data_connection,
                     v_tmer,
                     v_tpec,
                     v_dur_cal) %>%
-    dplyr::summarise(nb_landings_in_activity_year = nb_landings_in_activity_year,
-                     nb_days = nb_days,
-                     .groups = "drop")
+    dplyr::reframe(nb_landings_in_activity_year = nb_landings_in_activity_year,
+                   nb_days = nb_days)
   #Adding columns by years (daysatsea, fishingdays, ...)
   fishing_effort_t3 <- fishing_effort_t2b %>%
     dplyr::group_by(year) %>%
-    dplyr::summarise("days_at_sea" = round(sum(v_tmer / 24,
-                                               na.rm = TRUE)),
-                     "nb_landings_in_activity_year" = sum(nb_landings_in_activity_year, na.rm = TRUE),
-                     "average_nb_days_by_trip" = mean(nb_days, 0),
-                     "fishing_days_1000" = ifelse(test = ocean_id == 1,
-                                                  yes = round(sum(v_tpec / 12,
-                                                                  na.rm = TRUE)),
-                                                  no = round(sum(v_tpec / 13,
-                                                                 na.rm = TRUE))),
-                     "set_duration_in_days" = ifelse(test = ocean_id == 1,
-                                                     yes = round(sum(v_dur_cal / 12,
-                                                                     na.rm = TRUE)),
-                                                     no = round(sum(v_dur_cal / 13,
-                                                                    na.rm = TRUE))),
-                     "searching_days_1000" = ifelse(test = ocean_id == 1,
-                                                    yes = round(sum((v_tpec - v_dur_cal) / 12,
+    dplyr::reframe("days_at_sea" = round(sum(v_tmer / 24,
+                                             na.rm = TRUE)),
+                   "nb_landings_in_activity_year" = sum(nb_landings_in_activity_year, na.rm = TRUE),
+                   "average_nb_days_by_trip" = mean(nb_days, 0),
+                   "fishing_days_1000" = ifelse(test = ocean_id == 1,
+                                                yes = round(sum(v_tpec / 12,
+                                                                na.rm = TRUE)),
+                                                no = round(sum(v_tpec / 13,
+                                                               na.rm = TRUE))),
+                   "set_duration_in_days" = ifelse(test = ocean_id == 1,
+                                                   yes = round(sum(v_dur_cal / 12,
+                                                                   na.rm = TRUE)),
+                                                   no = round(sum(v_dur_cal / 13,
+                                                                  na.rm = TRUE))),
+                   "searching_days_1000" = ifelse(test = ocean_id == 1,
+                                                  yes = round(sum((v_tpec - v_dur_cal) / 12,
 
-                                                                    na.rm = TRUE)),
-                                                    no = round(sum((v_tpec - v_dur_cal) / 13, na.rm = TRUE))),
-                     .groups = "drop")
+                                                                  na.rm = TRUE)),
+                                                  no = round(sum((v_tpec - v_dur_cal) / 13, na.rm = TRUE))))
 
   #remove duplicates
-
   fishing_effort_t4 <- unique(fishing_effort_t3[, c("year",
                                                     "nb_landings_in_activity_year",
                                                     "average_nb_days_by_trip",
@@ -204,20 +137,22 @@ fishing_effort <- function(data_connection,
   table_effort <- fishing_effort_t4 %>%
     dplyr::mutate("fishing_days" = fishing_days_1000 / 1000,
                   "searching_days" = searching_days_1000 / 1000)
-  # 4 - Legend design ----
+  # 3 - Legend design ----
   #Ocean
-  ocean_legend <- code_manipulation(data         = fishing_effort_data$ocean_id,
+  ocean_legend <- code_manipulation(data         = dataframe$ocean_id,
                                     referential  = "ocean",
                                     manipulation = "legend")
   #country
-  country_legend <- code_manipulation(data         = fishing_effort_data$country_id,
+  country_legend <- code_manipulation(data         = dataframe$country_id,
                                       referential  = "country",
                                       manipulation = "legend")
   #vessel
-  vessel_type_legend <- code_manipulation(data         = fishing_effort_data$vessel_type_id,
+  vessel_type_legend <- code_manipulation(data         = dataframe$vessel_type_id,
                                           referential  = "vessel_simple_type",
                                           manipulation = "legend")
-  # 5 - Graphic design ----
+  # time_period
+  time_period <- c(unique(min(fishing_effort_t1$year):max(fishing_effort_t1$year)))
+  # 4 - Graphic design ----
   if (graph_type == "plot") {
     par(mar = c(4, 4.7, 4.1, 1.5))
     # Define the positions of the x-axis tick marks

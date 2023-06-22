@@ -1,13 +1,22 @@
 #' @name map_effort_distribution
-#' @title Map effort distribution
-#' @description Spatial distribution of tuna effort of the French purse seine fishing fleet.
-#' @param data_connection {\link[base]{list}} expected. Output of the function {\link[furdeb]{postgresql_dbconnection}}, which must be done before using the map_effort_distribution() function.
-#' @param time_period {\link[base]{integer}} expected. Period identification in year.
-#' @param country {\link[base]{integer}} expected. Country codes identification.
-#' @param vessel_type {\link[base]{integer}} expected. Vessel type codes identification.
-#' @param ocean {\link[base]{integer}} expected. Ocean codes identification.
+#' @title Spatial distribution of tuna effort
+#' @description Spatial distribution of tuna effort.
+#' @param dataframe {\link[base]{data.frame}} expected. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the map_effort_distribution() function.
 #' @param graph_type {\link[base]{character}} expected. plot or plotly. Plot by default.
 #' @param title TRUE or FALSE expected. False by default.
+#' @details
+#' The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Referentials.html}{see referentials}]:
+#' \itemize{
+#'  \item{\code{  - activity_date}}
+#'  \item{\code{  - c_bat}}
+#'  \item{\code{  - country_id}}
+#'  \item{\code{  - cwp11_act}}
+#'  \item{\code{  - n_act}}
+#'  \item{\code{  - ocean_id}}
+#'  \item{\code{  - v_dur_cal}}
+#'  \item{\code{  - vessel_type_id}}
+#'  \item{\code{  - v_tpec}}
+#' }
 #' @return The function return ggplot R plot.
 #' @export
 #' @importFrom DBI dbGetQuery sqlInterpolate SQL
@@ -20,11 +29,7 @@
 #' @importFrom scatterpie geom_scatterpie
 #' @importFrom rnaturalearth ne_countries
 #' @importFrom ggspatial coord_sf
-map_effort_distribution <- function(data_connection,
-                                    time_period,
-                                    country = as.integer(x = c(1, 41)),
-                                    vessel_type = as.integer(x = 1),
-                                    ocean = as.integer(x = 1),
+map_effort_distribution <- function(dataframe,
                                     graph_type = "plot",
                                     title = FALSE) {
   # 0 - Global variables assignement ----
@@ -33,44 +38,9 @@ map_effort_distribution <- function(data_connection,
   v_dur_cal <- NULL
   effort <- NULL
   wrld_simpl <- NULL
+  time_period <- NULL
+  activity_date <- NULL
   # 1 - Arguments verification ----
-  if (codama::r_type_checking(r_object = data_connection,
-                              type = "list",
-                              length = 2L,
-                              output = "logical") != TRUE) {
-    return(codama::r_type_checking(r_object = data_connection,
-                                   type = "list",
-                                   length = 2L,
-                                   output = "message"))
-  }
-  if (codama::r_type_checking(r_object = time_period,
-                              type = "integer",
-                              output = "logical") != TRUE) {
-    return(codama::r_type_checking(r_object = time_period,
-                                   type = "integer",
-                                   output = "message"))
-  }
-  if (codama::r_type_checking(r_object = country,
-                              type = "integer",
-                              output = "logical") != TRUE) {
-    return(codama::r_type_checking(r_object = country,
-                                   type = "integer",
-                                   output = "message"))
-  }
-  if (codama::r_type_checking(r_object = ocean,
-                              type = "integer",
-                              output = "logical") != TRUE) {
-    return(codama::r_type_checking(r_object = ocean,
-                                   type = "integer",
-                                   output = "message"))
-  }
-  if (codama::r_type_checking(r_object = vessel_type,
-                              type = "integer",
-                              output = "logical") != TRUE) {
-    return(codama::r_type_checking(r_object = vessel_type,
-                                   type = "integer",
-                                   output = "message"))
-  }
   if (codama::r_type_checking(r_object = graph_type,
                               type = "character",
                               output = "logical") != TRUE) {
@@ -78,32 +48,14 @@ map_effort_distribution <- function(data_connection,
                                    type = "integer",
                                    output = "message"))
   }
-  # 2 - Data extraction ----
-  if (data_connection[[1]] == "balbaya") {
-    map_effort_sql <- paste(readLines(con = system.file("sql",
-                                                        "balbaya_effort_distribution.sql",
-                                                        package = "fishi")),
-                            collapse = "\n")
-  } else {
-    stop(format(x = Sys.time(),
-                format = "%Y-%m-%d %H:%M:%S"),
-         " - Indicator not developed yet for this \"data_connection\" argument.\n",
-         sep = "")
-  }
-  map_effort_sql_final <- DBI::sqlInterpolate(conn        = data_connection[[2]],
-                                              sql         = map_effort_sql,
-                                              time_period = DBI::SQL(paste(time_period,
-                                                                           collapse = ", ")),
-                                              country     = DBI::SQL(paste(country,
-                                                                           collapse = ", ")),
-                                              ocean       = DBI::SQL(paste(ocean,
-                                                                           collapse = ", ")),
-                                              vessel_type = DBI::SQL(paste(vessel_type,
-                                                                           collapse = ", ")))
-  map_effort_sql_data <- dplyr::tibble(DBI::dbGetQuery(conn      = data_connection[[2]],
-                                                       statement = map_effort_sql_final))
-  # 3 - Data design ----
-  t1 <- map_effort_sql_data %>%
+  # 2 - Data design ----
+  # time period and ocean
+  dataframe <- dataframe %>%
+    dplyr::mutate(year = lubridate::year(x = activity_date))
+  time_period <- c(unique(min(dataframe$year):max(dataframe$year)))
+  ocean <- dataframe$ocean_id[1]
+  # dataframe
+  t1 <- dataframe %>%
     dplyr::group_by(cwp11_act,
                     v_tpec,
                     v_dur_cal) %>%
@@ -117,7 +69,7 @@ map_effort_distribution <- function(data_connection,
   datafile <- t2 %>%
     dplyr::mutate(effort = effort / 12)
   datafile[datafile == 0] <- 1e-8
-  # 4 - Legend design ----
+  # 3 - Legend design ----
   # Define fuction quad2pos
   quad2pos <- function(id) {
     latsiz <- c(5, 10, 10, 20, 1, 5)
@@ -140,22 +92,22 @@ map_effort_distribution <- function(data_connection,
                    sizelat = latsiz[siz],
                    sizelon = lonsiz[siz]))
   }
+  lat <- quad2pos(as.numeric(datafile$cwp11_act + 5 * 1e6))$y
+  long <- quad2pos(as.numeric(datafile$cwp11_act + 5 * 1e6))$x
   #Ocean
-  ocean_legend <- code_manipulation(data         = map_effort_sql_data$ocean_id,
+  ocean_legend <- code_manipulation(data         = dataframe$ocean_id,
                                     referential  = "ocean",
                                     manipulation = "legend")
   #vessel
-  vessel_type_legend <- code_manipulation(data         = map_effort_sql_data$vessel_type_id,
+  vessel_type_legend <- code_manipulation(data         = dataframe$vessel_type_id,
                                           referential  = "vessel_simple_type",
                                           manipulation = "legend")
   #country
-  country_legend <- code_manipulation(data         = map_effort_sql_data$country_id,
+  country_legend <- code_manipulation(data         = dataframe$country_id,
                                       referential  = "country",
                                       manipulation = "legend")
-  # 5 - Graphic design ----
+  # 4 - Graphic design ----
   if (graph_type == "plot") {
-    lat <- quad2pos(as.numeric(datafile$cwp11_act + 5 * 1e6))$y
-    long <- quad2pos(as.numeric(datafile$cwp11_act + 5 * 1e6))$x
     load(file = system.file("wrld_simpl.RData",
                             package = "fishi"))
     ryref <- sqrt(50)		#Radius of the reference effort
@@ -236,7 +188,7 @@ map_effort_distribution <- function(data_connection,
                        lty = 3)
       # Plot the data
       for (i in c(1:nrow(datafile))) {
-        floating.pie(long[i],
+        plotrix::floating.pie(long[i],
                      lat[i],
                      c(datafile$effort[i]),
                      radius = ryrel[i],
@@ -244,7 +196,7 @@ map_effort_distribution <- function(data_connection,
                      col = c("orange"),
                      border = NA)
       }
-      floating.pie(80,
+      plotrix::floating.pie(80,
                    -20,
                    c(1),
                    radius = 1,
@@ -279,8 +231,8 @@ map_effort_distribution <- function(data_connection,
                               120,
                               20),
                      labels = paste(seq(30, 120, 20),
-                                   "E",
-                                   sep = ""),
+                                    "E",
+                                    sep = ""),
                      tick = TRUE)
       axis(2,
            at = seq(-40, 40, 10),
@@ -301,7 +253,7 @@ map_effort_distribution <- function(data_connection,
              lty = 3)
       # Plot the data
       for (i in c(1:nrow(datafile))) {
-        floating.pie(long[i],
+        plotrix::floating.pie(long[i],
                      lat[i],
                      c(datafile$effort[i]),
                      radius = ryrel[i],
@@ -309,7 +261,7 @@ map_effort_distribution <- function(data_connection,
                      col = c("orange"),
                      border = NA)
       }
-      floating.pie(80,
+      plotrix::floating.pie(80,
                    -20,
                    c(1),
                    radius = 1,

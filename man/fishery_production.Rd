@@ -2,31 +2,19 @@
 % Please edit documentation in R/fishery_production.R
 \name{fishery_production}
 \alias{fishery_production}
-\title{Fishery production}
+\title{Total fishery production}
 \usage{
 fishery_production(
-  data_connection,
-  time_period,
-  ocean,
-  country = as.integer(x = 1),
-  vessel_type = as.integer(x = 1),
+  dataframe,
   fishing_type = "ALL",
   graph_type = "plot",
   title = FALSE
 )
 }
 \arguments{
-\item{data_connection}{{\link[base]{list}} expected. Output of the function {\link[furdeb]{postgresql_dbconnection}}, which must be done before using the fishery_production() function.}
+\item{dataframe}{{\link[base]{data.frame}} expected. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the fishery_production() function.}
 
-\item{time_period}{{\link[base]{integer}} expected. Period identification in year.}
-
-\item{ocean}{{\link[base]{integer}} expected. Ocean codes identification.}
-
-\item{country}{{\link[base]{integer}} expected. Country codes identification. 1 by default.}
-
-\item{vessel_type}{{\link[base]{integer}} expected. Vessel type codes identification. 1 by default.}
-
-\item{fishing_type}{{\link[base]{character}} expected. FSC, FOB or ALL.}
+\item{fishing_type}{{\link[base]{character}} expected. FSC, FOB or ALL. ALL by default.}
 
 \item{graph_type}{{\link[base]{character}} expected. plot, plotly, table or percentage. Plot by default.}
 
@@ -36,5 +24,22 @@ fishery_production(
 The function return ggplot R plot.
 }
 \description{
-total fishery production. Catch by species of the French purse seine fishing fleet.
+Total fishery production (catch by species).
+Generates a figure for catches (x 1000 t) of the three main tunas: BET, SKJ and YFT.
+}
+\details{
+The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Referentials.html}{see referentials}]:
+\itemize{
+ \item{\code{  - activity_date}}
+ \item{\code{  - c_esp}}
+ \item{\code{  - country_id}}
+ \item{\code{  - flag}}
+ \item{\code{  - fleet}}
+ \item{\code{  - gear}}
+ \item{\code{  - l4c_tban}}
+ \item{\code{  - ocean_id}}
+ \item{\code{  - ocean_name}}
+ \item{\code{  - vessel_type_id}}
+ \item{\code{  - v_poids_capt}}
+}
 }

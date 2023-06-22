@@ -4,29 +4,10 @@
 \alias{spatial_occupancy}
 \title{Spatial occupancy}
 \usage{
-spatial_occupancy(
-  data_connection,
-  time_period,
-  ocean,
-  country = as.integer(x = 1),
-  vessel_type_select = "vessel_accuracy",
-  vessel_type = as.integer(x = c(4, 5, 6)),
-  graph_type = "plot",
-  title = FALSE
-)
+spatial_occupancy(dataframe, graph_type = "plot", title = FALSE)
 }
 \arguments{
-\item{data_connection}{{\link[base]{list}} expected. Output of the function {\link[furdeb]{postgresql_dbconnection}}, which must be done before using the spatial_occupancy() function.}
-
-\item{time_period}{{\link[base]{integer}} expected. Period identification in year.}
-
-\item{ocean}{{\link[base]{integer}} expected. Ocean codes identification.}
-
-\item{country}{{\link[base]{integer}} expected. Country codes identification. 1 by default.}
-
-\item{vessel_type_select}{{\link[base]{character}} expected. Vessel for c_engin or vessel_accuracy for c_typ_bat.}
-
-\item{vessel_type}{{\link[base]{integer}} expected. Vessel type codes identification. 1 by default.}
+\item{dataframe}{{\link[base]{data.frame}} expected. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the spatial_occupancy function.}
 
 \item{graph_type}{{\link[base]{character}} expected. plot, plotly or table. Plot by default.}
 
@@ -36,5 +17,18 @@ spatial_occupancy(
 The function return ggplot R plot.
 }
 \description{
-Changes in the spatial extent of the fishery over time. Annual number of 1-degree squares explored by each vessel of the French purse seine fishing fleet.
+Changes in the spatial extent of the fishery over time. Annual number of 1-degree squares explored by each vessel.
+}
+\details{
+The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Referentials.html}{see referentials}]:
+\itemize{
+ \item{\code{  - activity_date}}
+ \item{\code{  - country_id}}
+ \item{\code{  - cwp11_act}}
+ \item{\code{  - ocean_id}}
+ \item{\code{  - vessel_type_id}}
+ \item{\code{  - v_nb_calee_pos}}
+ \item{\code{  - v_nb_calees}}
+ \item{\code{  - v_tpec}}
+}
 }

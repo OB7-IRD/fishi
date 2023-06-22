@@ -1,18 +1,21 @@
 #' @name fishing_capacity
-#' @title Fishing capacity
-#' @description Fishing capacity of the French purse seine fishing fleet in the Atlantic Ocean. Annual changes in the number of purse seiners by tonnage categories (barplots) and total carrying capacity (dashed line with circles).
-#' @param data_connection {\link[base]{list}} expected. Output of the function {\link[furdeb]{postgresql_dbconnection}}, which must be done before using the fishing_capacity function.
-#' @param time_period {\link[base]{integer}} expected. Period identification in year.
-#' @param ocean {\link[base]{integer}} expected. Ocean codes identification.
-#' @param country {\link[base]{integer}} expected. Country codes identification. 1 by default.
-#' @param vessel_type_select {\link[base]{character}} expected. Vessel for c_engin or vessel_accuracy for c_typ_bat.
-#' @param vessel_type {\link[base]{integer}} expected. Vessel type codes identification. 1 by default.
+#' @title Annual changes in the number of vessels
+#' @description Fishing capacity. Annual changes in the number of purse seiners by tonnage categories (barplots) and total carrying capacity (dashed line with circles).
+#' @param dataframe {\link[base]{data.frame}} expected. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the fishing_capacity() function.
 #' @param graph_type {\link[base]{character}} expected. plot, plotly or table. Plot by default.
-#' @param figure {\link[base]{character}} expected. vessel (for number of vessels graph) or capacity (for carrying capacity graph). Vessel by default.
+#' @param figure {\link[base]{character}} expected. For plotly figure: vessel (for number of vessels graph) or capacity (for carrying capacity graph). NULL by default.
 #' @param title TRUE or FALSE expected. False by default.
+#' @details
+#' The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Referentials.html}{see referentials}]:
+#' \itemize{
+#'  \item{\code{  - activity_date}}
+#'  \item{\code{  - catch}}
+#'  \item{\code{  - c_quille}}
+#'  \item{\code{  - ocean_id}}
+#'  \item{\code{  - vessel_type_id}}
+#' }
 #' @return The function return ggplot R plot.
 #' @export
-#' @importFrom DBI dbGetQuery sqlInterpolate SQL
 #' @importFrom dplyr mutate tibble group_by summarise n_distinct
 #' @importFrom lubridate year
 #' @importFrom RColorBrewer brewer.pal
@@ -22,14 +25,9 @@
 #' @importFrom tidyr pivot_longer
 #' @importFrom forcats fct_relevel
 #' @importFrom codama r_type_checking
-fishing_capacity <- function(data_connection,
-                             time_period,
-                             ocean,
-                             country = as.integer(x = 1),
-                             vessel_type_select = "vessel_accuracy",
-                             vessel_type = as.integer(x = c(4, 5, 6)),
+fishing_capacity <- function(dataframe,
                              graph_type = "plot",
-                             figure = "vessel",
+                             figure = NULL,
                              title = FALSE) {
   # 0 - Global variables assignement ----
   c_quille <- NULL
@@ -41,44 +39,8 @@ fishing_capacity <- function(data_connection,
   c_quille_nb_months <- NULL
   nb_vessels <- NULL
   CC <- NULL
+  time_period <- NULL
   # 1 - Arguments verification ----
-  if (codama::r_type_checking(r_object = data_connection,
-                              type = "list",
-                              length = 2L,
-                              output = "logical") != TRUE) {
-    return(codama::r_type_checking(r_object = data_connection,
-                                   type = "list",
-                                   length = 2L,
-                                   output = "message"))
-  }
-  if (codama::r_type_checking(r_object = time_period,
-                              type = "integer",
-                              output = "logical") != TRUE) {
-    return(codama::r_type_checking(r_object = time_period,
-                                   type = "integer",
-                                   output = "message"))
-  }
-  if (codama::r_type_checking(r_object = ocean,
-                              type = "integer",
-                              output = "logical") != TRUE) {
-    return(codama::r_type_checking(r_object = ocean,
-                                   type = "integer",
-                                   output = "message"))
-  }
-  if (codama::r_type_checking(r_object = country,
-                              type = "integer",
-                              output = "logical") != TRUE) {
-    return(codama::r_type_checking(r_object = country,
-                                   type = "integer",
-                                   output = "message"))
-  }
-  if (codama::r_type_checking(r_object = vessel_type,
-                              type = "integer",
-                              output = "logical") != TRUE) {
-    return(codama::r_type_checking(r_object = vessel_type,
-                                   type = "integer",
-                                   output = "message"))
-  }
   if (codama::r_type_checking(r_object = graph_type,
                               type = "character",
                               output = "logical") != TRUE) {
@@ -86,57 +48,14 @@ fishing_capacity <- function(data_connection,
                                    type = "character",
                                    output = "message"))
   }
-  if (codama::r_type_checking(r_object = figure,
-                              type = "character",
-                              output = "logical") != TRUE) {
-    return(codama::r_type_checking(r_object = figure,
-                                   type = "character",
-                                   output = "message"))
-  }
-  # 2 - Data extraction ----
-  if (data_connection[[1]] == "balbaya") {
-    fishing_capacity_sql <- paste(readLines(con = system.file("sql",
-                                                              "balbaya_fishing_capacity.sql",
-                                                              package = "fishi")),
-                                  collapse = "\n")
-  } else {
-    stop(format(x = Sys.time(),
-                format = "%Y-%m-%d %H:%M:%S"),
-         " - Indicator not developed yet for this \"data_connection\" argument.\n",
-         sep = "")
-  }
-  if (vessel_type_select == "vessel") {
-    fishing_capacity_sql <- sub(pattern = "\n\tand b.c_typ_b in (?vessel_type)",
-                                replacement = "",
-                                x = fishing_capacity_sql,
-                                fixed = TRUE)
-  } else if (vessel_type_select == "vessel_accuracy") {
-    fishing_capacity_sql <- sub(pattern = "\n\tAND a.c_engin IN (?vessel_type)",
-                                replacement = "",
-                                x = fishing_capacity_sql,
-                                fixed = TRUE)
-  }
-  fishing_capacity_sql_final <- DBI::sqlInterpolate(conn        = data_connection[[2]],
-                                                    sql         = fishing_capacity_sql,
-                                                    time_period = DBI::SQL(paste(time_period,
-                                                                                 collapse = ", ")),
-                                                    country     = DBI::SQL(paste(country,
-                                                                                 collapse = ", ")),
-                                                    vessel_type = DBI::SQL(paste(vessel_type,
-                                                                                 collapse = ", ")),
-                                                    ocean       = DBI::SQL(paste(ocean,
-                                                                                 collapse = ", ")))
-  fishing_capacity_final <- dplyr::tibble(DBI::dbGetQuery(conn      = data_connection[[2]],
-                                                          statement = fishing_capacity_sql_final))
-  # 3 - Data design ----
+  # 2 - Data design ----
   #  Add columns catches in tonnes and catches in tonnes per month
-  fishing_capacity_t1 <- fishing_capacity_final %>%
+  fishing_capacity_t1 <- dataframe %>%
     dplyr::group_by(c_quille) %>%
-    dplyr::summarise(year = lubridate::year(x = activity_date),
-                     month = lubridate::month(x = activity_date),
-                     tons_month = (catch * 0.7) / 12,
-                     tons = catch * 0.7,
-                     .groups = "drop")
+    dplyr::reframe(year = lubridate::year(x = activity_date),
+                   month = lubridate::month(x = activity_date),
+                   tons_month = (catch * 0.7) / 12,
+                   tons = catch * 0.7)
   # Remove duplicates
   fishing_capacity_t1 <- unique(fishing_capacity_t1[, c("year",
                                                         "month",
@@ -149,24 +68,22 @@ fishing_capacity <- function(data_connection,
                     c_quille,
                     tons,
                     tons_month) %>%
-    dplyr::summarise("cc" = sum(tons_month,
-                                na.rm = TRUE),
-                     "c_quille_nb_months" = dplyr::n_distinct(month,
-                                                              na.rm = TRUE),
-                     .groups = "drop")
+    dplyr::reframe("cc" = sum(tons_month,
+                              na.rm = TRUE),
+                   "c_quille_nb_months" = dplyr::n_distinct(month,
+                                                            na.rm = TRUE))
   # Number of ships per category
   fishing_capacity_t3 <- fishing_capacity_t2 %>%
     dplyr::group_by(year) %>%
-    dplyr::summarise("50-400" = sum(tons > 50 & tons <= 400, na.rm = TRUE),
-                     "401-600" = sum(tons > 401 & tons <= 600, na.rm = TRUE),
-                     "601-800" = sum(tons > 601 & tons <= 800, na.rm = TRUE),
-                     "801-1200" = sum(tons > 801 & tons <= 1200, na.rm = TRUE),
-                     "1201-2000" = sum(tons > 1201 & tons <= 2000, na.rm = TRUE),
-                     "> 2000" = sum(tons > 2000, na.rm = TRUE),
-                     "Nb_vessels" = dplyr::n_distinct(c_quille, na.rm = TRUE),
-                     "Nb_vessels_weighted" = sum(c_quille_nb_months / 12, na.rm = TRUE),
-                     "CC" = sum(cc, na.rm = TRUE),
-                     .groups = "drop")
+    dplyr::reframe("50-400" = sum(tons >= 50 & tons <= 400, na.rm = TRUE),
+                   "400-600" = sum(tons > 400 & tons <= 600, na.rm = TRUE),
+                   "600-800" = sum(tons > 600 & tons <= 800, na.rm = TRUE),
+                   "800-1200" = sum(tons > 800 & tons <= 1200, na.rm = TRUE),
+                   "1200-2000" = sum(tons > 1200 & tons <= 2000, na.rm = TRUE),
+                   "> 2000" = sum(tons > 2000, na.rm = TRUE),
+                   "Nb_vessels" = dplyr::n_distinct(c_quille, na.rm = TRUE),
+                   "Nb_vessels_weighted" = sum(c_quille_nb_months / 12, na.rm = TRUE),
+                   "CC" = sum(cc, na.rm = TRUE))
   fishing_capacity_data <- fishing_capacity_t3 %>%
     dplyr::mutate("fishing_capacity" = CC / 1000)
   # Pivot wider for ggplot
@@ -176,25 +93,27 @@ fishing_capacity <- function(data_connection,
                                     values_to = "nb_vessels")
   data_pivot <- data_pivot %>%
     dplyr::mutate(tons = forcats::fct_relevel(tons,
-                                              "1201-2000",
-                                              "801-1200",
-                                              "601-800",
-                                              "401-600",
+                                              "1200-2000",
+                                              "800-1200",
+                                              "600-800",
+                                              "400-600",
                                               "50-400"))
-  # 4 - Legend design ----
+  # 3 - Legend design ----
   #Ocean
-  ocean_legend <- code_manipulation(data         = fishing_capacity_final$ocean_id,
+  ocean_legend <- code_manipulation(data         = dataframe$ocean_id,
                                     referential  = "ocean",
                                     manipulation = "legend")
   #country
-  country_legend <- code_manipulation(data         = fishing_capacity_final$country_id,
+  country_legend <- code_manipulation(data         = dataframe$country_id,
                                       referential  = "country",
                                       manipulation = "legend")
   #vessel
-  vessel_type_legend <- code_manipulation(data         = fishing_capacity_final$vessel_type_id,
+  vessel_type_legend <- code_manipulation(data         = dataframe$vessel_type_id,
                                           referential  = "vessel_simple_type",
                                           manipulation = "legend")
-  # 5 - Graphic design ----
+  # time_period
+  time_period <- c(unique(min(fishing_capacity_t1$year):max(fishing_capacity_t1$year)))
+  # 4 - Graphic design ----
   par(mar = c(5.1, 4.1, 4.1, 4.1))
   if (graph_type == "plot") {
     if (title == TRUE) {
@@ -207,7 +126,8 @@ fishing_capacity <- function(data_connection,
                                                     " fleet in the ",
                                                     ocean_legend,
                                                     " ocean. Annual changes in the", "\n",
-                                                    "number of purse seiners by tonnage categories (barplots) and total carrying capacity (dashed", "\n",
+                                                    "number of purse seiners by tonnage categories (barplots) and total carrying capacity (dashed",
+                                                    "\n",
                                                     "line with circles) during ",
                                                     min(time_period),
                                                     "-",
@@ -248,29 +168,28 @@ fishing_capacity <- function(data_connection,
                    cex = 1.2)
     graphics::legend("topright",
                      legend = c("50-400 t",
-                                "401-600 t",
-                                "601-800 t",
-                                "801-1200 t",
-                                "1201-2000 t"),
+                                "400-600 t",
+                                "600-800 t",
+                                "800-1200 t",
+                                "1200-2000 t"),
                      ncol = 2,
                      bty = "n",
                      fill = RColorBrewer::brewer.pal(5, "Greys"),
                      cex = 1.3)
     graphics::par(new = TRUE)
     graphics::plot(barvessels,
-         fishing_capacity_data$CC / 1000,
-         type = "b",
-         col = "black",
-         lwd = 2,
-         lty = 2,
-         xaxt = "n",
-         yaxt = "n",
-         pch = 16,
-         xlab = "",
-         ylab = "",
-         ylim = c(0, max(fishing_capacity_data$CC / 1000) * 1.1),
-         yaxs = "i",
-         xlim = c(0, 37.6))
+                   fishing_capacity_data$CC / 1000,
+                   type = "b",
+                   col = "black",
+                   lwd = 2,
+                   lty = 2,
+                   xaxt = "n",
+                   yaxt = "n",
+                   pch = 16,
+                   xlab = "",
+                   ylab = "",
+                   ylim = c(0, max(fishing_capacity_data$CC / 1000) * 1.1),
+                   yaxs = "i")
     graphics::axis(4,
                    at = seq(0, 20, 5),
                    tick = TRUE,
@@ -297,10 +216,10 @@ fishing_capacity <- function(data_connection,
                                               "grey54",
                                               "grey70",
                                               "grey90"),
-                                   labels = c("1201-2000 t",
-                                              "801-1200 t",
-                                              "601-800 t",
-                                              "401-600 t",
+                                   labels = c("1200-2000 t",
+                                              "800-1200 t",
+                                              "600-800 t",
+                                              "400-600 t",
                                               "50-400 t")) +
         ggplot2::scale_y_continuous(name = "Number of vessels") +
         ggplot2::theme_bw() +
@@ -313,16 +232,16 @@ fishing_capacity <- function(data_connection,
       if (title == TRUE) {
         plotly_graph <- plotly_graph %>%
           plotly::layout(title = list(text = paste0("Fishing capacity of the ",
-                                                   country_legend, " ",
-                                                   vessel_type_legend,
-                                                   " fleet in the ",
-                                                   ocean_legend,
-                                                   " ocean. Annual changes in the", "\n",
-                                                   "number of purse seiners by tonnage categories during ",
-                                                   min(time_period),
-                                                   "-",
-                                                   max(time_period),
-                                                   "."),
+                                                    country_legend, " ",
+                                                    vessel_type_legend,
+                                                    " fleet in the ",
+                                                    ocean_legend,
+                                                    " ocean. Annual changes in the", "\n",
+                                                    "number of purse seiners by tonnage categories during ",
+                                                    min(time_period),
+                                                    "-",
+                                                    max(time_period),
+                                                    "."),
                                       font = list(size = 17)),
                          margin = list(t = 120))
       }

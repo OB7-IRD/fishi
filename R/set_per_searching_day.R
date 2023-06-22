@@ -1,17 +1,25 @@
 #' @name set_per_searching_day
-#' @title Set per searching day
-#' @description Annual number of sets per searching day on FOB-associated and free-swimming schools for the French purse seine fishing fleet in the Atlantic Ocean
-#' @param data_connection {\link[base]{list}} expected. Output of the function {\link[furdeb]{postgresql_dbconnection}}, which must be done before using the set_per_searching_day() function.
-#' @param time_period {\link[base]{integer}} expected. Period identification in year.
-#' @param ocean {\link[base]{integer}} expected. Ocean codes identification.
+#' @title Annual number of sets per searching day
+#' @description Annual number of sets per searching day on FOB-associated and free-swimming schools.
+#' @param dataframe {\link[base]{data.frame}} expected. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the set_per_searching_day() function.
 #' @param fishing_type {\link[base]{character}} expected. FOB and FSC.
-#' @param country {\link[base]{integer}} expected. Country codes identification. 1 by default.
-#' @param vessel_type {\link[base]{integer}} expected. Vessel type codes identification. 1 by default.
 #' @param graph_type {\link[base]{character}} expected. plot, plotly or table. Plot by default.
 #' @param title TRUE or FALSE expected. False by default.
+#' @details
+#' The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Referentials.html}{see referentials}]:
+#' \itemize{
+#'  \item{\code{  - activity_date}}
+#'  \item{\code{  - country_id}}
+#'  \item{\code{  - c_tban}}
+#'  \item{\code{  - ocean_id}}
+#'  \item{\code{  - v_dur_cal}}
+#'  \item{\code{  - vessel_type_id}}
+#'  \item{\code{  - v_nb_calee_pos}}
+#'  \item{\code{  - v_nb_calees}}
+#'  \item{\code{  - v_tpec}}
+#' }
 #' @return The function return ggplot R plot.
 #' @export
-#' @importFrom DBI dbGetQuery sqlInterpolate SQL
 #' @importFrom dplyr mutate tibble group_by summarise case_when
 #' @importFrom lubridate year
 #' @importFrom plotrix stackpoly
@@ -19,12 +27,8 @@
 #' @importFrom plotly ggplotly
 #' @importFrom graphics par plot axis lines abline legend text
 #' @importFrom codama r_type_checking
-set_per_searching_day <- function(data_connection,
-                                  time_period,
-                                  ocean,
+set_per_searching_day <- function(dataframe,
                                   fishing_type,
-                                  country = as.integer(x = 1),
-                                  vessel_type = as.integer(x = 1),
                                   graph_type = "plot",
                                   title = FALSE) {
   # 0 - Global variables assignement ----
@@ -37,44 +41,8 @@ set_per_searching_day <- function(data_connection,
   sets_per_day_all <- NULL
   sets_per_day_fad <- NULL
   sets_per_day_fsc <- NULL
+  time_period <- NULL
   # 1 - Arguments verification ----
-  if (codama::r_type_checking(r_object = data_connection,
-                              type = "list",
-                              length = 2L,
-                              output = "logical") != TRUE) {
-    return(codama::r_type_checking(r_object = data_connection,
-                                   type = "list",
-                                   length = 2L,
-                                   output = "message"))
-  }
-  if (codama::r_type_checking(r_object = time_period,
-                              type = "integer",
-                              output = "logical") != TRUE) {
-    return(codama::r_type_checking(r_object = time_period,
-                                   type = "integer",
-                                   output = "message"))
-  }
-  if (codama::r_type_checking(r_object = ocean,
-                              type = "integer",
-                              output = "logical") != TRUE) {
-    return(codama::r_type_checking(r_object = ocean,
-                                   type = "integer",
-                                   output = "message"))
-  }
-  if (codama::r_type_checking(r_object = country,
-                              type = "integer",
-                              output = "logical") != TRUE) {
-    return(codama::r_type_checking(r_object = country,
-                                   type = "integer",
-                                   output = "message"))
-  }
-  if (codama::r_type_checking(r_object = vessel_type,
-                              type = "integer",
-                              output = "logical") != TRUE) {
-    return(codama::r_type_checking(r_object = vessel_type,
-                                   type = "integer",
-                                   output = "message"))
-  }
   if (codama::r_type_checking(r_object = fishing_type,
                               type = "character",
                               output = "logical") != TRUE) {
@@ -89,35 +57,11 @@ set_per_searching_day <- function(data_connection,
                                    type = "character",
                                    output = "message"))
   }
-  # 2 - Data extraction ----
-  if (data_connection[[1]] == "balbaya") {
-    time_serie_catch_nb_set_sql <- paste(readLines(con = system.file("sql",
-                                                                     "balbaya_fishing_activity.sql",
-                                                                     package = "fishi")),
-                                         collapse = "\n")
-  } else {
-    stop(format(x = Sys.time(),
-                format = "%Y-%m-%d %H:%M:%S"),
-         " - Indicator not developed yet for this \"data_connection\" argument.\n",
-         sep = "")
-  }
-  annual_catch_rate_nb_set <- DBI::sqlInterpolate(conn = data_connection[[2]],
-                                                  sql  = time_serie_catch_nb_set_sql,
-                                                  time_period = DBI::SQL(paste(time_period,
-                                                                               collapse = ", ")),
-                                                  country     = DBI::SQL(paste(country,
-                                                                               collapse = ", ")),
-                                                  vessel_type = DBI::SQL(paste(vessel_type,
-                                                                               collapse = ", ")),
-                                                  ocean = DBI::SQL(paste(ocean,
-                                                                         collapse = ", ")))
-  time_serie_catch_nb_set_data <- dplyr::tibble(DBI::dbGetQuery(conn      = data_connection[[2]],
-                                                                statement = annual_catch_rate_nb_set))
-  # 3 - Data design ----
-  time_serie_catch_nb_set_data <-  time_serie_catch_nb_set_data %>%
+  # 2 - Data design ----
+  dataframe <-  dataframe %>%
     dplyr::mutate(year = lubridate::year(x = activity_date))
   # db t1 - Add columns : nb_sets_pos and nb_sets
-  t1 <- time_serie_catch_nb_set_data %>%
+  t1 <- dataframe %>%
     dplyr::group_by(year,
                     c_tban) %>%
     dplyr::summarise(nb_sets_pos = sum(v_nb_calee_pos,
@@ -126,7 +70,7 @@ set_per_searching_day <- function(data_connection,
                                    na.rm = TRUE),
                      .groups = "drop")
   # db t2 - Add columns t_peche and t_recherche
-  t2 <- time_serie_catch_nb_set_data %>%
+  t2 <- dataframe %>%
     dplyr::group_by(year) %>%
     dplyr::summarise(t_peche = sum(v_tpec,
                                    na.rm = TRUE),
@@ -157,17 +101,19 @@ set_per_searching_day <- function(data_connection,
                      .groups = "drop")
   # 4 - Legend design ----
   #Ocean
-  ocean_legend <- code_manipulation(data         = time_serie_catch_nb_set_data$ocean_id,
+  ocean_legend <- code_manipulation(data         = dataframe$ocean_id,
                                     referential  = "ocean",
                                     manipulation = "legend")
   #country
-  country_legend <- code_manipulation(data         = time_serie_catch_nb_set_data$country_id,
+  country_legend <- code_manipulation(data         = dataframe$country_id,
                                       referential  = "country",
                                       manipulation = "legend")
   #vessel
-  vessel_type_legend <- code_manipulation(data         = time_serie_catch_nb_set_data$vessel_type_id,
+  vessel_type_legend <- code_manipulation(data         = dataframe$vessel_type_id,
                                           referential  = "vessel_simple_type",
                                           manipulation = "legend")
+  # time_period
+  time_period <- c(unique(min(dataframe$year):max(dataframe$year)))
   # 5 - Graphic design ----
   graphics::par(mar = c(4,
                         4.7,
@@ -175,7 +121,8 @@ set_per_searching_day <- function(data_connection,
                         1.5))
   if (graph_type == "plot") {
     # Define the positions of the x-axis tick marks
-    x_tick_pos <- seq(min(table_cpue_set_per_day$year), max(table_cpue_set_per_day$year))
+    x_tick_pos <- seq(min(table_cpue_set_per_day$year),
+                      max(table_cpue_set_per_day$year))
     if (fishing_type == "FOB") {
       graphics::plot(table_cpue_set_per_day$year,
                      table_cpue_set_per_day$sets_per_day_fad,
@@ -268,8 +215,19 @@ set_per_searching_day <- function(data_connection,
       # Add a title
       if (title == TRUE) {
         plotly_graph <- plotly_graph %>%
-          plotly::layout(title = list(text = paste0("Annual number of sets per searching day on ", fishing_type, " fishing mode schools for the ", country_legend, "\n",
-                                                   vessel_type_legend, " fishing fleet in the Atlantic Ocean during ", min(time_period), "-", max(time_period), ", in the ", ocean_legend, " ocean."),
+          plotly::layout(title = list(text = paste0("Annual number of sets per searching day on ",
+                                                    fishing_type,
+                                                    " fishing mode schools for the ",
+                                                    country_legend,
+                                                    "\n",
+                                                    vessel_type_legend,
+                                                    " fishing fleet in the Atlantic Ocean during ",
+                                                    min(time_period),
+                                                    "-",
+                                                    max(time_period),
+                                                    ", in the ",
+                                                    ocean_legend,
+                                                    " ocean."),
                                       font = list(size = 17)),
                          margin = list(t = 120))
 
@@ -297,8 +255,19 @@ set_per_searching_day <- function(data_connection,
       # Add a title
       if (title == TRUE) {
         plotly_graph <- plotly_graph %>%
-          plotly::layout(title = list(text = paste0("Annual number of sets per searching day on ", fishing_type, " fishing mode schoolsfor the ", country_legend, "\n",
-                                                    vessel_type_legend, " fishing fleet in the Atlantic Ocean during ", min(time_period), "-", max(time_period), ", in the ", ocean_legend, " ocean."),
+          plotly::layout(title = list(text = paste0("Annual number of sets per searching day on ",
+                                                    fishing_type,
+                                                    " fishing mode schoolsfor the ",
+                                                    country_legend,
+                                                    "\n",
+                                                    vessel_type_legend,
+                                                    " fishing fleet in the Atlantic Ocean during ",
+                                                    min(time_period),
+                                                    "-",
+                                                    max(time_period),
+                                                    ", in the ",
+                                                    ocean_legend,
+                                                    " ocean."),
                                       font = list(size = 17)),
                          margin = list(t = 120))
 

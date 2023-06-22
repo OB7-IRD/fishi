@@ -1,29 +1,30 @@
 #' @name spatial_occupancy
 #' @title Spatial occupancy
-#' @description Changes in the spatial extent of the fishery over time. Annual number of 1-degree squares explored by each vessel of the French purse seine fishing fleet.
-#' @param data_connection {\link[base]{list}} expected. Output of the function {\link[furdeb]{postgresql_dbconnection}}, which must be done before using the spatial_occupancy() function.
-#' @param time_period {\link[base]{integer}} expected. Period identification in year.
-#' @param ocean {\link[base]{integer}} expected. Ocean codes identification.
-#' @param country {\link[base]{integer}} expected. Country codes identification. 1 by default.
-#' @param vessel_type_select {\link[base]{character}} expected. Vessel for c_engin or vessel_accuracy for c_typ_bat.
-#' @param vessel_type {\link[base]{integer}} expected. Vessel type codes identification. 1 by default.
+#' @description Changes in the spatial extent of the fishery over time. Annual number of 1-degree squares explored by each vessel.
+#' @param dataframe {\link[base]{data.frame}} expected. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the spatial_occupancy function.
 #' @param graph_type {\link[base]{character}} expected. plot, plotly or table. Plot by default.
 #' @param title TRUE or FALSE expected. False by default.
+#' @details
+#' The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Referentials.html}{see referentials}]:
+#' \itemize{
+#'  \item{\code{  - activity_date}}
+#'  \item{\code{  - country_id}}
+#'  \item{\code{  - cwp11_act}}
+#'  \item{\code{  - ocean_id}}
+#'  \item{\code{  - vessel_type_id}}
+#'  \item{\code{  - v_nb_calee_pos}}
+#'  \item{\code{  - v_nb_calees}}
+#'  \item{\code{  - v_tpec}}
+#' }
 #' @return The function return ggplot R plot.
 #' @export
-#' @importFrom DBI dbGetQuery sqlInterpolate SQL
 #' @importFrom dplyr mutate tibble group_by summarise n_distinct filter
 #' @importFrom lubridate year
 #' @importFrom graphics par plot axis lines abline legend text
 #' @importFrom ggplot2 ggplot aes geom_line scale_color_manual geom_point labs ylim theme_bw
 #' @importFrom plotly ggplotly
 #' @importFrom codama r_type_checking
-spatial_occupancy <- function(data_connection,
-                              time_period,
-                              ocean,
-                              country = as.integer(x = 1),
-                              vessel_type_select = "vessel_accuracy",
-                              vessel_type = as.integer(x = c(4, 5, 6)),
+spatial_occupancy <- function(dataframe,
                               graph_type = "plot",
                               title = FALSE) {
   # 0 - Global variables assignement ----
@@ -38,44 +39,8 @@ spatial_occupancy <- function(data_connection,
   `Catch > 0` <- NULL
   `Effort > 1 d` <- NULL
   `#sets` <- NULL
+  time_period <- NULL
   # 1 - Arguments verification ----
-  if (codama::r_type_checking(r_object = data_connection,
-                              type = "list",
-                              length = 2L,
-                              output = "logical") != TRUE) {
-    return(codama::r_type_checking(r_object = data_connection,
-                                   type = "list",
-                                   length = 2L,
-                                   output = "message"))
-  }
-  if (codama::r_type_checking(r_object = time_period,
-                              type = "integer",
-                              output = "logical") != TRUE) {
-    return(codama::r_type_checking(r_object = time_period,
-                                   type = "integer",
-                                   output = "message"))
-  }
-  if (codama::r_type_checking(r_object = ocean,
-                              type = "integer",
-                              output = "logical") != TRUE) {
-    return(codama::r_type_checking(r_object = ocean,
-                                   type = "integer",
-                                   output = "message"))
-  }
-  if (codama::r_type_checking(r_object = country,
-                              type = "integer",
-                              output = "logical") != TRUE) {
-    return(codama::r_type_checking(r_object = country,
-                                   type = "integer",
-                                   output = "message"))
-  }
-  if (codama::r_type_checking(r_object = vessel_type,
-                              type = "integer",
-                              output = "logical") != TRUE) {
-    return(codama::r_type_checking(r_object = vessel_type,
-                                   type = "integer",
-                                   output = "message"))
-  }
   if (codama::r_type_checking(r_object = graph_type,
                               type = "character",
                               output = "logical") != TRUE) {
@@ -83,43 +48,8 @@ spatial_occupancy <- function(data_connection,
                                    type = "character",
                                    output = "message"))
   }
-  # 2 - Data extraction ----
-  if (data_connection[[1]] == "balbaya") {
-    spatial_occupancy_sql <- paste(readLines(con = system.file("sql",
-                                                               "balbaya_spatial_occupancy.sql",
-                                                               package = "fishi")),
-                                   collapse = "\n")
-  } else {
-    stop(format(x = Sys.time(),
-                format = "%Y-%m-%d %H:%M:%S"),
-         " - Indicator not developed yet for this \"data_connection\" argument.\n",
-         sep = "")
-  }
-  if (vessel_type_select == "vessel") {
-    spatial_occupancy_sql <- sub(pattern = "\n\tAND b.c_typ_b IN (?vessel_type)",
-                                replacement = "",
-                                x = spatial_occupancy_sql,
-                                fixed = TRUE)
-  } else if (vessel_type_select == "vessel_accuracy") {
-    spatial_occupancy_sql <- sub(pattern = "\n\tAND a.c_engin IN (?vessel_type)",
-                                replacement = "",
-                                x = spatial_occupancy_sql,
-                                fixed = TRUE)
-  }
-  spatial_occupancy_sql_final <- DBI::sqlInterpolate(conn = data_connection[[2]],
-                                                     sql  = spatial_occupancy_sql,
-                                                     time_period = DBI::SQL(paste(time_period,
-                                                                                  collapse = ", ")),
-                                                     country     = DBI::SQL(paste(country,
-                                                                                  collapse = ", ")),
-                                                     vessel_type = DBI::SQL(paste(vessel_type,
-                                                                                  collapse = ", ")),
-                                                     ocean = DBI::SQL(paste(ocean,
-                                                                            collapse = ", ")))
-  spatial_occupancy_data <- dplyr::tibble(DBI::dbGetQuery(conn      = data_connection[[2]],
-                                                          statement = spatial_occupancy_sql_final))
-  # 3 - Data design ----
-  spatial_occupancy_t1 <- spatial_occupancy_data %>%
+  # 2 - Data design ----
+  spatial_occupancy_t1 <- dataframe %>%
     dplyr::mutate(year = lubridate::year(x = activity_date))
   #db t0 - YEAR and total
   t0 <- spatial_occupancy_t1 %>%
@@ -163,20 +93,22 @@ spatial_occupancy <- function(data_connection,
   table_occ <- merge(table_occ, t3, by = "year")
   table_occ <- merge(table_occ, t4, by = "year")
   table_occ[is.na(table_occ)] <- 0
-  # 4 - Legend design ----
+  # 3 - Legend design ----
   #Ocean
-  ocean_legend <- code_manipulation(data         = spatial_occupancy_data$ocean_id,
+  ocean_legend <- code_manipulation(data         = dataframe$ocean_id,
                                     referential  = "ocean",
                                     manipulation = "legend")
   #country
-  country_legend <- code_manipulation(data         = spatial_occupancy_data$country_id,
+  country_legend <- code_manipulation(data         = dataframe$country_id,
                                       referential  = "country",
                                       manipulation = "legend")
   #vessel
-  vessel_type_legend <- code_manipulation(data         = spatial_occupancy_data$vessel_type_id,
+  vessel_type_legend <- code_manipulation(data         = dataframe$vessel_type_id,
                                           referential  = "vessel_simple_type",
                                           manipulation = "legend")
-  # 5 - Graphic design ----
+  # time_period
+  time_period <- c(unique(min(spatial_occupancy_t1$year):max(spatial_occupancy_t1$year)))
+  # 4 - Graphic design ----
   if (graph_type == "plot") {
     graphics::par(mar = c(5, 4.7, 4.1, 1.5))
     # Define the positions of the x-axis tick marks
@@ -189,7 +121,8 @@ spatial_occupancy <- function(data_connection,
                      ylab = "Spatial occupancy",
                      cex.axis = 1.4,
                      cex.lab = 1.4,
-                     main = paste0("Changes in the spatial extent of the fishery over time. Annual number of 1 degree squares explored", "\n",
+                     main = paste0("Changes in the spatial extent of the fishery over time. Annual number of 1 degree squares explored",
+                                   "\n",
                                    "by each vessel of the ",
                                    country_legend,
                                    " ",
@@ -311,8 +244,19 @@ spatial_occupancy <- function(data_connection,
     # Add a title
     if (title == TRUE) {
       plotly_graph <- plotly_graph %>%
-        plotly::layout(title = list(text = paste0("Changes in the spatial extent of the fishery over time. Annual number of 1-degree squares explored by ", "\n",
-                                                  "each vessel of the ", country_legend, " ", vessel_type_legend, " fishing fleet during ", min(time_period), "-", max(time_period), " in the ", ocean_legend, " ocean."),
+        plotly::layout(title = list(text = paste0("Changes in the spatial extent of the fishery over time. Annual number of 1-degree squares explored by ",
+                                                  "\n",
+                                                  "each vessel of the ",
+                                                  country_legend,
+                                                  " ",
+                                                  vessel_type_legend,
+                                                  " fishing fleet during ",
+                                                  min(time_period),
+                                                  "-",
+                                                  max(time_period),
+                                                  " in the ",
+                                                  ocean_legend,
+                                                  " ocean."),
                                     font = list(size = 17)),
                        margin = list(t = 120))
 
