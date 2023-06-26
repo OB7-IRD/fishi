@@ -5,24 +5,21 @@
 \title{Number of vessel}
 \usage{
 vessel_number(
-  data_connection,
-  time_period,
-  ocean,
-  country,
-  vessel_type,
+  dataframe,
+  graph_type = "plot",
+  figure = NULL,
+  title = FALSE,
   time_step = "year"
 )
 }
 \arguments{
-\item{data_connection}{{\link[base]{list}} expected. Output of the function {\link[furdeb]{postgresql_dbconnection}}, which must be done before using the vessel_number function.}
+\item{dataframe}{{\link[base]{data.frame}} expected. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the vessel_number() function.}
 
-\item{time_period}{{\link[base]{integer}} expected. Period identification in year.}
+\item{graph_type}{{\link[base]{character}} expected. plot, plotly or table. Plot by default.}
 
-\item{ocean}{{\link[base]{integer}} expected. Ocean codes identification.}
+\item{figure}{{\link[base]{character}} expected. For plotly figure: vessel (for number of vessels graph) or capacity (for carrying capacity graph). NULL by default.}
 
-\item{country}{{\link[base]{integer}} expected. Country codes identification.}
-
-\item{vessel_type}{{\link[base]{integer}}. Vessel type codes identification.}
+\item{title}{TRUE or FALSE expected. False by default.}
 
 \item{time_step}{{\link[base]{character}} expected. Kind of display you want in the graphic output. You can choose between "month" and "year".}
 }
