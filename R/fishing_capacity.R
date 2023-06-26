@@ -3,7 +3,7 @@
 #' @description Fishing capacity. Annual changes in the number of purse seiners by tonnage categories (barplots) and total carrying capacity (dashed line with circles).
 #' @param dataframe {\link[base]{data.frame}} expected. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the fishing_capacity() function.
 #' @param graph_type {\link[base]{character}} expected. plot, plotly or table. Plot by default.
-#' @param figure {\link[base]{character}} expected. For plotly figure: vessel (for number of vessels graph) or capacity (for carrying capacity graph). NULL by default.
+#' @param figure {\link[base]{character}} expected. For plotly figure: vessel (for number of vessels graph) or capacity (for carrying capacity graph). vessel by default.
 #' @param title TRUE or FALSE expected. False by default.
 #' @details
 #' The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Referentials.html}{see referentials}]:
@@ -27,7 +27,7 @@
 #' @importFrom codama r_type_checking
 fishing_capacity <- function(dataframe,
                              graph_type = "plot",
-                             figure = NULL,
+                             figure = "vessel",
                              title = FALSE) {
   # 0 - Global variables assignement ----
   c_quille <- NULL

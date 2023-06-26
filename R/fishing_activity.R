@@ -3,7 +3,7 @@
 #' @description Fishing operations. Annual number of fishing sets on FOB-associated and free-swimming tuna schools.
 #' @param dataframe {\link[base]{data.frame}} expected. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the fishing_activity() function.
 #' @param graph_type {\link[base]{character}} expected. plot, plotly or table. Plot by default.
-#' @param figure {\link[base]{character}} expected. For plotly figure: set (for number of sets graph) or log (for percentage FOB-associated sets graph). NULL by default.
+#' @param figure {\link[base]{character}} expected. For plotly figure: set (for number of sets graph) or log (for percentage FOB-associated sets graph). set by default.
 #' @param title TRUE or FALSE expected. False by default.
 #' @details
 #' The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Referentials.html}{see referentials}]:
@@ -29,7 +29,7 @@
 #' @importFrom codama r_type_checking
 fishing_activity <- function(dataframe,
                              graph_type = "plot",
-                             figure = NULL,
+                             figure = "set",
                              title = FALSE) {
   # 0 - Global variables assignement ----
   activity_date <- NULL
