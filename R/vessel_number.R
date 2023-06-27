@@ -115,6 +115,8 @@ vessel_number <- function(dataframe,
                        margin = list(t = 120))
     }
     return(plotly_graph)
+  } else if (graph_type == "table") {
+    as.data.frame(vessel_number_final)
   }
 
 }
