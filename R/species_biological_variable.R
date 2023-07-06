@@ -4,7 +4,6 @@
 #' @param dataframe {\link[base]{data.frame}} expected. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the fishing_activity() function.
 #' @param graph_type {\link[base]{character}} expected. plot, plotly or table. Plot by default.
 #' @param reported_year {\link[base]{integer}} expected. Write the wanted year of the report
-#' @param file_path {\link[base]{character}} expected. Write the path of the file if Tunabio variable wanted. NULL by default.
 #' @param title TRUE or FALSE expected. False by default.
 #' @return The function return ggplot or table R plot.
 #' @export
@@ -19,7 +18,6 @@
 species_biological_variable <- function(dataframe,
                                         graph_type = "plot",
                                         reported_year = NULL,
-                                        file_path = NULL,
                                         title = FALSE) {
   # 0 - Global variables assignement ----
   fish_sampling_date <- NULL
@@ -42,10 +40,9 @@ species_biological_variable <- function(dataframe,
                                    output = "message"))
   }
   # 2 - Data design ----
-
   ## Data import -----
   tunabio <- vector("list")
-  tunabio[["biology"]] <- readxl::read_excel(path = file_path,
+  tunabio[["biology"]] <- readxl::read_excel(path = dataframe,
                                              sheet = "SPECIMEN",
                                              col_types = c("text",
                                                            "text",
@@ -96,7 +93,6 @@ species_biological_variable <- function(dataframe,
                                                            "text"),
                                              na = "na")
   ## Data manipulation ----
-
   tunabio[["biology"]] <- dplyr::mutate(.data =  tunabio[["biology"]],
                                         sampling_year = lubridate::year(fish_sampling_date))
   ## Data analyze ----
@@ -105,25 +101,25 @@ species_biological_variable <- function(dataframe,
     dplyr::filter(sampling_year == reported_year) %>%
     dplyr::filter(!is.na(total_length) | !is.na(fork_length)) %>%
     dplyr::group_by(species_code_fao) %>%
-    dplyr::summarise(length = n())
+    dplyr::summarise(length = dplyr::n())
   #### Weight
   sampled_weight_summarize <- tunabio[["biology"]] %>%
     dplyr::filter(sampling_year == reported_year) %>%
     dplyr::filter(!is.na(whole_fish_weight)) %>%
     dplyr::group_by(species_code_fao) %>%
-    dplyr::summarise(weight = n())
+    dplyr::summarise(weight = dplyr::n())
   #### Sex
   sampled_sex_summarize <- tunabio[["biology"]] %>%
     dplyr::filter(sampling_year == reported_year) %>%
     dplyr::filter(!is.na(sex)) %>%
     dplyr::group_by(species_code_fao) %>%
-    dplyr::summarise(maturity = n())
+    dplyr::summarise(maturity = dplyr::n())
   #### Maturity
   sampled_maturity_summarize <- tunabio[["biology"]] %>%
     dplyr::filter(sampling_year == reported_year) %>%
     dplyr::filter(!is.na(macro_maturity_stage)) %>%
     dplyr::group_by(species_code_fao) %>%
-    dplyr::summarise(sex = n())
+    dplyr::summarise(sex = dplyr::n())
   #### Table join
   sampled_summarize <- dplyr::full_join(sampled_length_summarize,
                                         sampled_weight_summarize,

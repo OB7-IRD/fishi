@@ -4,17 +4,24 @@
 \alias{species_biological_variable}
 \title{Sampled biological variables}
 \usage{
-species_biological_variable(dataframe, graph_type = "plot", title = FALSE)
+species_biological_variable(
+  dataframe,
+  graph_type = "plot",
+  reported_year = NULL,
+  title = FALSE
+)
 }
 \arguments{
 \item{dataframe}{{\link[base]{data.frame}} expected. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the fishing_activity() function.}
 
 \item{graph_type}{{\link[base]{character}} expected. plot, plotly or table. Plot by default.}
 
+\item{reported_year}{{\link[base]{integer}} expected. Write the wanted year of the report}
+
 \item{title}{TRUE or FALSE expected. False by default.}
 }
 \value{
-The function return ggplot R plot.
+The function return ggplot or table R plot.
 }
 \description{
 Give the number of each biological variable sampled for a given year.
