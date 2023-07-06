@@ -8,10 +8,10 @@
 #' @return The function return ggplot or table R plot.
 #' @export
 #' @importFrom readxl read_excel
-#' @importFrom dplyr mutate filter group_by summarise full_join
+#' @importFrom dplyr mutate filter group_by summarise full_join n
 #' @importFrom lubridate year
 #' @importFrom graphics par plot axis lines abline legend text
-#' @importFrom ggplot2 ggplot aes geom_bar labs theme_light
+#' @importFrom ggplot2 ggplot aes geom_bar labs theme_light geom_text
 #' @importFrom plotly ggplotly layout
 #' @importFrom tidyr pivot_longer
 #' @importFrom codama r_type_checking
@@ -132,15 +132,20 @@ species_biological_variable <- function(dataframe,
   # 4 - Graphic design ----
   if (graph_type == "plot") {
     sampled_summarize_pivot <- tidyr::pivot_longer(sampled_summarize,
-                                             cols = c(2:5),
-                                             names_to = "variable",
-                                             values_to = "number")
-      ggplot2::ggplot(data = sampled_summarize_pivot,
-                      ggplot2::aes(x = variable,
-                                   y = number,
-                                   fill = species_code_fao)) +
+                                                   cols = c(2:5),
+                                                   names_to = "variable",
+                                                   values_to = "number")
+    ggplot2::ggplot(data = sampled_summarize_pivot,
+                    ggplot2::aes(x = variable,
+                                 y = number,
+                                 fill = species_code_fao)) +
       ggplot2::geom_histogram(position = "dodge",
-                        stat = "identity") +
+                              stat = "identity") +
+      ggplot2::geom_text (ggplot2::aes(label = number),
+                          vjust = -.3,
+                          size = 4,
+                          position = ggplot2::position_dodge (width = 0.9),
+                          color="black") +
       ggplot2::labs(fill = "Species",
                     x = "Biological varibles",
                     y = "Number of fish sampled") +
