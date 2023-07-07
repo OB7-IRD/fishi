@@ -6,7 +6,7 @@
 \usage{
 number_vessel_sampled(
   dataframe,
-  graph_type = "plot",
+  graph_type = "number",
   reported_year = NULL,
   selected_country = NULL,
   title = FALSE
@@ -15,11 +15,11 @@ number_vessel_sampled(
 \arguments{
 \item{dataframe}{{\link[base]{data.frame}} expected. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the fishing_activity() function.}
 
-\item{graph_type}{{\link[base]{character}} expected. plot, plotly or table. Plot by default.}
+\item{graph_type}{{\link[base]{character}} expected. "number" or "table." Number by default.}
 
 \item{reported_year}{{\link[base]{integer}} expected. Write the wanted year of the report}
 
-\item{selected_country}{{\link[base]{integer}} expected. Country code to select the list of boat to count}
+\item{selected_country}{{\link[base]{integer}} expected. Country code to select the list of boat to count. If NULL give all the vessel for the given year.}
 
 \item{title}{TRUE or FALSE expected. False by default.}
 }

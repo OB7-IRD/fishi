@@ -25,7 +25,6 @@ species_biological_variable <- function(dataframe,
   total_length <- NULL
   fork_length <- NULL
   species_code_fao <- NULL
-  n <- NULL
   whole_fish_weight <- NULL
   sex <- NULL
   macro_maturity_stage <- NULL
@@ -141,11 +140,11 @@ species_biological_variable <- function(dataframe,
                                  fill = species_code_fao)) +
       ggplot2::geom_histogram(position = "dodge",
                               stat = "identity") +
-      ggplot2::geom_text (ggplot2::aes(label = number),
+      ggplot2::geom_text(ggplot2::aes(label = number),
                           vjust = -.3,
                           size = 4,
-                          position = ggplot2::position_dodge (width = 0.9),
-                          color="black") +
+                          position = ggplot2::position_dodge(width = 0.9),
+                          color = "black") +
       ggplot2::labs(fill = "Species",
                     x = "Biological varibles",
                     y = "Number of fish sampled") +

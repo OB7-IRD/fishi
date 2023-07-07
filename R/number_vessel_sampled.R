@@ -148,7 +148,7 @@ number_vessel_sampled <- function(dataframe,
                   vessel_name,
                   landing_date)
   ## Data analyze ----
-  if (!is.null(selected_country)){
+  if (!is.null(selected_country)) {
     sampled_vessel_summarize <-  tunabio[["merged"]] %>%
       dplyr::filter(sampling_year == reported_year) %>%
       dplyr::group_by(vessel_name) %>%
@@ -156,7 +156,7 @@ number_vessel_sampled <- function(dataframe,
       dplyr::left_join(y = tunabio[["vessel"]], by = dplyr::join_by(vessel_name)) %>%
       dplyr::select(-nb_vessel) %>%
       dplyr::filter(country == selected_country)
-  } else if (is.null(selected_country)){
+  } else if (is.null(selected_country)) {
     sampled_vessel_summarize <-  tunabio[["merged"]] %>%
       dplyr::filter(sampling_year == reported_year) %>%
       dplyr::group_by(vessel_name) %>%
