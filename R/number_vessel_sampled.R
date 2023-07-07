@@ -162,7 +162,8 @@ number_vessel_sampled <- function(dataframe,
       dplyr::group_by(vessel_name) %>%
       dplyr::summarise(nb_vessel = dplyr::n_distinct(vessel_name)) %>%
       dplyr::left_join(y = tunabio[["vessel"]], by = dplyr::join_by(vessel_name)) %>%
-      dplyr::select(-nb_vessel)
+      dplyr::select(-nb_vessel) %>%
+      dplyr::filter(!is.na(vessel_name))
   }
   # 3 - Legend design ----
   # 4 - Graphic design ----
