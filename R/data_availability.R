@@ -30,10 +30,10 @@ data_availability <- function(dataframe_observe,
   # vessel
   vessel <- as.character(sort(unique(dataframe_t3$vessel)))
   # day
-  day <- seq(as.Date(paste(min(year),
+  day <- seq(as.Date(paste(min(reported_year),
                            "01-01",
                            sep = "-")),
-             as.Date(paste(max(year) + 1,
+             as.Date(paste(max(reported_year) + 1,
                            "01-01",
                            sep = "-")),
              by = 1)
@@ -76,7 +76,7 @@ data_availability <- function(dataframe_observe,
       "Data availability for purse seiners in the",
       ocean,
       "Ocean in",
-      year))
+      reported_year))
     for (v in 1:length(vessel)) {
       uniqueday <- as.Date(sort(unique(dataframe_vms$date[dataframe_vms$vesselname == vessel[v]])))
       graphics::points(uniqueday,
