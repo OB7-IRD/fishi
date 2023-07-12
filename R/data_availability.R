@@ -11,6 +11,7 @@
 #' @export
 #' @importFrom codama r_type_checking
 #' @importFrom graphics par plot axis lines abline legend text
+#' @importFrom plyr . ddply
 data_availability <- function(dataframe_observe,
                               dataframe_t3,
                               dataframe_vms,
@@ -18,6 +19,8 @@ data_availability <- function(dataframe_observe,
                               reported_year,
                               ocean = "Atlantic") {
   # 0 - Global variables assignement ----
+  vesselname <- NULL
+  id <- NULL
   # 1 - Arguments verification ----
   if (codama::r_type_checking(r_object = graph_type,
                               type = "character",
@@ -111,7 +114,7 @@ data_availability <- function(dataframe_observe,
                       pt.cex = c(0.5, 0.5, 0.5),
                       bg = "white")
   } else if (graph_type == "table") {
-    data_availability <-  ddply(dataframe_vms, .(vesselname), summarise, n=length(unique(id)))
+    data_availability <-  plyr::ddply(dataframe_vms, plyr::.(vesselname), summarise, n=length(unique(id)))
     as.data.frame(data_availability)
   }
 }

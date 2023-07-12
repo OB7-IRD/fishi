@@ -14,9 +14,9 @@ trip_effort(
 )
 }
 \arguments{
-\item{dataframe_observe}{{\link[base]{data.frame}} expected. Dataframe from the Observe database. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the data_availability() function.}
+\item{dataframe_observe}{{\link[base]{data.frame}} expected. Dataframe from the Observe database. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the trip_effort() function.}
 
-\item{dataframe_t3}{{\link[base]{data.frame}} expected. Dataframe from the T3 database. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the data_availability() function.}
+\item{dataframe_t3}{{\link[base]{data.frame}} expected. Dataframe from the T3 database. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the trip_effort() function.}
 
 \item{database}{{\link[base]{character}} expected. Observe or t3. Observe by default.}
 

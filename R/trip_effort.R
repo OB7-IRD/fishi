@@ -1,8 +1,8 @@
 #' @name trip_effort
 #' @title Effort trip
 #' @description Effort trip
-#' @param dataframe_observe {\link[base]{data.frame}} expected. Dataframe from the Observe database. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the data_availability() function.
-#' @param dataframe_t3 {\link[base]{data.frame}} expected. Dataframe from the T3 database. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the data_availability() function.
+#' @param dataframe_observe {\link[base]{data.frame}} expected. Dataframe from the Observe database. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the trip_effort() function.
+#' @param dataframe_t3 {\link[base]{data.frame}} expected. Dataframe from the T3 database. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the trip_effort() function.
 #' @param database {\link[base]{character}} expected. Observe or t3. Observe by default.
 #' @param reported_year  {\link[base]{integer}} expected. Year of the report.
 #' @param ocean {\link[base]{character}} expected. Atlantic or Indian. Atlantic by default.
@@ -34,15 +34,8 @@ trip_effort <- function(dataframe_observe,
                               type = "integer",
                               output = "logical") != TRUE) {
     return(codama::r_type_checking(r_object = reported_year,
-                                   type = "character",
+                                   type = "integer",
                                    output = "integer"))
-  }
-  if (codama::r_type_checking(r_object = flag,
-                              type = "character",
-                              output = "logical") != TRUE) {
-    return(codama::r_type_checking(r_object = flag,
-                                   type = "character",
-                                   output = "message"))
   }
   if (codama::r_type_checking(r_object = ocean,
                               type = "character",
