@@ -9,6 +9,7 @@ control_trip(
   dataframe_t3,
   reported_year,
   flag,
+  table = "vessel_set",
   ocean = "Atlantic",
   path_to_csv = NULL
 )
@@ -21,6 +22,8 @@ control_trip(
 \item{reported_year}{{\link[base]{integer}} expected. Year of the report.}
 
 \item{flag}{{\link[base]{character}} expected. Flag of the country; isocode.}
+
+\item{table}{{\link[base]{character}} expected. code_case, controltrip or vessel_set. vessel_set by default.}
 
 \item{ocean}{{\link[base]{character}} expected. Atlantic or Indian. Atlantic by default.}
 
