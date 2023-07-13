@@ -11,7 +11,8 @@ control_trip_map(
   reported_year,
   trip_i,
   control_dist_vms = FALSE,
-  ocean = "Atlantic"
+  ocean = "Atlantic",
+  path_to_shp = NULL
 )
 }
 \arguments{
@@ -28,6 +29,8 @@ control_trip_map(
 \item{control_dist_vms}{TRUE or FALSE. FALSE by default.}
 
 \item{ocean}{{\link[base]{character}} expected. Atlantic or Indian Atlantic by default.}
+
+\item{path_to_shp}{{\link[base]{character}} expected. Put a link, if you want to add a shapefile.}
 }
 \value{
 The function return ggplot R plot.

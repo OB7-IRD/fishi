@@ -8,6 +8,7 @@
 #' @param ocean {\link[base]{character}} expected. Atlantic or Indian Atlantic by default.
 #' @param trip_i {\link[base]{character}} expected. Date + # + vessel name.
 #' @param control_dist_vms TRUE or FALSE. FALSE by default.
+#' @param path_to_shp {\link[base]{character}} expected. Put a link, if you want to add a shapefile.
 #' @return The function return ggplot R plot.
 #' @export
 #' @importFrom codama r_type_checking
@@ -20,7 +21,8 @@ control_trip_map <- function(dataframe_observe,
                              reported_year,
                              trip_i,
                              control_dist_vms = FALSE,
-                             ocean = "Atlantic") {
+                             ocean = "Atlantic",
+                             path_to_shp = NULL) {
   # 0 - Global variables assignement ----
   vessel <- NULL
   trip_end_date <- NULL
@@ -218,6 +220,16 @@ control_trip_map <- function(dataframe_observe,
             xaxs = "i",
             mar = c(4, 4.1, 3, 2),
             border = 0)
+  if (!is.null(path_to_shp)) {
+    zee_v11 <- PBSmapping::importShapefile(path_to_shp,
+                                           readDBF = TRUE,
+                                           projection = "LL")
+    zee_v11_trop <- zee_v11[zee_v11$PID %in% unique(zee_v11[zee_v11$X >= (-35) & zee_v11$X <= 90 & zee_v11$Y >= (-35) & zee_v11$Y <= 25, ]$PID), ]
+    PBSmapping::addPolys(zee_v11_trop,
+                         xlim = xlim,
+                         ylim = ylim,
+                         border = "pink")
+  }
   graphics::lines(dataframe_vms$longitude,
                   dataframe_vms$latitude,
                   type = "o",
