@@ -25,4 +25,5 @@ FROM
 WHERE
 	EXTRACT(year FROM v.date) IN (?time_period)
 	AND t."PAYS"::numeric  IN (?country))
+ORDER BY vesselname, date, time
 ;
