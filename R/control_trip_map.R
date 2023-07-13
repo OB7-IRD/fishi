@@ -15,6 +15,7 @@
 #' @importFrom graphics par plot axis lines abline legend text points box
 #' @importFrom plyr . ddply
 #' @importFrom dplyr summarize
+#' @importFrom PBSmapping importShapefile addPolys
 control_trip_map <- function(dataframe_observe,
                              dataframe_t3,
                              dataframe_vms,

@@ -75,63 +75,63 @@ control_trip <- function(dataframe_observe,
   dataframe_t3$t3_school_type[dataframe_t3$school_type == "IND"] <- "UNK"
   # Trips
   dataframe_t3$t3_trip_id <- dataframe_t3$trip_id
-  t3Trips <- plyr::ddply(dataframe_t3,
+  t3trips <- plyr::ddply(dataframe_t3,
                          plyr::.(ocean, t3_trip_id, vessel, departure_date, landing_date),
                          dplyr::summarize,
                          t3_n_sets = length(unique(activity_id)))
 
-  t3Trips$common_trip_id <- paste(t3Trips$landing_date,
-                                  t3Trips$vessel,
+  t3trips$common_trip_id <- paste(t3trips$landing_date,
+                                  t3trips$vessel,
                                   sep = "#")
 
   dataframe_observe$obs_trip_id <- dataframe_observe$trip_id
-  obsTrips <- plyr::ddply(dataframe_observe,
+  obstrips <- plyr::ddply(dataframe_observe,
                           plyr::.(ocean, obs_trip_id, vessel, trip_end_date, program),
                           dplyr::summarize,
                           obs_n_sets = length(unique(set_id)))
 
-  obsTrips$common_trip_id <- paste(obsTrips$trip_end_date,
-                                   obsTrips$vessel,
+  obstrips$common_trip_id <- paste(obstrips$trip_end_date,
+                                   obstrips$vessel,
                                    sep = "#")
 
-  controlTrips <- merge(t3Trips[, c("ocean", "vessel", "common_trip_id", "t3_trip_id", "t3_n_sets")],
-                        obsTrips[, c("ocean", "vessel", "common_trip_id", "obs_trip_id", "obs_n_sets", "program")],
+  controltrips <- merge(t3trips[, c("ocean", "vessel", "common_trip_id", "t3_trip_id", "t3_n_sets")],
+                        obstrips[, c("ocean", "vessel", "common_trip_id", "obs_trip_id", "obs_n_sets", "program")],
                         by = c("ocean", "common_trip_id", "vessel"),
-                        all = T)
+                        all = TRUE)
 
-  controlTrips$diff_n_sets <- rowSums(
-    data.frame(bal_n_sets = controlTrips$t3_n_sets * -1,
-               obs_n_sets = controlTrips$obs_n_sets),
-    na.rm = T)
+  controltrips$diff_n_sets <- rowSums(
+    data.frame(bal_n_sets = controltrips$t3_n_sets * -1,
+               obs_n_sets = controltrips$obs_n_sets),
+    na.rm = TRUE)
 
-  controlTrips$code <- NA
-  controlTrips$code[is.na(controlTrips$t3_trip_id) == F & is.na(controlTrips$obs_trip_id) == F] <- 0 # trip match
-  controlTrips$code[is.na(controlTrips$t3_trip_id) == T & is.na(controlTrips$obs_trip_id) == F] <- 1 # no match, only OBS
-  controlTrips$code[is.na(controlTrips$t3_trip_id) == F & is.na(controlTrips$obs_trip_id) == T] <- 2 # no match, only LB
+  controltrips$code <- NA
+  controltrips$code[is.na(controltrips$t3_trip_id) == FALSE & is.na(controltrips$obs_trip_id) == FALSE] <- 0 # trip match
+  controltrips$code[is.na(controltrips$t3_trip_id) == TRUE & is.na(controltrips$obs_trip_id) == FALSE] <- 1 # no match, only OBS
+  controltrips$code[is.na(controltrips$t3_trip_id) == FALSE & is.na(controltrips$obs_trip_id) == TRUE] <- 2 # no match, only LB
   # 3 - Graphic design ----
   if (table == "code_case") {
-    ct_data <- plyr::ddply(controlTrips,
+    ct_data <- plyr::ddply(controltrips,
                            plyr::.(code),
                            dplyr::summarize,
                            cases = length(unique(common_trip_id)))
   } else if (table == "controltrip") {
-    ct_data <-controlTrips[controlTrips$code > 0, ]
+    ct_data <- controltrips[controltrips$code > 0, ]
   } else if (table == "vessel_set") {
-    ct_data <- plyr::ddply(controlTrips,
+    ct_data <- plyr::ddply(controltrips,
                          plyr::.(vessel),
                          dplyr::summarize,
                          t3_n_sets = sum(t3_n_sets,
-                                         na.rm = T),
+                                         na.rm = TRUE),
                          obs_n_sets = sum(obs_n_sets,
-                                          na.rm = T))
+                                          na.rm = TRUE))
     ct_data$perc_sets_obs <- round(100 * ct_data$obs_n_sets / ct_data$t3_n_sets)
     ct_data <- ct_data[order(ct_data$perc_sets_obs,
-                         decreasing = T), ]
+                         decreasing = TRUE), ]
   }
   return(ct_data)
   # path to csv
-  if (!is.null(path_to_csv)){
-    write.csv(controlTrips,
+  if (!is.null(path_to_csv)) {
+    write.csv(controltrips,
               paste(path_to_csv,
                     "/control_trips_observe_logbook_",
                     ocean,
@@ -139,6 +139,6 @@ control_trip <- function(dataframe_observe,
                     reported_year,
                     ".csv",
                     sep = ""),
-              row.names = F)
+              row.names = FALSE)
   }
 }

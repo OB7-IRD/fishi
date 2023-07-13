@@ -114,7 +114,7 @@ data_availability <- function(dataframe_observe,
                       pt.cex = c(0.5, 0.5, 0.5),
                       bg = "white")
   } else if (graph_type == "table") {
-    data_availability <-  plyr::ddply(dataframe_vms, plyr::.(vesselname), summarise, n=length(unique(id)))
+    data_availability <-  plyr::ddply(dataframe_vms, plyr::.(vesselname), summarise, n = length(unique(id)))
     as.data.frame(data_availability)
   }
 }
