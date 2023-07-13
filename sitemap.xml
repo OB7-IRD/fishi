@@ -43,6 +43,15 @@
     <loc>https://ob7-ird.github.io/fishi/reference/code_manipulation.html</loc>
   </url>
   <url>
+    <loc>https://ob7-ird.github.io/fishi/reference/control_trip.html</loc>
+  </url>
+  <url>
+    <loc>https://ob7-ird.github.io/fishi/reference/control_trip_map.html</loc>
+  </url>
+  <url>
+    <loc>https://ob7-ird.github.io/fishi/reference/data_availability.html</loc>
+  </url>
+  <url>
     <loc>https://ob7-ird.github.io/fishi/reference/data_extraction.html</loc>
   </url>
   <url>
@@ -77,6 +86,9 @@
   </url>
   <url>
     <loc>https://ob7-ird.github.io/fishi/reference/spatial_occupancy.html</loc>
+  </url>
+  <url>
+    <loc>https://ob7-ird.github.io/fishi/reference/trip_effort.html</loc>
   </url>
   <url>
     <loc>https://ob7-ird.github.io/fishi/reference/vessel_number.html</loc>
