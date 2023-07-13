@@ -4,7 +4,7 @@ pkgdown_sha: ~
 articles:
   Db_and_csv: Db_and_csv.html
   Referentials: Referentials.html
-last_built: 2023-07-13T09:14Z
+last_built: 2023-07-13T09:28Z
 urls:
   reference: https://ob7-ird.github.io/fishi/reference
   article: https://ob7-ird.github.io/fishi/articles
