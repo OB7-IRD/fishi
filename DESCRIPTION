@@ -50,6 +50,7 @@ Imports:
     kableExtra (>= 1.3.4),
     plyr (>= 1.8.8),
     PBSmapping (>= 2.73.2),
+    grDevices (>= 4.3.0),
     utils
 URL: https://github.com/OB7-IRD/fishi
 BugReports: https://github.com/OB7-IRD/fishi/issues
