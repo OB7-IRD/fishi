@@ -5,14 +5,14 @@
 \title{Number of biological UO}
 \usage{
 biological_UO_count(
-  path,
+  path_file,
   graph_type = "number",
   start_date = NULL,
   end_date = NULL
 )
 }
 \arguments{
-\item{path}{{\link[base]{character}} expected. File path to the Tunabio file.}
+\item{path_file}{{\link[base]{character}} expected. File path to the Tunabio file.}
 
 \item{graph_type}{{\link[base]{character}} expected. "number" or "table." Number give the total number of each biological UO and table give the detail per month. Number by default.}
 
