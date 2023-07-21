@@ -5,25 +5,37 @@
 #' @param graph_type {\link[base]{character}} expected. "number" or "table." Number by default.
 #' @param reported_year {\link[base]{integer}} expected. Write the wanted year of the report
 #' @param selected_country {\link[base]{integer}} expected. Country code to select the list of boat to count. If NULL give all the vessel for the given year.
-#' @param variable {\link[base]{character}} expected. Write the first variable of the PSU. "trip" by default.
+#' @param variable {\link[base]{character}} expected. Write the variable of the PSU. Can be "trip" or "well". "trip" by default.
 #' @param title TRUE or FALSE expected. False by default.
 #' @return The function return ggplot or table R plot.
 #' @export
 #' @importFrom readxl read_excel
-#' @importFrom dplyr mutate filter select group_by summarise full_join left_join join_by n_distinct
+#' @importFrom dplyr mutate filter select group_by summarise left_join join_by n_distinct
 #' @importFrom lubridate year
-#' @importFrom graphics par plot axis lines abline legend text
-#' @importFrom ggplot2 ggplot aes geom_bar labs theme_light
-#' @importFrom plotly ggplotly layout
-#' @importFrom tidyr pivot_longer
-#' @importFrom codama r_type_checking
+#' @importFrom tidyr separate_longer_delim
+#' @importFrom codama r_type_checking %>%
 number_PSU_sampled <- function(dataframe,
                                graph_type = "number",
                                reported_year = NULL,
                                selected_country = NULL,
-                               variable_2 = "trip",
+                               variable = "trip",
                                title = FALSE) {
   # 0 - Global variables assignement ----
+  STATUT <- NULL
+  NOMBAT <- NULL
+  NUMBAT <- NULL
+  PAYS <- NULL
+  FLOTTE <- NULL
+  fish_sampling_date <- NULL
+  landing_date <- NULL
+  fish_identifier <- NULL
+  sampling_year <- NULL
+  vessel_code <- NULL
+  vessel_name <- NULL
+  vessel_well_number <- NULL
+  well_position <- NULL
+  nb_vessel <- NULL
+  country <- NULL
   # 1 - Arguments verification ----
   if (codama::r_type_checking(r_object = graph_type,
                               type = "character",
@@ -105,7 +117,7 @@ number_PSU_sampled <- function(dataframe,
                                                        "date",
                                                        "numeric",
                                                        "text",
-                                                       "numeric",
+                                                       "text",
                                                        "text",
                                                        "text",
                                                        "text",
@@ -114,7 +126,7 @@ number_PSU_sampled <- function(dataframe,
                                                        "text",
                                                        "text"),
                                          na = "na")
-  tunabio[["vessel"]] <- readxl::read_excel("~/Echantillonnage biologique/OI/Tunabio/Tunabio OI 20230619.xlsx",
+  tunabio[["vessel"]] <- readxl::read_excel(dataframe,
                                             sheet = "vessel") %>%
     dplyr::filter(STATUT == 1) %>%
     dplyr::select(vessel_name = NOMBAT, boat_code = NUMBAT, country = PAYS, fleet = FLOTTE)
@@ -135,30 +147,75 @@ number_PSU_sampled <- function(dataframe,
                   sampling_year,
                   vessel_code,
                   vessel_name,
-                  landing_date)
+                  landing_date,
+                  vessel_well_number,
+                  well_position)
   ## Data analyze ----
-  if (!is.null(selected_country)) {
-    sampled_trip_summarize <-  tunabio[["merged"]] %>%
+  if (variable == "trip") {
+      if (!is.null(selected_country)) {
+    sampled_PSU_summarize <-  tunabio[["merged"]] %>%
       dplyr::filter(sampling_year == reported_year) %>%
-      dplyr::group_by(vessel_name, landing_date) %>%
-      dplyr::summarise(nb_vessel = dplyr::n_distinct(vessel_name), .groups = "drop") %>%
-      dplyr::left_join(y = tunabio[["vessel"]], by = dplyr::join_by(vessel_name)) %>%
+      dplyr::group_by(vessel_name,
+                      landing_date) %>%
+      dplyr::summarise(nb_vessel = dplyr::n_distinct(vessel_name),
+                       .groups = "drop") %>%
+      dplyr::left_join(y = tunabio[["vessel"]],
+                       by = dplyr::join_by(vessel_name)) %>%
       dplyr::select(-nb_vessel) %>%
       dplyr::filter(country == selected_country)
   } else if (is.null(selected_country)) {
-    sampled_trip_summarize <-  tunabio[["merged"]] %>%
+    sampled_PSU_summarize <-  tunabio[["merged"]] %>%
       dplyr::filter(sampling_year == reported_year) %>%
-      dplyr::group_by(vessel_name, landing_date) %>%
-      dplyr::summarise(nb_trip = dplyr::n_distinct(vessel_name), .groups = "drop") %>%
-      dplyr::left_join(y = tunabio[["vessel"]], by = dplyr::join_by(vessel_name)) %>%
+      dplyr::group_by(vessel_name,
+                      landing_date) %>%
+      dplyr::summarise(nb_trip = dplyr::n_distinct(vessel_name),
+                       .groups = "drop") %>%
+      dplyr::left_join(y = tunabio[["vessel"]],
+                       by = dplyr::join_by(vessel_name)) %>%
       dplyr::select(-nb_vessel) %>%
       dplyr::filter(!is.na(vessel_name))
+  }
+  } else if (variable == "well") {
+    if (!is.null(selected_country)) {
+      sampled_PSU_summarize <-  tunabio[["merged"]] %>%
+        dplyr::filter(sampling_year == reported_year) %>%
+        tidyr::separate_longer_delim(cols = c("vessel_well_number",
+                                            "well_position"),
+                                     delim = ";") %>%
+        dplyr::group_by(vessel_name,
+                        landing_date,
+                        vessel_well_number,
+                        well_position) %>%
+        dplyr::summarise(nb_vessel = dplyr::n_distinct(vessel_name),
+                         .groups = "drop") %>%
+        dplyr::left_join(y = tunabio[["vessel"]],
+                         by = dplyr::join_by(vessel_name)) %>%
+        dplyr::select(-nb_vessel) %>%
+        dplyr::filter(country == selected_country)
+
+    } else if (is.null(selected_country)) {
+      sampled_PSU_summarize <-  tunabio[["merged"]] %>%
+        dplyr::filter(sampling_year == reported_year) %>%
+        tidyr::separate_longer_delim(cols = c("vessel_well_number",
+                                            "well_position"),
+                                     delim = ";") %>%
+        dplyr::group_by(vessel_name,
+                        landing_date,
+                        vessel_well_number,
+                        well_position) %>%
+        dplyr::summarise(nb_trip = dplyr::n_distinct(vessel_name),
+                         .groups = "drop") %>%
+        dplyr::left_join(y = tunabio[["vessel"]],
+                         by = dplyr::join_by(vessel_name)) %>%
+        dplyr::select(-nb_vessel) %>%
+        dplyr::filter(!is.na(vessel_name))
+    }
   }
   # 3 - Legend design ----
   # 4 - Graphic design ----
   if (graph_type == "number") {
-    length(sampled_trip_summarize$vessel_name)
+    length(sampled_PSU_summarize$vessel_name)
   } else if (graph_type == "table") {
-    as.data.frame(sampled_trip_summarize)
+    as.data.frame(sampled_PSU_summarize)
   }
 }
