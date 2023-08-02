@@ -13,9 +13,10 @@
 #' @export
 #' @importFrom codama r_type_checking
 #' @importFrom graphics par plot axis lines abline legend text points box
-#' @importFrom plyr . ddply
-#' @importFrom dplyr summarize
+#' @importFrom dplyr summarize filter mutate if_else group_by n_distinct
 #' @importFrom PBSmapping importShapefile addPolys
+#' @importFrom stringr str_split
+#' @importFrom stats time
 control_trip_map <- function(dataframe_observe,
                              dataframe_t3,
                              dataframe_vms,
@@ -31,6 +32,12 @@ control_trip_map <- function(dataframe_observe,
   observation_date <- NULL
   activity_id <- NULL
   wrld_simpl <- NULL
+  fob_type_when_arriving <- NULL
+  latitude <- NULL
+  longitude <- NULL
+  time <- NULL
+  observation_time <- NULL
+  vessel_activity_code <- NULL
   # 1 - Arguments verification ----
   # 2 - Functions ----
   # My axes
@@ -61,15 +68,15 @@ control_trip_map <- function(dataframe_observe,
                               "0",
                               paste(abs(seqlat[seqlat > 0]),
                                     "N",
-                                    sep = ""))
-                   , tck = 0.02,
+                                    sep = "")),
+                   tck = 0.02,
                    lwd = 1)
     graphics::axis(4,
                    at = seqlat,
                    labels = FALSE,
                    tck = 0.02,
                    lwd = 1)
-    }
+  }
   # My grid
   mygrid <- function(step) {
     graphics::abline(v = seq(-180, 180, by = step),
@@ -95,15 +102,19 @@ control_trip_map <- function(dataframe_observe,
     return(dist_m / 1000)
   }
   # 3 - Data design ----
+  vessel_i <- stringr::str_split(trip_i,
+                                 "#")[[1]][2]
+  end_date_i <- stringr::str_split(trip_i,
+                                   "#")[[1]][1]
   # Observe
-  vessel_i <- strsplit(trip_i,
-                       "#")[[1]][2]
-  end_date_i <- strsplit(trip_i,
-                         "#")[[1]][1]
-  dataframe_observe <- subset(dataframe_observe,
-                              vessel %in% vessel_i)
-  dataframe_observe <- subset(dataframe_observe,
-                              trip_end_date %in% end_date_i)
+  dataframe_observe <- dataframe_observe %>%
+    dplyr::filter(vessel %in% vessel_i,
+                  trip_end_date %in% end_date_i) %>%
+    dplyr::mutate(fob_type_when_arriving = dplyr::if_else(is.na(fob_type_when_arriving),
+                                                          "/",
+                                                          fob_type_when_arriving),
+                  latitude_dmd = dd_to_dmd(latitude),
+                  longitude_dmd = dd_to_dmd(longitude))
   end_date_i <- as.Date(end_date_i)
   start_date_i <- sort(dataframe_observe$observation_date)[1]
   observer_i <- toupper(unique(dataframe_observe$observer_name))
@@ -112,36 +123,33 @@ control_trip_map <- function(dataframe_observe,
   seq_date_i <- seq.Date(start_date_i,
                          end_date_i,
                          by = "day")
-  dataframe_observe$fob_type_when_arriving[is.na(dataframe_observe$fob_type_when_arriving)] <- "/"
-  dataframe_observe$latitude_dmd <- dd_to_dmd(dataframe_observe$latitude)
-  dataframe_observe$longitude_dmd <- dd_to_dmd(dataframe_observe$longitude)
-  # write.csv(dataframe_observe,paste("Tables/obs_",trip_i,".csv",sep=""),row.names=F)
   # T3
-  dataframe_t3 <- subset(dataframe_t3,
-                         vessel %in% vessel_i)
-  dataframe_t3 <- subset(dataframe_t3,
-                         date %in% seq_date_i)
+  dataframe_t3 <- dataframe_t3 %>%
+    dplyr::filter(vessel %in% vessel_i,
+                  date %in% seq_date_i)
   # Vms
-  dataframe_vms <- subset(dataframe_vms,
-                          vesselname %in% vessel_i)
-  dataframe_vms <- subset(dataframe_vms,
-                          date %in% seq_date_i)
+  dataframe_vms <- dataframe_vms %>%
+    dplyr::filter(vesselname %in% vessel_i,
+                  date %in% seq_date_i)
   # Distance to vms
   if (control_dist_vms == TRUE) {
     if (nrow(dataframe_vms) > 0) {
       threshold_km <- 10
-      dataframe_vms$timestamp <- as.POSIXct(paste(dataframe_vms$date,
-                                                  dataframe_vms$time),
-                                            format = "%Y-%m-%d %H:%M:%S",
-                                            tz = "UTC")
-      dataframe_observe$timestamp <- as.POSIXct(paste(dataframe_observe$observation_date,
-                                                      dataframe_observe$observation_time),
-                                                format = "%Y-%m-%d %H:%M:%S",
-                                                tz = "UTC") - as.difftime(0,
-                                                                          units = "hours")
-      dataframe_observe$latitude_vms <- NA
-      dataframe_observe$longitude_vms <- NA
-      dataframe_observe$delta_vms <- NA
+      dataframe_vms <- dataframe_vms %>%
+        dplyr::mutate(timestamp = as.POSIXct(paste(date,
+                                                   time),
+                                             format = "%Y-%m-%d %H:%M:%S",
+                                             tz = "UTC"))
+      dataframe_observe <- dataframe_observe %>%
+        dplyr::mutate(timestamp = as.POSIXct(paste(observation_date,
+                                                   observation_time),
+                                             format = "%Y-%m-%d %H:%M:%S",
+                                             tz = "UTC") - as.difftime(0,
+                                                                       units = "hours"),
+                      latitude_vms = NA,
+                      longitude_vms = NA,
+                      delta_vms = NA
+        )
       for (n in 1:nrow(dataframe_observe)) {
         d <- as.numeric(difftime(dataframe_vms$timestamp,
                                  dataframe_observe$timestamp[n],
@@ -159,17 +167,44 @@ control_trip_map <- function(dataframe_observe,
                                                                               dataframe_vms$timestamp[a],
                                                                               units = "mins"))
         }
-        dataframe_observe$latitude_vms[n] <- (1 - alpha) * dataframe_vms$latitude[a] + alpha * dataframe_vms$latitude[b]
-        dataframe_observe$longitude_vms[n] <- (1 - alpha) * dataframe_vms$longitude[a] + alpha * dataframe_vms$longitude[b]
-        dataframe_observe$delta_vms[n] <- dist_orthodromic(dataframe_observe$longitude[n],
-                                                           dataframe_observe$latitude[n],
-                                                           dataframe_observe$longitude_vms[n],
-                                                           dataframe_observe$latitude_vms[n])
+        dataframe_observe %>%
+          dplyr::mutate(latitude_vms = (1 - alpha) * dataframe_vms$latitude[a] + alpha * dataframe_vms$latitude[b],
+                        longitude_vms = (1 - alpha) * dataframe_vms$longitude[a] + alpha * dataframe_vms$longitude[b],
+                        delta_vms = dist_orthodromic(dataframe_observe$longitude[n],
+                                                     dataframe_observe$latitude[n],
+                                                     dataframe_observe$longitude_vms[n],
+                                                     dataframe_observe$latitude_vms[n]))
       }
       perrors <- round(100 * nrow(dataframe_observe[dataframe_observe$delta_vms >= threshold_km, ]) / nrow(dataframe_observe))
     }
-    # write.csv(dataframe_observe,paste("Tables/obs_",trip_i,".csv",sep=""),row.names=F)
   }
+  # sets
+  obsets <- dataframe_observe %>%
+    dplyr::filter(vessel_activity_code == 6) %>%
+    dplyr::group_by(observation_date) %>%
+    dplyr::summarise(n_sets = dplyr::n_distinct(activity_id))
+  t3sets <- dataframe_t3 %>%
+    dplyr::filter(vessel_activity_code %in% c(0, 1, 2, 14)) %>%
+    dplyr::group_by(date) %>%
+    dplyr::summarise(n_sets = dplyr::n_distinct(activity_id))
+  # fads deployed
+  t3fadsdeployed <- length(unique(dataframe_t3[dataframe_t3$vessel_activity_code
+                                               %in% c(5, 23, 31, 32),
+                                               "activity_id"]))
+
+  obsfadsdeployed <- length(unique(dataframe_observe[dataframe_observe$operation_on_object_code
+                                                     %in% c("1") | (dataframe_observe$operation_on_object_code
+                                                                    %in% c("8", "9") &
+                                                                      dataframe_observe$fob_type_when_arriving != "DFAD"),
+                                                     "activity_id"]))
+
+  # buoys deployed
+  t3buoysdeployed <- length(unique(dataframe_t3[dataframe_t3$vessel_activity_code
+                                                  %in% c(5, 23, 25, 32)
+                                                , "activity_id"]))
+  obsbuoysdeployed <- length(unique(dataframe_observe[grepl("3",
+                                                            dataframe_observe$operation_on_buoy_code),
+                                                      "activity_id"]))
   # 4 - Graphic design ----
   longitudes <- c(dataframe_vms$longitude,
                   dataframe_t3$longitude,
@@ -190,26 +225,12 @@ control_trip_map <- function(dataframe_observe,
     abs(diff(yrange)))))
   xlim <- mean(xrange) + (1 + maxrange / 2) * c(-1, 1)
   ylim <- mean(yrange) + (1 + maxrange / 2) * c(-1, 1)
-  obsets <- plyr::ddply(dataframe_observe[dataframe_observe$vessel_activity_code == 6, ],
-                        plyr::.(observation_date),
-                        dplyr::summarise,
-                        n_sets = length(unique(activity_id)))
-  t3sets <- plyr::ddply(dataframe_t3[dataframe_t3$vessel_activity_code %in% c(0, 1, 2, 14), ],
-                        plyr::.(date),
-                        dplyr::summarise,
-                        n_sets = length(unique(activity_id)))
-  t3fadsdeployed <- length(unique(dataframe_t3[dataframe_t3$vessel_activity_code %in% c(5, 23, 31, 32),
-                                               "activity_id"]))
-  t3buoysdeployed <- length(unique(dataframe_t3[dataframe_t3$vessel_activity_code %in% c(5, 23, 25, 32)
-                                                , "activity_id"]))
-  obsfadsdeployed <- length(unique(dataframe_observe[dataframe_observe$operation_on_object_code %in% c("1") | (dataframe_observe$operation_on_object_code %in% c("8", "9") & dataframe_observe$fob_type_when_arriving != "DFAD"), "activity_id"]))
-  obsbuoysdeployed <- length(unique(dataframe_observe[grepl("3", dataframe_observe$operation_on_buoy_code),
-                                                      "activity_id"]))
   # 1 - MAP
   load(file = system.file("wrld_simpl.RData",
                           package = "fishi"))
-  layout(matrix(c(rep(1, 12), 2, 2, 2, 3), 4, 4, byrow = TRUE))
-  par(mar = c(1.1, 3.1, 4.1, 1.1))
+  layout(matrix(c(rep(1, 12), 2, 2, 2, 3), 4, 4,
+                byrow = TRUE))
+  par(mar = c(1.1, 3.1, 5.1, 1.1))
   maps::map(wrld_simpl,
             main = "",
             resolution = 0.1,
