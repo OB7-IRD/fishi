@@ -48,7 +48,6 @@ data_availability <- function(dataframe_observe,
     dataframe_vms <- dataframe_vms[dataframe_vms$longitude > 25, ]
   }
   # 3 - Graphic design ----
-  graphics::par(mar = c(5.1, 4.1, 4.1, 4.1))
   if (graph_type == "plot") {
     graphics::par(mar = c(6.1, 10.1, 4.1, 2.1))
     graphics::plot(NA,
@@ -114,7 +113,9 @@ data_availability <- function(dataframe_observe,
                       pt.cex = c(0.5, 0.5, 0.5),
                       bg = "white")
   } else if (graph_type == "table") {
-    data_availability <-  plyr::ddply(dataframe_vms, plyr::.(vesselname), summarise, n = length(unique(id)))
+    data_availability <-  dataframe_vms %>%
+      dplyr::group_by(vesselname) %>%
+      dplyr::summarise(n = dplyr::n_distinct(id))
     as.data.frame(data_availability)
   }
 }
