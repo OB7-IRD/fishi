@@ -11,7 +11,7 @@
 #' @export
 #' @importFrom codama r_type_checking
 #' @importFrom graphics par plot axis lines abline legend text
-#' @importFrom plyr . ddply
+#' @importFrom dplyr filter mutate group_by summarize n_distinct case_when
 trip_effort <- function(dataframe_observe,
                         dataframe_t3,
                         database = "observe",
@@ -22,6 +22,11 @@ trip_effort <- function(dataframe_observe,
   flag <- NULL
   vessel_activity_code <- NULL
   trip_id <- NULL
+  trip_end_date <- NULL
+  observation_date <- NULL
+  route_id <- NULL
+  observation_time <- NULL
+  observation_timestamp <- NULL
   # 1 - Arguments verification ----
   if (codama::r_type_checking(r_object = database,
                               type = "character",
@@ -46,44 +51,42 @@ trip_effort <- function(dataframe_observe,
   }
   # 2 - Data design ----
   # Observe data
-  dataframe_observe <- subset(dataframe_observe, flag %in% flag)
-  dataframe_observe$year_dbq <- as.numeric(substr(dataframe_observe$trip_end_date, 1, 4))
-  dataframe_observe$year <- as.numeric(substr(dataframe_observe$observation_date, 1, 4))
-  dataframe_observe$quarter <- ceiling(as.numeric(substr(dataframe_observe$observation_date, 6, 7)) / 3)
-  dataframe_observe$month <- as.numeric(substr(dataframe_observe$observation_date, 6, 7))
-  dataframe_observe$route_id <- paste(dataframe_observe$trip_id,
-                                      dataframe_observe$observation_date,
-                                      sep = "#")
-  dataframe_observe$observation_timestamp <- as.POSIXct(paste(dataframe_observe$observation_date,
-                                                              dataframe_observe$observation_time),
-                                                        format = "%Y-%m-%d %H:%M:%S")
-  dataframe_observe$set_order <- NA
-  for (i in unique(dataframe_observe$route_id)) {
-    dataframe_observe[dataframe_observe$route_id == i,
-                      "set_order"] <- order(dataframe_observe[dataframe_observe$route_id == i, ]$observation_timestamp)
-  }
+  dataframe_observe <- dataframe_observe %>%
+    dplyr::filter(flag %in% flag) %>%
+    dplyr::mutate(year_dbq = as.numeric(substr(trip_end_date, 1, 4)),
+                  year = as.numeric(substr(observation_date, 1, 4)),
+                  quarter = ceiling(as.numeric(substr(observation_date, 6, 7)) / 3),
+                  month = as.numeric(substr(observation_date, 6, 7)),
+                  route_id = paste(trip_id,
+                                   observation_date,
+                                   sep = "#"),
+                  observation_timestamp = as.POSIXct(paste(observation_date,
+                                                           observation_time),
+                                                     format = "%Y-%m-%d %H:%M:%S")) %>%
+    dplyr::group_by(route_id) %>%
+    dplyr::mutate(set_order = order(observation_timestamp))
   # T3 data
-  dataframe_t3 <- subset(dataframe_t3, flag %in% flag)
-  dataframe_t3 <- subset(dataframe_t3, vessel_activity_code %in% c(0, 1, 2, 14))
-  dataframe_t3$year <- as.numeric(substr(dataframe_t3$date, 1, 4))
-  dataframe_t3$ocean[dataframe_t3$ocean == "Atlantique"] <- "Atlantic"
-  dataframe_t3$ocean[dataframe_t3$ocean == "Indien"] <- "Indian"
-  dataframe_t3$t3_school_type <- NA
-  dataframe_t3$t3_school_type[dataframe_t3$school_type == "BL"] <- "FSC"
-  dataframe_t3$t3_school_type[dataframe_t3$school_type == "BO"] <- "FAD"
-  dataframe_t3$t3_school_type[dataframe_t3$school_type == "IND"] <- "UNK"
+  dataframe_t3 <- dataframe_t3 %>%
+    dplyr::filter(flag %in% flag) %>%
+    dplyr::filter(vessel_activity_code %in% c(0, 1, 2, 14)) %>%
+    dplyr::mutate(year = as.numeric(substr(date, 1, 4)),
+                  ocean = dplyr::case_when(ocean == "Atlantique" ~ "Atlantic",
+                                           ocean == "Indien" ~ "Indian",
+                                           TRUE ~ NA),
+                  t3_school_type = dplyr::case_when(school_type == "BL" ~ "FSC",
+                                                    school_type == "BO" ~ "FAD",
+                                                    school_type == "IND" ~ "UNK",
+                                                    TRUE ~ NA))
   # 3 - Graphic design ----
   if (database == "observe") {
-    trip_effort_data <-  plyr::ddply(dataframe_observe,
-                                     plyr::.(ocean, reported_year, flag),
-                                     summarise,
-                                     n_trips = length(unique(trip_id)))
+    trip_effort_data <-  dataframe_observe %>%
+      dplyr::group_by(ocean, year, flag) %>%
+      dplyr::summarise(n_trips = dplyr::n_distinct(trip_id))
     as.data.frame(trip_effort_data)
   } else if (database == "t3") {
-    trip_effort_data <- plyr::ddply(dataframe_t3,
-                                    plyr::.(ocean, year, flag),
-                                    summarise,
-                                    n_trips = length(unique(trip_id)))
+    trip_effort_data <- dataframe_t3 %>%
+      dplyr::group_by(ocean, year, flag) %>%
+      dplyr::summarise(n_trips = dplyr::n_distinct(trip_id))
     as.data.frame(trip_effort_data)
   }
 }
