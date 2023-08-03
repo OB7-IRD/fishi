@@ -135,24 +135,23 @@ control_trip <- function(dataframe_observe,
                                           TRUE ~ NA))
   # 3 - Graphic design ----
   if (table == "code_case") {
-    ct_data <- plyr::ddply(controltrips,
-                           plyr::.(code),
-                           dplyr::summarize,
-                           cases = length(unique(common_trip_id)))
+    ct_data <- controltrips %>%
+      dplyr::group_by(code) %>%
+      dplyr::summarize(cases = dplyr::n_distinct(common_trip_id))
   } else if (table == "controltrip") {
     ct_data <- controltrips[controltrips$code > 0, ]
   } else if (table == "vessel_set") {
-    ct_data <- plyr::ddply(controltrips,
-                           plyr::.(vessel),
-                           dplyr::summarize,
-                           t3_n_sets = sum(t3_n_sets,
-                                           na.rm = TRUE),
-                           obs_n_sets = sum(obs_n_sets,
-                                            na.rm = TRUE))
+    ct_data <- controltrips %>%
+      dplyr::group_by(vessel) %>%
+      dplyr::summarize(t3_n_sets = sum(t3_n_sets,
+                                       na.rm = TRUE),
+        obs_n_sets = sum(obs_n_sets,
+                         na.rm = TRUE))
     ct_data$perc_sets_obs <- round(100 * ct_data$obs_n_sets / ct_data$t3_n_sets)
     ct_data <- ct_data[order(ct_data$perc_sets_obs,
                              decreasing = TRUE), ]
   }
+  ct_data <- as.data.frame(ct_data)
   return(ct_data)
   # path to csv
   if (!is.null(path_to_csv)) {

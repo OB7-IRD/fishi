@@ -11,7 +11,7 @@
 #' @export
 #' @importFrom codama r_type_checking
 #' @importFrom graphics par plot axis lines abline legend text
-#' @importFrom plyr . ddply
+#' @importFrom dplyr group_by summarize n_distinct
 data_availability <- function(dataframe_observe,
                               dataframe_t3,
                               dataframe_vms,
