@@ -24,7 +24,6 @@ vessel_number <- function(dataframe,
   date <- NULL
   vessel_id <- NULL
   vessel_number <- NULL
-  vessel_type <- NULL
   # 1 - Arguments verification ----
   if (codama::r_type_checking(r_object = time_step,
                               type = "character",
