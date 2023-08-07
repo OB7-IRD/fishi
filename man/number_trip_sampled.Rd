@@ -6,22 +6,22 @@
 \usage{
 number_trip_sampled(
   dataframe,
+  data_type,
   graph_type = "number",
   reported_year = NULL,
-  selected_country = NULL,
-  title = FALSE
+  country = NULL
 )
 }
 \arguments{
 \item{dataframe}{{\link[base]{data.frame}} expected. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the fishing_activity() function.}
 
+\item{data_type}{{\link[base]{character}} expected. Tunabio or observe.}
+
 \item{graph_type}{{\link[base]{character}} expected. "number" or "table." Number by default.}
 
-\item{reported_year}{{\link[base]{integer}} expected. Write the wanted year of the report}
+\item{reported_year}{{\link[base]{integer}} expected. Year of the report, for tunabio only.}
 
-\item{selected_country}{{\link[base]{integer}} expected. Country code to select the list of boat to count. If NULL give all the vessel for the given year.}
-
-\item{title}{TRUE or FALSE expected. False by default.}
+\item{country}{{\link[base]{integer}} expected. Country code to select the list of boat to count. If NULL give all the vessel for the given year.}
 }
 \value{
 The function return ggplot or table R plot.
