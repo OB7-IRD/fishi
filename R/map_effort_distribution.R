@@ -29,6 +29,7 @@
 #' @importFrom scatterpie geom_scatterpie
 #' @importFrom rnaturalearth ne_countries
 #' @importFrom ggspatial coord_sf
+#' @importFrom grDevices adjustcolor
 map_effort_distribution <- function(dataframe,
                                     graph_type = "plot",
                                     title = FALSE) {
@@ -189,21 +190,23 @@ map_effort_distribution <- function(dataframe,
       # Plot the data
       for (i in c(1:nrow(datafile))) {
         plotrix::floating.pie(long[i],
-                     lat[i],
-                     c(datafile$effort[i]),
-                     radius = ryrel[i],
-                     edges = 100,
-                     col = c("orange"),
-                     border = NA)
+                              lat[i],
+                              c(datafile$effort[i]),
+                              radius = ryrel[i],
+                              edges = 100,
+                              col = adjustcolor("blue",
+                                                alpha.f = 0.45),
+                              border = NA)
       }
-      plotrix::floating.pie(80,
-                   -20,
-                   c(1),
-                   radius = 1,
-                   edges = 100,
-                   col = c("orange"),
-                   border = NA)
-      text(82.5,
+      plotrix::floating.pie(-30,
+                            -20,
+                            c(1),
+                            radius = 1,
+                            edges = 100,
+                            col = adjustcolor("blue",
+                                              alpha.f = 0.45),
+                            border = NA)
+      text(-27,
            -20,
            paste(50,
                  " d",
@@ -254,20 +257,22 @@ map_effort_distribution <- function(dataframe,
       # Plot the data
       for (i in c(1:nrow(datafile))) {
         plotrix::floating.pie(long[i],
-                     lat[i],
-                     c(datafile$effort[i]),
-                     radius = ryrel[i],
-                     edges = 100,
-                     col = c("orange"),
-                     border = NA)
+                              lat[i],
+                              c(datafile$effort[i]),
+                              radius = ryrel[i],
+                              edges = 100,
+                              col = adjustcolor("blue",
+                                                alpha.f = 0.45),
+                              border = NA)
       }
       plotrix::floating.pie(80,
-                   -20,
-                   c(1),
-                   radius = 1,
-                   edges = 100,
-                   col = c("orange"),
-                   border = NA)
+                            -20,
+                            c(1),
+                            radius = 1,
+                            edges = 100,
+                            col = adjustcolor("blue",
+                                              alpha.f = 0.45),
+                            border = NA)
       text(82.5,
            -20,
            paste(50,

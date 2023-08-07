@@ -32,11 +32,32 @@ data_extraction <- function(type,
                             vessel_type_select = NULL,
                             ocean = NULL,
                             csv_output = FALSE) {
-  # 0 - Global variables assignment ---
+  # 0 - Global variables assignment ----
   ocean_id <- NULL
   country_id <- NULL
   vessel_type_id <- NULL
-  # 1 - Function ----
+  # 1 - If NULL ----
+  if (is.null(time_period)) {
+    time_period = as.integer(1981:lubridate::year(Sys.Date()))
+  }
+  if (is.null(country)) {
+    country = as.integer(1:87)
+  }
+  if (is.null(ocean)) {
+    ocean = as.integer(1:6)
+  }
+  if (is.null(vessel_type_select))  {
+    vessel_type = NULL
+  } else  if (vessel_type_select == "vessel_type") {
+    if (is.null(vessel_type)) {
+      vessel_type = as.integer(1:12)
+    }
+  } else if (vessel_type_select == "engin") {
+    if (is.null(vessel_type)) {
+      vessel_type = as.integer(1:6)
+    }
+    }
+  # 2 - Function ----
   if (type == "database") {
     # Choose database
     if (data_connection[[1]] == "balbaya") {
@@ -54,7 +75,17 @@ data_extraction <- function(type,
                                                           sql_name,
                                                           package = "fishi")),
                               collapse = "\n")
-    } else if (data_connection[[1]] == "observe_9a") {
+    } else if (data_connection[[1]] == "observe_test") {
+      extraction_sql <- paste(readLines(con = system.file("sql",
+                                                          sql_name,
+                                                          package = "fishi")),
+                              collapse = "\n")
+    } else if (data_connection[[1]] == "t3_prod") {
+      extraction_sql <- paste(readLines(con = system.file("sql",
+                                                          sql_name,
+                                                          package = "fishi")),
+                              collapse = "\n")
+    } else if (data_connection[[1]] == "vms") {
       extraction_sql <- paste(readLines(con = system.file("sql",
                                                           sql_name,
                                                           package = "fishi")),
@@ -75,6 +106,13 @@ data_extraction <- function(type,
                                                   country     = DBI::SQL(paste(country,
                                                                                collapse = ", ")),
                                                   ocean       = DBI::SQL(paste(ocean,
+                                                                               collapse = ", ")))
+    } else if (data_connection[[1]] == "vms") {
+      extraction_sql_final <- DBI::sqlInterpolate(conn        = data_connection[[2]],
+                                                  sql         = extraction_sql,
+                                                  time_period = DBI::SQL(paste(time_period,
+                                                                               collapse = ", ")),
+                                                  country     = DBI::SQL(paste(country,
                                                                                collapse = ", ")))
     } else {
       # Vessel type select
@@ -109,7 +147,7 @@ data_extraction <- function(type,
                                                                                  collapse = ", ")),
                                                     ocean       = DBI::SQL(paste(ocean,
                                                                                  collapse = ", ")))
-      }  else {
+      } else {
         stop(format(x = Sys.time(),
                     format = "%Y-%m-%d %H:%M:%S"),
              " - Indicator not developed yet for this \"vessel_type_select\" argument.\n",
