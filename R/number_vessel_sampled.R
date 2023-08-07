@@ -2,6 +2,7 @@
 #' @title Vessel sampled
 #' @description Give the number of vessel sampled for a given year.
 #' @param dataframe {\link[base]{data.frame}} expected. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the fishing_activity() function.
+#' @param data_type {\link[base]{character}} expected. Tunabio or observe.
 #' @param graph_type {\link[base]{character}} expected. "number" or "table." Number by default.
 #' @param reported_year {\link[base]{integer}} expected. Write the wanted year of the report
 #' @param selected_country {\link[base]{integer}} expected. Country code to select the list of boat to count. If NULL give all the vessel for the given year.
@@ -17,11 +18,27 @@
 #' @importFrom tidyr pivot_longer
 #' @importFrom codama r_type_checking
 number_vessel_sampled <- function(dataframe,
+                                  data_type,
                                   graph_type = "number",
                                   reported_year = NULL,
                                   selected_country = NULL,
                                   title = FALSE) {
   # 0 - Global variables assignement ----
+  fish_sampling_date <- NULL
+  landing_date <- NULL
+  fish_identifier <- NULL
+  sampling_year <- NULL
+  vessel_code <- NULL
+  vessel_name <- NULL
+  nb_vessel <- NULL
+  country <- NULL
+  boat_code <- NULL
+  fleet <- NULL
+  FLOTTE  <- NULL
+  NOMBAT  <- NULL
+  NUMBAT  <- NULL
+  PAYS  <- NULL
+  STATUT  <- NULL
   # 1 - Arguments verification ----
   if (codama::r_type_checking(r_object = graph_type,
                               type = "character",
@@ -31,138 +48,138 @@ number_vessel_sampled <- function(dataframe,
                                    output = "message"))
   }
   # 2 - Data design ----
-  fish_sampling_date <- NULL
-  landing_date <- NULL
-  fish_identifier <- NULL
-  sampling_year <- NULL
-  vessel_code <- NULL
-  vessel_name <- NULL
-  nb_vessel <- NULL
-  country <- NULL
-  FLOTTE  <- NULL
-  NOMBAT  <- NULL
-  NUMBAT  <- NULL
-  PAYS  <- NULL
-  STATUT  <- NULL
   ## Data import -----
-  tunabio <- vector("list")
-  tunabio[["biology"]] <- readxl::read_excel(path = dataframe,
-                                             sheet = "SPECIMEN",
-                                             col_types = c("text",
-                                                           "text",
-                                                           "text",
-                                                           "text",
-                                                           "date",
-                                                           "text",
-                                                           "text",
-                                                           "text",
-                                                           "text",
-                                                           "text",
-                                                           "numeric",
-                                                           "numeric",
-                                                           "numeric",
-                                                           "numeric",
-                                                           "text",
-                                                           "numeric",
-                                                           "numeric",
-                                                           "numeric",
-                                                           "numeric",
-                                                           "text",
-                                                           "numeric",
-                                                           "numeric",
-                                                           "numeric",
-                                                           "numeric",
-                                                           "text",
-                                                           "numeric",
-                                                           "numeric",
-                                                           "numeric",
-                                                           "numeric",
-                                                           "numeric",
-                                                           "numeric",
-                                                           "text",
-                                                           "text",
-                                                           "text",
-                                                           "numeric",
-                                                           "numeric",
-                                                           "numeric",
-                                                           "numeric",
-                                                           "numeric",
-                                                           "numeric",
-                                                           "numeric",
-                                                           "text",
-                                                           "numeric",
-                                                           "text",
-                                                           "text",
-                                                           "text",
-                                                           "text"),
-                                             na = "na")
+  if (data_type == "tunabio") {
+    tunabio <- vector("list")
+    tunabio[["biology"]] <- readxl::read_excel(path = dataframe,
+                                               sheet = "SPECIMEN",
+                                               col_types = c("text",
+                                                             "text",
+                                                             "text",
+                                                             "text",
+                                                             "date",
+                                                             "text",
+                                                             "text",
+                                                             "text",
+                                                             "text",
+                                                             "text",
+                                                             "numeric",
+                                                             "numeric",
+                                                             "numeric",
+                                                             "numeric",
+                                                             "text",
+                                                             "numeric",
+                                                             "numeric",
+                                                             "numeric",
+                                                             "numeric",
+                                                             "text",
+                                                             "numeric",
+                                                             "numeric",
+                                                             "numeric",
+                                                             "numeric",
+                                                             "text",
+                                                             "numeric",
+                                                             "numeric",
+                                                             "numeric",
+                                                             "numeric",
+                                                             "numeric",
+                                                             "numeric",
+                                                             "text",
+                                                             "text",
+                                                             "text",
+                                                             "numeric",
+                                                             "numeric",
+                                                             "numeric",
+                                                             "numeric",
+                                                             "numeric",
+                                                             "numeric",
+                                                             "numeric",
+                                                             "text",
+                                                             "numeric",
+                                                             "text",
+                                                             "text",
+                                                             "text",
+                                                             "text"),
+                                               na = "na")
 
-  tunabio[["env"]] <- readxl::read_excel(path = dataframe,
-                                         sheet = "ENVIRONMENT",
-                                         col_types = c("text",
-                                                       "text",
-                                                       "text",
-                                                       "text",
-                                                       "text",
-                                                       "text",
-                                                       "text",
-                                                       "text",
-                                                       "text",
-                                                       "text",
-                                                       "text",
-                                                       "date",
-                                                       "date",
-                                                       "date",
-                                                       "date",
-                                                       "numeric",
-                                                       "text",
-                                                       "numeric",
-                                                       "text",
-                                                       "text",
-                                                       "text",
-                                                       "text",
-                                                       "text",
-                                                       "text",
-                                                       "text"),
-                                         na = "na")
-  tunabio[["vessel"]] <- readxl::read_excel("~/Echantillonnage biologique/OI/Tunabio/Tunabio OI 20230619.xlsx",
-                                            sheet = "vessel") %>%
-    dplyr::filter(STATUT == 1) %>%
-    dplyr::select(vessel_name = NOMBAT, boat_code = NUMBAT, country = PAYS, fleet = FLOTTE)
-  ## Data manipulation ----
-  tunabio[["biology"]] <- dplyr::mutate(.data =  tunabio[["biology"]],
-                                        sampling_year = lubridate::year(fish_sampling_date),
-                                        fish_sampling_date = lubridate::date(fish_sampling_date))
-  ## mean fishing date
-  tunabio[["env"]] <- dplyr::mutate(.data = tunabio[["env"]],
-                                    landing_date = lubridate::date(landing_date))
-  ## merge of ENV and BIO data
-  tunabio[["merged"]] <- dplyr::left_join(x = tunabio[["biology"]],
-                                          y = tunabio[["env"]],
-                                          by = "fish_identifier",
-                                          relationship = "many-to-many") %>%
-    dplyr::select(fish_identifier,
-                  fish_sampling_date,
-                  sampling_year,
-                  vessel_code,
-                  vessel_name,
-                  landing_date)
-  ## Data analyze ----
-  if (!is.null(selected_country)) {
-    sampled_vessel_summarize <-  tunabio[["merged"]] %>%
-      dplyr::filter(sampling_year == reported_year) %>%
-      dplyr::group_by(vessel_name) %>%
-      dplyr::summarise(nb_vessel = dplyr::n_distinct(vessel_name)) %>%
-      dplyr::left_join(y = tunabio[["vessel"]], by = dplyr::join_by(vessel_name)) %>%
-      dplyr::select(-nb_vessel) %>%
-      dplyr::filter(country == selected_country)
-  } else if (is.null(selected_country)) {
-    sampled_vessel_summarize <-  tunabio[["merged"]] %>%
-      dplyr::filter(sampling_year == reported_year) %>%
-      dplyr::group_by(vessel_name) %>%
-      dplyr::summarise(nb_vessel = dplyr::n_distinct(vessel_name)) %>%
-      dplyr::left_join(y = tunabio[["vessel"]], by = dplyr::join_by(vessel_name)) %>%
-      dplyr::select(-nb_vessel) %>%
+    tunabio[["env"]] <- readxl::read_excel(path = dataframe,
+                                           sheet = "ENVIRONMENT",
+                                           col_types = c("text",
+                                                         "text",
+                                                         "text",
+                                                         "text",
+                                                         "text",
+                                                         "text",
+                                                         "text",
+                                                         "text",
+                                                         "text",
+                                                         "text",
+                                                         "text",
+                                                         "date",
+                                                         "date",
+                                                         "date",
+                                                         "date",
+                                                         "numeric",
+                                                         "text",
+                                                         "numeric",
+                                                         "text",
+                                                         "text",
+                                                         "text",
+                                                         "text",
+                                                         "text",
+                                                         "text",
+                                                         "text"),
+                                           na = "na")
+    tunabio[["vessel"]] <- readxl::read_excel(path = dataframe,
+                                              sheet = "vessel") %>%
+      dplyr::filter(STATUT == 1) %>%
+      dplyr::select(vessel_name = NOMBAT,
+                    boat_code = NUMBAT,
+                    country = PAYS,
+                    fleet = FLOTTE)
+    ## Data manipulation ----
+    tunabio[["biology"]] <- dplyr::mutate(.data =  tunabio[["biology"]],
+                                          sampling_year = lubridate::year(fish_sampling_date),
+                                          fish_sampling_date = lubridate::date(fish_sampling_date))
+    ## mean fishing date
+    tunabio[["env"]] <- dplyr::mutate(.data = tunabio[["env"]],
+                                      landing_date = lubridate::date(landing_date))
+    ## merge of ENV and BIO data
+    tunabio[["merged"]] <- dplyr::left_join(x = tunabio[["biology"]],
+                                            y = tunabio[["env"]],
+                                            by = "fish_identifier",
+                                            relationship = "many-to-many") %>%
+      dplyr::select(fish_identifier,
+                    fish_sampling_date,
+                    sampling_year,
+                    vessel_code,
+                    vessel_name,
+                    landing_date)
+    ## Data analyze ----
+    if (!is.null(selected_country)) {
+      sampled_vessel_summarize <-  tunabio[["merged"]] %>%
+        dplyr::filter(sampling_year == reported_year) %>%
+        dplyr::group_by(vessel_name) %>%
+        dplyr::summarise(nb_vessel = dplyr::n_distinct(vessel_name)) %>%
+        dplyr::left_join(y = tunabio[["vessel"]], by = dplyr::join_by(vessel_name)) %>%
+        dplyr::select(-nb_vessel) %>%
+        dplyr::filter(country == selected_country)
+    } else if (is.null(selected_country)) {
+      sampled_vessel_summarize <-  tunabio[["merged"]] %>%
+        dplyr::filter(sampling_year == reported_year) %>%
+        dplyr::group_by(vessel_name) %>%
+        dplyr::summarise(nb_vessel = dplyr::n_distinct(vessel_name)) %>%
+        dplyr::left_join(y = tunabio[["vessel"]], by = dplyr::join_by(vessel_name)) %>%
+        dplyr::select(-nb_vessel) %>%
+        dplyr::filter(!is.na(vessel_name))
+    }
+  } else if (data_type == "observe") {
+    sampled_vessel_summarize <- dataframe %>%
+      dplyr::group_by(vessel_name,
+                      boat_code,
+                      country,
+                      fleet) %>%
+      dplyr::summarise(.groups = "drop") %>%
       dplyr::filter(!is.na(vessel_name))
   }
   # 3 - Legend design ----

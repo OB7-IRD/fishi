@@ -6,6 +6,7 @@
 \usage{
 number_vessel_sampled(
   dataframe,
+  data_type,
   graph_type = "number",
   reported_year = NULL,
   selected_country = NULL,
@@ -14,6 +15,8 @@ number_vessel_sampled(
 }
 \arguments{
 \item{dataframe}{{\link[base]{data.frame}} expected. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the fishing_activity() function.}
+
+\item{data_type}{{\link[base]{character}} expected. Tunabio or observe.}
 
 \item{graph_type}{{\link[base]{character}} expected. "number" or "table." Number by default.}
 
