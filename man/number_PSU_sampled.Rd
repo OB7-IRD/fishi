@@ -6,15 +6,17 @@
 \usage{
 number_PSU_sampled(
   dataframe,
+  data_type,
   graph_type = "number",
   reported_year = NULL,
   selected_country = NULL,
-  variable = "trip",
-  title = FALSE
+  variable = "trip"
 )
 }
 \arguments{
 \item{dataframe}{{\link[base]{data.frame}} expected. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the fishing_activity() function.}
+
+\item{data_type}{{\link[base]{character}} expected. Tunabio or observe.}
 
 \item{graph_type}{{\link[base]{character}} expected. "number" or "table." Number by default.}
 
@@ -23,8 +25,6 @@ number_PSU_sampled(
 \item{selected_country}{{\link[base]{integer}} expected. Country code to select the list of boat to count. If NULL give all the vessel for the given year.}
 
 \item{variable}{{\link[base]{character}} expected. Write the variable of the PSU. Can be "trip" or "well". "trip" by default.}
-
-\item{title}{TRUE or FALSE expected. False by default.}
 }
 \value{
 The function return ggplot or table R plot.
