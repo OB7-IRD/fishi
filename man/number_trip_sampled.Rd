@@ -9,7 +9,7 @@ number_trip_sampled(
   data_type,
   graph_type = "number",
   reported_year = NULL,
-  country = NULL
+  selected_country = NULL
 )
 }
 \arguments{
@@ -21,7 +21,7 @@ number_trip_sampled(
 
 \item{reported_year}{{\link[base]{integer}} expected. Year of the report, for tunabio only.}
 
-\item{country}{{\link[base]{integer}} expected. Country code to select the list of boat to count. If NULL give all the vessel for the given year.}
+\item{selected_country}{{\link[base]{integer}} expected. Country code to select the list of boat to count. If NULL give all the vessel for the given year.}
 }
 \value{
 The function return ggplot or table R plot.

@@ -5,7 +5,7 @@
 #' @param data_type {\link[base]{character}} expected. Tunabio or observe.
 #' @param graph_type {\link[base]{character}} expected. "number" or "table." Number by default.
 #' @param reported_year {\link[base]{integer}} expected. Write the wanted year of the report
-#' @param country {\link[base]{integer}} expected. Country code to select the list of boat to count. If NULL give all the vessel for the given year.
+#' @param selected_country {\link[base]{integer}} expected. Country code to select the list of boat to count. If NULL give all the vessel for the given year.
 #' @param variable {\link[base]{character}} expected. Write the variable of the PSU. Can be "trip" or "well". "trip" by default.
 #' @return The function return ggplot or table R plot.
 #' @export
@@ -18,7 +18,7 @@ number_PSU_sampled <- function(dataframe,
                                data_type,
                                graph_type = "number",
                                reported_year = NULL,
-                               country = NULL,
+                               selected_country = NULL,
                                variable = "trip") {
   # 0 - Global variables assignement ----
   STATUT <- NULL
@@ -157,7 +157,7 @@ number_PSU_sampled <- function(dataframe,
                     well_position)
     ## Data analyze ----
     if (variable == "trip") {
-      if (!is.null(country)) {
+      if (!is.null(selected_country)) {
         sampled_PSU_summarize <-  tunabio[["merged"]] %>%
           dplyr::filter(sampling_year == reported_year) %>%
           dplyr::group_by(vessel_name,
@@ -167,8 +167,8 @@ number_PSU_sampled <- function(dataframe,
           dplyr::left_join(y = tunabio[["vessel"]],
                            by = dplyr::join_by(vessel_name)) %>%
           dplyr::select(-nb_vessel) %>%
-          dplyr::filter(country == country)
-      } else if (is.null(country)) {
+          dplyr::filter(selected_country == country)
+      } else if (is.null(selected_country)) {
         sampled_PSU_summarize <-  tunabio[["merged"]] %>%
           dplyr::filter(sampling_year == reported_year) %>%
           dplyr::group_by(vessel_name,
@@ -181,7 +181,7 @@ number_PSU_sampled <- function(dataframe,
           dplyr::filter(!is.na(vessel_name))
       }
     } else if (variable == "well") {
-      if (!is.null(country)) {
+      if (!is.null(selected_country)) {
         sampled_PSU_summarize <-  tunabio[["merged"]] %>%
           dplyr::filter(sampling_year == reported_year) %>%
           tidyr::separate_longer_delim(cols = c("vessel_well_number",
@@ -196,9 +196,9 @@ number_PSU_sampled <- function(dataframe,
           dplyr::left_join(y = tunabio[["vessel"]],
                            by = dplyr::join_by(vessel_name)) %>%
           dplyr::select(-nb_vessel) %>%
-          dplyr::filter(country == country)
+          dplyr::filter(selected_country == country)
 
-      } else if (is.null(country)) {
+      } else if (is.null(selected_country)) {
         sampled_PSU_summarize <-  tunabio[["merged"]] %>%
           dplyr::filter(sampling_year == reported_year) %>%
           tidyr::separate_longer_delim(cols = c("vessel_well_number",
