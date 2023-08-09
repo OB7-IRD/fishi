@@ -4,6 +4,7 @@ SELECT
 	,sm.length 
 	,sx.code AS sex
 	,sp.faocode as species_code_fao
+	,sm.count 
 FROM ps_observation.route r
 	INNER JOIN ps_common.trip t ON r.trip = t.topiaid
 	INNER JOIN common.ocean o ON t.ocean = o.topiaid

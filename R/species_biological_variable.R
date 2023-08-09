@@ -8,7 +8,7 @@
 #' @return The function return ggplot or table R plot.
 #' @export
 #' @importFrom readxl read_excel
-#' @importFrom dplyr mutate filter group_by summarise full_join n
+#' @importFrom dplyr mutate filter group_by summarise full_join n reframe
 #' @importFrom lubridate year
 #' @importFrom graphics par plot axis lines abline legend text
 #' @importFrom ggplot2 ggplot aes geom_bar labs theme_light geom_text
@@ -31,6 +31,7 @@ species_biological_variable <- function(dataframe,
   variable <- NULL
   number <- NULL
   weight <- NULL
+  count <- NULL
   # 1 - Arguments verification ----
   if (codama::r_type_checking(r_object = graph_type,
                               type = "character",
@@ -139,18 +140,21 @@ species_biological_variable <- function(dataframe,
     sampled_length_summarize <- dataframe %>%
       dplyr::filter(!is.na(length)) %>%
       dplyr::group_by(species_code_fao) %>%
-      dplyr::summarise(length = dplyr::n())
+      dplyr::reframe(length = sum(count,
+                                  na.rm = TRUE))
     #### Weight
     sampled_weight_summarize <- dataframe %>%
       dplyr::filter(!is.na(weight)) %>%
       dplyr::group_by(species_code_fao) %>%
-      dplyr::summarise(weight = dplyr::n())
+      dplyr::reframe(weight = sum(count,
+                                  na.rm = TRUE))
     #### Maturity
     sampled_sex_summarize <- dataframe %>%
       dplyr::filter(!(sex %in% c(0, 3, 4))) %>%
       dplyr::filter(!is.na(sex)) %>%
       dplyr::group_by(species_code_fao) %>%
-      dplyr::summarise(sex = dplyr::n())
+      dplyr::reframe(sex = sum(count,
+                               na.rm = TRUE))
     #### Table join
     sampled_summarize <- dplyr::full_join(sampled_length_summarize,
                                           sampled_weight_summarize,
