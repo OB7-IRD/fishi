@@ -9,7 +9,7 @@ number_PSU_sampled(
   data_type,
   graph_type = "number",
   reported_year = NULL,
-  selected_country = NULL,
+  country = NULL,
   variable = "trip"
 )
 }
@@ -22,7 +22,7 @@ number_PSU_sampled(
 
 \item{reported_year}{{\link[base]{integer}} expected. Write the wanted year of the report}
 
-\item{selected_country}{{\link[base]{integer}} expected. Country code to select the list of boat to count. If NULL give all the vessel for the given year.}
+\item{country}{{\link[base]{integer}} expected. Country code to select the list of boat to count. If NULL give all the vessel for the given year.}
 
 \item{variable}{{\link[base]{character}} expected. Write the variable of the PSU. Can be "trip" or "well". "trip" by default.}
 }

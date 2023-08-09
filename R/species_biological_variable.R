@@ -3,9 +3,8 @@
 #' @description Give the number of each biological variable sampled for a given year.
 #' @param dataframe {\link[base]{data.frame}} expected. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the fishing_activity() function.
 #' @param data_type {\link[base]{character}} expected. Tunabio or observe.
-#' @param graph_type {\link[base]{character}} expected. plot, plotly or table. Plot by default.
+#' @param graph_type {\link[base]{character}} expected. plot or table. table by default.
 #' @param reported_year {\link[base]{integer}} expected. Write the wanted year of the report
-#' @param title TRUE or FALSE expected. False by default.
 #' @return The function return ggplot or table R plot.
 #' @export
 #' @importFrom readxl read_excel
@@ -18,9 +17,8 @@
 #' @importFrom codama r_type_checking
 species_biological_variable <- function(dataframe,
                                         data_type,
-                                        graph_type = "plot",
-                                        reported_year = NULL,
-                                        title = FALSE) {
+                                        graph_type = "table",
+                                        reported_year = NULL) {
   # 0 - Global variables assignement ----
   fish_sampling_date <- NULL
   sampling_year <- NULL

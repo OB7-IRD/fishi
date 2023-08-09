@@ -7,9 +7,8 @@
 species_biological_variable(
   dataframe,
   data_type,
-  graph_type = "plot",
-  reported_year = NULL,
-  title = FALSE
+  graph_type = "table",
+  reported_year = NULL
 )
 }
 \arguments{
@@ -17,11 +16,9 @@ species_biological_variable(
 
 \item{data_type}{{\link[base]{character}} expected. Tunabio or observe.}
 
-\item{graph_type}{{\link[base]{character}} expected. plot, plotly or table. Plot by default.}
+\item{graph_type}{{\link[base]{character}} expected. plot or table. table by default.}
 
 \item{reported_year}{{\link[base]{integer}} expected. Write the wanted year of the report}
-
-\item{title}{TRUE or FALSE expected. False by default.}
 }
 \value{
 The function return ggplot or table R plot.
