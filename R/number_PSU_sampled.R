@@ -236,10 +236,7 @@ number_PSU_sampled <- function(dataframe,
                           country,
                           fleet) %>%
           dplyr::summarise(.groups = "drop")  %>%
-          dplyr::filter(!is.na(vessel_name)) %>%
-          tidyr::separate(vessel_well_number,
-                          into = c("vessel_well_number", "well_position"),
-                          sep = "(?<=\\d)(?=\\D)")
+          dplyr::filter(!is.na(vessel_name))
       }
     }
   # 3 - Legend design ----

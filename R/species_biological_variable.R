@@ -2,6 +2,7 @@
 #' @title Sampled biological variables
 #' @description Give the number of each biological variable sampled for a given year.
 #' @param dataframe {\link[base]{data.frame}} expected. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the fishing_activity() function.
+#' @param data_type {\link[base]{character}} expected. Tunabio or observe.
 #' @param graph_type {\link[base]{character}} expected. plot, plotly or table. Plot by default.
 #' @param reported_year {\link[base]{integer}} expected. Write the wanted year of the report
 #' @param title TRUE or FALSE expected. False by default.
@@ -16,6 +17,7 @@
 #' @importFrom tidyr pivot_longer
 #' @importFrom codama r_type_checking
 species_biological_variable <- function(dataframe,
+                                        data_type,
                                         graph_type = "plot",
                                         reported_year = NULL,
                                         title = FALSE) {
@@ -30,6 +32,7 @@ species_biological_variable <- function(dataframe,
   macro_maturity_stage <- NULL
   variable <- NULL
   number <- NULL
+  weight <- NULL
   # 1 - Arguments verification ----
   if (codama::r_type_checking(r_object = graph_type,
                               type = "character",
@@ -39,101 +42,132 @@ species_biological_variable <- function(dataframe,
                                    output = "message"))
   }
   # 2 - Data design ----
-  ## Data import -----
-  tunabio <- vector("list")
-  tunabio[["biology"]] <- readxl::read_excel(path = dataframe,
-                                             sheet = "SPECIMEN",
-                                             col_types = c("text",
-                                                           "text",
-                                                           "text",
-                                                           "text",
-                                                           "date",
-                                                           "text",
-                                                           "text",
-                                                           "text",
-                                                           "text",
-                                                           "text",
-                                                           "numeric",
-                                                           "numeric",
-                                                           "numeric",
-                                                           "numeric",
-                                                           "text",
-                                                           "numeric",
-                                                           "numeric",
-                                                           "numeric",
-                                                           "numeric",
-                                                           "text",
-                                                           "numeric",
-                                                           "numeric",
-                                                           "numeric",
-                                                           "numeric",
-                                                           "text",
-                                                           "numeric",
-                                                           "numeric",
-                                                           "numeric",
-                                                           "numeric",
-                                                           "numeric",
-                                                           "numeric",
-                                                           "text",
-                                                           "text",
-                                                           "text",
-                                                           "numeric",
-                                                           "numeric",
-                                                           "numeric",
-                                                           "numeric",
-                                                           "numeric",
-                                                           "numeric",
-                                                           "numeric",
-                                                           "text",
-                                                           "numeric",
-                                                           "text",
-                                                           "text",
-                                                           "text",
-                                                           "text"),
-                                             na = "na")
-  ## Data manipulation ----
-  tunabio[["biology"]] <- dplyr::mutate(.data =  tunabio[["biology"]],
-                                        sampling_year = lubridate::year(fish_sampling_date))
-  ## Data analyze ----
-  #### Length
-  sampled_length_summarize <- tunabio[["biology"]] %>%
-    dplyr::filter(sampling_year == reported_year) %>%
-    dplyr::filter(!is.na(total_length) | !is.na(fork_length)) %>%
-    dplyr::group_by(species_code_fao) %>%
-    dplyr::summarise(length = dplyr::n())
-  #### Weight
-  sampled_weight_summarize <- tunabio[["biology"]] %>%
-    dplyr::filter(sampling_year == reported_year) %>%
-    dplyr::filter(!is.na(whole_fish_weight)) %>%
-    dplyr::group_by(species_code_fao) %>%
-    dplyr::summarise(weight = dplyr::n())
-  #### Sex
-  sampled_sex_summarize <- tunabio[["biology"]] %>%
-    dplyr::filter(sampling_year == reported_year) %>%
-    dplyr::filter(!is.na(sex)) %>%
-    dplyr::group_by(species_code_fao) %>%
-    dplyr::summarise(maturity = dplyr::n())
-  #### Maturity
-  sampled_maturity_summarize <- tunabio[["biology"]] %>%
-    dplyr::filter(sampling_year == reported_year) %>%
-    dplyr::filter(!is.na(macro_maturity_stage)) %>%
-    dplyr::group_by(species_code_fao) %>%
-    dplyr::summarise(sex = dplyr::n())
-  #### Table join
-  sampled_summarize <- dplyr::full_join(sampled_length_summarize,
-                                        sampled_weight_summarize,
-                                        by = "species_code_fao") %>%
-    dplyr::full_join(sampled_sex_summarize,
-                     by = "species_code_fao") %>%
-    dplyr::full_join(sampled_maturity_summarize,
-                     by = "species_code_fao")
-  # 3 - Legend design ----
-  # 4 - Graphic design ----
-  if (graph_type == "plot") {
+  if (data_type == "tunabio") {
+    ## Data import -----
+    tunabio <- vector("list")
+    tunabio[["biology"]] <- readxl::read_excel(path = dataframe,
+                                               sheet = "SPECIMEN",
+                                               col_types = c("text",
+                                                             "text",
+                                                             "text",
+                                                             "text",
+                                                             "date",
+                                                             "text",
+                                                             "text",
+                                                             "text",
+                                                             "text",
+                                                             "text",
+                                                             "numeric",
+                                                             "numeric",
+                                                             "numeric",
+                                                             "numeric",
+                                                             "text",
+                                                             "numeric",
+                                                             "numeric",
+                                                             "numeric",
+                                                             "numeric",
+                                                             "text",
+                                                             "numeric",
+                                                             "numeric",
+                                                             "numeric",
+                                                             "numeric",
+                                                             "text",
+                                                             "numeric",
+                                                             "numeric",
+                                                             "numeric",
+                                                             "numeric",
+                                                             "numeric",
+                                                             "numeric",
+                                                             "text",
+                                                             "text",
+                                                             "text",
+                                                             "numeric",
+                                                             "numeric",
+                                                             "numeric",
+                                                             "numeric",
+                                                             "numeric",
+                                                             "numeric",
+                                                             "numeric",
+                                                             "text",
+                                                             "numeric",
+                                                             "text",
+                                                             "text",
+                                                             "text",
+                                                             "text"),
+                                               na = "na")
+    ## Data manipulation ----
+    tunabio[["biology"]] <- dplyr::mutate(.data =  tunabio[["biology"]],
+                                          sampling_year = lubridate::year(fish_sampling_date))
+    ## Data analyze ----
+    #### Length
+    sampled_length_summarize <- tunabio[["biology"]] %>%
+      dplyr::filter(sampling_year == reported_year) %>%
+      dplyr::filter(!is.na(total_length) | !is.na(fork_length)) %>%
+      dplyr::group_by(species_code_fao) %>%
+      dplyr::summarise(length = dplyr::n())
+    #### Weight
+    sampled_weight_summarize <- tunabio[["biology"]] %>%
+      dplyr::filter(sampling_year == reported_year) %>%
+      dplyr::filter(!is.na(whole_fish_weight)) %>%
+      dplyr::group_by(species_code_fao) %>%
+      dplyr::summarise(weight = dplyr::n())
+    #### Sex
+    sampled_sex_summarize <- tunabio[["biology"]] %>%
+      dplyr::filter(sampling_year == reported_year) %>%
+      dplyr::filter(!is.na(sex)) %>%
+      dplyr::group_by(species_code_fao) %>%
+      dplyr::summarise(maturity = dplyr::n())
+    #### Maturity
+    sampled_maturity_summarize <- tunabio[["biology"]] %>%
+      dplyr::filter(sampling_year == reported_year) %>%
+      dplyr::filter(!is.na(macro_maturity_stage)) %>%
+      dplyr::group_by(species_code_fao) %>%
+      dplyr::summarise(sex = dplyr::n())
+    #### Table join
+    sampled_summarize <- dplyr::full_join(sampled_length_summarize,
+                                          sampled_weight_summarize,
+                                          by = "species_code_fao") %>%
+      dplyr::full_join(sampled_sex_summarize,
+                       by = "species_code_fao") %>%
+      dplyr::full_join(sampled_maturity_summarize,
+                       by = "species_code_fao")
+    #### Table pivot
     sampled_summarize_pivot <- tidyr::pivot_longer(sampled_summarize,
                                                    cols = c(2:5),
                                                    names_to = "variable",
                                                    values_to = "number")
+  } else if (data_type == "observe") {
+    #### Lenght
+    sampled_length_summarize <- dataframe %>%
+      dplyr::filter(!is.na(length)) %>%
+      dplyr::group_by(species_code_fao) %>%
+      dplyr::summarise(length = dplyr::n())
+    #### Weight
+    sampled_weight_summarize <- dataframe %>%
+      dplyr::filter(!is.na(weight)) %>%
+      dplyr::group_by(species_code_fao) %>%
+      dplyr::summarise(weight = dplyr::n())
+    #### Maturity
+    sampled_sex_summarize <- dataframe %>%
+      dplyr::filter(!(sex %in% c(0, 3, 4))) %>%
+      dplyr::filter(!is.na(sex)) %>%
+      dplyr::group_by(species_code_fao) %>%
+      dplyr::summarise(sex = dplyr::n())
+    #### Table join
+    sampled_summarize <- dplyr::full_join(sampled_length_summarize,
+                                          sampled_weight_summarize,
+                                          by = "species_code_fao") %>%
+      dplyr::full_join(sampled_sex_summarize,
+                       by = "species_code_fao")
+    #### Table pivot
+    sampled_summarize_pivot <- tidyr::pivot_longer(sampled_summarize,
+                                                   cols = c(2:4),
+                                                   names_to = "variable",
+                                                   values_to = "number")
+  }
+  # 3 - Legend design ----
+  # 4 - Graphic design ----
+  if (graph_type == "plot") {
     ggplot2::ggplot(data = sampled_summarize_pivot,
                     ggplot2::aes(x = variable,
                                  y = number,

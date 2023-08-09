@@ -6,6 +6,7 @@
 \usage{
 species_biological_variable(
   dataframe,
+  data_type,
   graph_type = "plot",
   reported_year = NULL,
   title = FALSE
@@ -13,6 +14,8 @@ species_biological_variable(
 }
 \arguments{
 \item{dataframe}{{\link[base]{data.frame}} expected. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the fishing_activity() function.}
+
+\item{data_type}{{\link[base]{character}} expected. Tunabio or observe.}
 
 \item{graph_type}{{\link[base]{character}} expected. plot, plotly or table. Plot by default.}
 
