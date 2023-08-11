@@ -54,6 +54,8 @@ fishery_production <- function(dataframe,
   count <- NULL
   specie <- NULL
   time_period <- NULL
+  Catch <- NULL
+  Species <- NULL
   # 1 - Arguments verification ----
   if (codama::r_type_checking(r_object = fishing_type,
                               type = "character",
@@ -243,6 +245,41 @@ fishery_production <- function(dataframe,
                        legend = "(FOB)",
                        cex = 1.3)
     }
+  } else if (graph_type == "ggplot") {
+    table_long <- pivot_longer(table_catch_all,
+                               cols = c("YFT",
+                                        "SKJ",
+                                        "BET"),
+                               names_to = "Species",
+                               values_to = "Catch")
+    ggplot(table_long,
+           aes(x = year,
+               y = Catch / 1000,
+               fill = Species)) +
+      ggplot2::geom_area(position = "stack") +
+      ggplot2::scale_fill_manual(values = c("YFT" = "khaki1",
+                                            "SKJ" = "firebrick2",
+                                            "BET" = "cornflowerblue")) +
+      ggplot2::labs(x = "",
+                    y = "Catch (x1000 t)",
+                    title = "") +
+      ggplot2::ylim(0, max((table_catch_all$total * 1.02) / 1000,
+                           na.rm = TRUE)) +
+      ggplot2::scale_x_continuous(expand = c(0, 0),
+                                  breaks = table_long$year) +
+      ggplot2::scale_y_continuous(expand = c(0, 0)) +
+      ggplot2::theme_bw() +
+      ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 45,
+                                                         hjust = 1,
+                                                         size = 12),
+            legend.position = "top",
+            legend.justification = "right",
+            panel.grid.major = ggplot2::element_blank(),
+            panel.grid.minor.x = ggplot2::element_blank(),
+            panel.grid.major.y = ggplot2::element_line(size = 0.2,
+                                                       color = "gray90")) +
+      ggplot2::labs(fill = NULL)
+
   } else if (graph_type == "plotly") {
     # pivot wider
     table_catch_3 <- table_catch_all %>%
