@@ -75,15 +75,24 @@ fishing_capacity <- function(dataframe,
   # Number of ships per category
   fishing_capacity_t3 <- fishing_capacity_t2 %>%
     dplyr::group_by(year) %>%
-    dplyr::reframe("50-400" = sum(tons >= 50 & tons <= 400, na.rm = TRUE),
-                   "400-600" = sum(tons > 400 & tons <= 600, na.rm = TRUE),
-                   "600-800" = sum(tons > 600 & tons <= 800, na.rm = TRUE),
-                   "800-1200" = sum(tons > 800 & tons <= 1200, na.rm = TRUE),
-                   "1200-2000" = sum(tons > 1200 & tons <= 2000, na.rm = TRUE),
-                   "> 2000" = sum(tons > 2000, na.rm = TRUE),
+    dplyr::reframe("50-400" = sum(tons >= 50 & tons <= 400,
+                                  na.rm = TRUE),
+                   "400-600" = sum(tons > 400 & tons <= 600,
+                                   na.rm = TRUE),
+                   "600-800" = sum(tons > 600 & tons <= 800,
+                                   na.rm = TRUE),
+                   "800-1200" = sum(tons > 800 & tons <= 1200,
+                                    na.rm = TRUE),
+                   "1200-2000" = sum(tons > 1200 & tons <= 2000,
+                                     na.rm = TRUE),
+                   "> 2000" = sum(tons > 2000,
+                                  na.rm = TRUE),
                    "Nb_vessels" = dplyr::n_distinct(c_quille, na.rm = TRUE),
-                   "Nb_vessels_weighted" = sum(c_quille_nb_months / 12, na.rm = TRUE),
-                   "CC" = sum(cc, na.rm = TRUE))
+                   "Nb_vessels_weighted" = round(sum(c_quille_nb_months / 12,
+                                                     na.rm = TRUE),
+                                                 2),
+                   "CC" = round(sum(cc,
+                                    na.rm = TRUE)))
   fishing_capacity_data <- fishing_capacity_t3 %>%
     dplyr::mutate("fishing_capacity" = CC / 1000)
   # Pivot wider for ggplot
