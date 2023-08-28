@@ -1,23 +1,25 @@
 SELECT
-	o.label1 AS ocean,
-	o.code AS ocean_code,
-	p.label1 AS program,
-	v.label1 AS vessel,
-	v.code AS vessel_code,
-	c.iso3code AS flag,
-	v.fleetcountry AS fleet_country,
-	ob.lastname::text AS observer_name,
-	t.startdate::date AS trip_start_date,
-	t.enddate::date AS trip_end_date,
-	r.date::date AS observation_date,
-	a.time AS observation_time,
-	va.label1 AS vessel_activity,
-	va.code AS vessel_activity_code,
-	a.latitude AS latitude,
-	a.longitude AS longitude,
-	(CASE WHEN st.code='0' THEN 'UNK' ELSE (CASE WHEN st.code='1' THEN 'FOB' ELSE (CASE WHEN st.code='2' THEN 'FSC' END) END) END) AS school_type,
-	t.topiaid AS trip_id,
-	s.topiaid AS set_id
+	o.label1 AS ocean
+	,o.code AS ocean_code
+	,p.label1 AS program
+	,v.label1 AS vessel
+	,v.code AS vessel_code
+	,c.iso3code AS flag
+	,v.fleetcountry AS fleet_country
+	,ob.lastname::text AS observer_name
+	,t.startdate::date AS trip_start_date
+	,t.enddate::date AS trip_end_date
+	,r.date::date AS observation_date
+	,a.time AS observation_time
+	,va.label1 AS vessel_activity
+	,va.code AS vessel_activity_code
+	,a.latitude AS latitude
+	,a.longitude AS longitude
+	,(CASE WHEN st.code='0' THEN 'UNK' 
+	ELSE (CASE WHEN st.code='1' THEN 'FOB' 
+	ELSE (CASE WHEN st.code='2' THEN 'FSC' END) END) END) AS school_type
+	,t.topiaid AS trip_id
+	,s.topiaid AS set_id
 
 FROM ps_common.trip t
 	INNER JOIN ps_common.program p ON (t.observationsprogram = p.topiaid)

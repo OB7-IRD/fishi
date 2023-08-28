@@ -1,30 +1,30 @@
 SELECT
-	o.label1 AS ocean,
-	o.code::numeric AS ocean_code,
-	p.label1 AS program,
-	v.label1 AS vessel,
-	v.code::numeric AS vessel_code,
-	vt.code::numeric AS vessel_id,
-	c.code::numeric AS country_code,
-	c.iso3code AS flag,
-	v.fleetcountry AS fleet_country,
-	ob.lastname::text AS observer_name,
-	t.startdate::date AS trip_start_date,
-	t.enddate::date AS trip_end_date,
-	r.date::date AS observation_date,
-	a.time AS observation_time,
-	va.label1 AS vessel_activity,
-	va.code AS vessel_activity_code,
-	a.latitude AS latitude,
-	a.longitude AS longitude,
-	oo.code AS operation_on_object_code,
-	oo.label1 AS operation_on_object,
-	fo.computedwhenarrivingsimplifiedobjecttype AS fob_type_when_arriving,
-	fo.computedwhenleavingsimplifiedobjecttype AS fob_type_when_leaving,
-	STRING_AGG(tbo.code, ';') AS operation_on_buoy_code,
-	STRING_AGG(tbo.label1, ';') AS operation_on_buoy,
-	t.topiaid AS trip_id,
-	a.topiaid AS activity_id
+	o.label1 AS ocean
+	,o.code::numeric AS ocean_code
+	,p.label1 AS program
+	,v.label1 AS vessel
+	,v.code::numeric AS vessel_code
+	,vt.code::numeric AS vessel_id
+	,c.code::numeric AS country_code
+	,c.iso3code AS flag
+	,v.fleetcountry AS fleet_country
+	,ob.lastname::text AS observer_name
+	,t.startdate::date AS trip_start_date
+	,t.enddate::date AS trip_end_date
+	,r.date::date AS observation_date
+	,a.time AS observation_time
+	,va.label1 AS vessel_activity
+	,va.code AS vessel_activity_code
+	,a.latitude AS latitude
+	,a.longitude AS longitude
+	,oo.code AS operation_on_object_code
+	,oo.label1 AS operation_on_object
+	,fo.computedwhenarrivingsimplifiedobjecttype AS fob_type_when_arriving
+	,fo.computedwhenleavingsimplifiedobjecttype AS fob_type_when_leaving
+	,STRING_AGG(tbo.code, ';') AS operation_on_buoy_code
+	,STRING_AGG(tbo.label1, ';') AS operation_on_buoy
+	,t.topiaid AS trip_id
+	,a.topiaid AS activity_id
 
 FROM ps_common.trip t
 	INNER JOIN ps_common.program p ON (t.observationsprogram = p.topiaid)
