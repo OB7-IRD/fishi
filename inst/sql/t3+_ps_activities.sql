@@ -1,22 +1,22 @@
 SELECT
-	ocean.label1 AS ocean,
-	ocean.code AS ocean_id,
-	flgc.codeiso3 AS flag,
-	flgc.code AS country_id,
-	vessel.label1 AS vessel,
-	vessel.code AS vessel_code,
-	vesseltype.code AS vessel_id,
-	latitude AS latitude,
-	longitude AS longitude,
-	route.date AS date,
-	number AS number,
-	vesselactivity.code AS vessel_activity_code,
-	vesselactivity.label1 AS vessel_activity,
-	schooltype.homeid AS school_type,
-	activity.topiaid AS activity_id,
-	trip.topiaid AS trip_id,
-	trip.departuredate AS departure_date,
-	trip.landingdate AS landing_date
+	ocean.label1 AS ocean
+	,ocean.code AS ocean_id
+	,flgc.codeiso3 AS flag
+	,flgc.code AS country_id
+	,vessel.label1 AS vessel
+	,vessel.code AS vessel_code
+	,vesseltype.code AS vessel_id
+	,latitude AS latitude
+	,longitude AS longitude
+	,route.date AS date
+	,number AS number
+	,vesselactivity.code AS vessel_activity_code
+	,vesselactivity.label1 AS vessel_activity
+	,schooltype.homeid AS school_type
+	,activity.topiaid AS activity_id
+	,trip.topiaid AS trip_id
+	,trip.departuredate AS departure_date
+	,trip.landingdate AS landing_date
 
 FROM activity
 	INNER JOIN ocean ON (activity.ocean=ocean.topiaid)

@@ -9,7 +9,7 @@ trip_effort(
   dataframe_t3,
   database = "observe",
   reported_year,
-  flag,
+  flag_selected,
   ocean = "Atlantic"
 )
 }
@@ -22,7 +22,7 @@ trip_effort(
 
 \item{reported_year}{{\link[base]{integer}} expected. Year of the report.}
 
-\item{flag}{{\link[base]{character}} expected. Flag of the country; isocode.}
+\item{flag_selected}{{\link[base]{character}} expected. Flag of the country; isocode.}
 
 \item{ocean}{{\link[base]{character}} expected. Atlantic or Indian. Atlantic by default.}
 }

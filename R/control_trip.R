@@ -102,7 +102,7 @@ control_trip <- function(dataframe_observe,
                                          vessel,
                                          sep = "#"))
   # t3trips
-  t3trips %>%
+  t3trips <- t3trips %>%
     dplyr::select(ocean, vessel, common_trip_id, t3_trip_id, t3_n_sets) %>%
     dplyr::full_join(obstrips %>%
                        dplyr::select(ocean, vessel, common_trip_id, obs_trip_id, obs_n_sets, program),
@@ -139,7 +139,7 @@ control_trip <- function(dataframe_observe,
       dplyr::group_by(code) %>%
       dplyr::summarize(cases = dplyr::n_distinct(common_trip_id))
   } else if (table == "controltrip") {
-    ct_data <- controltrips[controltrips$code > 0, ]
+    ct_data <- controltrips
   } else if (table == "vessel_set") {
     ct_data <- controltrips %>%
       dplyr::group_by(vessel) %>%
