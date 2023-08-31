@@ -29,6 +29,20 @@ data_availability <- function(dataframe_observe,
                                    type = "character",
                                    output = "message"))
   }
+  if (codama::r_type_checking(r_object = reported_year,
+                              type = "integer",
+                              output = "logical") != TRUE) {
+    return(codama::r_type_checking(r_object = reported_year,
+                                   type = "integer",
+                                   output = "message"))
+  }
+  if (codama::r_type_checking(r_object = ocean,
+                              type = "character",
+                              output = "logical") != TRUE) {
+    return(codama::r_type_checking(r_object = ocean,
+                                   type = "character",
+                                   output = "message"))
+  }
   # 2 - Data design ----
   # vessel
   vessel <- as.character(sort(unique(dataframe_t3$vessel)))

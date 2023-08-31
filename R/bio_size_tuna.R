@@ -41,11 +41,25 @@ bio_size_tuna <- function(dataframe,
   all_avg_5_years <- NULL
   all_current_year <- NULL
   # 1 - Arguments verification ----
+  if (codama::r_type_checking(r_object = report_year,
+                              type = "integer",
+                              output = "logical") != TRUE) {
+    return(codama::r_type_checking(r_object = report_year,
+                                   type = "integer",
+                                   output = "message"))
+  }
   if (codama::r_type_checking(r_object = graph_type,
                               type = "character",
                               output = "logical") != TRUE) {
     return(codama::r_type_checking(r_object = graph_type,
                                    type = "character",
+                                   output = "message"))
+  }
+  if (codama::r_type_checking(r_object = title,
+                              type = "logical",
+                              output = "logical") != TRUE) {
+    return(codama::r_type_checking(r_object = title,
+                                   type = "logical",
                                    output = "message"))
   }
   # 2 - Data extraction ----

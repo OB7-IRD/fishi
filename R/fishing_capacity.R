@@ -48,6 +48,20 @@ fishing_capacity <- function(dataframe,
                                    type = "character",
                                    output = "message"))
   }
+  if (codama::r_type_checking(r_object = figure,
+                              type = "character",
+                              output = "logical") != TRUE) {
+    return(codama::r_type_checking(r_object = figure,
+                                   type = "character",
+                                   output = "message"))
+  }
+  if (codama::r_type_checking(r_object = title,
+                              type = "logical",
+                              output = "logical") != TRUE) {
+    return(codama::r_type_checking(r_object = title,
+                                   type = "logical",
+                                   output = "message"))
+  }
   # 2 - Data design ----
   #  Add columns catches in tonnes and catches in tonnes per month
   fishing_capacity_t1 <- dataframe %>%

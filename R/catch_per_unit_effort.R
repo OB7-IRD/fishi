@@ -73,6 +73,13 @@ catch_per_unit_effort <- function(dataframe1,
                                    type = "character",
                                    output = "message"))
   }
+  if (codama::r_type_checking(r_object = title,
+                              type = "logical",
+                              output = "logical") != TRUE) {
+    return(codama::r_type_checking(r_object = title,
+                                   type = "logical",
+                                   output = "message"))
+  }
   # 2 - Data extraction ----
   # 3.a - Data design for FOB----
   #Creation of t0

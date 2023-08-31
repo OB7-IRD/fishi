@@ -53,7 +53,13 @@ bio_weight_tuna <- function(dataframe,
                                    type = "character",
                                    output = "message"))
   }
-
+  if (codama::r_type_checking(r_object = title,
+                              type = "logical",
+                              output = "logical") != TRUE) {
+    return(codama::r_type_checking(r_object = title,
+                                   type = "logical",
+                                   output = "message"))
+  }
   # 2 - Data extraction ----
   # Report_year
   five_previous <- c((report_year - 1):(report_year - 5))

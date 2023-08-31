@@ -51,6 +51,20 @@ fishing_activity <- function(dataframe,
                                    type = "character",
                                    output = "message"))
   }
+  if (codama::r_type_checking(r_object = figure,
+                              type = "character",
+                              output = "logical") != TRUE) {
+    return(codama::r_type_checking(r_object = figure,
+                                   type = "character",
+                                   output = "message"))
+  }
+  if (codama::r_type_checking(r_object = title,
+                              type = "logical",
+                              output = "logical") != TRUE) {
+    return(codama::r_type_checking(r_object = title,
+                                   type = "logical",
+                                   output = "message"))
+  }
   # 2 - Data design ----
   fishing_activity_t1 <- dataframe %>%
     dplyr::mutate(year = lubridate::year(x = activity_date))

@@ -8,7 +8,6 @@ control_trip_map(
   dataframe_observe,
   dataframe_t3,
   dataframe_vms,
-  reported_year,
   trip_i,
   control_dist_vms = FALSE,
   ocean = "Atlantic",
@@ -21,8 +20,6 @@ control_trip_map(
 \item{dataframe_t3}{{\link[base]{data.frame}} expected. Dataframe from the T3 database. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the data_availability() function.}
 
 \item{dataframe_vms}{{\link[base]{data.frame}} expected. Dataframe from the Vms database. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the data_availability() function.}
-
-\item{reported_year}{{\link[base]{integer}} expected. Year of the report.}
 
 \item{trip_i}{{\link[base]{character}} expected. Date + # + vessel name.}
 

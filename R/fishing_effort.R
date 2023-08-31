@@ -63,6 +63,13 @@ fishing_effort <- function(dataframe,
                                    type = "character",
                                    output = "message"))
   }
+  if (codama::r_type_checking(r_object = title,
+                              type = "logical",
+                              output = "logical") != TRUE) {
+    return(codama::r_type_checking(r_object = title,
+                                   type = "logical",
+                                   output = "message"))
+  }
   # 2 - Data design ----
   #Adding columns years
   fishing_effort_t1 <- dataframe %>%

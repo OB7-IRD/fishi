@@ -65,6 +65,13 @@ map_catch_distribution <- function(dataframe,
                                    type = "integer",
                                    output = "message"))
   }
+  if (codama::r_type_checking(r_object = title,
+                              type = "logical",
+                              output = "logical") != TRUE) {
+    return(codama::r_type_checking(r_object = title,
+                                   type = "logical",
+                                   output = "message"))
+  }
   # 2 - Data design ----
   # time period and ocean
   dataframe <- dataframe %>%

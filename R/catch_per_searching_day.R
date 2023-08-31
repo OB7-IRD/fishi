@@ -72,6 +72,13 @@ catch_per_searching_day <- function(dataframe1,
                                    type = "character",
                                    output = "message"))
   }
+  if (codama::r_type_checking(r_object = title,
+                              type = "logical",
+                              output = "logical") != TRUE) {
+    return(codama::r_type_checking(r_object = title,
+                                   type = "logical",
+                                   output = "message"))
+  }
   # 2 - Data extraction ---
   # 2 - Data design ----
   # Creation of t0 database from dataframe2

@@ -71,6 +71,13 @@ fishery_production <- function(dataframe,
                                    type = "character",
                                    output = "message"))
   }
+  if (codama::r_type_checking(r_object = title,
+                              type = "logical",
+                              output = "logical") != TRUE) {
+    return(codama::r_type_checking(r_object = title,
+                                   type = "logical",
+                                   output = "message"))
+  }
   # 2 - Data design ----
   # Add columns year, school type and species
   fishery_production_t1 <- dataframe %>%
@@ -279,7 +286,6 @@ fishery_production <- function(dataframe,
             panel.grid.major.y = ggplot2::element_line(size = 0.2,
                                                        color = "gray90")) +
       ggplot2::labs(fill = NULL)
-
   } else if (graph_type == "plotly") {
     # pivot wider
     table_catch_3 <- table_catch_all %>%
