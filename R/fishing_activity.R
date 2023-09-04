@@ -6,7 +6,7 @@
 #' @param figure {\link[base]{character}} expected. For plotly figure: set (for number of sets graph) or log (for percentage FOB-associated sets graph). set by default.
 #' @param title TRUE or FALSE expected. False by default.
 #' @details
-#' The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Referentials.html}{see referentials}]:
+#' The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:
 #' \itemize{
 #'  \item{\code{  - activity_date}}
 #'  \item{\code{  - c_tban}}
@@ -49,6 +49,20 @@ fishing_activity <- function(dataframe,
                               output = "logical") != TRUE) {
     return(codama::r_type_checking(r_object = graph_type,
                                    type = "character",
+                                   output = "message"))
+  }
+  if (codama::r_type_checking(r_object = figure,
+                              type = "character",
+                              output = "logical") != TRUE) {
+    return(codama::r_type_checking(r_object = figure,
+                                   type = "character",
+                                   output = "message"))
+  }
+  if (codama::r_type_checking(r_object = title,
+                              type = "logical",
+                              output = "logical") != TRUE) {
+    return(codama::r_type_checking(r_object = title,
+                                   type = "logical",
                                    output = "message"))
   }
   # 2 - Data design ----

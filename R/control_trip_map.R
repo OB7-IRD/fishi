@@ -4,7 +4,6 @@
 #' @param dataframe_observe {\link[base]{data.frame}} expected. Dataframe from the Observe database. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the data_availability() function.
 #' @param dataframe_t3 {\link[base]{data.frame}} expected. Dataframe from the T3 database. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the data_availability() function.
 #' @param dataframe_vms {\link[base]{data.frame}} expected. Dataframe from the Vms database. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the data_availability() function.
-#' @param reported_year  {\link[base]{integer}} expected. Year of the report.
 #' @param ocean {\link[base]{character}} expected. Atlantic or Indian Atlantic by default.
 #' @param trip_i {\link[base]{character}} expected. Date + # + vessel name.
 #' @param control_dist_vms TRUE or FALSE. FALSE by default.
@@ -20,7 +19,6 @@
 control_trip_map <- function(dataframe_observe,
                              dataframe_t3,
                              dataframe_vms,
-                             reported_year,
                              trip_i,
                              control_dist_vms = FALSE,
                              ocean = "Atlantic",
@@ -39,6 +37,35 @@ control_trip_map <- function(dataframe_observe,
   observation_time <- NULL
   vessel_activity_code <- NULL
   # 1 - Arguments verification ----
+  if (codama::r_type_checking(r_object = trip_i,
+                              type = "character",
+                              output = "logical") != TRUE) {
+    return(codama::r_type_checking(r_object = trip_i,
+                                   type = "character",
+                                   output = "message"))
+  }
+  if (codama::r_type_checking(r_object = control_dist_vms,
+                              type = "logical",
+                              output = "logical") != TRUE) {
+    return(codama::r_type_checking(r_object = control_dist_vms,
+                                   type = "character",
+                                   output = "message"))
+  }
+  if (codama::r_type_checking(r_object = ocean,
+                              type = "character",
+                              output = "logical") != TRUE) {
+    return(codama::r_type_checking(r_object = ocean,
+                                   type = "character",
+                                   output = "message"))
+  }
+  if ((! is.null(x = path_to_shp))
+      && codama::r_type_checking(r_object = path_to_shp,
+                                 type = "character",
+                                 output = "logical") != TRUE) {
+    return(codama::r_type_checking(r_object = path_to_shp,
+                                   type = "character",
+                                   output = "message"))
+  }
   # 2 - Functions ----
   # My axes
   myaxes <- function(step) {

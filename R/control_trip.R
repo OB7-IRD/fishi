@@ -41,10 +41,39 @@ control_trip <- function(dataframe_observe,
   observation_time <- NULL
   route_id <- NULL
   # 1 - Arguments verification ----
+  if (codama::r_type_checking(r_object = reported_year,
+                              type = "integer",
+                              output = "logical") != TRUE) {
+    return(codama::r_type_checking(r_object = reported_year,
+                                   type = "integer",
+                                   output = "message"))
+  }
+  if (codama::r_type_checking(r_object = flag,
+                              type = "character",
+                              output = "logical") != TRUE) {
+    return(codama::r_type_checking(r_object = flag,
+                                   type = "character",
+                                   output = "message"))
+  }
+  if (codama::r_type_checking(r_object = table,
+                              type = "character",
+                              output = "logical") != TRUE) {
+    return(codama::r_type_checking(r_object = table,
+                                   type = "character",
+                                   output = "message"))
+  }
   if (codama::r_type_checking(r_object = ocean,
                               type = "character",
                               output = "logical") != TRUE) {
     return(codama::r_type_checking(r_object = ocean,
+                                   type = "character",
+                                   output = "message"))
+  }
+  if ((! is.null(x = path_to_csv))
+      && codama::r_type_checking(r_object = path_to_csv,
+                                 type = "character",
+                                 output = "logical") != TRUE) {
+    return(codama::r_type_checking(r_object = path_to_csv,
                                    type = "character",
                                    output = "message"))
   }

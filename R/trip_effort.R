@@ -42,6 +42,13 @@ trip_effort <- function(dataframe_observe,
                                    type = "integer",
                                    output = "integer"))
   }
+  if (codama::r_type_checking(r_object = flag_selected,
+                              type = "character",
+                              output = "logical") != TRUE) {
+    return(codama::r_type_checking(r_object = flag_selected,
+                                   type = "character",
+                                   output = "message"))
+  }
   if (codama::r_type_checking(r_object = ocean,
                               type = "character",
                               output = "logical") != TRUE) {

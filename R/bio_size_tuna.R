@@ -6,7 +6,7 @@
 #' @param graph_type {\link[base]{character}} expected. plot or plotly. Plot by default.
 #' @param title TRUE or FALSE expected. False by default.
 #' @details
-#' The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Referentials.html}{see referentials}]:
+#' The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:
 #' \itemize{
 #'  \item{\code{  - activity_date}}
 #'  \item{\code{  - c_banc}}
@@ -41,11 +41,25 @@ bio_size_tuna <- function(dataframe,
   all_avg_5_years <- NULL
   all_current_year <- NULL
   # 1 - Arguments verification ----
+  if (codama::r_type_checking(r_object = report_year,
+                              type = "integer",
+                              output = "logical") != TRUE) {
+    return(codama::r_type_checking(r_object = report_year,
+                                   type = "integer",
+                                   output = "message"))
+  }
   if (codama::r_type_checking(r_object = graph_type,
                               type = "character",
                               output = "logical") != TRUE) {
     return(codama::r_type_checking(r_object = graph_type,
                                    type = "character",
+                                   output = "message"))
+  }
+  if (codama::r_type_checking(r_object = title,
+                              type = "logical",
+                              output = "logical") != TRUE) {
+    return(codama::r_type_checking(r_object = title,
+                                   type = "logical",
                                    output = "message"))
   }
   # 2 - Data extraction ----

@@ -7,7 +7,7 @@
 #' @param graph_type {\link[base]{character}} expected. plot, plotly, table or percentage. Plot by default.
 #' @param title TRUE or FALSE expected. False by default.
 #' @details
-#' The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Referentials.html}{see referentials}]:
+#' The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:
 #' \itemize{
 #'  \item{\code{  - activity_date}}
 #'  \item{\code{  - c_esp}}
@@ -69,6 +69,13 @@ fishery_production <- function(dataframe,
                               output = "logical") != TRUE) {
     return(codama::r_type_checking(r_object = graph_type,
                                    type = "character",
+                                   output = "message"))
+  }
+  if (codama::r_type_checking(r_object = title,
+                              type = "logical",
+                              output = "logical") != TRUE) {
+    return(codama::r_type_checking(r_object = title,
+                                   type = "logical",
                                    output = "message"))
   }
   # 2 - Data design ----
@@ -279,7 +286,6 @@ fishery_production <- function(dataframe,
             panel.grid.major.y = ggplot2::element_line(size = 0.2,
                                                        color = "gray90")) +
       ggplot2::labs(fill = NULL)
-
   } else if (graph_type == "plotly") {
     # pivot wider
     table_catch_3 <- table_catch_all %>%
