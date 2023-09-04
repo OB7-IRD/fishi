@@ -30,7 +30,7 @@ The function return ggplot R plot.
 Annual number of catch per positive set on FOB-associated and free-swimming schools.
 }
 \details{
-The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Referentials.html}{see referentials}]:
+The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:
 \itemize{
  \item{dataframe 1:}
  \item{\code{  - activity_date}}

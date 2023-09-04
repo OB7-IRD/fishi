@@ -27,7 +27,7 @@ The function return ggplot R plot.
 Spatial distribution of tuna catches.
 }
 \details{
-The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Referentials.html}{see referentials}]:
+The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:
 \itemize{
  \item{\code{  - activity_date}}
  \item{\code{  - c_bat}}

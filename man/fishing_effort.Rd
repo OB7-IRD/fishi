@@ -20,7 +20,7 @@ The function return ggplot R plot.
 Changes in nominal effort over time. Annual total number of fishing and searching days.
 }
 \details{
-The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Referentials.html}{see referentials}]:
+The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:
 \itemize{
  \item{\code{  - activity_date}}
  \item{\code{  - c_bat}}

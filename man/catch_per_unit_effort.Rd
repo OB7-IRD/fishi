@@ -30,7 +30,7 @@ The function return ggplot R plot.
 Annual catch rates (in t per searching day) on FOB- associated and free-swimming tuna schools (FSC).
 }
 \details{
-The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Referentials.html}{see referentials}]:
+The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:
 \itemize{
  \item{dataframe 1:}
  \item{\code{  - activity_date}}
