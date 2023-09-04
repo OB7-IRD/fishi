@@ -27,7 +27,7 @@ The function return ggplot R plot.
 Fishing capacity. Annual changes in the number of purse seiners by tonnage categories (barplots) and total carrying capacity (dashed line with circles).
 }
 \details{
-The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Referentials.html}{see referentials}]:
+The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:
 \itemize{
  \item{\code{  - activity_date}}
  \item{\code{  - catch}}

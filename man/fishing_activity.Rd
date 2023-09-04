@@ -22,7 +22,7 @@ The function return ggplot R plot.
 Fishing operations. Annual number of fishing sets on FOB-associated and free-swimming tuna schools.
 }
 \details{
-The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Referentials.html}{see referentials}]:
+The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:
 \itemize{
  \item{\code{  - activity_date}}
  \item{\code{  - c_tban}}
