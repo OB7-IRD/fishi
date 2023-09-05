@@ -22,18 +22,21 @@ Changes in nominal effort over time. Annual total number of fishing and searchin
 \details{
 The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:
 \itemize{
- \item{\code{  - activity_date}}
- \item{\code{  - c_bat}}
- \item{\code{  - country_id}}
- \item{\code{  - flag}}
- \item{\code{  - fleet}}
- \item{\code{  - l_bat}}
- \item{\code{  - landing_date}}
- \item{\code{  - ocean_id}}
- \item{\code{  - port}}
- \item{\code{  - v_dur_cal}}
- \item{\code{  - vessel_type_id}}
- \item{\code{  - v_tmer}}
- \item{\code{  - v_tpec}}
+ \item{\code{  activity_date}}
+ \item{\code{  c_bat}}
+ \item{\code{  flag}}
+ \item{\code{  fleet}}
+ \item{\code{  l_bat}}
+ \item{\code{  landing_date}}
+ \item{\code{  ocean_id}}
+ \item{\code{  port}}
+ \item{\code{  v_dur_cal}}
+ \item{\code{  vessel_type_id}}
+ \item{\code{  v_tmer}}
+ \item{\code{  v_tpec}}
+}
+Add these columns for an automatic title (optional):
+\itemize{
+ \item{\code{  country_id}}
 }
 }
