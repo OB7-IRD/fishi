@@ -30,16 +30,19 @@ Generates a figure for catches (x 1000 t) of the three main tunas: BET, SKJ and 
 \details{
 The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:
 \itemize{
- \item{\code{  - activity_date}}
- \item{\code{  - c_esp}}
- \item{\code{  - country_id}}
- \item{\code{  - flag}}
- \item{\code{  - fleet}}
- \item{\code{  - gear}}
- \item{\code{  - l4c_tban}}
- \item{\code{  - ocean_id}}
- \item{\code{  - ocean_name}}
- \item{\code{  - vessel_type_id}}
- \item{\code{  - v_poids_capt}}
+ \item{\code{  activity_date}}
+ \item{\code{  c_esp}}
+ \item{\code{  flag}}
+ \item{\code{  fleet}}
+ \item{\code{  gear}}
+ \item{\code{  l4c_tban}}
+ \item{\code{  ocean_name}}
+ \item{\code{  v_poids_capt}}
+}
+Add these columns for an automatic title (optional):
+\itemize{
+ \item{\code{  country_id}}
+ \item{\code{  ocean_id}}
+ \item{\code{  vessel_type_id}}
 }
 }
