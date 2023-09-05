@@ -7,14 +7,17 @@
 #' @details
 #' The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:
 #' \itemize{
-#'  \item{\code{  - activity_date}}
-#'  \item{\code{  - country_id}}
-#'  \item{\code{  - cwp11_act}}
-#'  \item{\code{  - ocean_id}}
-#'  \item{\code{  - vessel_type_id}}
-#'  \item{\code{  - v_nb_calee_pos}}
-#'  \item{\code{  - v_nb_calees}}
-#'  \item{\code{  - v_tpec}}
+#'  \item{\code{  activity_date}}
+#'  \item{\code{  cwp11_act}}
+#'  \item{\code{  v_nb_calee_pos}}
+#'  \item{\code{  v_nb_calees}}
+#'  \item{\code{  v_tpec}}
+#' }
+#' Add these columns for an automatic title (optional):
+#' \itemize{
+#'  \item{\code{  country_id}}
+#'  \item{\code{  ocean_id}}
+#'  \item{\code{  vessel_type_id}}
 #' }
 #' @return The function return ggplot R plot.
 #' @export
@@ -101,20 +104,22 @@ spatial_occupancy <- function(dataframe,
   table_occ <- merge(table_occ, t4, by = "year")
   table_occ[is.na(table_occ)] <- 0
   # 3 - Legend design ----
-  #Ocean
-  ocean_legend <- code_manipulation(data         = dataframe$ocean_id,
-                                    referential  = "ocean",
-                                    manipulation = "legend")
-  #country
-  country_legend <- code_manipulation(data         = dataframe$country_id,
-                                      referential  = "country",
+  if (title == TRUE) {
+    #Ocean
+    ocean_legend <- code_manipulation(data         = dataframe$ocean_id,
+                                      referential  = "ocean",
                                       manipulation = "legend")
-  #vessel
-  vessel_type_legend <- code_manipulation(data         = dataframe$vessel_type_id,
-                                          referential  = "vessel_simple_type",
-                                          manipulation = "legend")
-  # time_period
-  time_period <- c(unique(min(spatial_occupancy_t1$year):max(spatial_occupancy_t1$year)))
+    #country
+    country_legend <- code_manipulation(data         = dataframe$country_id,
+                                        referential  = "country",
+                                        manipulation = "legend")
+    #vessel
+    vessel_type_legend <- code_manipulation(data         = dataframe$vessel_type_id,
+                                            referential  = "vessel_simple_type",
+                                            manipulation = "legend")
+    # time_period
+    time_period <- c(unique(min(spatial_occupancy_t1$year):max(spatial_occupancy_t1$year)))
+  }
   # 4 - Graphic design ----
   if (graph_type == "plot") {
     graphics::par(mar = c(5, 4.7, 4.1, 1.5))
@@ -128,13 +133,15 @@ spatial_occupancy <- function(dataframe,
                      ylab = "Spatial occupancy",
                      cex.axis = 1.4,
                      cex.lab = 1.4,
-                     main = paste0("Changes in the spatial extent of the fishery over time. Annual number of 1 degree squares explored",
+                     cex.main = 1,
+                     main = paste0("Changes in the spatial extent of the fishery over time. Annual number of 1 degree",
                                    "\n",
-                                   "by each vessel of the ",
+                                   "squares explored by each vessel of the ",
                                    country_legend,
                                    " ",
                                    vessel_type_legend,
                                    " fishing fleet during ",
+                                   "\n",
                                    min(time_period),
                                    "-",
                                    max(time_period),
@@ -251,20 +258,21 @@ spatial_occupancy <- function(dataframe,
     # Add a title
     if (title == TRUE) {
       plotly_graph <- plotly_graph %>%
-        plotly::layout(title = list(text = paste0("Changes in the spatial extent of the fishery over time. Annual number of 1-degree squares explored by ",
+        plotly::layout(title = list(text = paste0("Changes in the spatial extent of the fishery over time. Annual number of 1-degree ",
                                                   "\n",
-                                                  "each vessel of the ",
+                                                  "squares explored by each vessel of the ",
                                                   country_legend,
                                                   " ",
                                                   vessel_type_legend,
                                                   " fishing fleet during ",
+                                                  "\n",
                                                   min(time_period),
                                                   "-",
                                                   max(time_period),
                                                   " in the ",
                                                   ocean_legend,
                                                   " ocean."),
-                                    font = list(size = 17)),
+                                    font = list(size = 15)),
                        margin = list(t = 120))
 
     }
