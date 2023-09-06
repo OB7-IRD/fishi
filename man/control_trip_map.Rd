@@ -10,7 +10,6 @@ control_trip_map(
   dataframe_vms,
   trip_i,
   control_dist_vms = FALSE,
-  ocean = "Atlantic",
   path_to_shp = NULL
 )
 }
@@ -25,8 +24,6 @@ control_trip_map(
 
 \item{control_dist_vms}{TRUE or FALSE. FALSE by default.}
 
-\item{ocean}{{\link[base]{character}} expected. Atlantic or Indian Atlantic by default.}
-
 \item{path_to_shp}{{\link[base]{character}} expected. Put a link, if you want to add a shapefile.}
 }
 \value{
@@ -34,4 +31,39 @@ The function return ggplot R plot.
 }
 \description{
 Map of the control, number of sets, number of fads
+}
+\details{
+The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:
+\itemize{
+Dataframe observe:
+ \item{\code{  program}}
+ \item{\code{  vessel}}
+ \item{\code{  observer_name}}
+ \item{\code{  trip_end_date}}
+ \item{\code{  observation_date}}
+ \item{\code{  observation_time}}
+ \item{\code{  vessel_activity_code}}
+ \item{\code{  latitude}}
+ \item{\code{  longitude}}
+ \item{\code{  operation_on_object_code}}
+ \item{\code{  fob_type_when_arriving}}
+ \item{\code{  activity_id}}
+}
+\itemize{
+Dataframe t3:
+ \item{\code{  vessel}}
+ \item{\code{  latitude}}
+ \item{\code{  longitude}}
+ \item{\code{  date}}
+ \item{\code{  number}}
+ \item{\code{  vessel_activity_code}}
+ \item{\code{  activity_id}}
+}\itemize{
+Dataframe vms:
+ \item{\code{  vesselname}}
+ \item{\code{  date}}
+ \item{\code{  time}}
+ \item{\code{  longitude}}
+ \item{\code{  latitude}}
+}
 }

@@ -47,6 +47,7 @@ control_trip <- function(dataframe_observe,
                          ocean = "Atlantic",
                          path_to_csv = NULL) {
   # 0 - Global variables assignement ----
+  flag <- NULL
   vessel_activity_code <- NULL
   t3_trip_id <- NULL
   vessel <- NULL
