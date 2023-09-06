@@ -7,15 +7,18 @@
 #' @details
 #' The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:
 #' \itemize{
-#'  \item{\code{  - activity_date}}
-#'  \item{\code{  - c_bat}}
-#'  \item{\code{  - country_id}}
-#'  \item{\code{  - cwp11_act}}
-#'  \item{\code{  - n_act}}
-#'  \item{\code{  - ocean_id}}
-#'  \item{\code{  - v_dur_cal}}
-#'  \item{\code{  - vessel_type_id}}
-#'  \item{\code{  - v_tpec}}
+#'  \item{\code{  activity_date}}
+#'  \item{\code{  c_bat}}
+#'  \item{\code{  cwp11_act}}
+#'  \item{\code{  n_act}}
+#'  \item{\code{  ocean_id}}
+#'  \item{\code{  v_dur_cal}}
+#'  \item{\code{  v_tpec}}
+#' }
+#' Add these columns for an automatic title (optional):
+#' \itemize{
+#'  \item{\code{  country_id}}
+#'  \item{\code{  vessel_type_id}}
 #' }
 #' @return The function return ggplot R plot.
 #' @export
@@ -102,18 +105,20 @@ map_effort_distribution <- function(dataframe,
   }
   lat <- quad2pos(as.numeric(datafile$cwp11_act + 5 * 1e6))$y
   long <- quad2pos(as.numeric(datafile$cwp11_act + 5 * 1e6))$x
-  #Ocean
-  ocean_legend <- code_manipulation(data         = dataframe$ocean_id,
-                                    referential  = "ocean",
-                                    manipulation = "legend")
-  #vessel
-  vessel_type_legend <- code_manipulation(data         = dataframe$vessel_type_id,
-                                          referential  = "vessel_simple_type",
-                                          manipulation = "legend")
-  #country
-  country_legend <- code_manipulation(data         = dataframe$country_id,
-                                      referential  = "country",
+  if (title == TRUE){
+    #Ocean
+    ocean_legend <- code_manipulation(data         = dataframe$ocean_id,
+                                      referential  = "ocean",
                                       manipulation = "legend")
+    #vessel
+    vessel_type_legend <- code_manipulation(data         = dataframe$vessel_type_id,
+                                            referential  = "vessel_simple_type",
+                                            manipulation = "legend")
+    #country
+    country_legend <- code_manipulation(data         = dataframe$country_id,
+                                        referential  = "country",
+                                        manipulation = "legend")
+  }
   # 4 - Graphic design ----
   if (graph_type == "plot") {
     load(file = system.file("wrld_simpl.RData",
@@ -290,13 +295,14 @@ map_effort_distribution <- function(dataframe,
     if (title == TRUE) {
       title(main = paste0("Spatial distribution of fishing effort (in searching days) of the ",
                           country_legend, " ",
-                          vessel_type_legend, " fishing fleet in ", "\n",
+                          vessel_type_legend,"\n", " fishing fleet in ",
                           ifelse(test = length(x = time_period) != 1,
                                  yes  = paste0(min(time_period), "-", max(time_period)),
                                  no   = time_period),
                           ", in the ",
                           ocean_legend,
-                          " ocean."))
+                          " ocean."),
+            cex.main = 1)
     }
   } else if (graph_type == "plotly") {
     datafile$lat <- quad2pos(as.numeric(datafile$cwp11_act + 5 * 1e6))$y
@@ -338,14 +344,14 @@ map_effort_distribution <- function(dataframe,
       plotly_map <- plotly_map %>%
         plotly::layout(title = list(text = paste0("Spatial distribution of fishing effort (in searching days) of the ",
                                                   country_legend, " ",
-                                                  vessel_type_legend, " fishing fleet in ", "\n",
+                                                  vessel_type_legend, "\n", " fishing fleet in ",
                                                   ifelse(test = length(x = time_period) != 1,
                                                          yes  = paste0(min(time_period), "-", max(time_period)),
                                                          no   = time_period),
                                                   ", in the ",
                                                   ocean_legend,
                                                   " ocean."),
-                                    font = list(size = 17)),
+                                    font = list(size = 15)),
                        margin = list(t = 120))
     }
     # Plot the plotly
