@@ -44,6 +44,7 @@ fishing_capacity <- function(dataframe,
   nb_vessels <- NULL
   CC <- NULL
   time_period <- NULL
+  month <- NULL
   # 1 - Arguments verification ----
   if (codama::r_type_checking(r_object = graph_type,
                               type = "character",
