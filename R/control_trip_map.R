@@ -4,10 +4,43 @@
 #' @param dataframe_observe {\link[base]{data.frame}} expected. Dataframe from the Observe database. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the data_availability() function.
 #' @param dataframe_t3 {\link[base]{data.frame}} expected. Dataframe from the T3 database. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the data_availability() function.
 #' @param dataframe_vms {\link[base]{data.frame}} expected. Dataframe from the Vms database. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the data_availability() function.
-#' @param ocean {\link[base]{character}} expected. Atlantic or Indian Atlantic by default.
 #' @param trip_i {\link[base]{character}} expected. Date + # + vessel name.
 #' @param control_dist_vms TRUE or FALSE. FALSE by default.
 #' @param path_to_shp {\link[base]{character}} expected. Put a link, if you want to add a shapefile.
+#' @details
+#' The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:
+#' \itemize{
+#' Dataframe observe:
+#'  \item{\code{  program}}
+#'  \item{\code{  vessel}}
+#'  \item{\code{  observer_name}}
+#'  \item{\code{  trip_end_date}}
+#'  \item{\code{  observation_date}}
+#'  \item{\code{  observation_time}}
+#'  \item{\code{  vessel_activity_code}}
+#'  \item{\code{  latitude}}
+#'  \item{\code{  longitude}}
+#'  \item{\code{  operation_on_object_code}}
+#'  \item{\code{  fob_type_when_arriving}}
+#'  \item{\code{  activity_id}}
+#' }
+#' \itemize{
+#' Dataframe t3:
+#'  \item{\code{  vessel}}
+#'  \item{\code{  latitude}}
+#'  \item{\code{  longitude}}
+#'  \item{\code{  date}}
+#'  \item{\code{  number}}
+#'  \item{\code{  vessel_activity_code}}
+#'  \item{\code{  activity_id}}
+#' }\itemize{
+#' Dataframe vms:
+#'  \item{\code{  vesselname}}
+#'  \item{\code{  date}}
+#'  \item{\code{  time}}
+#'  \item{\code{  longitude}}
+#'  \item{\code{  latitude}}
+#' }
 #' @return The function return ggplot R plot.
 #' @export
 #' @importFrom codama r_type_checking
@@ -21,7 +54,6 @@ control_trip_map <- function(dataframe_observe,
                              dataframe_vms,
                              trip_i,
                              control_dist_vms = FALSE,
-                             ocean = "Atlantic",
                              path_to_shp = NULL) {
   # 0 - Global variables assignement ----
   vessel <- NULL
@@ -48,13 +80,6 @@ control_trip_map <- function(dataframe_observe,
                               type = "logical",
                               output = "logical") != TRUE) {
     return(codama::r_type_checking(r_object = control_dist_vms,
-                                   type = "character",
-                                   output = "message"))
-  }
-  if (codama::r_type_checking(r_object = ocean,
-                              type = "character",
-                              output = "logical") != TRUE) {
-    return(codama::r_type_checking(r_object = ocean,
                                    type = "character",
                                    output = "message"))
   }

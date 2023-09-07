@@ -9,28 +9,30 @@
 #' @details
 #' The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:
 #' \itemize{
-#'  \item{dataframe 1:}
-#'  \item{\code{  - activity_date}}
-#'  \item{\code{  - c_esp}}
-#'  \item{\code{  - country_id}}
-#'  \item{\code{  - c_tban}}
-#'  \item{\code{  - ocean_id}}
-#'  \item{\code{  - v_dur_cal}}
-#'  \item{\code{  - vessel_type_id}}
-#'  \item{\code{  - v_nb_calee_pos}}
-#'  \item{\code{  - v_nb_calees}}
-#'  \item{\code{  - v_poids_capt}}
-#'  \item{\code{  - v_tpec}}
-#'  \item{dataframe 2:}
-#'  \item{\code{  - activity_date}}
-#'  \item{\code{  - country_id}}
-#'  \item{\code{  - c_tban}}
-#'  \item{\code{  - ocean_id}}
-#'  \item{\code{  - v_dur_cal}}
-#'  \item{\code{  - vessel_type_id}}
-#'  \item{\code{  - v_nb_calee_pos}}
-#'  \item{\code{  - v_nb_calees}}
-#'  \item{\code{  - v_tpec}}
+#'  Dataframe 1:
+#'  \item{\code{  activity_date}}
+#'  \item{\code{  c_esp}}
+#'  \item{\code{  c_tban}}
+#'  \item{\code{  v_dur_cal}}
+#'  \item{\code{  v_nb_calee_pos}}
+#'  \item{\code{  v_nb_calees}}
+#'  \item{\code{  v_poids_capt}}
+#'  \item{\code{  v_tpec}}
+#' }
+#' \itemize{
+#'  Dataframe 2:
+#'  \item{\code{  activity_date}}
+#'  \item{\code{  c_tban}}
+#'  \item{\code{  v_dur_cal}}
+#'  \item{\code{  v_nb_calee_pos}}
+#'  \item{\code{  v_nb_calees}}
+#'  \item{\code{  v_tpec}}
+#' }
+#' Add these columns for an automatic title (optional):
+#' \itemize{
+#'  \item{\code{  country_id}}
+#'  \item{\code{  ocean_id}}
+#'  \item{\code{  vessel_type_id}}
 #' }
 #' @return The function return ggplot R plot.
 #' @export
@@ -149,19 +151,21 @@ catch_per_unit_effort <- function(dataframe1,
                    ALB = (alb / (t_recherche / 12)),
                    total = (total / (t_recherche / 12)))
   # 4 - Legend design ----
-  #Ocean
-  ocean_legend <- code_manipulation(data         = dataframe1$ocean_id,
-                                    referential  = "ocean",
-                                    manipulation = "legend")
-  #country
-  country_legend <- code_manipulation(data         = dataframe1$country_id,
-                                      referential  = "country",
+  if (title == TRUE) {
+    #Ocean
+    ocean_legend <- code_manipulation(data         = dataframe1$ocean_id,
+                                      referential  = "ocean",
                                       manipulation = "legend")
-  #vessel
-  vessel_type_legend <- code_manipulation(data         = dataframe1$vessel_type_id,
-                                          referential  = "vessel_simple_type",
-                                          manipulation = "legend")
-  time_period <- c(unique(min(dataframe1$year):max(dataframe1$year)))
+    #country
+    country_legend <- code_manipulation(data         = dataframe1$country_id,
+                                        referential  = "country",
+                                        manipulation = "legend")
+    #vessel
+    vessel_type_legend <- code_manipulation(data         = dataframe1$vessel_type_id,
+                                            referential  = "vessel_simple_type",
+                                            manipulation = "legend")
+    time_period <- c(unique(min(dataframe1$year):max(dataframe1$year)))
+  }
   # 5 - Graphic design ----
   par(mar = c(4, 4.7, 4.1, 1.5))
   # Define the positions of the x-axis tick marks
@@ -180,6 +184,7 @@ catch_per_unit_effort <- function(dataframe1,
                                                ")")),
                        cex.axis = 1.4,
                        cex.lab = 1.4,
+                       cex.main = 1,
                        main = paste0("Annual catch rates (in t per searching day) of the ",
                                      country_legend,
                                      " ",
@@ -327,9 +332,9 @@ catch_per_unit_effort <- function(dataframe1,
                                                     " ",
                                                     vessel_type_legend,
                                                     " fishing fleet on ",
+                                                    "\n",
                                                     fishing_type,
                                                     " fishing",
-                                                    "\n",
                                                     "mode schools in the ",
                                                     ocean_legend,
                                                     " ocean during ",
@@ -337,7 +342,7 @@ catch_per_unit_effort <- function(dataframe1,
                                                     "-",
                                                     max(time_period),
                                                     "."),
-                                      font = list(size = 17)),
+                                      font = list(size = 15)),
                          margin = list(t = 120))
 
       }
@@ -370,14 +375,15 @@ catch_per_unit_effort <- function(dataframe1,
                                                ")")),
                        cex.axis = 1.4,
                        cex.lab = 1.4,
+                       cex.main = 1,
                        main = paste0("Annual catch rates (in t per searching day) of the ",
                                      country_legend,
                                      " ",
                                      vessel_type_legend,
-                                     " fishing fleet on ",
                                      "\n",
+                                     " fishing fleet on ",
                                      fishing_type,
-                                     " fishing mode schools in the",
+                                     " fishing mode schools in the ",
                                      ocean_legend,
                                      " ocean during ",
                                      min(time_period),
@@ -520,14 +526,14 @@ catch_per_unit_effort <- function(dataframe1,
                                                     fishing_type,
                                                     " fishing",
                                                     "\n",
-                                                    "mode schools in the",
+                                                    "mode schools in the ",
                                                     ocean_legend,
                                                     " ocean during ",
                                                     min(time_period),
                                                     "-",
                                                     max(time_period),
                                                     "."),
-                                      font = list(size = 17)),
+                                      font = list(size = 15)),
                          margin = list(t = 120))
 
       }

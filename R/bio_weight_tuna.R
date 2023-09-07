@@ -8,13 +8,16 @@
 #' @details
 #' The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:
 #' \itemize{
-#'  \item{\code{  - activity_date}}
-#'  \item{\code{  - c_banc}}
-#'  \item{\code{  - c_esp}}
-#'  \item{\code{  - country_id}}
-#'  \item{\code{  - ocean_id}}
-#'  \item{\code{  - size_class}}
-#'  \item{\code{  - v_mensur}}
+#'  \item{\code{  activity_date}}
+#'  \item{\code{  c_banc}}
+#'  \item{\code{  c_esp}}
+#'  \item{\code{  size_class}}
+#'  \item{\code{  v_mensur}}
+#' }
+#' Add these columns for an automatic title (optional):
+#' \itemize{
+#'  \item{\code{  country_id}}
+#'  \item{\code{  ocean_id}}
 #' }
 #' @return The function return ggplot R plot.
 #' @export
@@ -241,14 +244,16 @@ bio_weight_tuna <- function(dataframe,
   table_weight_yft_w <- merge(table_weight_yft_w, t4, by = "size_class")
   table_weight_yft_w <- merge(table_weight_yft_w, t5, by = "size_class")
   # 4 - Legend design ----
-  #Ocean
-  ocean_legend <- code_manipulation(data         = dataframe$ocean_id,
-                                    referential  = "ocean",
-                                    manipulation = "legend")
-  #country
-  country_legend <- code_manipulation(data         = dataframe$country_id,
-                                      referential  = "country",
+  if (title == TRUE) {
+    #Ocean
+    ocean_legend <- code_manipulation(data         = dataframe$ocean_id,
+                                      referential  = "ocean",
                                       manipulation = "legend")
+    #country
+    country_legend <- code_manipulation(data         = dataframe$country_id,
+                                        referential  = "country",
+                                        manipulation = "legend")
+  }
   # 5 - Graphic design ----
   # Function that read the 3 dataframe and print it in a plot
   if (graph_type == "plot") {
@@ -380,8 +385,7 @@ bio_weight_tuna <- function(dataframe,
                    country_legend,
                    " purse seine fleet in ",
                    report_year,
-                   " (solid line) and for an average year representing",
-                   "\n",
+                   " (solid line) \nand for an average year representing",
                    " the period ",
                    min(five_previous),
                    "-",

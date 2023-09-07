@@ -8,7 +8,7 @@ control_trip(
   dataframe_observe,
   dataframe_t3,
   reported_year,
-  flag,
+  flag_selected,
   table = "vessel_set",
   ocean = "Atlantic",
   path_to_csv = NULL
@@ -21,7 +21,7 @@ control_trip(
 
 \item{reported_year}{{\link[base]{integer}} expected. Year of the report.}
 
-\item{flag}{{\link[base]{character}} expected. Flag of the country; isocode.}
+\item{flag_selected}{{\link[base]{character}} expected. Flag of the country; isocode.}
 
 \item{table}{{\link[base]{character}} expected. code_case, controltrip or vessel_set. vessel_set by default.}
 
@@ -34,4 +34,30 @@ The function return ggplot R plot.
 }
 \description{
 Control trip
+}
+\details{
+The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:
+\itemize{
+Dataframe observe:
+ \item{\code{  ocean}}
+ \item{\code{  program}}
+ \item{\code{  vessel}}
+ \item{\code{  trip_end_date}}
+ \item{\code{  observation_date}}
+ \item{\code{  observation_time}}
+ \item{\code{  trip_id}}
+ \item{\code{  set_id}}
+}
+\itemize{
+Dataframe t3:
+ \item{\code{  ocean}}
+ \item{\code{  flag}}
+ \item{\code{  vessel}}
+ \item{\code{  vessel_activity_code}}
+ \item{\code{  school_type}}
+ \item{\code{  activity_id}}
+ \item{\code{  trip_id}}
+ \item{\code{  departure_date}}
+ \item{\code{  landing_date}}
+}
 }

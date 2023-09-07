@@ -8,18 +8,21 @@
 #' @details
 #' The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:
 #' \itemize{
-#'  \item{\code{  - activity_date}}
-#'  \item{\code{  - c_bat}}
-#'  \item{\code{  - c_esp}}
-#'  \item{\code{  - c_ocea}}
-#'  \item{\code{  - country_id}}
-#'  \item{\code{  - c_tban}}
-#'  \item{\code{  - cwp11_act}}
-#'  \item{\code{  - n_act}}
-#'  \item{\code{  - ocean_id}}
-#'  \item{\code{  - vessel_type_id}}
-#'  \item{\code{  - v_nb_calee_pos}}
-#'  \item{\code{  - v_poids_capt}}
+#'  \item{\code{  activity_date}}
+#'  \item{\code{  c_bat}}
+#'  \item{\code{  c_esp}}
+#'  \item{\code{  c_ocea}}
+#'  \item{\code{  c_tban}}
+#'  \item{\code{  cwp11_act}}
+#'  \item{\code{  n_act}}
+#'  \item{\code{  v_nb_calee_pos}}
+#'  \item{\code{  v_poids_capt}}
+#' }
+#' Add these columns for an automatic title (optional):
+#' \itemize{
+#'  \item{\code{  country_id}}
+#'  \item{\code{  ocean_id}}
+#'  \item{\code{  vessel_type_id}}
 #' }
 #' @return The function return ggplot R plot.
 #' @export
@@ -159,18 +162,20 @@ map_catch_distribution <- function(dataframe,
   }
   lat <- quad2pos(as.numeric(datafile$cwp11_act + 5 * 1e6))$y
   long <- quad2pos(as.numeric(datafile$cwp11_act + 5 * 1e6))$x
-  #Ocean
-  ocean_legend <- code_manipulation(data         = dataframe$ocean_id,
-                                    referential  = "ocean",
-                                    manipulation = "legend")
-  #vessel
-  vessel_type_legend <- code_manipulation(data         = dataframe$vessel_type_id,
-                                          referential  = "vessel_simple_type",
-                                          manipulation = "legend")
-  #country
-  country_legend <- code_manipulation(data         = dataframe$country_id,
-                                      referential  = "country",
+  if (title == TRUE) {
+    #Ocean
+    ocean_legend <- code_manipulation(data         = dataframe$ocean_id,
+                                      referential  = "ocean",
                                       manipulation = "legend")
+    #vessel
+    vessel_type_legend <- code_manipulation(data         = dataframe$vessel_type_id,
+                                            referential  = "vessel_simple_type",
+                                            manipulation = "legend")
+    #country
+    country_legend <- code_manipulation(data         = dataframe$country_id,
+                                        referential  = "country",
+                                        manipulation = "legend")
+  }
   # 4 - Graphic design ----
   if (graph_type == "plot") {
     load(file = system.file("wrld_simpl.RData",
@@ -433,7 +438,7 @@ map_catch_distribution <- function(dataframe,
                                                   ", in the ",
                                                   ocean_legend,
                                                   " ocean."),
-                                    font = list(size = 17)),
+                                    font = list(size = 15)),
                        margin = list(t = 120))
     }
     # Plot the plotly

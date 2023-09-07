@@ -9,28 +9,30 @@
 #' @details
 #' The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:
 #' \itemize{
-#'  \item{dataframe 1:}
-#'  \item{\code{  - activity_date}}
-#'  \item{\code{  - c_esp}}
-#'  \item{\code{  - country_id}}
-#'  \item{\code{  - c_tban}}
-#'  \item{\code{  - ocean_id}}
-#'  \item{\code{  - v_dur_cal}}
-#'  \item{\code{  - vessel_type_id}}
-#'  \item{\code{  - v_nb_calee_pos}}
-#'  \item{\code{  - v_nb_calees}}
-#'  \item{\code{  - v_poids_capt}}
-#'  \item{\code{  - v_tpec}}
-#'  \item{dataframe 2:}
-#'  \item{\code{  - activity_date}}
-#'  \item{\code{  - country_id}}
-#'  \item{\code{  - c_tban}}
-#'  \item{\code{  - ocean_id}}
-#'  \item{\code{  - v_dur_cal}}
-#'  \item{\code{  - vessel_type_id}}
-#'  \item{\code{  - v_nb_calee_pos}}
-#'  \item{\code{  - v_nb_calees}}
-#'  \item{\code{  - v_tpec}}
+#' Dataframe 1:
+#'  \item{\code{  activity_date}}
+#'  \item{\code{  c_esp}}
+#'  \item{\code{  c_tban}}
+#'  \item{\code{  v_dur_cal}}
+#'  \item{\code{  v_nb_calee_pos}}
+#'  \item{\code{  v_nb_calees}}
+#'  \item{\code{  v_poids_capt}}
+#'  \item{\code{  v_tpec}}
+#' }
+#' \itemize{
+#' Dataframe 2:
+#'  \item{\code{  activity_date}}
+#'  \item{\code{  c_tban}}
+#'  \item{\code{  v_dur_cal}}
+#'  \item{\code{  v_nb_calee_pos}}
+#'  \item{\code{  v_nb_calees}}
+#'  \item{\code{  v_tpec}}
+#' }
+#' Add these columns for an automatic title (optional):
+#' \itemize{
+#'  \item{\code{  country_id}}
+#'  \item{\code{  ocean_id}}
+#'  \item{\code{  vessel_type_id}}
 #' }
 #' @return The function return ggplot R plot.
 #' @export
@@ -159,19 +161,21 @@ catch_per_searching_day <- function(dataframe1,
                      total = (total / nb_sets_pos))
 
   # 3 - Legend design ----
-  #Ocean
-  ocean_legend <- code_manipulation(data         = dataframe1$ocean_id,
-                                    referential  = "ocean",
-                                    manipulation = "legend")
-  #country
-  country_legend <- code_manipulation(data         = dataframe1$country_id,
-                                      referential  = "country",
+  if (title == TRUE) {
+    #Ocean
+    ocean_legend <- code_manipulation(data         = dataframe1$ocean_id,
+                                      referential  = "ocean",
                                       manipulation = "legend")
-  #vessel
-  vessel_type_legend <- code_manipulation(data         = dataframe1$vessel_type_id,
-                                          referential  = "vessel_simple_type",
-                                          manipulation = "legend")
-  time_period <- c(unique(min(dataframe1$year):max(dataframe1$year)))
+    #country
+    country_legend <- code_manipulation(data         = dataframe1$country_id,
+                                        referential  = "country",
+                                        manipulation = "legend")
+    #vessel
+    vessel_type_legend <- code_manipulation(data         = dataframe1$vessel_type_id,
+                                            referential  = "vessel_simple_type",
+                                            manipulation = "legend")
+    time_period <- c(unique(min(dataframe1$year):max(dataframe1$year)))
+  }
   # 4 - Graphic design ----
   graphics::par(mar = c(4, 4.7, 4.1, 1.5))
   # Define the positions of the x-axis tick marks
@@ -186,6 +190,7 @@ catch_per_searching_day <- function(dataframe1,
                        ylab = "Catch (t) per positive set",
                        cex.axis = 1.4,
                        cex.lab = 1.4,
+                       cex.main = 1,
                        main = paste0("Annual number of catch per positive set on ",
                                      fishing_type,
                                      " fishing mode schools for the ",
@@ -343,7 +348,6 @@ catch_per_searching_day <- function(dataframe1,
                                                    "."),
                                       font = list(size = 17)),
                          margin = list(t = 120))
-
       }
       # Plot the plotly
       plotly_graph %>%
@@ -370,6 +374,7 @@ catch_per_searching_day <- function(dataframe1,
                        ylab = "Catch (t) per positive set",
                        cex.axis = 1.4,
                        cex.lab = 1.4,
+                       cex.main = 1,
                        main = paste0("Annual number of catch per positive set on ",
                                      fishing_type,
                                      " fishing mode schools for the ",

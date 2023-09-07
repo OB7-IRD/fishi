@@ -5,9 +5,34 @@
 #' @param dataframe_t3 {\link[base]{data.frame}} expected. Dataframe from the T3 database. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the control_trip() function.
 #' @param reported_year  {\link[base]{integer}} expected. Year of the report.
 #' @param ocean {\link[base]{character}} expected. Atlantic or Indian. Atlantic by default.
-#' @param flag {\link[base]{character}} expected. Flag of the country; isocode.
+#' @param flag_selected {\link[base]{character}} expected. Flag of the country; isocode.
 #' @param path_to_csv {\link[base]{character}} expected. Path to save the csv file. NULL by default.
 #' @param table {\link[base]{character}} expected. code_case, controltrip or vessel_set. vessel_set by default.
+#' @details
+#' The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:
+#' \itemize{
+#' Dataframe observe:
+#'  \item{\code{  ocean}}
+#'  \item{\code{  program}}
+#'  \item{\code{  vessel}}
+#'  \item{\code{  trip_end_date}}
+#'  \item{\code{  observation_date}}
+#'  \item{\code{  observation_time}}
+#'  \item{\code{  trip_id}}
+#'  \item{\code{  set_id}}
+#' }
+#' \itemize{
+#' Dataframe t3:
+#'  \item{\code{  ocean}}
+#'  \item{\code{  flag}}
+#'  \item{\code{  vessel}}
+#'  \item{\code{  vessel_activity_code}}
+#'  \item{\code{  school_type}}
+#'  \item{\code{  activity_id}}
+#'  \item{\code{  trip_id}}
+#'  \item{\code{  departure_date}}
+#'  \item{\code{  landing_date}}
+#' }
 #' @return The function return ggplot R plot.
 #' @export
 #' @importFrom codama r_type_checking
@@ -17,11 +42,12 @@
 control_trip <- function(dataframe_observe,
                          dataframe_t3,
                          reported_year,
-                         flag,
+                         flag_selected,
                          table = "vessel_set",
                          ocean = "Atlantic",
                          path_to_csv = NULL) {
   # 0 - Global variables assignement ----
+  flag <- NULL
   vessel_activity_code <- NULL
   t3_trip_id <- NULL
   vessel <- NULL
@@ -48,10 +74,10 @@ control_trip <- function(dataframe_observe,
                                    type = "integer",
                                    output = "message"))
   }
-  if (codama::r_type_checking(r_object = flag,
+  if (codama::r_type_checking(r_object = flag_selected,
                               type = "character",
                               output = "logical") != TRUE) {
-    return(codama::r_type_checking(r_object = flag,
+    return(codama::r_type_checking(r_object = flag_selected,
                                    type = "character",
                                    output = "message"))
   }
@@ -78,7 +104,7 @@ control_trip <- function(dataframe_observe,
                                    output = "message"))
   }
   # 2 - Data design ----
-  # Observe data
+  ## Observe data ----
   dataframe_observe <- dataframe_observe %>%
     dplyr::mutate(year_dbq = as.numeric(substr(trip_end_date, 1, 4)),
                   year = as.numeric(substr(observation_date, 1, 4)),
@@ -91,9 +117,9 @@ control_trip <- function(dataframe_observe,
     dplyr::group_by(route_id) %>%
     dplyr::mutate(set_order = dplyr::row_number(),
                   obs_trip_id = trip_id)
-  # T3 data
+  ## T3 data ----
   dataframe_t3 <- dataframe_t3 %>%
-    dplyr::filter(flag %in% flag,
+    dplyr::filter(flag_selected == flag,
                   vessel_activity_code %in% c(0, 1, 2, 14)) %>%
     dplyr::mutate(year = as.numeric(substr(date, 1, 4)),
                   ocean = dplyr::recode(ocean,
@@ -105,8 +131,8 @@ control_trip <- function(dataframe_observe,
                     school_type == "IND" ~ "UNK",
                     TRUE ~ NA),
                   t3_trip_id = trip_id)
-  # Trips
-  #t3trips
+  ## Trips ----
+  ### t3trips ----
   t3trips <- dataframe_t3 %>%
     dplyr::group_by(ocean,
                     t3_trip_id,
@@ -118,7 +144,7 @@ control_trip <- function(dataframe_observe,
     dplyr::mutate(common_trip_id = paste(landing_date,
                                          vessel,
                                          sep = "#"))
-  #obstrips
+  ### obstrips ----
   obstrips <- dataframe_observe %>%
     dplyr::group_by(ocean,
                     obs_trip_id,
@@ -130,7 +156,7 @@ control_trip <- function(dataframe_observe,
     dplyr::mutate(common_trip_id = paste(trip_end_date,
                                          vessel,
                                          sep = "#"))
-  # t3trips
+  ### t3trips ----
   t3trips <- t3trips %>%
     dplyr::select(ocean, vessel, common_trip_id, t3_trip_id, t3_n_sets) %>%
     dplyr::full_join(obstrips %>%
@@ -138,7 +164,7 @@ control_trip <- function(dataframe_observe,
                      by = c("ocean",
                             "common_trip_id",
                             "vessel"))
-  # controltrips
+  ## controltrips ----
   controltrips <- merge(t3trips[, c("ocean",
                                     "vessel",
                                     "common_trip_id",
