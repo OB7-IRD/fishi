@@ -170,7 +170,9 @@ fishing_activity <- function(dataframe,
                                     main = "",
                                     cex.axis = 1.3,
                                     cex.lab = 1.3,
-                                    xaxt = "n")
+                                    xaxt = "n",
+                                    col = c("gray19",
+                                            "lightgrey"))
     }
     graphics::axis(1,
                    at = fig_sets,
@@ -186,10 +188,10 @@ fishing_activity <- function(dataframe,
     graphics::legend("topleft",
                      legend = c("FOB-associated schools",
                                 "Free swimming schools"),
-                     col = c("black",
+                     col = c("gray19",
                              "lightgrey"),
                      bty = "n",
-                     fill = c("black",
+                     fill = c("gray19",
                               "lightgrey"))
     graphics::par(new = TRUE)
     plot(fig_sets,
