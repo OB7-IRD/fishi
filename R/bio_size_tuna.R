@@ -6,22 +6,24 @@
 #' @param graph_type {\link[base]{character}} expected. plot or plotly. Plot by default.
 #' @param title TRUE or FALSE expected. False by default.
 #' @details
-#' The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Referentials.html}{see referentials}]:
+#' The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:
 #' \itemize{
-#'  \item{\code{  - activity_date}}
-#'  \item{\code{  - c_banc}}
-#'  \item{\code{  - c_esp}}
-#'  \item{\code{  - country_id}}
-#'  \item{\code{  - ocean_id}}
-#'  \item{\code{  - size_class}}
-#'  \item{\code{  - v_mensur}}
+#'  \item{\code{  activity_date}}
+#'  \item{\code{  c_banc}}
+#'  \item{\code{  c_esp}}
+#'  \item{\code{  size_class}}
+#'  \item{\code{  v_mensur}}
+#' }
+#' Add these columns for an automatic title (optional):
+#' \itemize{
+#'  \item{\code{  country_id}}
+#'  \item{\code{  ocean_id}}
 #' }
 #' @return The function return ggplot R plot.
 #' @export
 #' @importFrom dplyr tibble group_by summarise filter mutate
 #' @importFrom graphics plot lines legend mtext
 #' @importFrom ggplot2 ggplot aes geom_line labs ylim xlim theme_bw theme element_blank ggtitle
-#' @importFrom ggpubr ggarrange
 #' @importFrom codama r_type_checking
 bio_size_tuna <- function(dataframe,
                           report_year,
@@ -42,11 +44,25 @@ bio_size_tuna <- function(dataframe,
   all_avg_5_years <- NULL
   all_current_year <- NULL
   # 1 - Arguments verification ----
+  if (codama::r_type_checking(r_object = report_year,
+                              type = "integer",
+                              output = "logical") != TRUE) {
+    return(codama::r_type_checking(r_object = report_year,
+                                   type = "integer",
+                                   output = "message"))
+  }
   if (codama::r_type_checking(r_object = graph_type,
                               type = "character",
                               output = "logical") != TRUE) {
     return(codama::r_type_checking(r_object = graph_type,
                                    type = "character",
+                                   output = "message"))
+  }
+  if (codama::r_type_checking(r_object = title,
+                              type = "logical",
+                              output = "logical") != TRUE) {
+    return(codama::r_type_checking(r_object = title,
+                                   type = "logical",
                                    output = "message"))
   }
   # 2 - Data extraction ----
@@ -323,14 +339,16 @@ bio_size_tuna <- function(dataframe,
   table_size_yft_n <- merge(table_size_yft_n, t4, by = "size_class")
   table_size_yft_n <- merge(table_size_yft_n, t5, by = "size_class")
   # 4 - Legend design ----
-  #Ocean
-  ocean_legend <- code_manipulation(data         = dataframe$ocean_id,
-                                    referential  = "ocean",
-                                    manipulation = "legend")
-  #country
-  country_legend <- code_manipulation(data         = dataframe$country_id,
-                                      referential  = "country",
+  if (title == TRUE) {
+    #Ocean
+    ocean_legend <- code_manipulation(data         = dataframe$ocean_id,
+                                      referential  = "ocean",
                                       manipulation = "legend")
+    #country
+    country_legend <- code_manipulation(data         = dataframe$country_id,
+                                        referential  = "country",
+                                        manipulation = "legend")
+  }
   # 5 - Graphic design ----
   # Function that read the 3 dataframe and print it in a plot
   if (graph_type == "plot") {
@@ -459,12 +477,12 @@ bio_size_tuna <- function(dataframe,
     }
     # Title
     if (title == TRUE) {
-      mtext(paste0("Size distribution of major tuna catches (in percentage of the total number of fishes) for the ",
+      mtext(paste0("Size distribution of major tuna catches for the ",
                    country_legend,
                    " purse seine fleet in ",
                    report_year,
-                   "\n",
-                   " (solid line) and for an average year representing the period ",
+                   " (solid line) \nand for an average year ",
+                   "representing the period ",
                    min(five_previous),
                    "-",
                    max(five_previous),
@@ -681,9 +699,7 @@ bio_size_tuna <- function(dataframe,
                     margin = 0.03)
     if (title == TRUE) {
     plotly_size <- plotly_size %>%
-      plotly::layout(title = list(text = paste0("Size distribution of major tuna catches (in percentage of the total number of fishes)",
-                                                "\n",
-                                               " for the ",
+      plotly::layout(title = list(text = paste0("Size distribution of major tuna catches for the ",
                                                country_legend,
                                                " purse seine fleet in ",
                                                report_year,

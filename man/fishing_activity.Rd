@@ -4,14 +4,14 @@
 \alias{fishing_activity}
 \title{Annual number of fishing sets}
 \usage{
-fishing_activity(dataframe, graph_type = "plot", figure = NULL, title = FALSE)
+fishing_activity(dataframe, graph_type = "plot", figure = "set", title = FALSE)
 }
 \arguments{
 \item{dataframe}{{\link[base]{data.frame}} expected. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the fishing_activity() function.}
 
 \item{graph_type}{{\link[base]{character}} expected. plot, plotly or table. Plot by default.}
 
-\item{figure}{{\link[base]{character}} expected. For plotly figure: set (for number of sets graph) or log (for percentage FOB-associated sets graph). NULL by default.}
+\item{figure}{{\link[base]{character}} expected. For plotly figure: set (for number of sets graph) or log (for percentage FOB-associated sets graph). set by default.}
 
 \item{title}{TRUE or FALSE expected. False by default.}
 }
@@ -22,16 +22,19 @@ The function return ggplot R plot.
 Fishing operations. Annual number of fishing sets on FOB-associated and free-swimming tuna schools.
 }
 \details{
-The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Referentials.html}{see referentials}]:
+The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:
 \itemize{
- \item{\code{  - activity_date}}
- \item{\code{  - c_tban}}
- \item{\code{  - country_id}}
- \item{\code{  - ocean_id}}
- \item{\code{  - v_dur_cal}}
- \item{\code{  - vessel_type_id}}
- \item{\code{  - v_nb_calee_pos}}
- \item{\code{  - v_nb_calees}}
- \item{\code{  - v_tpec}}
+ \item{\code{  activity_date}}
+ \item{\code{  c_tban}}
+ \item{\code{  v_dur_cal}}
+ \item{\code{  v_nb_calee_pos}}
+ \item{\code{  v_nb_calees}}
+ \item{\code{  v_tpec}}
+}
+Add these columns for an automatic title (optional):
+\itemize{
+ \item{\code{  country_id}}
+ \item{\code{  ocean_id}}
+ \item{\code{  vessel_type_id}}
 }
 }

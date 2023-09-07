@@ -5,17 +5,20 @@
 #' @param graph_type {\link[base]{character}} expected. plot or plotly. Plot by default.
 #' @param title TRUE or FALSE expected. False by default.
 #' @details
-#' The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Referentials.html}{see referentials}]:
+#' The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:
 #' \itemize{
-#'  \item{\code{  - activity_date}}
-#'  \item{\code{  - c_bat}}
-#'  \item{\code{  - country_id}}
-#'  \item{\code{  - cwp11_act}}
-#'  \item{\code{  - n_act}}
-#'  \item{\code{  - ocean_id}}
-#'  \item{\code{  - v_dur_cal}}
-#'  \item{\code{  - vessel_type_id}}
-#'  \item{\code{  - v_tpec}}
+#'  \item{\code{  activity_date}}
+#'  \item{\code{  c_bat}}
+#'  \item{\code{  cwp11_act}}
+#'  \item{\code{  n_act}}
+#'  \item{\code{  ocean_id}}
+#'  \item{\code{  v_dur_cal}}
+#'  \item{\code{  v_tpec}}
+#' }
+#' Add these columns for an automatic title (optional):
+#' \itemize{
+#'  \item{\code{  country_id}}
+#'  \item{\code{  vessel_type_id}}
 #' }
 #' @return The function return ggplot R plot.
 #' @export
@@ -29,6 +32,7 @@
 #' @importFrom scatterpie geom_scatterpie
 #' @importFrom rnaturalearth ne_countries
 #' @importFrom ggspatial coord_sf
+#' @importFrom grDevices adjustcolor
 map_effort_distribution <- function(dataframe,
                                     graph_type = "plot",
                                     title = FALSE) {
@@ -46,6 +50,13 @@ map_effort_distribution <- function(dataframe,
                               output = "logical") != TRUE) {
     return(codama::r_type_checking(r_object = graph_type,
                                    type = "integer",
+                                   output = "message"))
+  }
+  if (codama::r_type_checking(r_object = title,
+                              type = "logical",
+                              output = "logical") != TRUE) {
+    return(codama::r_type_checking(r_object = title,
+                                   type = "logical",
                                    output = "message"))
   }
   # 2 - Data design ----
@@ -94,18 +105,20 @@ map_effort_distribution <- function(dataframe,
   }
   lat <- quad2pos(as.numeric(datafile$cwp11_act + 5 * 1e6))$y
   long <- quad2pos(as.numeric(datafile$cwp11_act + 5 * 1e6))$x
-  #Ocean
-  ocean_legend <- code_manipulation(data         = dataframe$ocean_id,
-                                    referential  = "ocean",
-                                    manipulation = "legend")
-  #vessel
-  vessel_type_legend <- code_manipulation(data         = dataframe$vessel_type_id,
-                                          referential  = "vessel_simple_type",
-                                          manipulation = "legend")
-  #country
-  country_legend <- code_manipulation(data         = dataframe$country_id,
-                                      referential  = "country",
+  if (title == TRUE){
+    #Ocean
+    ocean_legend <- code_manipulation(data         = dataframe$ocean_id,
+                                      referential  = "ocean",
                                       manipulation = "legend")
+    #vessel
+    vessel_type_legend <- code_manipulation(data         = dataframe$vessel_type_id,
+                                            referential  = "vessel_simple_type",
+                                            manipulation = "legend")
+    #country
+    country_legend <- code_manipulation(data         = dataframe$country_id,
+                                        referential  = "country",
+                                        manipulation = "legend")
+  }
   # 4 - Graphic design ----
   if (graph_type == "plot") {
     load(file = system.file("wrld_simpl.RData",
@@ -189,21 +202,23 @@ map_effort_distribution <- function(dataframe,
       # Plot the data
       for (i in c(1:nrow(datafile))) {
         plotrix::floating.pie(long[i],
-                     lat[i],
-                     c(datafile$effort[i]),
-                     radius = ryrel[i],
-                     edges = 100,
-                     col = c("orange"),
-                     border = NA)
+                              lat[i],
+                              c(datafile$effort[i]),
+                              radius = ryrel[i],
+                              edges = 100,
+                              col = adjustcolor("blue",
+                                                alpha.f = 0.45),
+                              border = NA)
       }
-      plotrix::floating.pie(80,
-                   -20,
-                   c(1),
-                   radius = 1,
-                   edges = 100,
-                   col = c("orange"),
-                   border = NA)
-      text(82.5,
+      plotrix::floating.pie(-30,
+                            -20,
+                            c(1),
+                            radius = 1,
+                            edges = 100,
+                            col = adjustcolor("blue",
+                                              alpha.f = 0.45),
+                            border = NA)
+      text(-27,
            -20,
            paste(50,
                  " d",
@@ -254,20 +269,22 @@ map_effort_distribution <- function(dataframe,
       # Plot the data
       for (i in c(1:nrow(datafile))) {
         plotrix::floating.pie(long[i],
-                     lat[i],
-                     c(datafile$effort[i]),
-                     radius = ryrel[i],
-                     edges = 100,
-                     col = c("orange"),
-                     border = NA)
+                              lat[i],
+                              c(datafile$effort[i]),
+                              radius = ryrel[i],
+                              edges = 100,
+                              col = adjustcolor("blue",
+                                                alpha.f = 0.45),
+                              border = NA)
       }
       plotrix::floating.pie(80,
-                   -20,
-                   c(1),
-                   radius = 1,
-                   edges = 100,
-                   col = c("orange"),
-                   border = NA)
+                            -20,
+                            c(1),
+                            radius = 1,
+                            edges = 100,
+                            col = adjustcolor("blue",
+                                              alpha.f = 0.45),
+                            border = NA)
       text(82.5,
            -20,
            paste(50,
@@ -278,13 +295,14 @@ map_effort_distribution <- function(dataframe,
     if (title == TRUE) {
       title(main = paste0("Spatial distribution of fishing effort (in searching days) of the ",
                           country_legend, " ",
-                          vessel_type_legend, " fishing fleet in ", "\n",
+                          vessel_type_legend,"\n", " fishing fleet in ",
                           ifelse(test = length(x = time_period) != 1,
                                  yes  = paste0(min(time_period), "-", max(time_period)),
                                  no   = time_period),
                           ", in the ",
                           ocean_legend,
-                          " ocean."))
+                          " ocean."),
+            cex.main = 1)
     }
   } else if (graph_type == "plotly") {
     datafile$lat <- quad2pos(as.numeric(datafile$cwp11_act + 5 * 1e6))$y
@@ -326,14 +344,14 @@ map_effort_distribution <- function(dataframe,
       plotly_map <- plotly_map %>%
         plotly::layout(title = list(text = paste0("Spatial distribution of fishing effort (in searching days) of the ",
                                                   country_legend, " ",
-                                                  vessel_type_legend, " fishing fleet in ", "\n",
+                                                  vessel_type_legend, "\n", " fishing fleet in ",
                                                   ifelse(test = length(x = time_period) != 1,
                                                          yes  = paste0(min(time_period), "-", max(time_period)),
                                                          no   = time_period),
                                                   ", in the ",
                                                   ocean_legend,
                                                   " ocean."),
-                                    font = list(size = 17)),
+                                    font = list(size = 15)),
                        margin = list(t = 120))
     }
     # Plot the plotly

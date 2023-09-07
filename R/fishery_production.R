@@ -7,26 +7,29 @@
 #' @param graph_type {\link[base]{character}} expected. plot, plotly, table or percentage. Plot by default.
 #' @param title TRUE or FALSE expected. False by default.
 #' @details
-#' The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Referentials.html}{see referentials}]:
+#' The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:
 #' \itemize{
-#'  \item{\code{  - activity_date}}
-#'  \item{\code{  - c_esp}}
-#'  \item{\code{  - country_id}}
-#'  \item{\code{  - flag}}
-#'  \item{\code{  - fleet}}
-#'  \item{\code{  - gear}}
-#'  \item{\code{  - l4c_tban}}
-#'  \item{\code{  - ocean_id}}
-#'  \item{\code{  - ocean_name}}
-#'  \item{\code{  - vessel_type_id}}
-#'  \item{\code{  - v_poids_capt}}
+#'  \item{\code{  activity_date}}
+#'  \item{\code{  c_esp}}
+#'  \item{\code{  flag}}
+#'  \item{\code{  fleet}}
+#'  \item{\code{  gear}}
+#'  \item{\code{  l4c_tban}}
+#'  \item{\code{  ocean_name}}
+#'  \item{\code{  v_poids_capt}}
+#' }
+#' Add these columns for an automatic title (optional):
+#' \itemize{
+#'  \item{\code{  country_id}}
+#'  \item{\code{  ocean_id}}
+#'  \item{\code{  vessel_type_id}}
 #' }
 #' @return The function return ggplot R plot.
 #' @export
 #' @importFrom dplyr mutate tibble group_by summarise case_when
 #' @importFrom lubridate year
 #' @importFrom plotrix stackpoly
-#' @importFrom ggplot2 ggplot aes geom_area scale_fill_manual scale_y_continuous labs theme_bw
+#' @importFrom ggplot2 ggplot aes geom_area scale_fill_manual scale_y_continuous labs theme_bw ggtitle
 #' @importFrom plotly ggplotly
 #' @importFrom graphics par plot axis lines abline legend
 #' @importFrom tidyr pivot_longer
@@ -54,6 +57,8 @@ fishery_production <- function(dataframe,
   count <- NULL
   specie <- NULL
   time_period <- NULL
+  Catch <- NULL
+  Species <- NULL
   # 1 - Arguments verification ----
   if (codama::r_type_checking(r_object = fishing_type,
                               type = "character",
@@ -67,6 +72,13 @@ fishery_production <- function(dataframe,
                               output = "logical") != TRUE) {
     return(codama::r_type_checking(r_object = graph_type,
                                    type = "character",
+                                   output = "message"))
+  }
+  if (codama::r_type_checking(r_object = title,
+                              type = "logical",
+                              output = "logical") != TRUE) {
+    return(codama::r_type_checking(r_object = title,
+                                   type = "logical",
                                    output = "message"))
   }
   # 2 - Data design ----
@@ -146,20 +158,24 @@ fishery_production <- function(dataframe,
                        .groups = "drop")
   }
   # 3 - Legend design ----
-  #Ocean
-  ocean_legend <- code_manipulation(data         = dataframe$ocean_id,
-                                    referential  = "ocean",
-                                    manipulation = "legend")
-  #country
-  country_legend <- code_manipulation(data         = dataframe$country_id,
-                                      referential  = "country",
+  if (title == TRUE) {
+    #Ocean
+    ocean_legend <- code_manipulation(data         = dataframe$ocean_id,
+                                      referential  = "ocean",
                                       manipulation = "legend")
-  #vessel
-  vessel_type_legend <- code_manipulation(data         = dataframe$vessel_type_id,
-                                          referential  = "vessel_simple_type",
-                                          manipulation = "legend")
-  # time_period
-  time_period <- c(unique(min(fishery_production_t1$year):max(fishery_production_t1$year)))
+    #country
+    country_legend <- code_manipulation(data         = dataframe$country_id,
+                                        referential  = "country",
+                                        manipulation = "legend")
+    #vessel
+    vessel_type_legend <- code_manipulation(data         = dataframe$vessel_type_id,
+                                            referential  = "vessel_simple_type",
+                                            manipulation = "legend")
+    # time_period
+    time_period <- c(unique(min(fishery_production_t1$year):max(fishery_production_t1$year)))
+    # fishing_type
+    fishing_type <- fishing_type
+  }
   # 4 - Graphic design ----
   if (graph_type == "plot") {
     graphics::par(cex.axis = 1.4,
@@ -177,7 +193,7 @@ fishery_production <- function(dataframe,
                          ylab = "Catch (x1000 t)",
                          main = paste0("Fishery production by ",
                                        fishing_type,
-                                       " fishing mode. Catch by species of the ",
+                                       " fishing mode. \nCatch by species of the ",
                                        country_legend,
                                        " ",
                                        vessel_type_legend,
@@ -243,6 +259,58 @@ fishery_production <- function(dataframe,
                        legend = "(FOB)",
                        cex = 1.3)
     }
+  } else if (graph_type == "ggplot") {
+    table_long <- pivot_longer(table_catch_all,
+                               cols = c("YFT",
+                                        "SKJ",
+                                        "BET"),
+                               names_to = "Species",
+                               values_to = "Catch")
+    fishery_ggplot <- ggplot(table_long,
+                             aes(x = year,
+                                 y = Catch / 1000,
+                                 fill = Species)) +
+      ggplot2::geom_area(position = "stack") +
+      ggplot2::scale_fill_manual(values = c("YFT" = "khaki1",
+                                            "SKJ" = "firebrick2",
+                                            "BET" = "cornflowerblue")) +
+      ggplot2::labs(x = "",
+                    y = "Catch (x1000 t)",
+                    title = "") +
+      ggplot2::ylim(0, max((table_catch_all$total * 1.02) / 1000,
+                           na.rm = TRUE)) +
+      ggplot2::scale_x_continuous(expand = c(0, 0),
+                                  breaks = table_long$year) +
+      ggplot2::scale_y_continuous(expand = c(0, 0)) +
+      ggplot2::theme_bw() +
+      ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 45,
+                                                         hjust = 1,
+                                                         size = 12),
+                     legend.position = "top",
+                     legend.justification = "right",
+                     panel.grid.major = ggplot2::element_blank(),
+                     panel.grid.minor.x = ggplot2::element_blank(),
+                     panel.grid.major.y = ggplot2::element_line(size = 0.2,
+                                                                color = "gray90")) +
+      ggplot2::labs(fill = NULL)
+    if (title == TRUE) {
+      fishery_ggplot <- fishery_ggplot + ggplot2::ggtitle(paste0("Fishery production by ",
+                                               fishing_type,
+                                               " fishing mode. \nCatch by species of the ",
+                                               country_legend,
+                                               " ",
+                                               vessel_type_legend,
+                                               " fishing",
+                                               "\n",
+                                               "fleet during ",
+                                               min(time_period),
+                                               "-",
+                                               max(time_period),
+                                               ", in the ",
+                                               ocean_legend,
+                                               " ocean."))
+    }
+    return(fishery_ggplot)
   } else if (graph_type == "plotly") {
     # pivot wider
     table_catch_3 <- table_catch_all %>%
