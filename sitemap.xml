@@ -31,28 +31,13 @@
     <loc>https://ob7-ird.github.io/fishi/reference/biological_UO_count.html</loc>
   </url>
   <url>
-    <loc>https://ob7-ird.github.io/fishi/reference/catch_map.html</loc>
-  </url>
-  <url>
     <loc>https://ob7-ird.github.io/fishi/reference/catch_per_searching_day.html</loc>
   </url>
   <url>
     <loc>https://ob7-ird.github.io/fishi/reference/catch_per_unit_effort.html</loc>
   </url>
   <url>
-    <loc>https://ob7-ird.github.io/fishi/reference/catch_serie.html</loc>
-  </url>
-  <url>
     <loc>https://ob7-ird.github.io/fishi/reference/code_manipulation.html</loc>
-  </url>
-  <url>
-    <loc>https://ob7-ird.github.io/fishi/reference/control_trip.html</loc>
-  </url>
-  <url>
-    <loc>https://ob7-ird.github.io/fishi/reference/control_trip_map.html</loc>
-  </url>
-  <url>
-    <loc>https://ob7-ird.github.io/fishi/reference/data_availability.html</loc>
   </url>
   <url>
     <loc>https://ob7-ird.github.io/fishi/reference/data_extraction.html</loc>
@@ -89,11 +74,5 @@
   </url>
   <url>
     <loc>https://ob7-ird.github.io/fishi/reference/spatial_occupancy.html</loc>
-  </url>
-  <url>
-    <loc>https://ob7-ird.github.io/fishi/reference/trip_effort.html</loc>
-  </url>
-  <url>
-    <loc>https://ob7-ird.github.io/fishi/reference/vessel_number.html</loc>
   </url>
 </urlset>
