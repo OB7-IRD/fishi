@@ -120,6 +120,7 @@ fishing_capacity <- function(dataframe,
                                     values_to = "nb_vessels")
   data_pivot <- data_pivot %>%
     dplyr::mutate(tons = forcats::fct_relevel(tons,
+                                              "> 2000",
                                               "1200-2000",
                                               "800-1200",
                                               "600-800",
