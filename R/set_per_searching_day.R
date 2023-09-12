@@ -6,17 +6,20 @@
 #' @param graph_type {\link[base]{character}} expected. plot, plotly or table. Plot by default.
 #' @param title TRUE or FALSE expected. False by default.
 #' @details
-#' The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Referentials.html}{see referentials}]:
+#' The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:
 #' \itemize{
-#'  \item{\code{  - activity_date}}
-#'  \item{\code{  - country_id}}
-#'  \item{\code{  - c_tban}}
-#'  \item{\code{  - ocean_id}}
-#'  \item{\code{  - v_dur_cal}}
-#'  \item{\code{  - vessel_type_id}}
-#'  \item{\code{  - v_nb_calee_pos}}
-#'  \item{\code{  - v_nb_calees}}
-#'  \item{\code{  - v_tpec}}
+#'  \item{\code{  activity_date}}
+#'  \item{\code{  c_tban}}
+#'  \item{\code{  v_dur_cal}}
+#'  \item{\code{  v_nb_calee_pos}}
+#'  \item{\code{  v_nb_calees}}
+#'  \item{\code{  v_tpec}}
+#' }
+#' Add these columns for an automatic title (optional):
+#' \itemize{
+#'  \item{\code{  country_id}}
+#'  \item{\code{  ocean_id}}
+#'  \item{\code{  vessel_type_id}}
 #' }
 #' @return The function return ggplot R plot.
 #' @export
@@ -55,6 +58,13 @@ set_per_searching_day <- function(dataframe,
                               output = "logical") != TRUE) {
     return(codama::r_type_checking(r_object = graph_type,
                                    type = "character",
+                                   output = "message"))
+  }
+  if (codama::r_type_checking(r_object = title,
+                              type = "logical",
+                              output = "logical") != TRUE) {
+    return(codama::r_type_checking(r_object = title,
+                                   type = "logical",
                                    output = "message"))
   }
   # 2 - Data design ----
@@ -98,20 +108,22 @@ set_per_searching_day <- function(dataframe,
                                             na.rm = TRUE),
                      .groups = "drop")
   # 4 - Legend design ----
-  #Ocean
-  ocean_legend <- code_manipulation(data         = dataframe$ocean_id,
-                                    referential  = "ocean",
-                                    manipulation = "legend")
-  #country
-  country_legend <- code_manipulation(data         = dataframe$country_id,
-                                      referential  = "country",
+  if (title == TRUE) {
+    #Ocean
+    ocean_legend <- code_manipulation(data         = dataframe$ocean_id,
+                                      referential  = "ocean",
                                       manipulation = "legend")
-  #vessel
-  vessel_type_legend <- code_manipulation(data         = dataframe$vessel_type_id,
-                                          referential  = "vessel_simple_type",
-                                          manipulation = "legend")
-  # time_period
-  time_period <- c(unique(min(dataframe$year):max(dataframe$year)))
+    #country
+    country_legend <- code_manipulation(data         = dataframe$country_id,
+                                        referential  = "country",
+                                        manipulation = "legend")
+    #vessel
+    vessel_type_legend <- code_manipulation(data         = dataframe$vessel_type_id,
+                                            referential  = "vessel_simple_type",
+                                            manipulation = "legend")
+    # time_period
+    time_period <- c(unique(min(dataframe$year):max(dataframe$year)))
+  }
   # 5 - Graphic design ----
   graphics::par(mar = c(4,
                         4.7,
@@ -122,18 +134,46 @@ set_per_searching_day <- function(dataframe,
     x_tick_pos <- seq(min(table_cpue_set_per_day$year),
                       max(table_cpue_set_per_day$year))
     if (fishing_type == "FOB") {
-      graphics::plot(table_cpue_set_per_day$year,
-                     table_cpue_set_per_day$sets_per_day_fad,
-                     type = "b",
-                     xlab = "",
-                     ylab = "Number of sets per searching day",
-                     cex.axis = 1.4,
-                     cex.lab = 1.4,
-                     main = "",
-                     ylim = c(0, 1),
-                     las = 1,
-                     xaxt = "n",
-                     pch = 19)
+      if (title == TRUE) {
+        graphics::plot(table_cpue_set_per_day$year,
+                       table_cpue_set_per_day$sets_per_day_fad,
+                       type = "b",
+                       xlab = "",
+                       ylab = "Number of sets per searching day",
+                       cex.axis = 1.4,
+                       cex.lab = 1.4,
+                       cex.main = 1,
+                       main = paste0("Annual number of sets per searching day on ",
+                                     fishing_type,
+                                     " fishing mode schools for the ",
+                                     country_legend,
+                                     "\n",
+                                     vessel_type_legend,
+                                     " fishing fleet in the Atlantic Ocean during ",
+                                     min(time_period),
+                                     "-",
+                                     max(time_period),
+                                     ", in the ",
+                                     ocean_legend,
+                                     " ocean."),
+                       ylim = c(0, 1),
+                       las = 1,
+                       xaxt = "n",
+                       pch = 19)
+      } else {
+        graphics::plot(table_cpue_set_per_day$year,
+                       table_cpue_set_per_day$sets_per_day_fad,
+                       type = "b",
+                       xlab = "",
+                       ylab = "Number of sets per searching day",
+                       cex.axis = 1.4,
+                       cex.lab = 1.4,
+                       main = "",
+                       ylim = c(0, 1),
+                       las = 1,
+                       xaxt = "n",
+                       pch = 19)
+      }
       # Add the x-axis tick marks without labels
       graphics::axis(1,
                      at = x_tick_pos,
@@ -156,19 +196,48 @@ set_per_searching_day <- function(dataframe,
                        bty = "n",
                        cex = 2)
     } else if (fishing_type == "FSC") {
-      graphics::plot(table_cpue_set_per_day$year,
-                     table_cpue_set_per_day$sets_per_day_fsc,
-                     type = "b",
-                     xlab = "",
-                     ylab = "Number of sets per searching day",
-                     cex.axis = 1.4,
-                     cex.lab = 1.4,
-                     main = "",
-                     ylim = c(0,
-                              1),
-                     las = 1,
-                     xaxt = "n",
-                     pch = 19)
+      if (title == TRUE) {
+        graphics::plot(table_cpue_set_per_day$year,
+                       table_cpue_set_per_day$sets_per_day_fsc,
+                       type = "b",
+                       xlab = "",
+                       ylab = "Number of sets per searching day",
+                       cex.axis = 1.4,
+                       cex.lab = 1.4,
+                       cex.main = 1,
+                       main = paste0("Annual number of sets per searching day on ",
+                                     fishing_type,
+                                     " fishing mode schools for the ",
+                                     country_legend,
+                                     "\n",
+                                     vessel_type_legend,
+                                     " fishing fleet in the Atlantic Ocean during ",
+                                     min(time_period),
+                                     "-",
+                                     max(time_period),
+                                     ", in the ",
+                                     ocean_legend,
+                                     " ocean."),
+                       ylim = c(0,
+                                1),
+                       las = 1,
+                       xaxt = "n",
+                       pch = 19)
+      } else {
+        graphics::plot(table_cpue_set_per_day$year,
+                       table_cpue_set_per_day$sets_per_day_fsc,
+                       type = "b",
+                       xlab = "",
+                       ylab = "Number of sets per searching day",
+                       cex.axis = 1.4,
+                       cex.lab = 1.4,
+                       main = "",
+                       ylim = c(0,
+                                1),
+                       las = 1,
+                       xaxt = "n",
+                       pch = 19)
+      }
       # Add the x-axis tick marks without labels
       graphics::axis(1,
                      at = x_tick_pos,
@@ -226,9 +295,8 @@ set_per_searching_day <- function(dataframe,
                                                     ", in the ",
                                                     ocean_legend,
                                                     " ocean."),
-                                      font = list(size = 17)),
+                                      font = list(size = 15)),
                          margin = list(t = 120))
-
       }
       # Plot the plotly
       plotly_graph
@@ -266,7 +334,7 @@ set_per_searching_day <- function(dataframe,
                                                     ", in the ",
                                                     ocean_legend,
                                                     " ocean."),
-                                      font = list(size = 17)),
+                                      font = list(size = 15)),
                          margin = list(t = 120))
 
       }
@@ -280,7 +348,6 @@ set_per_searching_day <- function(dataframe,
                     "FOB" = sets_per_day_fad,
                     "FSC" = sets_per_day_fsc)
     table_cpue_set_per_day <- round(table_cpue_set_per_day, 2)
-
     as.data.frame(table_cpue_set_per_day)
   }
 }

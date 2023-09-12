@@ -1,3 +1,5 @@
 code;name;color
 1;French;#a6cee3
+4;Spain;#FFCC00
 41;Mayotte;#1f78b4
+

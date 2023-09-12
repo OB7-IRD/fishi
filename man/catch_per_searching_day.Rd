@@ -30,29 +30,31 @@ The function return ggplot R plot.
 Annual number of catch per positive set on FOB-associated and free-swimming schools.
 }
 \details{
-The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Referentials.html}{see referentials}]:
+The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:
 \itemize{
- \item{dataframe 1:}
- \item{\code{  - activity_date}}
- \item{\code{  - c_esp}}
- \item{\code{  - country_id}}
- \item{\code{  - c_tban}}
- \item{\code{  - ocean_id}}
- \item{\code{  - v_dur_cal}}
- \item{\code{  - vessel_type_id}}
- \item{\code{  - v_nb_calee_pos}}
- \item{\code{  - v_nb_calees}}
- \item{\code{  - v_poids_capt}}
- \item{\code{  - v_tpec}}
- \item{dataframe 2:}
- \item{\code{  - activity_date}}
- \item{\code{  - country_id}}
- \item{\code{  - c_tban}}
- \item{\code{  - ocean_id}}
- \item{\code{  - v_dur_cal}}
- \item{\code{  - vessel_type_id}}
- \item{\code{  - v_nb_calee_pos}}
- \item{\code{  - v_nb_calees}}
- \item{\code{  - v_tpec}}
+Dataframe 1:
+ \item{\code{  activity_date}}
+ \item{\code{  c_esp}}
+ \item{\code{  c_tban}}
+ \item{\code{  v_dur_cal}}
+ \item{\code{  v_nb_calee_pos}}
+ \item{\code{  v_nb_calees}}
+ \item{\code{  v_poids_capt}}
+ \item{\code{  v_tpec}}
+}
+\itemize{
+Dataframe 2:
+ \item{\code{  activity_date}}
+ \item{\code{  c_tban}}
+ \item{\code{  v_dur_cal}}
+ \item{\code{  v_nb_calee_pos}}
+ \item{\code{  v_nb_calees}}
+ \item{\code{  v_tpec}}
+}
+Add these columns for an automatic title (optional):
+\itemize{
+ \item{\code{  country_id}}
+ \item{\code{  ocean_id}}
+ \item{\code{  vessel_type_id}}
 }
 }

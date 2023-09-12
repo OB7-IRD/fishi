@@ -6,17 +6,20 @@
 #' @param figure {\link[base]{character}} expected. For plotly figure: set (for number of sets graph) or log (for percentage FOB-associated sets graph). set by default.
 #' @param title TRUE or FALSE expected. False by default.
 #' @details
-#' The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Referentials.html}{see referentials}]:
+#' The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:
 #' \itemize{
-#'  \item{\code{  - activity_date}}
-#'  \item{\code{  - c_tban}}
-#'  \item{\code{  - country_id}}
-#'  \item{\code{  - ocean_id}}
-#'  \item{\code{  - v_dur_cal}}
-#'  \item{\code{  - vessel_type_id}}
-#'  \item{\code{  - v_nb_calee_pos}}
-#'  \item{\code{  - v_nb_calees}}
-#'  \item{\code{  - v_tpec}}
+#'  \item{\code{  activity_date}}
+#'  \item{\code{  c_tban}}
+#'  \item{\code{  v_dur_cal}}
+#'  \item{\code{  v_nb_calee_pos}}
+#'  \item{\code{  v_nb_calees}}
+#'  \item{\code{  v_tpec}}
+#' }
+#' Add these columns for an automatic title (optional):
+#' \itemize{
+#'  \item{\code{  country_id}}
+#'  \item{\code{  ocean_id}}
+#'  \item{\code{  vessel_type_id}}
 #' }
 #' @return The function return ggplot R plot.
 #' @export
@@ -49,6 +52,20 @@ fishing_activity <- function(dataframe,
                               output = "logical") != TRUE) {
     return(codama::r_type_checking(r_object = graph_type,
                                    type = "character",
+                                   output = "message"))
+  }
+  if (codama::r_type_checking(r_object = figure,
+                              type = "character",
+                              output = "logical") != TRUE) {
+    return(codama::r_type_checking(r_object = figure,
+                                   type = "character",
+                                   output = "message"))
+  }
+  if (codama::r_type_checking(r_object = title,
+                              type = "logical",
+                              output = "logical") != TRUE) {
+    return(codama::r_type_checking(r_object = title,
+                                   type = "logical",
                                    output = "message"))
   }
   # 2 - Data design ----
@@ -103,20 +120,22 @@ fishing_activity <- function(dataframe,
                                      names_to = "type",
                                      values_to = "nb_sets")
   # 3 - Legend design ----
-  #Ocean
-  ocean_legend <- code_manipulation(data         = dataframe$ocean_id,
-                                    referential  = "ocean",
-                                    manipulation = "legend")
-  #country
-  country_legend <- code_manipulation(data         = dataframe$country_id,
-                                      referential  = "country",
+  if (title == TRUE) {
+    #Ocean
+    ocean_legend <- code_manipulation(data         = dataframe$ocean_id,
+                                      referential  = "ocean",
                                       manipulation = "legend")
-  #vessel
-  vessel_type_legend <- code_manipulation(data         = dataframe$vessel_type_id,
-                                          referential  = "vessel_simple_type",
-                                          manipulation = "legend")
-  # time_period
-  time_period <- c(unique(min(fishing_activity_t1$year):max(fishing_activity_t1$year)))
+    #country
+    country_legend <- code_manipulation(data         = dataframe$country_id,
+                                        referential  = "country",
+                                        manipulation = "legend")
+    #vessel
+    vessel_type_legend <- code_manipulation(data         = dataframe$vessel_type_id,
+                                            referential  = "vessel_simple_type",
+                                            manipulation = "legend")
+    # time_period
+    time_period <- c(unique(min(fishing_activity_t1$year):max(fishing_activity_t1$year)))
+  }
   # 4 - Graphic design ----
   if (graph_type == "plot") {
     graphics::par(mar = c(5, 4, 4, 4))
@@ -140,6 +159,7 @@ fishing_activity <- function(dataframe,
                                                   "Line with solid circles indicates the percentage of sets on FOB-associated schools."),
                                     cex.axis = 1.3,
                                     cex.lab = 1.3,
+                                    cex.main = 1,
                                     xaxt = "n")
 
     } else {
@@ -150,7 +170,9 @@ fishing_activity <- function(dataframe,
                                     main = "",
                                     cex.axis = 1.3,
                                     cex.lab = 1.3,
-                                    xaxt = "n")
+                                    xaxt = "n",
+                                    col = c("gray19",
+                                            "lightgrey"))
     }
     graphics::axis(1,
                    at = fig_sets,
@@ -166,10 +188,10 @@ fishing_activity <- function(dataframe,
     graphics::legend("topleft",
                      legend = c("FOB-associated schools",
                                 "Free swimming schools"),
-                     col = c("black",
+                     col = c("gray19",
                              "lightgrey"),
                      bty = "n",
-                     fill = c("black",
+                     fill = c("gray19",
                               "lightgrey"))
     graphics::par(new = TRUE)
     plot(fig_sets,
@@ -224,18 +246,15 @@ fishing_activity <- function(dataframe,
           plotly::layout(title = list(text = paste0("Fishing operations. Annual number of fishing sets in the ",
                                                     country_legend, " ",
                                                     vessel_type_legend,
-                                                    " fishery on FOB-associated",
-                                                    "\n",
-                                                    "and free-swimming tuna schools during ",
+                                                    " fishery \n",
+                                                    "on FOB-associated and free-swimming tuna schools during ",
                                                     min(time_period),
                                                     "-",
                                                     max(time_period),
-                                                    " (high panel), in the ",
+                                                    " in the ",
                                                     ocean_legend,
-                                                    " ocean.",
-                                                    "\n",
-                                                    "Line with solid circles indicates the percentage of sets on FOB-associated schools (low panel)."),
-                                      font = list(size = 17)),
+                                                    " ocean."),
+                                      font = list(size = 15)),
                          margin = list(t = 120))
 
       }
@@ -256,7 +275,27 @@ fishing_activity <- function(dataframe,
         ggplot2::scale_y_continuous(name = "% FOB-associated sets") +
         ggplot2::theme_bw() +
         ggplot2::labs(fill = "")
-      plotly::ggplotly(ggplot_set)
+      # Plotly
+      plotly_graph <- plotly::ggplotly(ggplot_set)
+      # Add a title
+      if (title == TRUE) {
+        plotly_graph <- plotly_graph %>%
+          plotly::layout(title = list(text = paste0("Fishing operations. Percentage of sets on FOB-associated schools in the ",
+                                                    country_legend, " ",
+                                                    vessel_type_legend,
+                                                    "\n",
+                                                    "during ",
+                                                    min(time_period),
+                                                    "-",
+                                                    max(time_period),
+                                                    " in the ",
+                                                    ocean_legend,
+                                                    " ocean."),
+                                      font = list(size = 15)),
+                         margin = list(t = 120))
+
+      }
+      plotly::ggplotly(plotly_graph)
     }
   } else if (graph_type == "table") {
     table_sets <- table_sets %>%
