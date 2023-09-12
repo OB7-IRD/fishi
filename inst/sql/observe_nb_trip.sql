@@ -6,7 +6,7 @@ SELECT
 	,v.code::numeric AS boat_code
 	,ct.iso3code AS fleet
 	,o.code::numeric as ocean_id
-	,ct.code::numeric as country
+	,ct.code::numeric as country_id
 	,c.well as vessel_well_number
 FROM ps_observation.route r
 	INNER JOIN ps_common.trip t ON r.trip = t.topiaid

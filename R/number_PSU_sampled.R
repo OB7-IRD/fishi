@@ -6,8 +6,25 @@
 #' @param graph_type {\link[base]{character}} expected. "number" or "table." Number by default.
 #' @param reported_year {\link[base]{integer}} expected. Write the wanted year of the report
 #' @param selected_country {\link[base]{integer}} expected. Country code to select the list of boat to count. If NULL give all the vessel for the given year.
+#' @param selected_ocean {\link[base]{integer}} expected. Ocean code to select the list of boat to count. If NULL give all the vessel for the given year.
 #' @param variable {\link[base]{character}} expected. Write the variable of the PSU. Can be "trip" or "well". "trip" by default.
-#' @return The function return ggplot or table R plot.
+#' @details
+#' The input dataframe frome sql must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:
+#' \itemize{
+#'  \item{\code{  sampling_year}}
+#'  \item{\code{  fish_sampling_date}}
+#'  \item{\code{  landing_date}}
+#'  \item{\code{  vessel_name}}
+#'  \item{\code{  boat_code}}
+#'  \item{\code{  fleet}}
+#'  \item{\code{  vessel_well_number}}
+#' }
+#' add these columns to select the country and ocean (optional):
+#' \itemize{
+#'  \item{\code{  country_id}}
+#'  \item{\code{  ocean_id}}
+#' }
+#' @return The function return a table.
 #' @export
 #' @importFrom readxl read_excel
 #' @importFrom dplyr mutate filter select group_by summarise left_join join_by n_distinct
@@ -19,6 +36,7 @@ number_PSU_sampled <- function(dataframe,
                                graph_type = "number",
                                reported_year = NULL,
                                selected_country = NULL,
+                               selected_ocean = NULL,
                                variable = "trip") {
   # 0 - Global variables assignement ----
   STATUT <- NULL
@@ -38,7 +56,18 @@ number_PSU_sampled <- function(dataframe,
   well_position <- NULL
   nb_vessel <- NULL
   country <- NULL
+  country_id <- NULL
+  ocean_id <- NULL
   # 1 - Arguments verification ----
+  # data type
+  if (codama::r_type_checking(r_object = data_type,
+                              type = "character",
+                              output = "logical") != TRUE) {
+    return(codama::r_type_checking(r_object = data_type,
+                                   type = "character",
+                                   output = "message"))
+  }
+  # graph type
   if (codama::r_type_checking(r_object = graph_type,
                               type = "character",
                               output = "logical") != TRUE) {
@@ -46,6 +75,33 @@ number_PSU_sampled <- function(dataframe,
                                    type = "character",
                                    output = "message"))
   }
+  # reported year
+  if ((! is.null(x = selected_country))
+      && codama::r_type_checking(r_object = selected_country,
+                                 type = "integer",
+                                 output = "logical") != TRUE) {
+    return(codama::r_type_checking(r_object = selected_country,
+                                   type = "integer",
+                                   output = "message"))
+  }
+  # selected country
+  if ((! is.null(x = selected_ocean))
+      && codama::r_type_checking(r_object = selected_ocean,
+                                 type = "integer",
+                                 output = "logical") != TRUE) {
+    return(codama::r_type_checking(r_object = selected_ocean,
+                                   type = "integer",
+                                   output = "message"))
+  }
+  # selected ocean
+  if (codama::r_type_checking(r_object = variable,
+                              type = "character",
+                              output = "logical") != TRUE) {
+    return(codama::r_type_checking(r_object = variable,
+                                   type = "character",
+                                   output = "message"))
+  }
+  # variable
   # 2 - Data design ----
   if (data_type == "tunabio") {
     ## Data import -----
@@ -217,30 +273,39 @@ number_PSU_sampled <- function(dataframe,
       }
     }
   } else if (data_type == "observe") {
+    # If is null
+    if (is.null(selected_country)) {
+      selected_country <- as.integer(1:87)
+    }
+    if (is.null(selected_ocean)) {
+      selected_ocean <- as.integer(1:6)
+    }
+    # dataframe filter
+    dataframe <- dataframe %>%
+      dplyr::filter(country_id %in% selected_country,
+                    ocean_id %in% selected_ocean)
     if (variable == "trip") {
       sampled_PSU_summarize <- dataframe %>%
         dplyr::group_by(vessel_name,
                         landing_date,
                         boat_code,
-                        country,
+                        country_id,
                         fleet) %>%
         dplyr::summarise(.groups = "drop")  %>%
         dplyr::filter(!is.na(vessel_name))
-      } else if (variable == "well") {
-      # vessel_name, landing_date, vessel_well_number, well_position, boat_code, country, fleet
-        sampled_PSU_summarize <- dataframe %>%
-          dplyr::group_by(vessel_name,
-                          landing_date,
-                          vessel_well_number,
-                          boat_code,
-                          country,
-                          fleet) %>%
-          dplyr::summarise(.groups = "drop")  %>%
-          dplyr::filter(!is.na(vessel_name))
-      }
+    } else if (variable == "well") {
+      sampled_PSU_summarize <- dataframe %>%
+        dplyr::group_by(vessel_name,
+                        landing_date,
+                        vessel_well_number,
+                        boat_code,
+                        country_id,
+                        fleet) %>%
+        dplyr::summarise(.groups = "drop")  %>%
+        dplyr::filter(!is.na(vessel_name))
     }
-  # 3 - Legend design ----
-  # 4 - Graphic design ----
+  }
+  # 3 - Graphic design ----
   if (graph_type == "number") {
     length(sampled_PSU_summarize$vessel_name)
   } else if (graph_type == "table") {

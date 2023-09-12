@@ -10,6 +10,7 @@ number_PSU_sampled(
   graph_type = "number",
   reported_year = NULL,
   selected_country = NULL,
+  selected_ocean = NULL,
   variable = "trip"
 )
 }
@@ -24,11 +25,30 @@ number_PSU_sampled(
 
 \item{selected_country}{{\link[base]{integer}} expected. Country code to select the list of boat to count. If NULL give all the vessel for the given year.}
 
+\item{selected_ocean}{{\link[base]{integer}} expected. Ocean code to select the list of boat to count. If NULL give all the vessel for the given year.}
+
 \item{variable}{{\link[base]{character}} expected. Write the variable of the PSU. Can be "trip" or "well". "trip" by default.}
 }
 \value{
-The function return ggplot or table R plot.
+The function return a table.
 }
 \description{
 Give the number of PSU sampled for a given year. Need to define PSU parameter.
+}
+\details{
+The input dataframe frome sql must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:
+\itemize{
+ \item{\code{  sampling_year}}
+ \item{\code{  fish_sampling_date}}
+ \item{\code{  landing_date}}
+ \item{\code{  vessel_name}}
+ \item{\code{  boat_code}}
+ \item{\code{  fleet}}
+ \item{\code{  vessel_well_number}}
+}
+add these columns to select the country and ocean (optional):
+\itemize{
+ \item{\code{  country_id}}
+ \item{\code{  ocean_id}}
+}
 }
