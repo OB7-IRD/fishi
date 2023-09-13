@@ -5,6 +5,16 @@
 #' @param data_type {\link[base]{character}} expected. Tunabio or observe.
 #' @param graph_type {\link[base]{character}} expected. plot or table. table by default.
 #' @param reported_year {\link[base]{integer}} expected. Write the wanted year of the report
+#' @details
+#' The input dataframe frome sql must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:
+#' \itemize{
+#'  \item{\code{  fish_sampling_date}}
+#'  \item{\code{  weight}}
+#'  \item{\code{  length}}
+#'  \item{\code{  sex}}
+#'  \item{\code{  species_code_fao}}
+#'  \item{\code{  count}}
+#' }
 #' @return The function return ggplot or table R plot.
 #' @export
 #' @importFrom readxl read_excel
@@ -33,11 +43,29 @@ species_biological_variable <- function(dataframe,
   weight <- NULL
   count <- NULL
   # 1 - Arguments verification ----
+  # datatype
+  if (codama::r_type_checking(r_object = data_type,
+                              type = "character",
+                              output = "logical") != TRUE) {
+    return(codama::r_type_checking(r_object = data_type,
+                                   type = "character",
+                                   output = "message"))
+  }
+  # graph type
   if (codama::r_type_checking(r_object = graph_type,
                               type = "character",
                               output = "logical") != TRUE) {
     return(codama::r_type_checking(r_object = graph_type,
                                    type = "character",
+                                   output = "message"))
+  }
+  # reported year
+  if ((! is.null(x = reported_year))
+      && codama::r_type_checking(r_object = reported_year,
+                              type = "integer",
+                              output = "logical") != TRUE) {
+    return(codama::r_type_checking(r_object = reported_year,
+                                   type = "integer",
                                    output = "message"))
   }
   # 2 - Data design ----
