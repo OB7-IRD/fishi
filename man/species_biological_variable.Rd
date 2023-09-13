@@ -8,7 +8,8 @@ species_biological_variable(
   dataframe,
   data_type,
   graph_type = "table",
-  reported_year = NULL
+  reported_year = NULL,
+  selected_variable = NULL
 )
 }
 \arguments{
@@ -19,6 +20,8 @@ species_biological_variable(
 \item{graph_type}{{\link[base]{character}} expected. plot or table. table by default.}
 
 \item{reported_year}{{\link[base]{integer}} expected. Write the wanted year of the report}
+
+\item{selected_variable}{{\link[base]{character}} expected. weight, length or sex. If NULL give all the variable for the given year.}
 }
 \value{
 The function return ggplot or table R plot.

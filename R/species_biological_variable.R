@@ -5,6 +5,7 @@
 #' @param data_type {\link[base]{character}} expected. Tunabio or observe.
 #' @param graph_type {\link[base]{character}} expected. plot or table. table by default.
 #' @param reported_year {\link[base]{integer}} expected. Write the wanted year of the report
+#' @param selected_variable {\link[base]{character}} expected. weight, length or sex. If NULL give all the variable for the given year.
 #' @details
 #' The input dataframe frome sql must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:
 #' \itemize{
@@ -28,7 +29,8 @@
 species_biological_variable <- function(dataframe,
                                         data_type,
                                         graph_type = "table",
-                                        reported_year = NULL) {
+                                        reported_year = NULL,
+                                        selected_variable = NULL) {
   # 0 - Global variables assignement ----
   fish_sampling_date <- NULL
   sampling_year <- NULL
@@ -66,6 +68,15 @@ species_biological_variable <- function(dataframe,
                               output = "logical") != TRUE) {
     return(codama::r_type_checking(r_object = reported_year,
                                    type = "integer",
+                                   output = "message"))
+  }
+  # selected variable
+  if ((! is.null(x = selected_variable))
+      && codama::r_type_checking(r_object = selected_variable,
+                                 type = "character",
+                                 output = "logical") != TRUE) {
+    return(codama::r_type_checking(r_object = selected_variable,
+                                   type = "character",
                                    output = "message"))
   }
   # 2 - Data design ----
@@ -195,10 +206,16 @@ species_biological_variable <- function(dataframe,
                                                    names_to = "variable",
                                                    values_to = "number")
   }
-  # 3 - Legend design ----
-  # 4 - Graphic design ----
+  ## filtered data ----
+  if (is.null(selected_variable)) {
+    filtered_data <- sampled_summarize_pivot
+  } else {
+    filtered_data <- sampled_summarize_pivot %>%
+      dplyr::filter(variable == selected_variable)
+  }
+  # 3 - Graphic design ----
   if (graph_type == "plot") {
-    ggplot2::ggplot(data = sampled_summarize_pivot,
+    ggplot2::ggplot(data = filtered_data,
                     ggplot2::aes(x = variable,
                                  y = number,
                                  fill = species_code_fao)) +
