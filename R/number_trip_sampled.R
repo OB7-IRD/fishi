@@ -246,6 +246,7 @@ number_trip_sampled <- function(dataframe,
     dataframe <- dataframe %>%
       dplyr::filter(country_id %in% selected_country,
                     ocean_id %in% selected_ocean)
+    # summarize
     sampled_trip_summarize <- dataframe %>%
       dplyr::group_by(vessel_name,
                       landing_date,
