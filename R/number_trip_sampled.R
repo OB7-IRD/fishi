@@ -6,7 +6,24 @@
 #' @param graph_type {\link[base]{character}} expected. "number" or "table." Number by default.
 #' @param reported_year {\link[base]{integer}} expected. Year of the report, for tunabio only.
 #' @param selected_country {\link[base]{integer}} expected. Country code to select the list of boat to count. If NULL give all the vessel for the given year.
-#' @return The function return ggplot or table R plot.
+#' @param selected_ocean {\link[base]{integer}} expected. Ocean code to select the list of boat to count. If NULL give all the vessel for the given year.
+#' @details
+#' The input dataframe frome sql must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:
+#' \itemize{
+#'  \item{\code{  sampling_year}}
+#'  \item{\code{  fish_sampling_date}}
+#'  \item{\code{  landing_date}}
+#'  \item{\code{  vessel_name}}
+#'  \item{\code{  boat_code}}
+#'  \item{\code{  fleet}}
+#'  \item{\code{  vessel_well_number}}
+#' }
+#' add these columns to select the country and ocean (optional):
+#' \itemize{
+#'  \item{\code{  country_id}}
+#'  \item{\code{  ocean_id}}
+#' }
+#' @return The function return a table.
 #' @export
 #' @importFrom readxl read_excel
 #' @importFrom dplyr mutate filter select group_by summarise full_join left_join join_by n_distinct
@@ -20,7 +37,8 @@ number_trip_sampled <- function(dataframe,
                                 data_type,
                                 graph_type = "number",
                                 reported_year = NULL,
-                                selected_country = NULL) {
+                                selected_country = NULL,
+                                selected_ocean = NULL) {
   # 0 - Global variables assignement ----
   fish_sampling_date <- NULL
   landing_date <- NULL
@@ -38,12 +56,50 @@ number_trip_sampled <- function(dataframe,
   NUMBAT <- NULL
   PAYS <- NULL
   FLOTTE <- NULL
+  country_id <- NULL
+  ocean_id <- NULL
   # 1 - Arguments verification ----
+  # data type
+  if (codama::r_type_checking(r_object = data_type,
+                              type = "character",
+                              output = "logical") != TRUE) {
+    return(codama::r_type_checking(r_object = data_type,
+                                   type = "character",
+                                   output = "message"))
+  }
+  # graph type
   if (codama::r_type_checking(r_object = graph_type,
                               type = "character",
                               output = "logical") != TRUE) {
     return(codama::r_type_checking(r_object = graph_type,
                                    type = "character",
+                                   output = "message"))
+  }
+  # reported year
+  if ((! is.null(x = reported_year))
+      && codama::r_type_checking(r_object = reported_year,
+                                 type = "integer",
+                                 output = "logical") != TRUE) {
+    return(codama::r_type_checking(r_object = reported_year,
+                                   type = "integer",
+                                   output = "message"))
+  }
+  # selected country
+  if ((! is.null(x = selected_country))
+      && codama::r_type_checking(r_object = selected_country,
+                                 type = "integer",
+                                 output = "logical") != TRUE) {
+    return(codama::r_type_checking(r_object = selected_country,
+                                   type = "integer",
+                                   output = "message"))
+  }
+  # selected ocean
+  if ((! is.null(x = selected_ocean))
+      && codama::r_type_checking(r_object = selected_ocean,
+                                 type = "integer",
+                                 output = "logical") != TRUE) {
+    return(codama::r_type_checking(r_object = selected_ocean,
+                                   type = "integer",
                                    output = "message"))
   }
   # 2 - Data design ----
@@ -179,19 +235,28 @@ number_trip_sampled <- function(dataframe,
         dplyr::filter(!is.na(vessel_name))
     }
   } else if (data_type == "observe") {
+    # If is null
+    if (is.null(selected_country)) {
+      selected_country <- as.integer(1:87)
+    }
+    if (is.null(selected_ocean)) {
+      selected_ocean <- as.integer(1:6)
+    }
+    # dataframe filter
+    dataframe <- dataframe %>%
+      dplyr::filter(country_id %in% selected_country,
+                    ocean_id %in% selected_ocean)
     sampled_trip_summarize <- dataframe %>%
       dplyr::group_by(vessel_name,
                       landing_date,
                       boat_code,
-                      country,
+                      country_id,
                       fleet) %>%
       dplyr::summarise(nb_trip = dplyr::n_distinct(vessel_name),
                        .groups = "drop")  %>%
       dplyr::filter(!is.na(vessel_name))
   }
-
-  # 3 - Legend design ----
-  # 4 - Graphic design ----
+  # 3 - Graphic design ----
   if (graph_type == "number") {
     length(sampled_trip_summarize$vessel_name)
   } else if (graph_type == "table") {

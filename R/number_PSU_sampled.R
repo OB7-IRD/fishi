@@ -76,6 +76,15 @@ number_PSU_sampled <- function(dataframe,
                                    output = "message"))
   }
   # reported year
+  if ((! is.null(x = reported_year))
+      && codama::r_type_checking(r_object = reported_year,
+                                 type = "integer",
+                                 output = "logical") != TRUE) {
+    return(codama::r_type_checking(r_object = reported_year,
+                                   type = "integer",
+                                   output = "message"))
+  }
+  # selected country
   if ((! is.null(x = selected_country))
       && codama::r_type_checking(r_object = selected_country,
                                  type = "integer",
@@ -84,7 +93,7 @@ number_PSU_sampled <- function(dataframe,
                                    type = "integer",
                                    output = "message"))
   }
-  # selected country
+  # selected ocean
   if ((! is.null(x = selected_ocean))
       && codama::r_type_checking(r_object = selected_ocean,
                                  type = "integer",
@@ -93,7 +102,7 @@ number_PSU_sampled <- function(dataframe,
                                    type = "integer",
                                    output = "message"))
   }
-  # selected ocean
+  # variable
   if (codama::r_type_checking(r_object = variable,
                               type = "character",
                               output = "logical") != TRUE) {
@@ -101,7 +110,6 @@ number_PSU_sampled <- function(dataframe,
                                    type = "character",
                                    output = "message"))
   }
-  # variable
   # 2 - Data design ----
   if (data_type == "tunabio") {
     ## Data import -----
