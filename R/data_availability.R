@@ -21,6 +21,7 @@ data_availability <- function(dataframe_observe,
   # 0 - Global variables assignement ----
   vesselname <- NULL
   id <- NULL
+  observation_date <- NULL
   # 1 - Arguments verification ----
   if (codama::r_type_checking(r_object = graph_type,
                               type = "character",
@@ -126,6 +127,68 @@ data_availability <- function(dataframe_observe,
                       col = c("grey", "red", "blue"),
                       pt.cex = c(0.5, 0.5, 0.5),
                       bg = "white")
+  } else if (graph_type == "ggplot") {
+    # Creating a data frame for boat names
+    vessel_data <- data.frame(vessel = as.character(sort(unique(dataframe_t3$vessel))))
+    # Creating a data frame for dates
+    day_data <- data.frame(day = seq(as.Date(paste(min(reported_year), "01-01", sep = "-")),
+                                     as.Date(paste(max(reported_year) + 1, "01-01", sep = "-")),
+                                     by = 1))
+    # Merge the data to create the ggplot graph
+    data <- merge(vessel_data, day_data, all = TRUE)
+    dataframe_vms$date <- as.Date(dataframe_vms$date)
+    dataframe_vms$vesselname <- trimws(dataframe_vms$vesselname)
+    dataframe_vms <- dataframe_vms %>%
+      dplyr::filter(vesselname %in% vessel)
+    # Ggplot
+    graph <- ggplot2::ggplot(data,
+                    aes(x = day,
+                        y = vessel)) +
+      ggplot2::geom_blank() +
+      ggplot2::geom_hline(yintercept = 1:length(vessel),
+                          linetype = "dashed",
+                          color = "grey") +
+      ggplot2::geom_vline(xintercept = data$day[format(data$day, "%d") == "01"],
+                          linetype = "dashed",
+                          color = "grey") +
+      ggplot2::scale_x_date(date_labels = "%Y-%m-%d",
+                            date_breaks = "1 month") +
+      ggplot2::scale_y_discrete(labels = vessel) +
+      ggplot2::labs(x = NULL,
+                    y = NULL,
+                    title = paste("Data availability for purse seiners in the",
+                                  ocean,
+                                  "Ocean in",
+                                  reported_year)) +
+      ggplot2::theme_minimal() +
+      ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 90,
+                                                hjust = 1),
+                     legend.position = "topright",
+                     panel.background = ggplot2::element_rect(fill = NA)) +
+      ggplot2::geom_point(data = dataframe_vms,
+                          aes(x = date,
+                              y = vesselname),
+                          shape = 3,
+                          color = "grey",
+                          size = 2,
+                          position = ggplot2::position_nudge(y = -0.1),
+                          na.rm = TRUE) +
+      ggplot2::geom_point(data = dataframe_t3,
+                          aes(x = date,
+                              y = vessel),
+                          shape = 3,
+                          color = "red",
+                          size = 2,
+                          na.rm = TRUE) +
+      ggplot2::geom_point(data = dataframe_observe,
+                          aes(x = observation_date,
+                              y = vessel),
+                          shape = 3,
+                          color = "blue",
+                          position = ggplot2::position_nudge(y = 0.1),
+                          size = 2,
+                          na.rm = TRUE)
+    return(graph)
   } else if (graph_type == "table") {
     data_availability <-  dataframe_vms %>%
       dplyr::group_by(vesselname) %>%
