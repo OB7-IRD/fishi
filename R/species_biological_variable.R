@@ -30,6 +30,8 @@ species_biological_variable <- function(dataframe,
                                         data_type,
                                         graph_type = "table",
                                         reported_year = NULL,
+                                        start_date = NULL,
+                                        end_date = NULL,
                                         selected_variable = NULL) {
   # 0 - Global variables assignement ----
   fish_sampling_date <- NULL
@@ -67,6 +69,24 @@ species_biological_variable <- function(dataframe,
                               type = "integer",
                               output = "logical") != TRUE) {
     return(codama::r_type_checking(r_object = reported_year,
+                                   type = "integer",
+                                   output = "message"))
+  }
+  # start_date
+  if ((! is.null(x = start_date))
+      && codama::r_type_checking(r_object = start_date,
+                                 type = "integer",
+                                 output = "logical") != TRUE) {
+    return(codama::r_type_checking(r_object = start_date,
+                                   type = "integer",
+                                   output = "message"))
+  }
+  # end_date
+  if ((! is.null(x = end_date))
+      && codama::r_type_checking(r_object = end_date,
+                                 type = "integer",
+                                 output = "logical") != TRUE) {
+    return(codama::r_type_checking(r_object = end_date,
                                    type = "integer",
                                    output = "message"))
   }
@@ -137,27 +157,32 @@ species_biological_variable <- function(dataframe,
     tunabio[["biology"]] <- dplyr::mutate(.data =  tunabio[["biology"]],
                                           sampling_year = lubridate::year(fish_sampling_date))
     ## Data analyze ----
+    if (!is.null(reported_year)){
+      df <- tunabio[["biology"]] %>%
+        dplyr::filter(sampling_year == reported_year)
+    } else if(!is.null(start_date) & !is.null(end_date)){
+      df <- tunabio[["biology"]] %>%
+      dplyr::filter(fish_sampling_date >= start_date &
+                      fish_sampling_date <= end_date)
+    }
+
     #### Length
-    sampled_length_summarize <- tunabio[["biology"]] %>%
-      dplyr::filter(sampling_year == reported_year) %>%
+    sampled_length_summarize <- df %>%
       dplyr::filter(!is.na(total_length) | !is.na(fork_length)) %>%
       dplyr::group_by(species_code_fao) %>%
       dplyr::summarise(length = dplyr::n())
     #### Weight
-    sampled_weight_summarize <- tunabio[["biology"]] %>%
-      dplyr::filter(sampling_year == reported_year) %>%
+    sampled_weight_summarize <- df %>%
       dplyr::filter(!is.na(whole_fish_weight)) %>%
       dplyr::group_by(species_code_fao) %>%
       dplyr::summarise(weight = dplyr::n())
     #### Sex
-    sampled_sex_summarize <- tunabio[["biology"]] %>%
-      dplyr::filter(sampling_year == reported_year) %>%
+    sampled_sex_summarize <- df %>%
       dplyr::filter(!is.na(sex)) %>%
       dplyr::group_by(species_code_fao) %>%
       dplyr::summarise(maturity = dplyr::n())
     #### Maturity
-    sampled_maturity_summarize <- tunabio[["biology"]] %>%
-      dplyr::filter(sampling_year == reported_year) %>%
+    sampled_maturity_summarize <- df %>%
       dplyr::filter(!is.na(macro_maturity_stage)) %>%
       dplyr::group_by(species_code_fao) %>%
       dplyr::summarise(sex = dplyr::n())
