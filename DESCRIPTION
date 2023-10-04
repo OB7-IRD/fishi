@@ -47,6 +47,7 @@ Imports:
     scatterpie (>= 0.1.8),
     readr (>= 2.1.4),
     readxl (>= 1.4.3),
+    tibble (>= 3.2.1),
     grDevices,
     utils
 URL: https://github.com/OB7-IRD/fishi

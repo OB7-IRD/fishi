@@ -9,19 +9,28 @@ species_biological_variable(
   data_type,
   graph_type = "table",
   reported_year = NULL,
-  selected_variable = NULL
+  start_date = NULL,
+  end_date = NULL,
+  selected_variable = NULL,
+  selected_species = NULL
 )
 }
 \arguments{
 \item{dataframe}{{\link[base]{data.frame}} expected. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the fishing_activity() function.}
 
-\item{data_type}{{\link[base]{character}} expected. Tunabio or observe.}
+\item{data_type}{{\link[base]{character}} expected. 'tunabio' or 'observe'.}
 
-\item{graph_type}{{\link[base]{character}} expected. plot or table. table by default.}
+\item{graph_type}{{\link[base]{character}} expected. 'ggplot' or 'table'. table by default.}
 
 \item{reported_year}{{\link[base]{integer}} expected. Write the wanted year of the report}
 
-\item{selected_variable}{{\link[base]{character}} expected. weight, length or sex. If NULL give all the variable for the given year.}
+\item{start_date}{{\link[base]{character}} expected. if reported_year is not given. Write the start date of the time range of the report.}
+
+\item{end_date}{{\link[base]{character}} expected. if reported_year is not given. Write the end date of the time range of the report}
+
+\item{selected_variable}{{\link[base]{character}} expected. 'weight', 'length' or 'sex'. If NULL give all the variable for the given year.}
+
+\item{selected_species}{{\link[base]{character}} expected. Name the species you want to select. Can be more than one. If NULL give all the species for the given year.}
 }
 \value{
 The function return ggplot or table R plot.

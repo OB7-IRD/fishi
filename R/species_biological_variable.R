@@ -2,10 +2,13 @@
 #' @title Sampled biological variables
 #' @description Give the number of each biological variable sampled for a given year.
 #' @param dataframe {\link[base]{data.frame}} expected. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the fishing_activity() function.
-#' @param data_type {\link[base]{character}} expected. Tunabio or observe.
-#' @param graph_type {\link[base]{character}} expected. plot or table. table by default.
+#' @param data_type {\link[base]{character}} expected. 'tunabio' or 'observe'.
+#' @param graph_type {\link[base]{character}} expected. 'ggplot' or 'table'. table by default.
 #' @param reported_year {\link[base]{integer}} expected. Write the wanted year of the report
-#' @param selected_variable {\link[base]{character}} expected. weight, length or sex. If NULL give all the variable for the given year.
+#' @param start_date {\link[base]{character}} expected. if reported_year is not given. Write the start date of the time range of the report.
+#' @param end_date {\link[base]{character}} expected. if reported_year is not given. Write the end date of the time range of the report
+#' @param selected_variable {\link[base]{character}} expected. 'weight', 'length' or 'sex'. If NULL give all the variable for the given year.
+#' @param selected_species {\link[base]{character}} expected. Name the species you want to select. Can be more than one. If NULL give all the species for the given year.
 #' @details
 #' The input dataframe frome sql must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:
 #' \itemize{
@@ -19,20 +22,22 @@
 #' @return The function return ggplot or table R plot.
 #' @export
 #' @importFrom readxl read_excel
-#' @importFrom dplyr mutate filter group_by summarise full_join n reframe
+#' @importFrom dplyr mutate filter group_by summarise full_join n reframe arrange desc bind_rows
 #' @importFrom lubridate year
 #' @importFrom graphics par plot axis lines abline legend text
-#' @importFrom ggplot2 ggplot aes geom_bar labs theme_light geom_text
+#' @importFrom ggplot2 ggplot aes geom_bar labs theme_light geom_text scale_fill_manual
 #' @importFrom plotly ggplotly layout
 #' @importFrom tidyr pivot_longer
 #' @importFrom codama r_type_checking
+#' @importFrom tibble column_to_rownames
 species_biological_variable <- function(dataframe,
                                         data_type,
                                         graph_type = "table",
                                         reported_year = NULL,
                                         start_date = NULL,
                                         end_date = NULL,
-                                        selected_variable = NULL) {
+                                        selected_variable = NULL,
+                                        selected_species = NULL) {
   # 0 - Global variables assignement ----
   fish_sampling_date <- NULL
   sampling_year <- NULL
@@ -66,8 +71,8 @@ species_biological_variable <- function(dataframe,
   # reported year
   if ((! is.null(x = reported_year))
       && codama::r_type_checking(r_object = reported_year,
-                              type = "integer",
-                              output = "logical") != TRUE) {
+                                 type = "integer",
+                                 output = "logical") != TRUE) {
     return(codama::r_type_checking(r_object = reported_year,
                                    type = "integer",
                                    output = "message"))
@@ -75,19 +80,19 @@ species_biological_variable <- function(dataframe,
   # start_date
   if ((! is.null(x = start_date))
       && codama::r_type_checking(r_object = start_date,
-                                 type = "integer",
+                                 type = "character",
                                  output = "logical") != TRUE) {
     return(codama::r_type_checking(r_object = start_date,
-                                   type = "integer",
+                                   type = "character",
                                    output = "message"))
   }
   # end_date
   if ((! is.null(x = end_date))
       && codama::r_type_checking(r_object = end_date,
-                                 type = "integer",
+                                 type = "character",
                                  output = "logical") != TRUE) {
     return(codama::r_type_checking(r_object = end_date,
-                                   type = "integer",
+                                   type = "character",
                                    output = "message"))
   }
   # selected variable
@@ -96,6 +101,15 @@ species_biological_variable <- function(dataframe,
                                  type = "character",
                                  output = "logical") != TRUE) {
     return(codama::r_type_checking(r_object = selected_variable,
+                                   type = "character",
+                                   output = "message"))
+  }
+  # selected species
+  if ((! is.null(x = selected_species))
+      && codama::r_type_checking(r_object = selected_species,
+                                 type = "character",
+                                 output = "logical") != TRUE) {
+    return(codama::r_type_checking(r_object = selected_species,
                                    type = "character",
                                    output = "message"))
   }
@@ -157,13 +171,13 @@ species_biological_variable <- function(dataframe,
     tunabio[["biology"]] <- dplyr::mutate(.data =  tunabio[["biology"]],
                                           sampling_year = lubridate::year(fish_sampling_date))
     ## Data analyze ----
-    if (!is.null(reported_year)){
+    if (!is.null(reported_year)) {
       df <- tunabio[["biology"]] %>%
         dplyr::filter(sampling_year == reported_year)
-    } else if(!is.null(start_date) & !is.null(end_date)){
+    } else if (!is.null(start_date) && !is.null(end_date)) {
       df <- tunabio[["biology"]] %>%
-      dplyr::filter(fish_sampling_date >= start_date &
-                      fish_sampling_date <= end_date)
+        dplyr::filter(fish_sampling_date >= start_date &
+                        fish_sampling_date <= end_date)
     }
 
     #### Length
@@ -194,11 +208,6 @@ species_biological_variable <- function(dataframe,
                        by = "species_code_fao") %>%
       dplyr::full_join(sampled_maturity_summarize,
                        by = "species_code_fao")
-    #### Table pivot
-    sampled_summarize_pivot <- tidyr::pivot_longer(sampled_summarize,
-                                                   cols = c(2:5),
-                                                   names_to = "variable",
-                                                   values_to = "number")
   } else if (data_type == "observe") {
     #### Lenght
     sampled_length_summarize <- dataframe %>%
@@ -225,37 +234,85 @@ species_biological_variable <- function(dataframe,
                                           by = "species_code_fao") %>%
       dplyr::full_join(sampled_sex_summarize,
                        by = "species_code_fao")
-    #### Table pivot
-    sampled_summarize_pivot <- tidyr::pivot_longer(sampled_summarize,
-                                                   cols = c(2:4),
-                                                   names_to = "variable",
-                                                   values_to = "number")
   }
   ## filtered data ----
+  ### variable selection
   if (is.null(selected_variable)) {
-    filtered_data <- sampled_summarize_pivot
+    filtered_data <- sampled_summarize
   } else {
-    filtered_data <- sampled_summarize_pivot %>%
-      dplyr::filter(variable == selected_variable)
+    filtered_data <- sampled_summarize %>%
+      dplyr::select(dplyr::all_of(c("species_code_fao", selected_variable)))
+  }
+  ### species selection
+  if (is.null(selected_species)) {
+    sampled_summarize_filtred <- filtered_data
+  } else if (selected_species == "shorter") {
+    df_arrange <- dplyr::arrange(filtered_data,
+                                 dplyr::desc(length))
+    df_cut <- df_arrange[1:5, ]
+    df_end <- df_arrange[6:length(df_arrange$species_code_fao), ]
+    # df_sum <- colSums(df_end)
+    df_sum <- df_end %>%
+      dplyr::select(-species_code_fao) %>%
+      colSums()
+
+    sampled_summarize_filtred <- dplyr::bind_rows(df_cut,
+                                                  df_sum)
+    sampled_summarize_filtred[6, 1] <- "Other"
+
+  } else if (selected_species != "shorter") {
+    sampled_summarize_filtred <- filtered_data %>%
+      dplyr::filter(species_code_fao == selected_species)
   }
   # 3 - Graphic design ----
-  if (graph_type == "plot") {
-    ggplot2::ggplot(data = filtered_data,
-                    ggplot2::aes(x = variable,
+  if (graph_type == "ggplot") {
+    #### Table pivot
+    if (data_type == "tunabio") {
+      sampled_summarize_pivot <- tidyr::pivot_longer(sampled_summarize_filtred,
+                                                     cols = c(2:5),
+                                                     names_to = "variable",
+                                                     values_to = "number")
+    } else if (data_type == "observe") {
+      sampled_summarize_pivot <- tidyr::pivot_longer(sampled_summarize_filtred,
+                                                     cols = c(2:4),
+                                                     names_to = "variable",
+                                                     values_to = "number")
+    }
+    # ggplot2::ggplot(data = sampled_summarize_pivot,
+    #                 ggplot2::aes(x = variable,
+    #                              y = number,
+    #                              fill = species_code_fao)) +
+    #   ggplot2::geom_histogram(position = "dodge",
+    #                           stat = "identity") +
+    #   ggplot2::geom_text(ggplot2::aes(label = number),
+    #                      vjust = -.3,
+    #                      size = 2.5,
+    #                      position = ggplot2::position_dodge(width = 0.9),
+    #                      color = "black") +
+    #   ggplot2::labs(fill = "Species",
+    #                 x = "Biological variables",
+    #                 y = "Number of fish sampled") +
+    #   ggplot2::theme_light()
+    ggplot2::ggplot(data = sampled_summarize_pivot,
+                    ggplot2::aes(x = species_code_fao,
                                  y = number,
-                                 fill = species_code_fao)) +
+                                 fill = variable)) +
       ggplot2::geom_histogram(position = "dodge",
                               stat = "identity") +
       ggplot2::geom_text(ggplot2::aes(label = number),
-                          vjust = -.3,
-                          size = 4,
-                          position = ggplot2::position_dodge(width = 0.9),
-                          color = "black") +
-      ggplot2::labs(fill = "Species",
-                    x = "Biological varibles",
+                         vjust = -.3,
+                         size = 2.5,
+                         position = ggplot2::position_dodge(width = 0.9),
+                         color = "black") +
+      ggplot2::labs(fill = "Biological variables",
+                    x = "Species",
                     y = "Number of fish sampled") +
+      ggplot2::scale_fill_manual(values = c("#cc0033",
+                                            "#009900",
+                                            "#FFCC33",
+                                            "#6633cc")) +
       ggplot2::theme_light()
   } else if (graph_type == "table") {
-    as.data.frame(sampled_summarize)
+    as.data.frame(sampled_summarize_filtred)
   }
 }
