@@ -251,7 +251,7 @@ species_biological_variable <- function(dataframe,
                                  dplyr::desc(length))
     df_cut <- df_arrange[1:5, ]
     df_end <- df_arrange[6:length(df_arrange$species_code_fao), ]
-    # df_sum <- colSums(df_end)
+
     df_sum <- df_end %>%
       dplyr::select(-species_code_fao) %>%
       colSums()
