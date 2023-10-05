@@ -2,7 +2,7 @@
 % Please edit documentation in R/control_trip_map.R
 \name{control_trip_map}
 \alias{control_trip_map}
-\title{Control trip map}
+\title{Trip data consistency control}
 \usage{
 control_trip_map(
   dataframe_observe,
@@ -30,7 +30,7 @@ control_trip_map(
 The function return ggplot R plot.
 }
 \description{
-Map of the control, number of sets, number of fads
+Check the consistency between LB and OBS data (Positions, number of sets and deployments)
 }
 \details{
 The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:

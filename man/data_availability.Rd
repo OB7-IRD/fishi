@@ -2,7 +2,7 @@
 % Please edit documentation in R/data_availability.R
 \name{data_availability}
 \alias{data_availability}
-\title{Data availability}
+\title{Assessing data availability}
 \usage{
 data_availability(
   dataframe_observe,
@@ -30,5 +30,5 @@ data_availability(
 The function return ggplot R plot.
 }
 \description{
-Data availability for LOG, OBS and VMS
+Control to verify the availability of LB, OBS and OBS data.
 }

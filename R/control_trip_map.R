@@ -1,6 +1,6 @@
 #' @name control_trip_map
-#' @title Control trip map
-#' @description Map of the control, number of sets, number of fads
+#' @title Trip data consistency control
+#' @description Check the consistency between LB and OBS data (Positions, number of sets and deployments)
 #' @param dataframe_observe {\link[base]{data.frame}} expected. Dataframe from the Observe database. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the data_availability() function.
 #' @param dataframe_t3 {\link[base]{data.frame}} expected. Dataframe from the T3 database. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the data_availability() function.
 #' @param dataframe_vms {\link[base]{data.frame}} expected. Dataframe from the Vms database. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the data_availability() function.
