@@ -4,7 +4,9 @@
 #' @param dataframe {\link[base]{data.frame}} expected. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the fishing_activity() function.
 #' @param data_type {\link[base]{character}} expected. Tunabio or observe.
 #' @param graph_type {\link[base]{character}} expected. "number" or "table." Number by default.
-#' @param reported_year {\link[base]{integer}} expected. Write the wanted year of the report
+#' @param reported_year {\link[base]{integer}} expected. Write the wanted year of the report.
+#' @param start_date {\link[base]{character}} expected. if reported_year is not given. Write the start date of the time range of the report.
+#' @param end_date {\link[base]{character}} expected. if reported_year is not given. Write the end date of the time range of the report
 #' @param selected_country {\link[base]{integer}} expected. Country code to select the list of boat to count. If NULL give all the vessel for the given year.
 #' @param selected_ocean {\link[base]{integer}} expected. Ocean code to select the list of boat to count. If NULL give all the vessel for the given year.
 #' @param variable {\link[base]{character}} expected. Write the variable of the PSU. Can be "trip" or "well". "trip" by default.
@@ -35,6 +37,8 @@ number_PSU_sampled <- function(dataframe,
                                data_type,
                                graph_type = "number",
                                reported_year = NULL,
+                               start_date = NULL,
+                               end_date = NULL,
                                selected_country = NULL,
                                selected_ocean = NULL,
                                variable = "trip") {
@@ -83,6 +87,24 @@ number_PSU_sampled <- function(dataframe,
     return(codama::r_type_checking(r_object = reported_year,
                                    type = "integer",
                                    output = "message"))
+  }
+    # start_date
+    if ((! is.null(x = start_date))
+        && codama::r_type_checking(r_object = start_date,
+                                   type = "character",
+                                   output = "logical") != TRUE) {
+      return(codama::r_type_checking(r_object = start_date,
+                                     type = "character",
+                                     output = "message"))
+    }
+    # end_date
+    if ((! is.null(x = end_date))
+        && codama::r_type_checking(r_object = end_date,
+                                   type = "character",
+                                   output = "logical") != TRUE) {
+      return(codama::r_type_checking(r_object = end_date,
+                                     type = "character",
+                                     output = "message"))
   }
   # selected country
   if ((! is.null(x = selected_country))
@@ -203,10 +225,10 @@ number_PSU_sampled <- function(dataframe,
     tunabio[["biology"]] <- dplyr::mutate(.data =  tunabio[["biology"]],
                                           sampling_year = lubridate::year(fish_sampling_date),
                                           fish_sampling_date = lubridate::date(fish_sampling_date))
-    ## mean fishing date
+    ### mean fishing date
     tunabio[["env"]] <- dplyr::mutate(.data = tunabio[["env"]],
                                       landing_date = lubridate::date(landing_date))
-    ## merge of ENV and BIO data
+    ### merge of ENV and BIO data
     tunabio[["merged"]] <- dplyr::left_join(x = tunabio[["biology"]],
                                             y = tunabio[["env"]],
                                             by = "fish_identifier",
@@ -217,8 +239,19 @@ number_PSU_sampled <- function(dataframe,
                     vessel_code,
                     vessel_name,
                     landing_date,
+                    landing_site,
                     vessel_well_number,
                     well_position)
+    ### Selection of the time period
+    if (!is.null(reported_year)) {
+      df <- tunabio[["merged"]] %>%
+        dplyr::filter(sampling_year == reported_year)
+    } else if (!is.null(start_date) && !is.null(end_date)) {
+      df <- tunabio[["merged"]] %>%
+        dplyr::filter(fish_sampling_date >= start_date &
+                        fish_sampling_date <= end_date)
+    }
+
     ## Data analyze ----
     if (variable == "trip") {
       if (!is.null(selected_country)) {
