@@ -68,13 +68,13 @@ data_availability <- function(dataframe_observe,
     graphics::plot(NA,
                    NA,
                    xlim = range(day),
-                   ylim = range(1:length(vessel)),
+                   ylim = range(seq_along(vessel)),
                    type = "n",
                    xlab = "",
                    ylab = "",
                    yaxt = "n",
                    xaxt = "n")
-    graphics::abline(h = 1:length(vessel),
+    graphics::abline(h = seq_along(vessel),
                      lty = 3,
                      col = "grey")
     graphics::abline(v = day[which(substr(day, 9, 10) == "01")],
@@ -85,7 +85,7 @@ data_availability <- function(dataframe_observe,
                    labels = day[which(substr(day, 9, 10) == "01")],
                    las = 3)
     graphics::axis(2,
-                   at = 1:length(vessel),
+                   at = seq_along(vessel),
                    labels = vessel,
                    las = 1
     )
@@ -94,7 +94,7 @@ data_availability <- function(dataframe_observe,
       ocean,
       "Ocean in",
       reported_year))
-    for (v in 1:length(vessel)) {
+    for (v in seq_along(vessel)) {
       uniqueday <- as.Date(sort(unique(dataframe_vms$date[dataframe_vms$vesselname == vessel[v]])))
       graphics::points(uniqueday,
                        rep(v, length(uniqueday)) - 0.1,
@@ -102,7 +102,7 @@ data_availability <- function(dataframe_observe,
                        col = "grey",
                        cex = 0.5)
     }
-    for (v in 1:length(vessel)) {
+    for (v in seq_along(vessel)) {
       uniqueday <- as.Date(sort(unique(dataframe_t3$date[dataframe_t3$vessel == vessel[v]])))
       graphics::points(uniqueday,
                        rep(v, length(uniqueday)) - 0.0,
@@ -110,7 +110,7 @@ data_availability <- function(dataframe_observe,
                        col = "red",
                        cex = 0.5)
     }
-    for (v in 1:length(vessel)) {
+    for (v in seq_along(vessel)) {
       uniqueday <- sort(unique(dataframe_observe$observation_date[dataframe_observe$vessel == vessel[v]]))
       graphics::points(uniqueday,
                        rep(v, length(uniqueday)) + 0.1,
@@ -142,10 +142,10 @@ data_availability <- function(dataframe_observe,
       dplyr::filter(vesselname %in% vessel)
     # Ggplot
     graph <- ggplot2::ggplot(data,
-                    aes(x = day,
-                        y = vessel)) +
+                             ggplot2::aes(x = day,
+                                          y = vessel)) +
       ggplot2::geom_blank() +
-      ggplot2::geom_hline(yintercept = 1:length(vessel),
+      ggplot2::geom_hline(yintercept = seq_along(vessel),
                           linetype = "dashed",
                           color = "grey") +
       ggplot2::geom_vline(xintercept = data$day[format(data$day, "%d") == "01"],
@@ -162,32 +162,37 @@ data_availability <- function(dataframe_observe,
                                   reported_year)) +
       ggplot2::theme_minimal() +
       ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 90,
-                                                hjust = 1),
+                                                         hjust = 1),
                      legend.position = "topright",
                      panel.background = ggplot2::element_rect(fill = NA)) +
       ggplot2::geom_point(data = dataframe_vms,
-                          aes(x = date,
-                              y = vesselname),
+                          ggplot2::aes(x = date,
+                                       y = vesselname,
+                                       color = "vms"),
                           shape = 3,
-                          color = "grey",
                           size = 2,
                           position = ggplot2::position_nudge(y = -0.1),
                           na.rm = TRUE) +
       ggplot2::geom_point(data = dataframe_t3,
-                          aes(x = date,
-                              y = vessel),
+                          ggplot2::aes(x = date,
+                                       y = vessel,
+                                       color = "logbook"),
                           shape = 3,
-                          color = "red",
                           size = 2,
                           na.rm = TRUE) +
       ggplot2::geom_point(data = dataframe_observe,
-                          aes(x = observation_date,
-                              y = vessel),
+                          ggplot2::aes(x = observation_date,
+                                       y = vessel,
+                                       color = "observe"),
                           shape = 3,
-                          color = "blue",
                           position = ggplot2::position_nudge(y = 0.1),
                           size = 2,
-                          na.rm = TRUE)
+                          na.rm = TRUE) +
+      ggplot2::scale_color_manual(values = c("vms" = "grey",
+                                             "logbook" = "red",
+                                             "observe" = "blue")) +
+      ggplot2::theme(legend.position = "bottom") +
+      ggplot2::labs(color = "")
     return(graph)
   } else if (graph_type == "table") {
     data_availability <-  dataframe_vms %>%
