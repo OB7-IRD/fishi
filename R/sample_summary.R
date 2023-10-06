@@ -1,16 +1,16 @@
-#' @name number_PSU_sampled
-#' @title PSU sampled
-#' @description Give the number of PSU sampled for a given year. Need to define PSU parameter.
+#' @name sample_summary
+#' @title Sample summary
+#' @description Give the number of trip, vessel or well sampled for a given year. Need to define your goal in the parameter.
 #' @param dataframe {\link[base]{data.frame}} expected. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the fishing_activity() function.
-#' @param data_type {\link[base]{character}} expected. Tunabio or observe.
+#' @param data_type {\link[base]{character}} expected. 'tunabio' or 'observe'.
 #' @param graph_type {\link[base]{character}} expected. "number" or "table." Number by default.
 #' @param reported_year {\link[base]{integer}} expected. Write the wanted year of the report.
 #' @param start_date {\link[base]{character}} expected. if reported_year is not given. Write the start date of the time range of the report.
 #' @param end_date {\link[base]{character}} expected. if reported_year is not given. Write the end date of the time range of the report
 #' @param selected_country {\link[base]{integer}} expected. Country code to select the list of boat to count. If NULL give all the vessel for the given year.
-#' @param selected_ocean {\link[base]{integer}} expected. Ocean code to select the list of boat to count. If NULL give all the vessel for the given year.
+#' @param selected_ocean {\link[base]{integer}} expected. Ocean code to select the list of boat to count. If NULL give all the vessel for the given year, works only for 'data_type' == 'observ'
 #' @param port {\link[base]{integer}} expected. Port code to select the scale of the count count. If NULL give all the vessel for the given year.
-#' @param variable {\link[base]{character}} expected. Write the variable of the PSU. Can be "trip" or "well". "trip" by default.
+#' @param variable {\link[base]{character}} expected. Write the variable of the PSU. Can be "trip", "velssel" or "well". "trip" by default.
 #' @details
 #' The input dataframe frome sql must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:
 #' \itemize{
@@ -34,7 +34,7 @@
 #' @importFrom lubridate year
 #' @importFrom tidyr separate_longer_delim separate
 #' @importFrom codama r_type_checking %>%
-number_PSU_sampled <- function(dataframe,
+sample_summary <- function(dataframe,
                                data_type,
                                graph_type = "number",
                                reported_year = NULL,
@@ -91,23 +91,23 @@ number_PSU_sampled <- function(dataframe,
                                    type = "integer",
                                    output = "message"))
   }
-    # start_date
-    if ((! is.null(x = start_date))
-        && codama::r_type_checking(r_object = start_date,
+  # start_date
+  if ((! is.null(x = start_date))
+      && codama::r_type_checking(r_object = start_date,
+                                 type = "character",
+                                 output = "logical") != TRUE) {
+    return(codama::r_type_checking(r_object = start_date,
                                    type = "character",
-                                   output = "logical") != TRUE) {
-      return(codama::r_type_checking(r_object = start_date,
-                                     type = "character",
-                                     output = "message"))
-    }
-    # end_date
-    if ((! is.null(x = end_date))
-        && codama::r_type_checking(r_object = end_date,
+                                   output = "message"))
+  }
+  # end_date
+  if ((! is.null(x = end_date))
+      && codama::r_type_checking(r_object = end_date,
+                                 type = "character",
+                                 output = "logical") != TRUE) {
+    return(codama::r_type_checking(r_object = end_date,
                                    type = "character",
-                                   output = "logical") != TRUE) {
-      return(codama::r_type_checking(r_object = end_date,
-                                     type = "character",
-                                     output = "message"))
+                                   output = "message"))
   }
   # selected country
   if ((! is.null(x = selected_country))
@@ -247,10 +247,10 @@ number_PSU_sampled <- function(dataframe,
                     well_position)
     ### Selection of the time period
     if (!is.null(reported_year)) {
-      sample_PSU_filtered <- tunabio[["merged"]] %>%
+      sample_filtered <- tunabio[["merged"]] %>%
         dplyr::filter(sampling_year == reported_year)
     } else if (!is.null(start_date) && !is.null(end_date)) {
-      sample_PSU_filtered <- tunabio[["merged"]] %>%
+      sample_filtered <- tunabio[["merged"]] %>%
         dplyr::filter(fish_sampling_date >= start_date &
                         fish_sampling_date <= end_date)
     }
@@ -258,27 +258,28 @@ number_PSU_sampled <- function(dataframe,
     ## Data analyze ----
     if (variable == "trip") {
       if (!is.null(selected_country)) {
-        sampled_PSU_summarize <-  sample_PSU_filtered %>%
+        sample_summarize <-  sample_filtered %>%
           dplyr::group_by(vessel_name,
                           landing_date) %>%
           dplyr::summarise(nb_vessel = dplyr::n_distinct(vessel_name),
                            .groups = "drop") %>%
           dplyr::left_join(y = tunabio[["vessel"]],
                            by = dplyr::join_by(vessel_name)) %>%
+          dplyr::select(-nb_vessel) %>%
           dplyr::filter(selected_country == country)
       } else if (is.null(selected_country)) {
-        sampled_PSU_summarize <-  sample_PSU_filtered %>%
+        sample_summarize <-  sample_filtered %>%
           dplyr::group_by(vessel_name,
                           landing_date) %>%
           dplyr::summarise(nb_trip = dplyr::n_distinct(vessel_name),
                            .groups = "drop") %>%
           dplyr::left_join(y = tunabio[["vessel"]],
-                           by = dplyr::join_by(vessel_name))
+                           by = dplyr::join_by(vessel_name)) %>%
           dplyr::filter(!is.na(vessel_name))
       }
     } else if (variable == "well") {
       if (!is.null(selected_country)) {
-        sampled_PSU_summarize <-  sample_PSU_filtered %>%
+        sample_summarize <-  sample_filtered %>%
           tidyr::separate_longer_delim(cols = c("vessel_well_number",
                                                 "well_position"),
                                        delim = ";") %>%
@@ -294,7 +295,7 @@ number_PSU_sampled <- function(dataframe,
           dplyr::filter(selected_country == country)
 
       } else if (is.null(selected_country)) {
-        sampled_PSU_summarize <-  sample_PSU_filtered %>%
+        sample_summarize <-  sample_filtered %>%
           tidyr::separate_longer_delim(cols = c("vessel_well_number",
                                                 "well_position"),
                                        delim = ";") %>%
@@ -304,6 +305,23 @@ number_PSU_sampled <- function(dataframe,
                           well_position) %>%
           dplyr::summarise(nb_trip = dplyr::n_distinct(vessel_name),
                            .groups = "drop") %>%
+          dplyr::left_join(y = tunabio[["vessel"]],
+                           by = dplyr::join_by(vessel_name)) %>%
+          dplyr::filter(!is.na(vessel_name))
+      }
+    } else if (variable == "vessel") {
+      if (!is.null(selected_country)) {
+        sample_summarize <-  sample_filtered %>%
+          dplyr::group_by(vessel_name) %>%
+          dplyr::summarise(nb_vessel = dplyr::n_distinct(vessel_name)) %>%
+          dplyr::left_join(y = tunabio[["vessel"]],
+                           by = dplyr::join_by(vessel_name)) %>%
+          dplyr::select(-nb_vessel) %>%
+          dplyr::filter(selected_country == country)
+      } else if (is.null(selected_country)) {
+        sample_summarize <-  sample_filtered %>%
+          dplyr::group_by(vessel_name) %>%
+          dplyr::summarise(nb_vessel = dplyr::n_distinct(vessel_name)) %>%
           dplyr::left_join(y = tunabio[["vessel"]],
                            by = dplyr::join_by(vessel_name)) %>%
           dplyr::select(-nb_vessel) %>%
@@ -323,7 +341,7 @@ number_PSU_sampled <- function(dataframe,
       dplyr::filter(country_id %in% selected_country,
                     ocean_id %in% selected_ocean)
     if (variable == "trip") {
-      sampled_PSU_summarize <- dataframe %>%
+      sample_summarize <- dataframe %>%
         dplyr::group_by(vessel_name,
                         landing_date,
                         boat_code,
@@ -332,7 +350,7 @@ number_PSU_sampled <- function(dataframe,
         dplyr::summarise(.groups = "drop")  %>%
         dplyr::filter(!is.na(vessel_name))
     } else if (variable == "well") {
-      sampled_PSU_summarize <- dataframe %>%
+      sample_summarize <- dataframe %>%
         dplyr::group_by(vessel_name,
                         landing_date,
                         vessel_well_number,
@@ -345,8 +363,8 @@ number_PSU_sampled <- function(dataframe,
   }
   # 3 - Graphic design ----
   if (graph_type == "number") {
-    length(sampled_PSU_summarize$vessel_name)
+    length(sample_summarize$vessel_name)
   } else if (graph_type == "table") {
-    as.data.frame(sampled_PSU_summarize)
+    as.data.frame(sample_summarize)
   }
 }
