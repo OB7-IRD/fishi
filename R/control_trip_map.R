@@ -4,6 +4,7 @@
 #' @param dataframe_observe {\link[base]{data.frame}} expected. Dataframe from the Observe database. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the data_availability() function.
 #' @param dataframe_t3 {\link[base]{data.frame}} expected. Dataframe from the T3 database. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the data_availability() function.
 #' @param dataframe_vms {\link[base]{data.frame}} expected. Dataframe from the Vms database. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the data_availability() function.
+#' @param graph_type {\link[base]{character}} expected. plot or ggplot Plot by default.
 #' @param trip_i {\link[base]{character}} expected. Date + # + vessel name.
 #' @param control_dist_vms TRUE or FALSE. FALSE by default.
 #' @param path_to_shp {\link[base]{character}} expected. Put a link, if you want to add a shapefile.
@@ -49,10 +50,13 @@
 #' @importFrom PBSmapping importShapefile addPolys
 #' @importFrom stringr str_split
 #' @importFrom stats time
+#' @importFrom grDevices x11
+#' @importFrom cowplot ggdraw
 control_trip_map <- function(dataframe_observe,
                              dataframe_t3,
                              dataframe_vms,
                              trip_i,
+                             graph_type = "plot",
                              control_dist_vms = FALSE,
                              path_to_shp = NULL) {
   # 0 - Global variables assignement ----
@@ -68,6 +72,13 @@ control_trip_map <- function(dataframe_observe,
   time <- NULL
   observation_time <- NULL
   vessel_activity_code <- NULL
+  long <- NULL
+  lat <- NULL
+  group <- NULL
+  X <- NULL
+  Y <- NULL
+  PID <- NULL
+  n_sets <- NULL
   # 1 - Arguments verification ----
   if (codama::r_type_checking(r_object = trip_i,
                               type = "character",
@@ -252,7 +263,7 @@ control_trip_map <- function(dataframe_observe,
 
   # buoys deployed
   t3buoysdeployed <- length(unique(dataframe_t3[dataframe_t3$vessel_activity_code
-                                                  %in% c(5, 23, 25, 32)
+                                                %in% c(5, 23, 25, 32)
                                                 , "activity_id"]))
   obsbuoysdeployed <- length(unique(dataframe_observe[grepl("3",
                                                             dataframe_observe$operation_on_buoy_code),
@@ -277,205 +288,445 @@ control_trip_map <- function(dataframe_observe,
     abs(diff(yrange)))))
   xlim <- mean(xrange) + (1 + maxrange / 2) * c(-1, 1)
   ylim <- mean(yrange) + (1 + maxrange / 2) * c(-1, 1)
-  # 1 - MAP
-  load(file = system.file("wrld_simpl.RData",
-                          package = "fishi"))
-  layout(matrix(c(rep(1, 12), 2, 2, 2, 3), 4, 4,
-                byrow = TRUE))
-  par(mar = c(1.1, 3.1, 5.1, 1.1))
-  maps::map(wrld_simpl,
-            main = "",
-            resolution = 0.1,
-            add = FALSE,
-            col = "lightgrey",
-            fill = TRUE,
-            xlim = xlim,
-            ylim = ylim,
-            xaxs = "i",
-            mar = c(4, 4.1, 3, 2),
-            border = 0)
-  if (!is.null(path_to_shp)) {
-    zee_v11 <- PBSmapping::importShapefile(path_to_shp,
-                                           readDBF = TRUE,
-                                           projection = "LL")
-    zee_v11_trop <- zee_v11[zee_v11$PID %in% unique(zee_v11[zee_v11$X >= (-35) & zee_v11$X <= 90 & zee_v11$Y >= (-35) & zee_v11$Y <= 25, ]$PID), ]
-    PBSmapping::addPolys(zee_v11_trop,
-                         xlim = xlim,
-                         ylim = ylim,
-                         border = "pink")
-  }
-  graphics::lines(dataframe_vms$longitude,
-                  dataframe_vms$latitude,
-                  type = "o",
-                  pch = 16,
-                  lwd = 1,
-                  cex = .5,
-                  col = "grey")
-  graphics::lines(dataframe_t3$longitude,
-                  dataframe_t3$latitude,
-                  type = "p",
-                  pch = 1,
-                  cex = 1,
-                  col = "red")
-  graphics::points(dataframe_t3$longitude[dataframe_t3$vessel_activity_code %in% c(0, 1, 2, 14)],
-                   dataframe_t3$latitude[dataframe_t3$vessel_activity_code %in% c(0, 1, 2, 14)],
-                   pch = 3,
-                   col = "red",
-                   cex = 2)
-  graphics::lines(dataframe_observe$longitude,
-                  dataframe_observe$latitude,
-                  type = "p",
-                  pch = 16,
-                  cex = .5,
-                  col = "blue")
-  graphics::points(dataframe_observe$longitude[dataframe_observe$vessel_activity_code == 6],
-                   dataframe_observe$latitude[dataframe_observe$vessel_activity_code == 6],
-                   pch = 4,
-                   col = "blue",
-                   cex = 2)
-  if (control_dist_vms == TRUE) {
-    if (nrow(dataframe_vms) > 0) {
-      graphics::points(dataframe_observe$longitude[dataframe_observe$delta_vms >= threshold_km],
-                       dataframe_observe$latitude[dataframe_observe$delta_vms >= threshold_km],
-                       pch = 7,
-                       col = "black",
-                       cex = 2)
+  if (graph_type == "plot") {
+    # 1 - MAP ----
+    load(file = system.file("wrld_simpl.RData",
+                            package = "fishi"))
+    layout(matrix(c(rep(1, 12), 2, 2, 2, 3), 4, 4,
+                  byrow = TRUE))
+    par(mar = c(1.1, 3.1, 5.1, 1.1))
+    maps::map(wrld_simpl,
+              main = "",
+              resolution = 0.1,
+              add = FALSE,
+              col = "lightgrey",
+              fill = TRUE,
+              xlim = xlim,
+              ylim = ylim,
+              xaxs = "i",
+              mar = c(4, 4.1, 3, 2),
+              border = 0)
+    if (!is.null(path_to_shp)) {
+      zee_v11 <- PBSmapping::importShapefile(path_to_shp,
+                                             readDBF = TRUE,
+                                             projection = "LL")
+      zee_v11_trop <- zee_v11[zee_v11$PID %in% unique(zee_v11[zee_v11$X >= (-35) & zee_v11$X <= 90 & zee_v11$Y >= (-35) & zee_v11$Y <= 25, ]$PID), ]
+      PBSmapping::addPolys(zee_v11_trop,
+                           xlim = xlim,
+                           ylim = ylim,
+                           border = "pink")
     }
-  }
-  mygrid(5)
-  myaxes(5)
-  box()
-  legend("topright",
-         legend = c("vms position",
-                    "logbook activity",
-                    "observe activity",
-                    "logbook set",
-                    "observe set"),
-         col = c("grey",
-                 "red",
-                 "blue",
-                 "red",
-                 "blue"),
-         pch = c(16, 1, 16, 3, 4),
-         pt.cex = c(.5, 1, .5, 1, 1),
-         bg = "white")
-  if (control_dist_vms == TRUE) {
-    graphics::legend("bottomright",
-                     legend = paste(perrors,
-                                    "% errors",
-                                    sep = ""),
-                     pch = 7,
-                     bg = "white")
-  }
-  graphics::title(paste(start_date_i,
-                        end_date_i,
-                        vessel_i,
-                        observer_i,
-                        program_i,
-                        sep = " | "))
-  # 2 - sets
-  par(mar = c(6.1, 3.1, 3.1, 1.1))
-  graphics::plot(obsets$observation_date,
-                 obsets$n_sets,
-                 ylim = c(0,
-                          max(c(obsets$n_sets,
-                                t3sets$n_sets)) + 1),
-                 xlim = c(as.Date(start_date_i),
-                          as.Date(end_date_i)),
-                 type = "n",
-                 ylab = "",
-                 xlab = "",
-                 xaxt = "n",
-                 yaxt = "n",
-                 main = "Number of sets")
-  graphics::abline(v = seq(as.Date(start_date_i),
-                           as.Date(end_date_i),
-                           by = 1),
-                   lty = 3,
-                   col = "grey")
-  graphics::abline(h = 0:10,
-                   lty = 3,
-                   col = "grey")
-  graphics::points(as.Date(as.character(t3sets$date)),
-                   t3sets$n_sets,
-                   pch = 3,
-                   col = "red",
-                   cex = 2)
-  graphics::points(obsets$observation_date,
+    graphics::lines(dataframe_vms$longitude,
+                    dataframe_vms$latitude,
+                    type = "o",
+                    pch = 16,
+                    lwd = 1,
+                    cex = .5,
+                    col = "grey")
+    graphics::lines(dataframe_t3$longitude,
+                    dataframe_t3$latitude,
+                    type = "p",
+                    pch = 1,
+                    cex = 1,
+                    col = "red")
+    graphics::points(dataframe_t3$longitude[dataframe_t3$vessel_activity_code %in% c(0, 1, 2, 14)],
+                     dataframe_t3$latitude[dataframe_t3$vessel_activity_code %in% c(0, 1, 2, 14)],
+                     pch = 3,
+                     col = "red",
+                     cex = 2)
+    graphics::lines(dataframe_observe$longitude,
+                    dataframe_observe$latitude,
+                    type = "p",
+                    pch = 16,
+                    cex = .5,
+                    col = "blue")
+    graphics::points(dataframe_observe$longitude[dataframe_observe$vessel_activity_code == 6],
+                     dataframe_observe$latitude[dataframe_observe$vessel_activity_code == 6],
+                     pch = 4,
+                     col = "blue",
+                     cex = 2)
+    if (control_dist_vms == TRUE) {
+      if (nrow(dataframe_vms) > 0) {
+        graphics::points(dataframe_observe$longitude[dataframe_observe$delta_vms >= threshold_km],
+                         dataframe_observe$latitude[dataframe_observe$delta_vms >= threshold_km],
+                         pch = 7,
+                         col = "black",
+                         cex = 2)
+      }
+    }
+    mygrid(5)
+    myaxes(5)
+    box()
+    legend("topright",
+           legend = c("vms position",
+                      "logbook activity",
+                      "observe activity",
+                      "logbook set",
+                      "observe set"),
+           col = c("grey",
+                   "red",
+                   "blue",
+                   "red",
+                   "blue"),
+           pch = c(16, 1, 16, 3, 4),
+           pt.cex = c(.5, 1, .5, 1, 1),
+           bg = "white")
+    if (control_dist_vms == TRUE) {
+      graphics::legend("bottomright",
+                       legend = paste(perrors,
+                                      "% errors",
+                                      sep = ""),
+                       pch = 7,
+                       bg = "white")
+    }
+    graphics::title(paste(start_date_i,
+                          end_date_i,
+                          vessel_i,
+                          observer_i,
+                          program_i,
+                          sep = " | "))
+    # 2 - sets ----
+    par(mar = c(6.1, 3.1, 3.1, 1.1))
+    graphics::plot(obsets$observation_date,
                    obsets$n_sets,
-                   pch = 4,
-                   col = "blue",
-                   cex = 2)
-  graphics::axis(1,
-                 at = seq(as.Date(start_date_i),
-                          as.Date(end_date_i),
-                          by = 1),
-                 labels = seq(as.Date(start_date_i),
-                              as.Date(end_date_i),
-                              by = 1),
-                 las = 3)
-  graphics::axis(2,
-                 at = 0:10,
-                 las = 1)
-  graphics::legend("topright",
-                   legend = c("logbook",
-                              "observe"),
-                   col = c("red",
-                           "blue"),
-                   pch = c(3, 4),
-                   bg = "white")
-  # 3 - fads and beacons deployed
-  graphics::par(mar = c(6.1, 2.1, 3.1, 2.1))
-  graphics::plot(NA,
-                 NA,
-                 type = "n",
-                 xlim = c(0, 3),
-                 ylim = c(0, 5 + max(c(t3fadsdeployed,
-                                       t3buoysdeployed,
-                                       obsfadsdeployed,
-                                       obsbuoysdeployed),
-                                     na.rm = TRUE)),
-                 xlab = "",
-                 ylab = "",
-                 xaxt = "n",
-                 main = "Number of deployments")
-  graphics::axis(1,
-                 at = c(1, 2),
-                 labels = c("FADs",
-                            "Buoys"),
-                 las = 3)
-  graphics::abline(h = seq(0, 200, by = 5),
-                   lty = 3,
-                   col = "grey")
-  graphics::abline(v = c(1, 2),
-                   lty = 3,
-                   col = "grey")
-  graphics::points(1,
-                   t3fadsdeployed,
-                   pch = 3,
-                   col = "red",
-                   cex = 2)
-  graphics::points(2,
-                   t3buoysdeployed,
-                   pch = 3,
-                   col = "red",
-                   cex = 2)
-  graphics::points(1,
-                   obsfadsdeployed,
-                   pch = 4,
-                   col = "blue",
-                   cex = 2)
-  graphics::points(2,
-                   obsbuoysdeployed,
-                   pch = 4,
-                   col = "blue",
-                   cex = 2)
-  graphics::legend("topleft",
-                   legend = c("logbook",
-                              "observe"),
-                   col = c("red",
-                           "blue"),
-                   pch = c(3, 4),
-                   bg = "white")
+                   ylim = c(0,
+                            max(c(obsets$n_sets,
+                                  t3sets$n_sets)) + 1),
+                   xlim = c(as.Date(start_date_i),
+                            as.Date(end_date_i)),
+                   type = "n",
+                   ylab = "",
+                   xlab = "",
+                   xaxt = "n",
+                   yaxt = "n",
+                   main = "Number of sets")
+    graphics::abline(v = seq(as.Date(start_date_i),
+                             as.Date(end_date_i),
+                             by = 1),
+                     lty = 3,
+                     col = "grey")
+    graphics::abline(h = 0:10,
+                     lty = 3,
+                     col = "grey")
+    graphics::points(as.Date(as.character(t3sets$date)),
+                     t3sets$n_sets,
+                     pch = 3,
+                     col = "red",
+                     cex = 2)
+    graphics::points(obsets$observation_date,
+                     obsets$n_sets,
+                     pch = 4,
+                     col = "blue",
+                     cex = 2)
+    graphics::axis(1,
+                   at = seq(as.Date(start_date_i),
+                            as.Date(end_date_i),
+                            by = 1),
+                   labels = seq(as.Date(start_date_i),
+                                as.Date(end_date_i),
+                                by = 1),
+                   las = 3)
+    graphics::axis(2,
+                   at = 0:10,
+                   las = 1)
+    graphics::legend("topright",
+                     legend = c("logbook",
+                                "observe"),
+                     col = c("red",
+                             "blue"),
+                     pch = c(3, 4),
+                     bg = "white")
+    # 3 - fads and beacons deployedv ----
+    graphics::par(mar = c(6.1, 2.1, 3.1, 2.1))
+    graphics::plot(NA,
+                   NA,
+                   type = "n",
+                   xlim = c(0, 3),
+                   ylim = c(0, 5 + max(c(t3fadsdeployed,
+                                         t3buoysdeployed,
+                                         obsfadsdeployed,
+                                         obsbuoysdeployed),
+                                       na.rm = TRUE)),
+                   xlab = "",
+                   ylab = "",
+                   xaxt = "n",
+                   main = "Number of deployments")
+    graphics::axis(1,
+                   at = c(1, 2),
+                   labels = c("FADs",
+                              "Buoys"),
+                   las = 3)
+    graphics::abline(h = seq(0, 200, by = 5),
+                     lty = 3,
+                     col = "grey")
+    graphics::abline(v = c(1, 2),
+                     lty = 3,
+                     col = "grey")
+    graphics::points(1,
+                     t3fadsdeployed,
+                     pch = 3,
+                     col = "red",
+                     cex = 2)
+    graphics::points(2,
+                     t3buoysdeployed,
+                     pch = 3,
+                     col = "red",
+                     cex = 2)
+    graphics::points(1,
+                     obsfadsdeployed,
+                     pch = 4,
+                     col = "blue",
+                     cex = 2)
+    graphics::points(2,
+                     obsbuoysdeployed,
+                     pch = 4,
+                     col = "blue",
+                     cex = 2)
+    graphics::legend("topleft",
+                     legend = c("logbook",
+                                "observe"),
+                     col = c("red",
+                             "blue"),
+                     pch = c(3, 4),
+                     bg = "white")
+  } else if (graph_type == "ggplot") {
+    dataframe_t3_bis <- dataframe_t3 %>%
+      dplyr::filter(vessel_activity_code %in% c(0, 1, 2, 14))
+    dataframe_observe_bis <- dataframe_observe %>%
+      dplyr::filter(vessel_activity_code == 6)
+    # 1 - MAP ----
+    load(file = system.file("wrld_simpl.RData",
+                            package = "fishi"))
+    graph_map <- ggplot2::ggplot() +
+      ggplot2::geom_blank() +
+      ggplot2::geom_polygon(data = wrld_simpl,
+                            ggplot2::aes(x = long,
+                                         y = lat,
+                                         group = group),
+                            fill = "lightgrey",
+                            color = "white") +
+      ggplot2::coord_cartesian(xlim = xlim,
+                               ylim = ylim) +
+      ggplot2::theme_minimal() +
+      # vms position
+      ggplot2::geom_point(data = dataframe_vms,
+                          ggplot2::aes(x = longitude,
+                                       y = latitude,
+                                       color = "VMS position"),
+                          size = 0.5,
+                          pch = 16) +
+      # logbook activity
+      ggplot2::geom_point(data = dataframe_t3,
+                          ggplot2::aes(x = longitude,
+                                       y = latitude,
+                                       color = "Logbook activity"),
+                          size = 2,
+                          pch = 1) +
+      # observe activity
+      ggplot2::geom_point(data = dataframe_observe,
+                          ggplot2::aes(x = longitude,
+                                       y = latitude,
+                                       color = "Observe activity"),
+                          size = 1,
+                          pch = 16) +
+      # logbook set
+      ggplot2::geom_point(data = dataframe_t3_bis,
+                          ggplot2::aes(x = longitude,
+                                       y = latitude,
+                                       color = "Logbook set"),
+                          size = 3,
+                          pch = 3) +
+      # observe activity
+      ggplot2::geom_point(data = dataframe_observe_bis,
+                          ggplot2::aes(x = longitude,
+                                       y = latitude,
+                                       color = "Observe set"),
+                          size = 3,
+                          pch = 4) +
+      ggplot2::geom_vline(xintercept = seq(-180, 180,
+                                           by = 5),
+                          linetype = "dotted") +
+      ggplot2::geom_hline(yintercept = seq(-90, 90,
+                                           by = 5),
+                          linetype = "dotted") +
+      ggplot2::theme(plot.margin = ggplot2::unit(c(4, 4.1, 3, 2),
+                                                 "lines"),
+                     panel.background = ggplot2::element_rect(fill = NA),
+                     panel.border = ggplot2::element_rect(fill = "NA"),
+                     axis.title = ggplot2::element_blank(),
+                     aspect.ratio = 1,
+                     plot.title = ggplot2::element_text(size = 11,
+                                                        face = "bold")) +
+      ggplot2::ggtitle(paste(start_date_i,
+                             end_date_i,
+                             vessel_i,
+                             observer_i,
+                             program_i,
+                             sep = " | ")) +
+      ggplot2::scale_color_manual(values = c("VMS position" = "grey",
+                                             "Logbook activity" = "red",
+                                             "Observe activity" = "blue",
+                                             "Logbook set" = "red",
+                                             "Observe set" = "blue")) +
+      ggplot2::scale_shape_manual(values = c("VMS position" = 16,
+                                             "Logbook activity" = 1,
+                                             "Observe activity" = 2,
+                                             "Logbook set" = 3,
+                                             "Observe set" = 4)) +
+      ggplot2::theme(legend.position = "bottom")  +
+      ggplot2::labs(color = "") +
+      ggplot2::guides(color = ggplot2::guide_legend(override.aes = list(shape = c(1, 3, 16, 4, 19))))
+    if (!is.null(path_to_shp)) {
+      zee_v11 <- PBSmapping::importShapefile(path_to_shp,
+                                             readDBF = TRUE,
+                                             projection = "LL")
+      zee_v11_trop <- zee_v11[zee_v11$PID %in% unique(zee_v11[zee_v11$X >= (-35) & zee_v11$X <= 90 & zee_v11$Y >= (-35) & zee_v11$Y <= 25, ]$PID), ]
+      # zee_v11_trop <- zee_v11_trop %>%
+      #   dplyr::filter(X >= min(xlim) & X <= max(xlim)) %>%
+      #   dplyr::filter(Y >= min(ylim) & Y <= max(ylim))
+      graph_map <- graph_map + ggplot2::geom_polygon(data = zee_v11_trop,
+                                                     ggplot2::aes(x = X,
+                                                                  y = Y,
+                                                                  group = PID), # Problème car trop de traits
+                                                     size = 0.5,
+                                                     #pch = 16,
+                                                     color = "pink",
+                                                     fill = "transparent")
 
+    }
+    # 2 - sets ----
+    graph_set <- ggplot2::ggplot(data = obsets,
+                                 ggplot2::aes(x = observation_date,
+                                              y = n_sets)) +
+      ggplot2::geom_blank() +
+      ggplot2::xlim(as.Date(start_date_i),
+                    as.Date(end_date_i)) +
+      ggplot2::ylim(0,
+                    max(c(obsets$n_sets,
+                          t3sets$n_sets)) + 1) +
+      ggplot2::labs(x = "",
+                    y = "",
+                    title = "") +
+      ggplot2::theme_minimal() +
+      ggplot2::geom_vline(xintercept = seq(start_date_i,
+                                           end_date_i,
+                                           by = 1),
+                          linetype = "dotted",
+                          color = "grey") +
+      ggplot2::geom_hline(yintercept = 0:10,
+                          linetype = "dotted",
+                          color = "grey") +
+      ggplot2::geom_point(data = t3sets,
+                          ggplot2::aes(x = as.Date(date),
+                                       y = n_sets,
+                                       color = "Logbook"),
+                          shape = 3,
+                          size = 3) +
+      ggplot2::geom_point(data = obsets,
+                          ggplot2::aes(x = as.Date(observation_date),
+                                       y = n_sets,
+                                       color = "Observe"),
+                          shape = 4,
+                          size = 3) +
+      ggplot2::scale_x_date(breaks = seq(as.Date(start_date_i),
+                                         as.Date(end_date_i),
+                                         by = "days"),
+                            labels = seq(as.Date(start_date_i),
+                                         as.Date(end_date_i),
+                                         by = "days"),
+                            date_labels = "%Y-%m-%d",
+                            date_breaks = "1 day",
+                            expand = c(0, 0),
+                            limits = c(as.Date(start_date_i), as.Date(end_date_i))) +
+      ggplot2::ggtitle("Number of sets") +
+      ggplot2::theme(panel.background = ggplot2::element_rect(fill = "NA"),
+                     # plot.margin = ggplot2::unit(c(6.1, 3.1, 3.1, 1.1),
+                     #                             "lines"),
+                     panel.border = ggplot2::element_rect(fill = "NA"),
+                     axis.title = ggplot2::element_blank(),
+                     plot.title = ggplot2::element_text(size = 11,
+                                                        face = "bold"),
+                     axis.text.x = ggplot2::element_text(angle = 90,
+                                                         hjust = 1))  +
+      ggplot2::scale_color_manual(values = c("Logbook" = "red",
+                                             "Observe" = "blue")) +
+      ggplot2::scale_shape_manual(values = c("Logbook" = 3,
+                                             "Observe" = 4)) +
+      ggplot2::theme(legend.position = "bottom")  +
+      ggplot2::labs(color = "") +
+      ggplot2::guides(color = ggplot2::guide_legend(override.aes = list(shape = c(3, 4))))
+    # 3 - fads and beacons  ----
+    graph_dpl <- ggplot2::ggplot() +
+      ggplot2::geom_blank() +
+      ggplot2::xlim(0, 3) +
+      ggplot2::ylim(0, 5 + max(c(t3fadsdeployed,
+                                 t3buoysdeployed,
+                                 obsfadsdeployed,
+                                 obsbuoysdeployed),
+                               na.rm = TRUE)) +
+      ggplot2::labs(x = "", y = "") +
+      ggplot2::theme(axis.text.x = ggplot2::element_blank()) +
+      ggplot2::geom_hline(yintercept = seq(0, 200, by = 5),
+                          linetype = "dashed",
+                          color = "grey") +
+      ggplot2::geom_vline(xintercept = c(1, 2),
+                          linetype = "dashed",
+                          color = "grey") +
+      ggplot2::labs(title = "") +
+      ggplot2::geom_point(ggplot2::aes(x = 1
+                                       , y = t3fadsdeployed,
+                                       col = "Logbook"),
+                          pch = 3,
+                          size = 3) +
+      ggplot2::geom_point(ggplot2::aes(x = 2,
+                                       y = obsfadsdeployed,
+                                       col = "Observe"),
+                          pch = 4,
+                          size = 3) +
+      ggplot2::geom_point(ggplot2::aes(x = 2,
+                                       y = t3buoysdeployed,
+                                       col = "Logbook"),
+                          pch = 3,
+                          size = 3) +
+      ggplot2::geom_point(ggplot2::aes(x = 1,
+                                       y = obsbuoysdeployed,
+                                       col = "Observe"),
+                          pch = 4,
+                          size = 3) +
+      ggplot2::ggtitle("Number of deployments") +
+      ggplot2::theme(panel.background = ggplot2::element_rect(fill = "NA"),
+                     # plot.margin = ggplot2::unit(c(6.1, 2.1, 3.1, 2.1),
+                     #                             "lines"),
+                     panel.border = ggplot2::element_rect(fill = "NA"),
+                     axis.title = ggplot2::element_blank(),
+                     plot.title = ggplot2::element_text(size = 11,
+                                                        face = "bold"),
+                     axis.text.x = ggplot2::element_text(angle = 90, hjust = 1)) +
+      ggplot2::scale_color_manual(values = c("Logbook" = "red",
+                                             "Observe" = "blue")) +
+      ggplot2::scale_shape_manual(values = c("Logbook" = 3,
+                                             "Observe" = 4)) +
+      ggplot2::theme(legend.position = "bottom")  +
+      ggplot2::labs(color = "") +
+      ggplot2::guides(color = ggplot2::guide_legend(override.aes = list(shape = c(3, 4))))
+    # Ggarrange ----
+    graph_final <- cowplot::ggdraw() +
+      cowplot::draw_plot(graph_map,
+                         x = 0,
+                         y = 0.17,
+                         width = 0.97,
+                         height = 0.97) +
+      cowplot::draw_plot(graph_set,
+                         x = 0,
+                         y = 0,
+                         width = 0.7,
+                         height = 0.3) +
+      cowplot::draw_plot(graph_dpl,
+                         x = 0.71,
+                         y = 0.05,
+                         width = 0.25,
+                         height = 0.25)
+    grDevices::x11(width = 15, height = 20)
+    return(graph_final)
+  }
 }

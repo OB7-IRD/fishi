@@ -9,6 +9,7 @@ control_trip_map(
   dataframe_t3,
   dataframe_vms,
   trip_i,
+  graph_type = "plot",
   control_dist_vms = FALSE,
   path_to_shp = NULL
 )
@@ -21,6 +22,8 @@ control_trip_map(
 \item{dataframe_vms}{{\link[base]{data.frame}} expected. Dataframe from the Vms database. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the data_availability() function.}
 
 \item{trip_i}{{\link[base]{character}} expected. Date + # + vessel name.}
+
+\item{graph_type}{{\link[base]{character}} expected. plot or ggplot Plot by default.}
 
 \item{control_dist_vms}{TRUE or FALSE. FALSE by default.}
 

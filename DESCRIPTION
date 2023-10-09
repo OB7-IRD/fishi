@@ -50,6 +50,7 @@ Imports:
     readxl (>= 1.4.3),
     stringr (>= 1.5.0),
     grDevices,
+    cowplot,
     utils
 URL: https://github.com/OB7-IRD/fishi
 BugReports: https://github.com/OB7-IRD/fishi/issues
