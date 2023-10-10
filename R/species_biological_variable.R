@@ -114,6 +114,7 @@ species_biological_variable <- function(dataframe,
                                    output = "message"))
   }
   # 2 - Data design ----
+  # TUNABIO ----
   if (data_type == "tunabio") {
     ## Data import -----
     tunabio <- vector("list")
@@ -209,6 +210,7 @@ species_biological_variable <- function(dataframe,
       dplyr::full_join(sampled_maturity_summarize,
                        by = "species_code_fao")
   } else if (data_type == "observe") {
+    # OBSERVE ----
     #### Lenght
     sampled_length_summarize <- dataframe %>%
       dplyr::filter(!is.na(length)) %>%
@@ -221,7 +223,7 @@ species_biological_variable <- function(dataframe,
       dplyr::group_by(species_code_fao) %>%
       dplyr::reframe(weight = sum(count,
                                   na.rm = TRUE))
-    #### Maturity
+    #### Sex
     sampled_sex_summarize <- dataframe %>%
       dplyr::filter(!(sex %in% c(0, 3, 4))) %>%
       dplyr::filter(!is.na(sex)) %>%
@@ -241,7 +243,8 @@ species_biological_variable <- function(dataframe,
     filtered_data <- sampled_summarize
   } else {
     filtered_data <- sampled_summarize %>%
-      dplyr::select(dplyr::all_of(c("species_code_fao", selected_variable)))
+      dplyr::select(dplyr::all_of(c("species_code_fao",
+                                    selected_variable)))
   }
   ### species selection
   if (is.null(selected_species)) {
