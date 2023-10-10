@@ -8,8 +8,8 @@
 #' @param start_date {\link[base]{character}} expected. if reported_year is not given. Write the start date of the time range of the report.
 #' @param end_date {\link[base]{character}} expected. if reported_year is not given. Write the end date of the time range of the report
 #' @param selected_country {\link[base]{integer}} expected. Country code to select the list of boat to count. If NULL give all the vessel for the given year.
-#' @param selected_ocean {\link[base]{integer}} expected. Ocean code to select the list of boat to count. If NULL give all the vessel for the given year, works only for 'data_type' == 'observ'
-#' @param port {\link[base]{integer}} expected. Port code to select the scale of the count count. If NULL give all the vessel for the given year.
+#' @param selected_ocean {\link[base]{integer}} expected. Ocean code to select the list of boat to count. If NULL give all the vessel for the given year, works only for 'data_type' == 'observe'
+#' @param selected_harbour {\link[base]{integer}} expected. Harbour code to select the list of boat to count. If NULL give all the vessel for the given year, works only for 'data_type' == 'observe'
 #' @param variable {\link[base]{character}} expected. Write the variable of the PSU. Can be "trip", "velssel" or "well". "trip" by default.
 #' @details
 #' The input dataframe frome sql must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:
@@ -42,7 +42,7 @@ sample_summary <- function(dataframe,
                                end_date = NULL,
                                selected_country = NULL,
                                selected_ocean = NULL,
-                               port = NULL,
+                               selected_harbour = NULL,
                                variable = "trip") {
   # 0 - Global variables assignement ----
   STATUT <- NULL
@@ -65,6 +65,7 @@ sample_summary <- function(dataframe,
   country <- NULL
   country_id <- NULL
   ocean_id <- NULL
+  harbour_id <- NULL
   # 1 - Arguments verification ----
   # data type
   if (codama::r_type_checking(r_object = data_type,
@@ -136,6 +137,7 @@ sample_summary <- function(dataframe,
                                    output = "message"))
   }
   # 2 - Data design ----
+  # TUNABIO ----
   if (data_type == "tunabio") {
     ## Data import -----
     tunabio <- vector("list")
@@ -329,17 +331,25 @@ sample_summary <- function(dataframe,
       }
     }
   } else if (data_type == "observe") {
+    # OBSERVE ----
     # If is null
-    if (is.null(selected_country)) {
-      selected_country <- as.integer(1:87)
-    }
+    # selected ocean
     if (is.null(selected_ocean)) {
       selected_ocean <- as.integer(1:6)
+    }
+    # selected harbour
+    if (is.null(selected_harbour)) {
+      selected_harbour <- as.integer(1:999)
+    }
+    # selected country
+    if (is.null(selected_country)) {
+      selected_country <- as.integer(1:87)
     }
     # dataframe filter
     dataframe <- dataframe %>%
       dplyr::filter(country_id %in% selected_country,
-                    ocean_id %in% selected_ocean)
+                    ocean_id %in% selected_ocean,
+                    harbour_id %in% selected_harbour)
     if (variable == "trip") {
       sample_summarize <- dataframe %>%
         dplyr::group_by(vessel_name,
@@ -358,6 +368,14 @@ sample_summary <- function(dataframe,
                         country_id,
                         fleet) %>%
         dplyr::summarise(.groups = "drop")  %>%
+        dplyr::filter(!is.na(vessel_name))
+    } else if (variable == "vessel") {
+      sample_summarize <- dataframe %>%
+        dplyr::group_by(vessel_name,
+                        boat_code,
+                        country_id,
+                        fleet) %>%
+        dplyr::summarise(.groups = "drop") %>%
         dplyr::filter(!is.na(vessel_name))
     }
   }
