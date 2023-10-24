@@ -30,12 +30,7 @@ FROM activity
 
 WHERE
 	EXTRACT(year FROM route.date) IN (?time_period)
-	AND flgc.code::numeric  IN (?country)
+	AND flgc.codeiso3 IN (?flag)
 	AND vesseltype.code::numeric IN (?vessel_type)
 	AND ocean.code::numeric IN (?ocean)
-
---	flgc.codeiso3 IN ('FRA','ITA','MUS','SYC','MYT','BLZ')
---	AND vesselactivity.code IN (0,1,2,14)
---	AND vesseltype.code IN (4,5,6) --4:"Senneur avec appât"; 5:"Senneur sans appât"; 6:"Grand senneur"
---	AND route.date >= '2005-01-01'
 ;
