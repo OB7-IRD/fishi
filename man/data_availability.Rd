@@ -8,7 +8,7 @@ data_availability(
   dataframe_observe,
   dataframe_t3,
   dataframe_vms,
-  graph_type = "plot",
+  graph_type = "ggplot",
   reported_year,
   ocean = "Atlantic"
 )

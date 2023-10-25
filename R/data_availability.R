@@ -15,7 +15,7 @@
 data_availability <- function(dataframe_observe,
                               dataframe_t3,
                               dataframe_vms,
-                              graph_type = "plot",
+                              graph_type = "ggplot",
                               reported_year,
                               ocean = "Atlantic") {
   # 0 - Global variables assignement ----
@@ -63,71 +63,7 @@ data_availability <- function(dataframe_observe,
     dataframe_vms <- dataframe_vms[dataframe_vms$longitude > 25, ]
   }
   # 3 - Graphic design ----
-  if (graph_type == "plot") {
-    graphics::par(mar = c(6.1, 10.1, 4.1, 2.1))
-    graphics::plot(NA,
-                   NA,
-                   xlim = range(day),
-                   ylim = range(seq_along(vessel)),
-                   type = "n",
-                   xlab = "",
-                   ylab = "",
-                   yaxt = "n",
-                   xaxt = "n")
-    graphics::abline(h = seq_along(vessel),
-                     lty = 3,
-                     col = "grey")
-    graphics::abline(v = day[which(substr(day, 9, 10) == "01")],
-                     lty = 3,
-                     col = "grey")
-    graphics::axis(1,
-                   at = day[which(substr(day, 9, 10) == "01")],
-                   labels = day[which(substr(day, 9, 10) == "01")],
-                   las = 3)
-    graphics::axis(2,
-                   at = seq_along(vessel),
-                   labels = vessel,
-                   las = 1
-    )
-    graphics::title(paste(
-      "Data availability for purse seiners in the",
-      ocean,
-      "Ocean in",
-      reported_year))
-    for (v in seq_along(vessel)) {
-      uniqueday <- as.Date(sort(unique(dataframe_vms$date[dataframe_vms$vesselname == vessel[v]])))
-      graphics::points(uniqueday,
-                       rep(v, length(uniqueday)) - 0.1,
-                       pch = 3,
-                       col = "grey",
-                       cex = 0.5)
-    }
-    for (v in seq_along(vessel)) {
-      uniqueday <- as.Date(sort(unique(dataframe_t3$date[dataframe_t3$vessel == vessel[v]])))
-      graphics::points(uniqueday,
-                       rep(v, length(uniqueday)) - 0.0,
-                       pch = 3,
-                       col = "red",
-                       cex = 0.5)
-    }
-    for (v in seq_along(vessel)) {
-      uniqueday <- sort(unique(dataframe_observe$observation_date[dataframe_observe$vessel == vessel[v]]))
-      graphics::points(uniqueday,
-                       rep(v, length(uniqueday)) + 0.1,
-                       pch = 3,
-                       col = "blue",
-                       cex = 0.5)
-    }
-    graphics:: legend("topright",
-                      legend = c(
-                        "vms",
-                        "logbook",
-                        "observe"),
-                      pch = c(3, 3, 3),
-                      col = c("grey", "red", "blue"),
-                      pt.cex = c(0.5, 0.5, 0.5),
-                      bg = "white")
-  } else if (graph_type == "ggplot") {
+  if (graph_type == "ggplot") {
     # Creating a data frame for boat names
     vessel_data <- data.frame(vessel = as.character(sort(unique(dataframe_t3$vessel))))
     # Creating a data frame for dates
@@ -142,8 +78,8 @@ data_availability <- function(dataframe_observe,
       dplyr::filter(vesselname %in% vessel)
     # Ggplot
     graph <- ggplot2::ggplot(data,
-                             ggplot2::aes(x = day,
-                                          y = vessel)) +
+                            ggplot2::aes(x = day,
+                                         y = vessel)) +
       ggplot2::geom_blank() +
       ggplot2::geom_hline(yintercept = seq_along(vessel),
                           linetype = "dashed",
@@ -155,15 +91,15 @@ data_availability <- function(dataframe_observe,
                             date_breaks = "1 month") +
       ggplot2::scale_y_discrete(labels = vessel) +
       ggplot2::labs(x = NULL,
-                    y = NULL,
-                    title = paste("Data availability for purse seiners in the",
-                                  ocean,
-                                  "Ocean in",
-                                  reported_year)) +
+                    y = NULL) +
       ggplot2::theme_minimal() +
+      ggplot2::ggtitle(paste("Data availability for purse seiners in the",
+                             ocean,
+                             "Ocean in",
+                             reported_year)) +
+      ggplot2::theme(plot.title = ggplot2::element_text(hjust = 0.5)) +
       ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 90,
                                                          hjust = 1),
-                     legend.position = "topright",
                      panel.background = ggplot2::element_rect(fill = NA)) +
       ggplot2::geom_point(data = dataframe_vms,
                           ggplot2::aes(x = date,
