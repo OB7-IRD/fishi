@@ -497,7 +497,7 @@ control_trip_map <- function(dataframe_observe,
     # 1 - MAP ----
     load(file = system.file("wrld_simpl.RData",
                             package = "fishi"))
-    graph_map <- ggplot2::ggplot() +
+    (graph_map <- ggplot2::ggplot() +
       ggplot2::geom_blank() +
       ggplot2::geom_polygon(data = wrld_simpl,
                             ggplot2::aes(x = long,
@@ -541,8 +541,8 @@ control_trip_map <- function(dataframe_observe,
                           ggplot2::aes(x = longitude,
                                        y = latitude,
                                        color = "Observe set"),
-                          size = 3,
-                          pch = 4) +
+                          size = 0.5,
+                          pch = 16) +
       ggplot2::geom_vline(xintercept = seq(-180, 180,
                                            by = 5),
                           linetype = "dotted") +
@@ -570,12 +570,12 @@ control_trip_map <- function(dataframe_observe,
                                              "Observe set" = "blue")) +
       ggplot2::scale_shape_manual(values = c("VMS position" = 16,
                                              "Logbook activity" = 1,
-                                             "Observe activity" = 2,
+                                             "Observe activity" = 16,
                                              "Logbook set" = 3,
                                              "Observe set" = 4)) +
       ggplot2::theme(legend.position = "bottom")  +
       ggplot2::labs(color = "") +
-      ggplot2::guides(color = ggplot2::guide_legend(override.aes = list(shape = c(1, 3, 16, 4, 19))))
+      ggplot2::guides(color = ggplot2::guide_legend(override.aes = list(shape = c(1, 3, 16, 4, 19)))))
     if (!is.null(path_to_shp)) {
       zee_v11 <- PBSmapping::importShapefile(path_to_shp,
                                              readDBF = TRUE,
