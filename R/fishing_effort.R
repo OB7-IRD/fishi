@@ -235,27 +235,39 @@ fishing_effort <- function(dataframe,
            lty = 2,
            col = "lightgrey")
   } else if (graph_type == "plotly") {
-    ggplot_table_effort <- ggplot2::ggplot(data = table_effort) +
-      ggplot2::geom_line(ggplot2::aes(x = year,
-                                      y = fishing_days,
-                                      color = "Fishing")) +
-      ggplot2::geom_line(ggplot2::aes(x = year,
-                                      y = searching_days,
-                                      color = "Searching"),
-                         linetype = "dashed") +
-      ggplot2::scale_color_manual(values = c("black",
-                                             "grey")) +
-      ggplot2::geom_point(ggplot2::aes(x = year,
-                                       y = fishing_days)) +
-      ggplot2::geom_point(ggplot2::aes(x = year,
-                                       y = searching_days),
-                          shape = 4) +
+    (ggplot_table_effort <- ggplot2::ggplot(data = table_effort) +
+       ggplot2::geom_hline(yintercept = c(1:5),
+                           color = "grey",
+                           linetype = "longdash",
+                           alpha = 0.5) +
+       ggplot2::theme(#legend.position = "bottom",
+         panel.background = ggplot2::element_rect(fill = "white",
+                                                  color = "black"),
+         axis.text.x = ggplot2::element_text(angle = 45,
+                                             hjust = 1,
+                                             size = 10),
+         axis.text.y = ggplot2::element_text(size = 10)) +
+       ggplot2::geom_line(ggplot2::aes(x = year,
+                                       y = fishing_days,
+                                       color = "Fishing")) +
+       ggplot2::geom_line(ggplot2::aes(x = year,
+                                       y = searching_days,
+                                       color = "Searching"),
+                          linetype = "dashed") +
+       ggplot2::scale_color_manual(values = c("black",
+                                              "grey")) +
+       ggplot2::geom_point(ggplot2::aes(x = year,
+                                        y = fishing_days)) +
+       ggplot2::geom_point(ggplot2::aes(x = year,
+                                        y = searching_days),
+                           shape = 4) +
 
-      ggplot2::labs(x = "",
-                    y = "Activity duration (x1000 days)") +
-      ggplot2::ylim(0, 5) +
-      ggplot2::theme_bw() +
-      ggplot2::labs(colour = "")
+       ggplot2::labs(x = "",
+                     y = "Activity duration (x1000 days)") +
+       ggplot2::ylim(0.5, 5) +
+       ggplot2::labs(colour = "") +
+       ggplot2::scale_x_continuous(breaks = unique(table_effort$year)) +
+       ggplot2::theme(legend.position = c(0.84, 0.97), legend.justification = c(0, 1)))
     # Plotly
     plotly_graph <- plotly::ggplotly(ggplot_table_effort)
     # Add a title
