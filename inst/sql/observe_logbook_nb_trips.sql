@@ -1,23 +1,20 @@
 SELECT
-	t.topiaid,
-	lp.label2 AS program,
-	o.label1 AS ocean,
-	ct1.iso3code AS flag,
-	v.label1 AS vessel_name,
-	CASE
+	lp.label2 AS program
+	,o.label1 AS ocean
+	,ct1.iso3code AS flag
+	,v.label1 AS vessel_name
+	,CASE
 		WHEN vt.code::NUMERIC IN (1, 2, 3) THEN 'BB'
 		WHEN vt.code::NUMERIC IN (4, 5, 6) THEN 'PS'
 		WHEN vt.code::NUMERIC IN (7) THEN 'LL'
 		WHEN vt.code::NUMERIC IN (10) THEN 'SV'
 		ELSE 'OTH'
-		END AS vessel_type,
-	t.enddate AS activity_date,
-	t.startdate AS departure,
-	h1.label1 AS port_departure, 
-	t.enddate AS arrival,
-	h2.label1 AS port_arrival, 
-	ct2.iso3code AS landing_country,
-	v.cfrid
+		END AS vessel_type
+	,t.enddate AS activity_date
+	,t.startdate AS departure
+	,h1.label1 AS port_departure
+	,t.enddate AS arrival
+	,h2.label1 AS port_arrival
 
 FROM
 	ps_common.trip AS t
