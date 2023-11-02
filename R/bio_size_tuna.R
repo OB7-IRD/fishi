@@ -395,7 +395,7 @@ bio_size_tuna <- function(dataframe,
      ggplot2::ylim(0, max(table_size_yft_n$free_current_year,
                           table_size_yft_n$free_avg_5_years) * 1.1) +
      ggplot2::xlim(20, 200) +
-     ggplot2::theme(legend.title = ggplot2::element_blank())+
+     ggplot2::theme(legend.title = ggplot2::element_blank()) +
      ggplot2::annotate("text", x = 160, y = max(table_size_yft_n$free_current_year, table_size_yft_n$free_avg_5_years) * 1.1,
                        label = "YFT - FSC", color = "black",
                        hjust = 1,
@@ -419,7 +419,7 @@ bio_size_tuna <- function(dataframe,
                           table_size_yft_n$all_avg_5_years) * 1.1) +
      ggplot2::xlim(20, 200) +
      ggplot2::theme(legend.position = c(0.85, 0.85),
-                    legend.title = ggplot2::element_blank())+
+                    legend.title = ggplot2::element_blank()) +
      ggplot2::annotate("text", x = 160, y = max(table_size_yft_n$all_current_year, table_size_yft_n$all_avg_5_years) * 1.1,
                        label = "YFT - ALL", color = "black",
                        hjust = 1,
@@ -442,7 +442,7 @@ bio_size_tuna <- function(dataframe,
      ggplot2::ylim(0, max(table_size_bet_n$log_current_year,
                           table_size_bet_n$log_avg_5_years) * 1.1) +
      ggplot2::xlim(20, 200) +
-     ggplot2::theme(legend.title = ggplot2::element_blank())+
+     ggplot2::theme(legend.title = ggplot2::element_blank()) +
      ggplot2::annotate("text", x = 160, y = max(table_size_bet_n$log_current_year, table_size_bet_n$log_avg_5_years) * 1.1,
                        label = "BET - LOG", color = "black",
                        hjust = 1,
@@ -540,7 +540,7 @@ bio_size_tuna <- function(dataframe,
                           table_size_skj_n$free_avg_5_years) * 1.1) +
      ggplot2::xlim(20, 80) +
      ggplot2::theme(legend.position = c(0.85, 0.85),
-                    legend.title = ggplot2::element_blank())+
+                    legend.title = ggplot2::element_blank()) +
      ggplot2::annotate("text",
                        x = 70,
                        y = max(table_size_skj_n$free_current_year, table_size_skj_n$free_avg_5_years) * 1.1,
@@ -566,7 +566,7 @@ bio_size_tuna <- function(dataframe,
      ggplot2::ylim(0, max(table_size_skj_n$all_current_year,
                           table_size_skj_n$all_avg_5_years) * 1.1) +
      ggplot2::xlim(20, 80) +
-     ggplot2::theme(legend.title = ggplot2::element_blank())+
+     ggplot2::theme(legend.title = ggplot2::element_blank()) +
      ggplot2::annotate("text",
                        x = 70,
                        y = max(table_size_skj_n$all_current_year, table_size_skj_n$all_avg_5_years) * 1.1,
@@ -601,7 +601,7 @@ bio_size_tuna <- function(dataframe,
                             yft_all, bet_all, skj_all,
                             bottom = common_legend))
     return(ggplot_final)
-  } else if (graph_type =="plotly") {
+  } else if (graph_type == "plotly") {
     yft_fob <- plotly::ggplotly(yft_fob) %>%
       plotly::layout(showlegend = FALSE)
     yft_free <-  plotly::ggplotly(yft_free) %>%

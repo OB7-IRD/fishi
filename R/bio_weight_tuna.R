@@ -66,6 +66,11 @@ bio_weight_tuna <- function(dataframe,
   # 2 - Data extraction ----
   # Report_year
   five_previous <- c((report_year - 1):(report_year - 5))
+  year <- as.character(report_year)
+  years <- as.character(paste0(report_year - 5,
+                               "-",
+                               report_year - 1))
+  # 3.a - Data design for YFT ----
   # Dataframe - Mode : LOG, Year : Report year
   t0 <- dataframe %>%
     dplyr::filter(c_esp %in% 2,
@@ -256,463 +261,327 @@ bio_weight_tuna <- function(dataframe,
   }
   # 5 - Graphic design ----
   # Function that read the 3 dataframe and print it in a plot
+  # YFT ----
+  # Round values
+  table_weight_yft_w$log_current_year <- round(table_weight_yft_w$log_current_year, 3)
+  table_weight_yft_w$log_avg_5_years <- round(table_weight_yft_w$log_avg_5_years, 3)
+  table_weight_yft_w$free_current_year <- round(table_weight_yft_w$free_current_year, 3)
+  table_weight_yft_w$free_avg_5_years <- round(table_weight_yft_w$free_avg_5_years, 3)
+  table_weight_yft_w$all_current_year <- round(table_weight_yft_w$all_current_year, 3)
+  table_weight_yft_w$all_avg_5_years <- round(table_weight_yft_w$all_avg_5_years, 3)
+  ## YFT LOG ----
+  (yft_fob <- ggplot2::ggplot(data = table_weight_yft_w) +
+     ggplot2::theme(panel.background = ggplot2::element_rect(fill = "white",
+                                                             color = "black")) +
+
+     ggplot2::geom_line(ggplot2::aes(x = size_class,
+                                     y = log_avg_5_years),
+                        color = "black",
+                        linetype = "dashed") +
+     ggplot2::geom_line(ggplot2::aes(x = size_class,
+                                     y = log_current_year),
+                        color = "red") +
+     ggplot2::labs(x = " ",
+                   y = " ") +
+     ggplot2::ylim(0, max(table_weight_yft_w$log_current_year,
+                          table_weight_yft_w$log_avg_5_years) * 1.1) +
+     ggplot2::xlim(20,
+                   200) +
+     ggplot2::theme(legend.title = ggplot2::element_blank()) +
+     ggplot2::annotate("text", x = 160, y = max(table_weight_yft_w$log_current_year,
+                                                table_weight_yft_w$log_avg_5_years) * 1.1,
+                       label = "YFT - FOB", color = "black",
+                       hjust = 1,
+                       vjust = 1,
+                       size = 3))
+  ## YFT FREE ----
+  (yft_free <- ggplot2::ggplot(data = table_weight_yft_w) +
+     ggplot2::theme(panel.background = ggplot2::element_rect(fill = "white",
+                                                             color = "black")) +
+     ggplot2::geom_line(ggplot2::aes(x = size_class,
+                                     y = free_avg_5_years),
+                        color = "black",
+                        linetype = "dashed") +
+     ggplot2::geom_line(ggplot2::aes(x = size_class,
+                                     y = free_current_year),
+                        color = "red") +
+     ggplot2::labs(x = " ",
+                   y = "Biomass (t)") +
+     ggplot2::ylim(0, max(table_weight_yft_w$free_current_year,
+                          table_weight_yft_w$free_avg_5_years) * 1.1) +
+     ggplot2::xlim(20,
+                   200) +
+     ggplot2::theme(legend.title = ggplot2::element_blank()) +
+     ggplot2::annotate("text", x = 160,
+                       y = max(table_weight_yft_w$free_current_year,
+                               table_weight_yft_w$free_avg_5_years) * 1.1,
+                       label = "YFT - FSC",
+                       color = "black",
+                       hjust = 1,
+                       vjust = 1,
+                       size = 3))
+  ## YFT ALL ----
+  (yft_all <- ggplot2::ggplot(data = table_weight_yft_w) +
+     ggplot2::theme(panel.background = ggplot2::element_rect(fill = "white",
+                                                             color = "black")) +
+     ggplot2::geom_line(ggplot2::aes(x = size_class,
+                                     y = all_avg_5_years),
+                        color = "black",
+                        linetype = "dashed") +
+     ggplot2::geom_line(ggplot2::aes(x = size_class,
+                                     y = all_current_year),
+                        color = "red") +
+     ggplot2::labs(x = " ",
+                   y = " ") +
+     ggplot2::ylim(0, max(table_weight_yft_w$all_current_year,
+                          table_weight_yft_w$all_avg_5_years) * 1.1) +
+     ggplot2::xlim(20,
+                   200) +
+     ggplot2::theme(legend.title = ggplot2::element_blank()) +
+     ggplot2::annotate("text",
+                       x = 160,
+                       y = max(table_weight_yft_w$all_current_year,
+                               table_weight_yft_w$all_avg_5_years) * 1.1,
+                       label = "YFT - ALL", color = "black",
+                       hjust = 1,
+                       vjust = 1,
+                       size = 3))
+  # BET ----
+  ## BET LOG ----
+  (bet_fob <- ggplot2::ggplot(data = table_weight_bet_w) +
+     ggplot2::theme(panel.background = ggplot2::element_rect(fill = "white",
+                                                             color = "black")) +
+     ggplot2::geom_line(ggplot2::aes(x = size_class,
+                                     y = log_avg_5_years),
+                        color = "black",
+                        linetype = "dashed") +
+     ggplot2::geom_line(ggplot2::aes(x = size_class,
+                                     y = log_current_year),
+                        color = "red") +
+     ggplot2::labs(x = " ",
+                   y = " ") +
+     ggplot2::ylim(0, max(table_weight_bet_w$log_current_year,
+                          table_weight_bet_w$log_avg_5_years) * 1.1) +
+     ggplot2::xlim(20,
+                   200) +
+     ggplot2::theme(legend.title = ggplot2::element_blank()) +
+     ggplot2::annotate("text",
+                       x = 160,
+                       y = max(table_weight_bet_w$log_current_year,
+                               table_weight_bet_w$log_avg_5_years) * 1.1,
+                       label = "BET - FOB", color = "black",
+                       hjust = 1,
+                       vjust = 1,
+                       size = 3))
+  ## BET FREE ----
+  (bet_free <- ggplot2::ggplot(data = table_weight_bet_w) +
+     ggplot2::theme(panel.background = ggplot2::element_rect(fill = "white",
+                                                             color = "black")) +
+     ggplot2::geom_line(ggplot2::aes(x = size_class,
+                                     y = free_avg_5_years),
+                        color = "black",
+                        linetype = "dashed") +
+     ggplot2::geom_line(ggplot2::aes(x = size_class,
+                                     y = free_current_year),
+                        color = "red") +
+     ggplot2::labs(x = " ",
+                   y = " ") +
+     ggplot2::ylim(0, max(table_weight_bet_w$free_current_year,
+                          table_weight_bet_w$free_avg_5_years) * 1.1) +
+     ggplot2::xlim(20,
+                   200) +
+     ggplot2::theme(legend.title = ggplot2::element_blank()) +
+     ggplot2::annotate("text",
+                       x = 160,
+                       y = max(table_weight_bet_w$free_current_year,
+                               table_weight_bet_w$free_avg_5_years) * 1.1,
+                       label = "BET - FSC",
+                       color = "black",
+                       hjust = 1,
+                       vjust = 1,
+                       size = 3))
+  ## BET ALL ----
+  (bet_all <- ggplot2::ggplot(data = table_weight_bet_w) +
+     ggplot2::theme(panel.background = ggplot2::element_rect(fill = "white",
+                                                             color = "black")) +
+     ggplot2::geom_line(ggplot2::aes(x = size_class,
+                                     y = all_avg_5_years),
+                        color = "black",
+                        linetype = "dashed") +
+     ggplot2::geom_line(ggplot2::aes(x = size_class,
+                                     y = all_current_year),
+                        color = "red") +
+     ggplot2::labs(x = "size class (cm)",
+                   y = " ") +
+     ggplot2::ylim(0, max(table_weight_bet_w$all_current_year,
+                          table_weight_bet_w$all_avg_5_years) * 1.1) +
+     ggplot2::xlim(20,
+                   200) +
+     ggplot2::theme(legend.title = ggplot2::element_blank()) +
+     ggplot2::annotate("text",
+                       x = 160,
+                       y = max(table_weight_bet_w$all_current_year,
+                               table_weight_bet_w$all_avg_5_years) * 1.1,
+                       label = "BET - ALL",
+                       color = "black",
+                       hjust = 1,
+                       vjust = 1,
+                       size = 3))
+  # SKJ ----
+  ## SKJ LOG ----
+  (skj_fob <- ggplot2::ggplot(data = table_weight_skj_w) +
+     ggplot2::theme(panel.background = ggplot2::element_rect(fill = "white",
+                                                             color = "black")) +
+     ggplot2::geom_line(ggplot2::aes(x = size_class,
+                                     y = log_avg_5_years),
+                        color = "black",
+                        linetype = "dashed") +
+     ggplot2::geom_line(ggplot2::aes(x = size_class,
+                                     y = log_current_year),
+                        color = "red") +
+     ggplot2::labs(x = " ",
+                   y = " ") +
+     ggplot2::ylim(0, max(table_weight_skj_w$log_current_year,
+                          table_weight_skj_w$log_avg_5_years) * 1.1) +
+     ggplot2::xlim(20,
+                   80) +
+     ggplot2::theme(legend.title = ggplot2::element_blank()) +
+     ggplot2::annotate("text",
+                       x = 70,
+                       y = max(table_weight_skj_w$log_current_year,
+                               table_weight_skj_w$log_avg_5_years) * 1.1,
+                       label = "SKJ - FOB",
+                       color = "black",
+                       hjust = 1,
+                       vjust = 1,
+                       size = 3))
+  ## SKJ FREE ----
+  (skj_free <- ggplot2::ggplot(data = table_weight_skj_w) +
+     ggplot2::theme(panel.background = ggplot2::element_rect(fill = "white",
+                                                             color = "black")) +
+     ggplot2::geom_line(ggplot2::aes(x = size_class,
+                                     y = free_avg_5_years),
+                        color = "black",
+                        linetype = "dashed") +
+     ggplot2::geom_line(ggplot2::aes(x = size_class,
+                                     y = free_current_year),
+                        color = "red") +
+     ggplot2::labs(x = " ",
+                   y = " ") +
+     ggplot2::ylim(0, max(table_weight_skj_w$free_current_year,
+                          table_weight_skj_w$free_avg_5_years) * 1.1) +
+     ggplot2::xlim(20,
+                   80) +
+     ggplot2::theme(legend.title = ggplot2::element_blank()) +
+     ggplot2::annotate("text",
+                       x = 70,
+                       y = max(table_weight_skj_w$free_current_year,
+                               table_weight_skj_w$free_avg_5_years) * 1.1,
+                       label = "SKJ - FSC",
+                       color = "black",
+                       hjust = 1,
+                       vjust = 1,
+                       size = 3))
+  ## SKJ ALL ----
+  (skj_all <- ggplot2::ggplot(data = table_weight_skj_w) +
+     ggplot2::theme(panel.background = ggplot2::element_rect(fill = "white",
+                                                             color = "black")) +
+     ggplot2::geom_line(ggplot2::aes(x = size_class,
+                                     y = all_avg_5_years),
+                        color = "black",
+                        linetype = "dashed") +
+     ggplot2::geom_line(ggplot2::aes(x = size_class,
+                                     y = all_current_year),
+                        color = "red") +
+     ggplot2::labs(x = " ",
+                   y = " ") +
+     ggplot2::ylim(0, max(table_weight_skj_w$all_current_year,
+                          table_weight_skj_w$all_avg_5_years) * 1.1) +
+     ggplot2::xlim(20,
+                   80) +
+     ggplot2::theme(legend.title = ggplot2::element_blank()) +
+     ggplot2::annotate("text",
+                       x = 70,
+                       y = max(table_weight_skj_w$all_current_year,
+                               table_weight_skj_w$all_avg_5_years) * 1.1,
+                       label = "SKJ - ALL",
+                       color = "black",
+                       hjust = 1,
+                       vjust = 1,
+                       size = 3))
   if (graph_type == "plot") {
-    # The function reads the different data sets
-    weight_plot_f <- function(species,
-                              mode,
-                              data_type) {
-      table <- get(paste("table_weight_",
-                         species,
-                         "_",
-                         data_type,
-                         sep = ""))
-      column1 <- get(paste("table_weight_",
-                           species,
-                           "_",
-                           data_type,
-                           sep = ""))[[paste(mode,
-                                             "_current_year",
-                                             sep = "")]]
-      column2 <- get(paste("table_weight_",
-                           species,
-                           "_",
-                           data_type,
-                           sep = ""))[[paste(mode,
-                                             "_avg_5_years",
-                                             sep = "")]]
-      # The abscissa limit is 160 for yft and bet, and 80 for skj
-      if (species == "skj") {
-        x_max <-  80
-      } else {
-        x_max <- 160
-      }
-      # Plot
-      graphics::plot(table$size_class,
-                     column1,
-                     cex.axis = 1.3,
-                     cex.lab = 1.3,
-                     type = "l",
-                     main = "",
-                     xlab = "Size class (cm)",
-                     ylab = ylabel,
-                     lty = "solid",
-                     col = "black",
-                     xlim = c(20,
-                              x_max),
-                     ylim = (c(0,
-                               max(column1,
-                                   column2) * 1.1)),
-                     lwd = 1.2)
-      graphics::lines(table$size_class,
-                      column2,
-                      lty = "dashed",
-                      col = "black",
-                      lwd = 1.2)
-      graphics::legend("topright",
-                       legend = c(report_year,
-                                  paste(report_year - 5,
-                                        "-",
-                                        report_year - 1,
-                                        sep = "")),
-                       lty = c("solid",
-                               "dashed"),
-                       col = c("black",
-                               "black"),
-                       bty = "n",
-                       cex = 1.3)
-    }
-    # Variables used in the plot
-    ylabel <- "Biomass (t)"
-    indic_species <- c("yft",
-                       "bet",
-                       "skj")
-    indic_mode <- c("log",
-                    "free",
-                    "all")
-    title1 <- c("YFT",
-                "",
-                "",
-                "BET",
-                "",
-                "",
-                "SKJ",
-                "",
-                "")
-    compteur <- 0
-    mtext_mode <- c("FOB",
-                    "FSC",
-                    "ALL",
-                    "",
-                    "",
-                    "",
-                    "",
-                    "",
-                    "")
-    par(mfcol = c(3,
-                  3),
-        mar = c(4,
-                4,
-                2,
-                2),
-        oma = c(0,
-                4,
-                4,
-                0))
-    # variables used in the plot
-    for (i in (seq_along(indic_species))){
-      for (j in (seq_along(indic_species))){
-        compteur <- compteur + 1
-        title2 <- title1[compteur]
-        weight_plot_f(indic_species[i],
-                      indic_mode[j],
-                      "w")
-        text <- mtext_mode[compteur]
-        graphics::mtext(text,
-                        side = 2,
-                        outer = FALSE,
-                        line = 4.5,
-                        cex = 1.2)
-        graphics::mtext(title2,
-                        side = 3,
-                        outer = FALSE,
-                        line = 0.8,
-                        cex = 1.2)
-      }
-    }
-    # Title
-    if (title == TRUE) {
-      mtext(paste0("Weight distribution of the catch for the ",
-                   country_legend,
-                   " purse seine fleet in ",
-                   report_year,
-                   " (solid line) \nand for an average year representing",
-                   " the period ",
-                   min(five_previous),
-                   "-",
-                   max(five_previous),
-                   " (dotted line) in the ",
-                   ocean_legend,
-                   " ocean."),
-            outer = TRUE,
-            cex = 0.9,
-            line = 0.85)
-    }
-  } else if (graph_type == "plotly") {
-    # creation of year variables
-    year <- as.character(report_year)
-    years <- as.character(paste0(report_year - 5,
-                                 "-",
-                                 report_year - 1))
-    ### YFT ----
-    # Round values
-    table_weight_yft_w$log_current_year <- round(table_weight_yft_w$log_current_year, 3)
-    table_weight_yft_w$log_avg_5_years <- round(table_weight_yft_w$log_avg_5_years, 3)
-    table_weight_yft_w$free_current_year <- round(table_weight_yft_w$free_current_year, 3)
-    table_weight_yft_w$free_avg_5_years <- round(table_weight_yft_w$free_avg_5_years, 3)
-    table_weight_yft_w$all_current_year <- round(table_weight_yft_w$all_current_year, 3)
-    table_weight_yft_w$all_avg_5_years <- round(table_weight_yft_w$all_avg_5_years, 3)
-    # YFT LOG
-    yft_fob <- ggplot2::ggplot(data = table_weight_yft_w) +
-      ggplot2::geom_line(ggplot2::aes(x = size_class,
-                                      y = log_avg_5_years,
-                                      color = years),
-                         linetype = "dashed") +
-      ggplot2::geom_line(ggplot2::aes(x = size_class,
-                                      y = log_current_year,
-                                      color = year)) +
-      ggplot2::labs(x = " ",
-                    y = " ") +
-      ggplot2::ylim(0, max(table_weight_yft_w$log_current_year,
-                           table_weight_yft_w$log_avg_5_years) * 1.1) +
-      ggplot2::xlim(20,
-                    160) +
-      ggplot2::theme_bw() +
-      ggplot2::theme(legend.position = c(0.85,
-                                         0.85),
-                     legend.title = ggplot2::element_blank())
-    # plotly
+    # legend
+    (yft_fob_leg <- ggplot2::ggplot(data = table_weight_yft_w) +
+       ggplot2::geom_line(ggplot2::aes(x = size_class,
+                                       y = log_avg_5_years,
+                                       color = years),
+                          linetype = "dashed") +
+       ggplot2::geom_line(ggplot2::aes(x = size_class,
+                                       y = log_current_year,
+                                       color = year)) +
+       ggplot2::scale_color_manual(values = c("black",
+                                              "red")) +
+       ggplot2::labs(x = " ",
+                     y = " ") +
+       ggplot2::ylim(0, max(table_weight_yft_w$log_current_year,
+                            table_weight_yft_w$log_avg_5_years) * 1.1) +
+       ggplot2::xlim(20, 200) +
+       ggplot2::theme_bw() +
+       ggplot2::theme(legend.position = "bottom",
+                      legend.title = ggplot2::element_blank()))
+    common_legend <- cowplot::get_legend(yft_fob_leg)
+    # grid extra
+    (ggplot_final <- gridExtra::grid.arrange(yft_fob, bet_fob, skj_fob,
+                                             yft_free, bet_free, skj_free,
+                                             yft_all, bet_all, skj_all,
+                                             bottom = common_legend))
+    return(ggplot_final)
+  }  else if (graph_type == "plotly") {
     yft_fob <- plotly::ggplotly(yft_fob) %>%
       plotly::layout(showlegend = FALSE)
-    # YFT FREE
-    yft_free <- ggplot2::ggplot(data = table_weight_yft_w) +
-      ggplot2::geom_line(ggplot2::aes(x = size_class,
-                                      y = free_avg_5_years,
-                                      color = years),
-                         linetype = "dashed") +
-      ggplot2::geom_line(ggplot2::aes(x = size_class,
-                                      y = free_current_year,
-                                      color = year)) +
-      ggplot2::labs(x = " ",
-                    y = "Percentage") +
-      ggplot2::ylim(0, max(table_weight_yft_w$free_current_year,
-                           table_weight_yft_w$free_avg_5_years) * 1.1) +
-      ggplot2::xlim(20,
-                    160) +
-      ggplot2::theme_bw() +
-      ggplot2::theme(legend.position = c(0.2,
-                                         0.85),
-                     legend.title = ggplot2::element_blank())
-    # plotly
     yft_free <-  plotly::ggplotly(yft_free) %>%
       plotly::layout(showlegend = FALSE)
-    # YFT ALL
-    yft_all <- ggplot2::ggplot(data = table_weight_yft_w) +
-      ggplot2::geom_line(ggplot2::aes(x = size_class,
-                                      y = all_avg_5_years,
-                                      color = years),
-                         linetype = "dashed") +
-      ggplot2::geom_line(ggplot2::aes(x = size_class,
-                                      y = all_current_year,
-                                      color = year)) +
-      ggplot2::labs(x = " ",
-                    y = " ") +
-      ggplot2::ylim(0, max(table_weight_yft_w$all_current_year,
-                           table_weight_yft_w$all_avg_5_years) * 1.1) +
-      ggplot2::xlim(20,
-                    160) +
-      ggplot2::theme_bw() +
-      ggplot2::theme(legend.position = c(0.85,
-                                         0.85),
-                     legend.title = ggplot2::element_blank())
-    # plotly
     yft_all <- plotly::ggplotly(yft_all) %>%
       plotly::layout(showlegend = FALSE)
-    ### BET ----
-    # BET LOG
-    bet_fob <- ggplot2::ggplot(data = table_weight_bet_w) +
-      ggplot2::geom_line(ggplot2::aes(x = size_class,
-                                      y = log_avg_5_years,
-                                      color = years),
-                         linetype = "dashed") +
-      ggplot2::geom_line(ggplot2::aes(x = size_class,
-                                      y = log_current_year,
-                                      color = year)) +
-      ggplot2::labs(x = " ",
-                    y = " ") +
-      ggplot2::ylim(0, max(table_weight_bet_w$log_current_year,
-                           table_weight_bet_w$log_avg_5_years) * 1.1) +
-      ggplot2::xlim(20,
-                    160) +
-      ggplot2::theme_bw() +
-      ggplot2::theme(legend.position = c(0.85,
-                                         0.85),
-                     legend.title = ggplot2::element_blank())
-    # plotly
+    # BET
     bet_fob <- plotly::ggplotly(bet_fob) %>%
       plotly::layout(showlegend = FALSE)
-    # BET FREE
-    bet_free <- ggplot2::ggplot(data = table_weight_bet_w) +
-      ggplot2::geom_line(ggplot2::aes(x = size_class,
-                                      y = free_avg_5_years,
-                                      color = years),
-                         linetype = "dashed") +
-      ggplot2::geom_line(ggplot2::aes(x = size_class,
-                                      y = free_current_year,
-                                      color = year)) +
-      ggplot2::labs(x = " ",
-                    y = " ") +
-      ggplot2::ylim(0, max(table_weight_bet_w$free_current_year,
-                           table_weight_bet_w$free_avg_5_years) * 1.1) +
-      ggplot2::xlim(20,
-                    160) +
-      ggplot2::theme_bw() +
-      ggplot2::theme(legend.position = c(0.85,
-                                         0.85),
-                     legend.title = ggplot2::element_blank())
-    # plotly
     bet_free <- plotly::ggplotly(bet_free) %>%
       plotly::layout(showlegend = FALSE)
-    # BET ALL
-    bet_all <- ggplot2::ggplot(data = table_weight_bet_w) +
-      ggplot2::geom_line(ggplot2::aes(x = size_class,
-                                      y = all_avg_5_years,
-                                      color = years),
-                         linetype = "dashed") +
-      ggplot2::geom_line(ggplot2::aes(x = size_class,
-                                      y = all_current_year,
-                                      color = year)) +
-      ggplot2::labs(x = "size class (cm)",
-                    y = " ") +
-      ggplot2::ylim(0, max(table_weight_bet_w$all_current_year,
-                           table_weight_bet_w$all_avg_5_years) * 1.1) +
-      ggplot2::xlim(20,
-                    160) +
-      ggplot2::theme_bw() +
-      ggplot2::theme(legend.position = c(0.85,
-                                         0.85),
-                     legend.title = ggplot2::element_blank())
-    # plotly
     bet_all <- plotly::ggplotly(bet_all) %>%
       plotly::layout(showlegend = FALSE)
-    ### SKJ ----
-    # SKJ LOG
-    skj_fob <- ggplot2::ggplot(data = table_weight_skj_w) +
-      ggplot2::geom_line(ggplot2::aes(x = size_class,
-                                      y = log_avg_5_years,
-                                      color = years),
-                         linetype = "dashed") +
-      ggplot2::geom_line(ggplot2::aes(x = size_class,
-                                      y = log_current_year,
-                                      color = year)) +
-      ggplot2::labs(x = " ",
-                    y = " ") +
-      ggplot2::ylim(0, max(table_weight_skj_w$log_current_year,
-                           table_weight_skj_w$log_avg_5_years) * 1.1) +
-      ggplot2::xlim(20,
-                    80) +
-      ggplot2::theme_bw() +
-      ggplot2::theme(legend.position = c(0.85,
-                                         0.85),
-                     legend.title = ggplot2::element_blank())
-    # plotly
+    # SKJ
     skj_fob <- plotly::ggplotly(skj_fob) %>%
       plotly::layout(showlegend = FALSE)
-    # SKJ FREE
-    skj_free <- ggplot2::ggplot(data = table_weight_skj_w) +
-      ggplot2::geom_line(ggplot2::aes(x = size_class,
-                                      y = free_avg_5_years,
-                                      color = years),
-                         linetype = "dashed") +
-      ggplot2::geom_line(ggplot2::aes(x = size_class,
-                                      y = free_current_year,
-                                      color = year)) +
-      ggplot2::labs(x = " ",
-                    y = " ") +
-      ggplot2::ylim(0, max(table_weight_skj_w$free_current_year,
-                           table_weight_skj_w$free_avg_5_years) * 1.1) +
-      ggplot2::xlim(20,
-                    80) +
-      ggplot2::theme_bw() +
-      ggplot2::theme(legend.position = c(0.85,
-                                         0.85),
-                     legend.title = ggplot2::element_blank())
-    # plotly
     skj_free <- plotly::ggplotly(skj_free) %>%
       plotly::layout(showlegend = FALSE)
-    # SKJ ALL
-    skj_all <- ggplot2::ggplot(data = table_weight_skj_w) +
-      ggplot2::geom_line(ggplot2::aes(x = size_class,
-                                      y = all_avg_5_years,
-                                      color = years),
-                         linetype = "dashed") +
-      ggplot2::geom_line(ggplot2::aes(x = size_class,
-                                      y = all_current_year,
-                                      color = year)) +
-      ggplot2::labs(x = " ",
-                    y = " ") +
-      ggplot2::ylim(0, max(table_weight_skj_w$all_current_year,
-                           table_weight_skj_w$all_avg_5_years) * 1.1) +
-      ggplot2::xlim(20,
-                    80) +
-      ggplot2::theme_bw() +
-      ggplot2::theme(legend.position = c(0.85,
-                                         0.85),
-                     legend.title = ggplot2::element_blank())
-
     skj_all <- plotly::ggplotly(skj_all) %>%
       plotly::layout(showlegend = FALSE)
-    ### Plotly ----
-    plotly_weight <- plotly::subplot(yft_fob, bet_fob, skj_fob,
-                    yft_free, bet_free, skj_free,
-                    yft_all, bet_all, skj_all, nrows = 3,
-                    titleX = TRUE, titleY = TRUE,
-                    shareX = FALSE, shareY = FALSE,
-                    margin = 0.03)
+    # Plot
+    (plotly_weight <- plotly::subplot(yft_fob, bet_fob, skj_fob,
+                                      yft_free, bet_free, skj_free,
+                                      yft_all, bet_all, skj_all, nrows = 3,
+                                      titleX = TRUE, titleY = TRUE,
+                                      shareX = FALSE, shareY = FALSE,
+                                      margin = 0.03))
     if (title == TRUE) {
-      plotly_weight <- plotly_weight %>%
+      (plotly_weight <- plotly_weight %>%
         plotly::layout(title = list(text = paste0("Weight distribution of the catch for the ",
                                                   country_legend,
                                                   " purse seine fleet in ",
                                                   report_year,
-                                                  " (solid line)",
                                                   "\n",
                                                   " and for an average year representing the period ",
                                                   min(five_previous),
                                                   "-",
                                                   max(five_previous),
-                                                  " (dotted line), in the ",
+                                                  ", in the ",
                                                   ocean_legend,
                                                   " ocean."),
-                                    font = list(size = 17)),
-                       margin = list(t = 120))
+                                    font = list(size = 12)),
+                       margin = list(t = 120)))
 
     }
-    plotly_weight %>%
-      plotly::layout(annotations = list(
-        # YFT title : Add text to the plot
-        list(text = "<b>YFT - FOB</b>",
-             x = 0.25,
-             y = 0.95,
-             xref = "paper",
-             yref = "paper",
-             showarrow = FALSE,
-             xanchor = "center",
-             yanchor = "bottom"),
-        list(text = "<b>YFT - FSC</b>",
-             x = 0.05,
-             y = 0.58,
-             xref = "paper",
-             yref = "paper",
-             showarrow = FALSE,
-             xanchor = "center",
-             yanchor = "bottom"),
-        list(text = "<b>YFT - ALL</b>",
-             x = 0.05,
-             y = 0.25,
-             xref = "paper",
-             yref = "paper",
-             showarrow = FALSE,
-             xanchor = "center",
-             yanchor = "bottom"),
-        # BET title : Add text to the plot
-        list(text = "<b>BET - FOB</b>",
-             x = 0.58,
-             y = 0.95,
-             xref = "paper",
-             yref = "paper",
-             showarrow = FALSE,
-             xanchor = "center",
-             yanchor = "bottom"),
-        list(text = "<b>BET - FSC</b>",
-             x = 0.42,
-             y = 0.58,
-             xref = "paper",
-             yref = "paper",
-             showarrow = FALSE,
-             xanchor = "center",
-             yanchor = "bottom"),
-        list(text = "<b>BET - ALL</b>",
-             x = 0.58,
-             y = 0.25,
-             xref = "paper",
-             yref = "paper",
-             showarrow = FALSE,
-             xanchor = "center",
-             yanchor = "bottom"),
-        # SKJ title : Add text to the plot
-        list(text = "<b>SKJ - FOB</b>",
-             x = 0.95,
-             y = 0.95,
-             xref = "paper",
-             yref = "paper",
-             showarrow = FALSE,
-             xanchor = "center",
-             yanchor = "bottom"),
-        list(text = "<b>SKJ - FSC</b>",
-             x = 0.95,
-             y = 0.58,
-             xref = "paper",
-             yref = "paper",
-             showarrow = FALSE,
-             xanchor = "center",
-             yanchor = "bottom"),
-        list(text = "<b>SKJ - ALL</b>",
-             x = 0.95,
-             y = 0.25,
-             xref = "paper",
-             yref = "paper",
-             showarrow = FALSE,
-             xanchor = "center",
-             yanchor = "bottom")))
+    return(plotly_weight)
   }
 }
