@@ -31,7 +31,6 @@
 #' @importFrom plotrix stackpoly
 #' @importFrom ggplot2 ggplot aes geom_area scale_fill_manual scale_y_continuous labs theme_bw ggtitle
 #' @importFrom plotly ggplotly
-#' @importFrom graphics par plot axis lines abline legend
 #' @importFrom tidyr pivot_longer
 #' @importFrom codama r_type_checking
 fishery_production <- function(dataframe,
@@ -178,88 +177,6 @@ fishery_production <- function(dataframe,
   }
   # 4 - Graphic design ----
   if (graph_type == "plot") {
-    graphics::par(cex.axis = 1.4,
-                  cex.lab = 1.4,
-                  las = 2)
-    if (title == TRUE) {
-      plotrix::stackpoly(x = matrix(table_catch_all$year,
-                                    nrow = length(table_catch_all$year),
-                                    ncol = 3),
-                         y = table_catch_all[, c("YFT", "SKJ", "BET")] / 1000,
-                         stack = TRUE,
-                         cex.axis = 1.3,
-                         cex.lab = 1.3,
-                         xlab = "",
-                         ylab = "Catch (x1000 t)",
-                         main = paste0("Fishery production by ",
-                                       fishing_type,
-                                       " fishing mode. \nCatch by species of the ",
-                                       country_legend,
-                                       " ",
-                                       vessel_type_legend,
-                                       " fishing",
-                                       "\n",
-                                       "fleet during ",
-                                       min(time_period),
-                                       "-",
-                                       max(time_period),
-                                       ", in the ",
-                                       ocean_legend,
-                                       " ocean."),
-                         axis4 = FALSE,
-                         col = c("khaki1",
-                                 "firebrick2",
-                                 "cornflowerblue"),
-                         cex = 1.3,
-                         ylim = c(0,
-                                  max((table_catch_all$total * 1.02) / 1000,
-                                      na.rm = TRUE)))
-    } else {
-      plotrix::stackpoly(x = matrix(table_catch_all$year,
-                                    nrow = length(table_catch_all$year),
-                                    ncol = 3),
-                         y = table_catch_all[, c("YFT", "SKJ", "BET")] / 1000,
-                         stack = TRUE,
-                         cex.axis = 1.3,
-                         cex.lab = 1.3,
-                         xlab = "",
-                         ylab = "Catch (x1000 t)",
-                         main = "",
-                         axis4 = FALSE,
-                         col = c("khaki1",
-                                 "firebrick2",
-                                 "cornflowerblue"),
-                         cex = 1.3,
-                         ylim = c(0,
-                                  max((table_catch_all$total * 1.02) / 1000,
-                                      na.rm = TRUE)))
-    }
-    graphics::abline(h = seq(20,
-                             100,
-                             20),
-                     col = "lightgrey",
-                     lty = 2)
-    graphics::legend("topright",
-                     legend = c("BET",
-                                "SKJ",
-                                "YFT"),
-                     bty = "n",
-                     fill = c("cornflowerblue",
-                              "firebrick2",
-                              "khaki1"),
-                     cex = 1.3)
-    if (fishing_type == "FSC") {
-      graphics::legend("topleft",
-                       bty = "n",
-                       legend = "(FSC)",
-                       cex = 1.3)
-    } else if (fishing_type == "FOB") {
-      graphics::legend("topleft",
-                       bty = "n",
-                       legend = "(FOB)",
-                       cex = 1.3)
-    }
-  } else if (graph_type == "ggplot") {
     table_long <- pivot_longer(table_catch_all,
                                cols = c("YFT",
                                         "SKJ",
@@ -295,20 +212,20 @@ fishery_production <- function(dataframe,
       ggplot2::labs(fill = NULL)
     if (title == TRUE) {
       fishery_ggplot <- fishery_ggplot + ggplot2::ggtitle(paste0("Fishery production by ",
-                                               fishing_type,
-                                               " fishing mode. \nCatch by species of the ",
-                                               country_legend,
-                                               " ",
-                                               vessel_type_legend,
-                                               " fishing",
-                                               "\n",
-                                               "fleet during ",
-                                               min(time_period),
-                                               "-",
-                                               max(time_period),
-                                               ", in the ",
-                                               ocean_legend,
-                                               " ocean."))
+                                                                 fishing_type,
+                                                                 " fishing mode. \nCatch by species of the ",
+                                                                 country_legend,
+                                                                 " ",
+                                                                 vessel_type_legend,
+                                                                 " fishing",
+                                                                 "\n",
+                                                                 "fleet during ",
+                                                                 min(time_period),
+                                                                 "-",
+                                                                 max(time_period),
+                                                                 ", in the ",
+                                                                 ocean_legend,
+                                                                 " ocean."))
     }
     return(fishery_ggplot)
   } else if (graph_type == "plotly") {

@@ -22,7 +22,6 @@
 #' @return The function return ggplot R plot.
 #' @export
 #' @importFrom dplyr tibble group_by summarise filter mutate
-#' @importFrom graphics plot lines legend mtext
 #' @importFrom ggplot2 ggplot aes geom_line labs ylim xlim theme_bw theme element_blank ggtitle
 #' @importFrom codama r_type_checking
 bio_weight_tuna <- function(dataframe,
