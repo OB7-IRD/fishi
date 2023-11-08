@@ -10,7 +10,7 @@
 #' @param selected_country {\link[base]{integer}} expected. Country code to select the list of boat to count. If NULL give all the vessel for the given year.
 #' @param selected_ocean {\link[base]{integer}} expected. Ocean code to select the list of boat to count. If NULL give all the vessel for the given year, works only for 'data_type' == 'observe'
 #' @param selected_harbour {\link[base]{integer}} expected. Harbour code to select the list of boat to count. If NULL give all the vessel for the given year, works only for 'data_type' == 'observe'
-#' @param variable {\link[base]{character}} expected. Write the variable of the PSU. Can be "trip", "velssel" or "well". "trip" by default.
+#' @param variable {\link[base]{character}} expected. Write the variable of the PSU. Can be "trip", "vessel" or "well". "trip" by default.
 #' @details
 #' The input dataframe frome sql must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:
 #' \itemize{
@@ -255,8 +255,9 @@ sample_summary <- function(dataframe,
       sample_filtered <- tunabio[["merged"]] %>%
         dplyr::filter(fish_sampling_date >= start_date &
                         fish_sampling_date <= end_date)
+    } else {
+      sample_filtered <- tunabio[["merged"]]
     }
-
     ## Data analyze ----
     if (variable == "trip") {
       if (!is.null(selected_country)) {
