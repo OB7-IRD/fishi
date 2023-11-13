@@ -35,15 +35,15 @@
 #' @importFrom tidyr separate_longer_delim separate
 #' @importFrom codama r_type_checking %>%
 sample_summary <- function(dataframe,
-                               data_type,
-                               graph_type = "number",
-                               reported_year = NULL,
-                               start_date = NULL,
-                               end_date = NULL,
-                               selected_country = NULL,
-                               selected_ocean = NULL,
-                               selected_harbour = NULL,
-                               variable = "trip") {
+                           data_type,
+                           graph_type = "number",
+                           reported_year = NULL,
+                           start_date = NULL,
+                           end_date = NULL,
+                           selected_country = NULL,
+                           selected_ocean = NULL,
+                           selected_harbour = NULL,
+                           variable = "trip") {
   # 0 - Global variables assignement ----
   STATUT <- NULL
   NOMBAT <- NULL
@@ -66,6 +66,8 @@ sample_summary <- function(dataframe,
   country_id <- NULL
   ocean_id <- NULL
   harbour_id <- NULL
+  landing_year <- NULL
+  harbour_name <- NULL
   # 1 - Arguments verification ----
   # data type
   if (codama::r_type_checking(r_object = data_type,
@@ -348,36 +350,98 @@ sample_summary <- function(dataframe,
     }
     # dataframe filter
     dataframe <- dataframe %>%
+      dplyr::mutate(landing_year = lubridate::year(x = landing_date))
+    dataframe <- dataframe %>%
       dplyr::filter(country_id %in% selected_country,
                     ocean_id %in% selected_ocean,
-                    harbour_id %in% selected_harbour)
+                    harbour_id %in% selected_harbour,
+                    landing_year %in% reported_year)
     if (variable == "trip") {
-      sample_summarize <- dataframe %>%
-        dplyr::group_by(vessel_name,
-                        landing_date,
-                        boat_code,
-                        country_id,
-                        fleet) %>%
-        dplyr::summarise(.groups = "drop")  %>%
-        dplyr::filter(!is.na(vessel_name))
+      if (is.null(selected_harbour)) {
+        (sample_summarize <- dataframe %>%
+           dplyr::group_by(fleet,
+                           landing_year,
+                           vessel_name,
+                           boat_code,
+                           landing_date) %>%
+           dplyr::summarise(.groups = "drop")  %>%
+           dplyr::group_by(landing_year,
+                           fleet,
+                           vessel_name) %>%
+           dplyr::summarise(nb_trips = dplyr::n(),
+                            .groups = "drop")  %>%
+           dplyr::filter(!is.na(vessel_name)))
+      } else {
+        (sample_summarize <- dataframe %>%
+           dplyr::group_by(fleet,
+                           landing_year,
+                           vessel_name,
+                           boat_code,
+                           landing_date,
+                           harbour_name) %>%
+           dplyr::summarise(.groups = "drop")  %>%
+           dplyr::group_by(landing_year,
+                           harbour_name,
+                           fleet,
+                           vessel_name) %>%
+           dplyr::summarise(nb_trips = dplyr::n(),
+                            .groups = "drop")  %>%
+           dplyr::filter(!is.na(vessel_name)))
+      }
+
     } else if (variable == "well") {
-      sample_summarize <- dataframe %>%
-        dplyr::group_by(vessel_name,
-                        landing_date,
-                        vessel_well_number,
-                        boat_code,
-                        country_id,
-                        fleet) %>%
-        dplyr::summarise(.groups = "drop")  %>%
-        dplyr::filter(!is.na(vessel_name))
+      if (is.null(selected_harbour)) {
+        (sample_summarize <- dataframe %>%
+           dplyr::group_by(vessel_name,
+                           landing_year,
+                           landing_date,
+                           vessel_well_number,
+                           boat_code,
+                           country_id,
+                           fleet) %>%
+           dplyr::summarise(.groups = "drop")  %>%
+           dplyr::filter(!is.na(vessel_name)) %>%
+           dplyr::group_by(landing_year,
+                           fleet,
+                           vessel_name) %>%
+           dplyr::summarise(nb_well = dplyr::n(),
+                            .groups = "drop"))
+      } else {
+        (sample_summarize <- dataframe %>%
+           dplyr::group_by(vessel_name,
+                           landing_year,
+                           landing_date,
+                           vessel_well_number,
+                           boat_code,
+                           country_id,
+                           fleet,
+                           harbour_name) %>%
+           dplyr::summarise(.groups = "drop")  %>%
+           dplyr::filter(!is.na(vessel_name)) %>%
+           dplyr::group_by(landing_year,
+                           harbour_name,
+                           fleet,
+                           vessel_name) %>%
+           dplyr::summarise(nb_well = dplyr::n(),
+                            .groups = "drop"))
+      }
     } else if (variable == "vessel") {
-      sample_summarize <- dataframe %>%
-        dplyr::group_by(vessel_name,
-                        boat_code,
-                        country_id,
-                        fleet) %>%
-        dplyr::summarise(.groups = "drop") %>%
-        dplyr::filter(!is.na(vessel_name))
+      if (is.null(selected_harbour)) {
+        (sample_summarize <- dataframe %>%
+           dplyr::group_by(landing_year,
+                           fleet,
+                           vessel_name)  %>%
+           dplyr::summarise(.groups = "drop") %>%
+           dplyr::filter(!is.na(vessel_name)))
+      } else {
+        (sample_summarize <- dataframe %>%
+           dplyr::group_by(landing_year,
+                           harbour_name,
+                           fleet,
+                           vessel_name)  %>%
+           dplyr::summarise(.groups = "drop") %>%
+           dplyr::filter(!is.na(vessel_name)))
+        }
     }
   }
   # 3 - Graphic design ----
