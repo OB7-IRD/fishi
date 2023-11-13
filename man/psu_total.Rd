@@ -4,12 +4,27 @@
 \alias{psu_total}
 \title{PSU Total}
 \usage{
-psu_total(dataframe, reported_year = NULL)
+psu_total(
+  dataframe,
+  reported_year = NULL,
+  selected_country = NULL,
+  selected_ocean = NULL,
+  selected_harbour = NULL,
+  variable = "trip"
+)
 }
 \arguments{
 \item{dataframe}{{\link[base]{data.frame}} expected. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the fishing_activity() function.}
 
 \item{reported_year}{{\link[base]{integer}} expected. Write the wanted year of the report.}
+
+\item{selected_country}{{\link[base]{integer}} expected. Country code to select the list of boat to count. If NULL give all the vessel for the given year.}
+
+\item{selected_ocean}{{\link[base]{integer}} expected. Ocean code to select the list of boat to count. If NULL give all the vessel for the given year, works only for 'data_type' == 'observe'}
+
+\item{selected_harbour}{{\link[base]{integer}} expected. Harbour code to select the list of boat to count. If NULL give all the vessel for the given year, works only for 'data_type' == 'observe'}
+
+\item{variable}{{\link[base]{character}} expected. Write the variable of the PSU. Can be "trip", "vessel" or "well. "trip" by default.}
 }
 \value{
 The function return a table.
