@@ -25,7 +25,6 @@ FROM
 	INNER JOIN common.vesseltype AS vt ON v.vesseltype = vt.topiaid
 	INNER JOIN common.country AS ct ON v.flagcountry = ct.topiaid
 	INNER JOIN ps_logbook.route AS r ON r.trip = t.topiaid
---	INNER JOIN ps_logbook.activity AS a ON a.route = r.topiaid
 	INNER JOIN ps_common.program lp ON (t.logbookprogram = lp.topiaid)
 	INNER JOIN ps_logbook.well w ON (w.trip = t.topiaid)
 WHERE
