@@ -10,7 +10,7 @@
 #' @param selected_country {\link[base]{integer}} expected. Country code to select the list of boat to count. If NULL give all the vessel for the given year.
 #' @param selected_ocean {\link[base]{integer}} expected. Ocean code to select the list of boat to count. If NULL give all the vessel for the given year, works only for 'data_type' == 'observe'
 #' @param selected_harbour {\link[base]{integer}} expected. Harbour code to select the list of boat to count. If NULL give all the vessel for the given year, works only for 'data_type' == 'observe'
-#' @param variable {\link[base]{character}} expected. Write the variable of the PSU. Can be "trip", "vessel" or "well". "trip" by default.
+#' @param selected_variable {\link[base]{character}} expected. Write the variable of the PSU. Can be "trip", "vessel" or "well". "trip" by default.
 #' @details
 #' The input dataframe frome sql must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:
 #' \itemize{
@@ -43,7 +43,7 @@ sample_summary <- function(dataframe,
                            selected_country = NULL,
                            selected_ocean = NULL,
                            selected_harbour = NULL,
-                           variable = "trip") {
+                           selected_variable = "trip") {
   # 0 - Global variables assignement ----
   STATUT <- NULL
   NOMBAT <- NULL
@@ -131,10 +131,10 @@ sample_summary <- function(dataframe,
                                    output = "message"))
   }
   # variable
-  if (codama::r_type_checking(r_object = variable,
+  if (codama::r_type_checking(r_object = selected_variable,
                               type = "character",
                               output = "logical") != TRUE) {
-    return(codama::r_type_checking(r_object = variable,
+    return(codama::r_type_checking(r_object = selected_variable,
                                    type = "character",
                                    output = "message"))
   }
@@ -261,7 +261,7 @@ sample_summary <- function(dataframe,
       sample_filtered <- tunabio[["merged"]]
     }
     ## Data analyze ----
-    if (variable == "trip") {
+    if (selected_variable == "trip") {
       if (!is.null(selected_country)) {
         sample_summarize <-  sample_filtered %>%
           dplyr::group_by(vessel_name,
@@ -282,7 +282,7 @@ sample_summary <- function(dataframe,
                            by = dplyr::join_by(vessel_name)) %>%
           dplyr::filter(!is.na(vessel_name))
       }
-    } else if (variable == "well") {
+    } else if (selected_variable == "well") {
       if (!is.null(selected_country)) {
         sample_summarize <-  sample_filtered %>%
           tidyr::separate_longer_delim(cols = c("vessel_well_number",
@@ -314,7 +314,7 @@ sample_summary <- function(dataframe,
                            by = dplyr::join_by(vessel_name)) %>%
           dplyr::filter(!is.na(vessel_name))
       }
-    } else if (variable == "vessel") {
+    } else if (selected_variable == "vessel") {
       if (!is.null(selected_country)) {
         sample_summarize <-  sample_filtered %>%
           dplyr::group_by(vessel_name) %>%
@@ -356,7 +356,7 @@ sample_summary <- function(dataframe,
                     ocean_id %in% selected_ocean,
                     harbour_id %in% selected_harbour,
                     landing_year %in% reported_year)
-    if (variable == "trip") {
+    if (selected_variable == "trip") {
       if (is.null(selected_harbour)) {
         (sample_summarize <- dataframe %>%
            dplyr::group_by(fleet,
@@ -389,7 +389,7 @@ sample_summary <- function(dataframe,
            dplyr::filter(!is.na(vessel_name)))
       }
 
-    } else if (variable == "well") {
+    } else if (selected_variable == "well") {
       if (is.null(selected_harbour)) {
         (sample_summarize <- dataframe %>%
            dplyr::group_by(vessel_name,
@@ -425,7 +425,7 @@ sample_summary <- function(dataframe,
            dplyr::summarise(nb_well = dplyr::n(),
                             .groups = "drop"))
       }
-    } else if (variable == "vessel") {
+    } else if (selected_variable == "vessel") {
       if (is.null(selected_harbour)) {
         (sample_summarize <- dataframe %>%
            dplyr::group_by(landing_year,

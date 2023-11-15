@@ -14,7 +14,7 @@ sample_summary(
   selected_country = NULL,
   selected_ocean = NULL,
   selected_harbour = NULL,
-  variable = "trip"
+  selected_variable = "trip"
 )
 }
 \arguments{
@@ -36,7 +36,7 @@ sample_summary(
 
 \item{selected_harbour}{{\link[base]{integer}} expected. Harbour code to select the list of boat to count. If NULL give all the vessel for the given year, works only for 'data_type' == 'observe'}
 
-\item{variable}{{\link[base]{character}} expected. Write the variable of the PSU. Can be "trip", "vessel" or "well". "trip" by default.}
+\item{selected_variable}{{\link[base]{character}} expected. Write the variable of the PSU. Can be "trip", "vessel" or "well". "trip" by default.}
 }
 \value{
 The function return a table.

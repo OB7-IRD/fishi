@@ -6,7 +6,7 @@
 #' @param selected_country {\link[base]{integer}} expected. Country code to select the list of boat to count. If NULL give all the vessel for the given year.
 #' @param selected_ocean {\link[base]{integer}} expected. Ocean code to select the list of boat to count. If NULL give all the vessel for the given year, works only for 'data_type' == 'observe'
 #' @param selected_harbour {\link[base]{integer}} expected. Harbour code to select the list of boat to count. If NULL give all the vessel for the given year, works only for 'data_type' == 'observe'
-#' @param variable {\link[base]{character}} expected. Write the variable of the PSU. Can be "trip", "vessel" or "well. "trip" by default.
+#' @param selected_variable {\link[base]{character}} expected. Write the variable of the PSU. Can be "trip", "vessel" or "well. "trip" by default.
 #' @details
 #' The input dataframe frome sql must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:
 #' \itemize{
@@ -31,7 +31,7 @@ psu_total <- function(dataframe,
                       selected_country = NULL,
                       selected_ocean = NULL,
                       selected_harbour = NULL,
-                      variable = "trip") {
+                      selected_variable = "trip") {
   # 0 - Global variables assignement ----
   activity_date <- NULL
   program <- NULL
@@ -80,7 +80,7 @@ psu_total <- function(dataframe,
                   ocean_id %in% selected_ocean,
                   harbour_id %in% selected_harbour,
                   landing_year %in% reported_year))
-  if (variable == "trip") {
+  if (selected_variable == "trip") {
     (psu_total_t2 <- psu_total_t1 %>%
        dplyr::group_by(ocean,
                        flag,
@@ -98,7 +98,7 @@ psu_total <- function(dataframe,
                        port_arrival) %>%
        dplyr::summarise("nb_trips" = dplyr::n(),
                         .groups = "drop"))
-  } else if (variable == "well") {
+  } else if (selected_variable == "well") {
     (psu_total_t2 <- psu_total_t1 %>%
        dplyr::group_by(ocean,
                        flag,
@@ -117,7 +117,7 @@ psu_total <- function(dataframe,
                        port_arrival) %>%
        dplyr::summarise(nb_well = dplyr::n(),
                         .groups = "drop"))
-  } else if (variable == "vessel") {
+  } else if (selected_variable == "vessel") {
     psu_total_t2 <- psu_total_t1 %>%
        dplyr::group_by(ocean,
                        flag,
