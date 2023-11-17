@@ -61,13 +61,14 @@ sample_summary <- function(dataframe,
   vessel_name <- NULL
   vessel_well_number <- NULL
   well_position <- NULL
-  nb_vessel <- NULL
   country <- NULL
   country_id <- NULL
   ocean_id <- NULL
   harbour_id <- NULL
   landing_year <- NULL
   harbour_name <- NULL
+  nb_trip <- NULL
+  nb_well <- NULL
   # 1 - Arguments verification ----
   # data type
   if (codama::r_type_checking(r_object = data_type,
@@ -248,7 +249,7 @@ sample_summary <- function(dataframe,
                     vessel_name,
                     landing_date,
                     landing_year,
-                    port = landing_site,
+                    harbour_name = landing_site,
                     vessel_well_number,
                     well_position)
     ### Selection of the time period
@@ -267,12 +268,12 @@ sample_summary <- function(dataframe,
       if (!is.null(selected_country)) {
         sample_summarize <-  sample_filtered %>%
           dplyr::group_by(landing_year,
-                          port,
+                          harbour_name,
                           vessel_name,
                           landing_date) %>%
           dplyr::summarise(.groups = "drop")  %>%
           dplyr::group_by(landing_year,
-                          port,
+                          harbour_name,
                           vessel_name) %>%
           dplyr::summarise(nb_trip = dplyr::n(),
                            .groups = "drop") %>%
@@ -280,7 +281,7 @@ sample_summary <- function(dataframe,
                            by = dplyr::join_by(vessel_name)) %>%
           dplyr::filter(country == selected_country) %>%
           dplyr::select(landing_year,
-                        port,
+                        harbour_name,
                         fleet,
                         country,
                         vessel_name,
@@ -289,12 +290,12 @@ sample_summary <- function(dataframe,
       } else if (is.null(selected_country)) {
         sample_summarize <-  sample_filtered %>%
           dplyr::group_by(landing_year,
-                          port,
+                          harbour_name,
                           vessel_name,
                           landing_date) %>%
           dplyr::summarise(.groups = "drop")  %>%
           dplyr::group_by(landing_year,
-                          port,
+                          harbour_name,
                           vessel_name)  %>%
           dplyr::summarise(nb_trip = dplyr::n(),
                            .groups = "drop") %>%
@@ -302,7 +303,7 @@ sample_summary <- function(dataframe,
           dplyr::left_join(y = tunabio[["vessel"]],
                            by = dplyr::join_by(vessel_name)) %>%
           dplyr::select(landing_year,
-                        port,
+                        harbour_name,
                         fleet,
                         country,
                         vessel_name,
@@ -315,22 +316,22 @@ sample_summary <- function(dataframe,
                                                 "well_position"),
                                        delim = ";") %>%
           dplyr::group_by(landing_year,
-                          port,
+                          harbour_name,
                           vessel_name,
                           landing_date,
                           vessel_well_number,
                           well_position) %>%
           dplyr::summarise(.groups = "drop")  %>%
           dplyr::group_by(landing_year,
-                          port,
+                          harbour_name,
                           vessel_name) %>%
           dplyr::summarise(nb_well = dplyr::n(),
                            .groups = "drop") %>%
           dplyr::left_join(y = tunabio[["vessel"]],
                            by = dplyr::join_by(vessel_name)) %>%
-          dplyr::filter(selected_country == country)%>%
+          dplyr::filter(selected_country == country) %>%
           dplyr::select(landing_year,
-                        port,
+                        harbour_name,
                         fleet,
                         country,
                         vessel_name,
@@ -343,21 +344,21 @@ sample_summary <- function(dataframe,
                                                 "well_position"),
                                        delim = ";") %>%
           dplyr::group_by(landing_year,
-                          port,
+                          harbour_name,
                           vessel_name,
                           landing_date,
                           vessel_well_number,
                           well_position) %>%
           dplyr::summarise(.groups = "drop")  %>%
           dplyr::group_by(landing_year,
-                          port,
+                          harbour_name,
                           vessel_name) %>%
           dplyr::summarise(nb_well = dplyr::n(),
                            .groups = "drop") %>%
           dplyr::left_join(y = tunabio[["vessel"]],
                            by = dplyr::join_by(vessel_name)) %>%
           dplyr::select(landing_year,
-                        port,
+                        harbour_name,
                         fleet,
                         country,
                         vessel_name,
@@ -367,27 +368,27 @@ sample_summary <- function(dataframe,
       if (!is.null(selected_country)) {
         sample_summarize <-  sample_filtered %>%
           dplyr::group_by(landing_year,
-                          port,
+                          harbour_name,
                           vessel_name) %>%
           dplyr::summarise(.groups = "drop") %>%
           dplyr::left_join(y = tunabio[["vessel"]],
                            by = dplyr::join_by(vessel_name)) %>%
           dplyr::filter(selected_country == country) %>%
           dplyr::select(landing_year,
-                        port,
+                        harbour_name,
                         fleet,
                         country,
                         vessel_name)
       } else if (is.null(selected_country)) {
         sample_summarize <-  sample_filtered %>%
           dplyr::group_by(landing_year,
-                          port,
+                          harbour_name,
                           vessel_name) %>%
           dplyr::summarise(.groups = "drop") %>%
           dplyr::left_join(y = tunabio[["vessel"]],
                            by = dplyr::join_by(vessel_name)) %>%
           dplyr::select(landing_year,
-                        port,
+                        harbour_name,
                         fleet,
                         country,
                         vessel_name)
@@ -501,16 +502,16 @@ sample_summary <- function(dataframe,
                            vessel_name)  %>%
            dplyr::summarise(.groups = "drop") %>%
            dplyr::filter(!is.na(vessel_name)))
-        }
+      }
     }
   }
   # 3 - Graphic design ----
   if (graph_type == "number") {
-    if (selected_variable == "trip"){
+    if (selected_variable == "trip") {
       sum(sample_summarize$nb_trip)
-    } else if(selected_variable == "well"){
+    } else if (selected_variable == "well") {
       sum(sample_summarize$nb_well)
-    } else if(selected_variable == "vessel"){
+    } else if (selected_variable == "vessel") {
       length(sample_summarize$vessel_name)
     }
 
@@ -518,4 +519,3 @@ sample_summary <- function(dataframe,
     as.data.frame(sample_summarize)
   }
 }
-
