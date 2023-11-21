@@ -268,53 +268,33 @@ species_biological_variable <- function(dataframe,
       dplyr::filter(species_code_fao == selected_species)
   }
   # 3 - Graphic design ----
-  if (graph_type == "ggplot") {
-    #### Table pivot
-    if (data_type == "tunabio") {
-      sampled_summarize_pivot <- tidyr::pivot_longer(sampled_summarize_filtred,
-                                                     cols = c(2:5),
-                                                     names_to = "variable",
-                                                     values_to = "number")
-    } else if (data_type == "observe") {
-      sampled_summarize_pivot <- tidyr::pivot_longer(sampled_summarize_filtred,
-                                                     cols = c(2:4),
-                                                     names_to = "variable",
-                                                     values_to = "number")
-    }
-    # ggplot2::ggplot(data = sampled_summarize_pivot,
-    #                 ggplot2::aes(x = variable,
-    #                              y = number,
-    #                              fill = species_code_fao)) +
-    #   ggplot2::geom_histogram(position = "dodge",
-    #                           stat = "identity") +
-    #   ggplot2::geom_text(ggplot2::aes(label = number),
-    #                      vjust = -.3,
-    #                      size = 2.5,
-    #                      position = ggplot2::position_dodge(width = 0.9),
-    #                      color = "black") +
-    #   ggplot2::labs(fill = "Species",
-    #                 x = "Biological variables",
-    #                 y = "Number of fish sampled") +
-    #   ggplot2::theme_light()
-    ggplot2::ggplot(data = sampled_summarize_pivot,
-                    ggplot2::aes(x = species_code_fao,
-                                 y = number,
-                                 fill = variable)) +
-      ggplot2::geom_histogram(position = "dodge",
-                              stat = "identity") +
-      ggplot2::geom_text(ggplot2::aes(label = number),
-                         vjust = -.3,
-                         size = 2.5,
-                         position = ggplot2::position_dodge(width = 0.9),
-                         color = "black") +
-      ggplot2::labs(fill = "Biological variables",
-                    x = "Species",
-                    y = "Number of fish sampled") +
-      ggplot2::scale_fill_manual(values = c("#cc0033",
-                                            "#009900",
-                                            "#FFCC33",
-                                            "#6633cc")) +
-      ggplot2::theme_light()
+  if (graph_type == "plot") {
+    # Table pivot
+    ncol_max <- ncol(sampled_summarize_filtred)
+    sampled_summarize_pivot <- tidyr::pivot_longer(sampled_summarize_filtred,
+                                                   cols = c(2:ncol_max),
+                                                   names_to = "variable",
+                                                   values_to = "number")
+    # ggplot
+    (ggplot2::ggplot(data = sampled_summarize_pivot,
+                     ggplot2::aes(x = species_code_fao,
+                                  y = number,
+                                  fill = variable)) +
+        ggplot2::geom_histogram(position = "dodge",
+                                stat = "identity") +
+        ggplot2::geom_text(ggplot2::aes(label = number),
+                           vjust = -.3,
+                           size = 2.5,
+                           position = ggplot2::position_dodge(width = 0.9),
+                           color = "black") +
+        ggplot2::labs(fill = "Biological variables",
+                      x = "Species",
+                      y = "Number of fish sampled") +
+        ggplot2::scale_fill_manual(values = c("#cc0033",
+                                              "#009900",
+                                              "#FFCC33",
+                                              "#6633cc")) +
+        ggplot2::theme_light())
   } else if (graph_type == "table") {
     as.data.frame(sampled_summarize_filtred)
   }
