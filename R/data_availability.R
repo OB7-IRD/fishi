@@ -63,7 +63,7 @@ data_availability <- function(dataframe_observe,
     dataframe_vms <- dataframe_vms[dataframe_vms$longitude > 25, ]
   }
   # 3 - Graphic design ----
-  if (graph_type == "ggplot") {
+  if (graph_type == "plot") {
     # Creating a data frame for boat names
     vessel_data <- data.frame(vessel = as.character(sort(unique(dataframe_t3$vessel))))
     # Creating a data frame for dates
@@ -77,7 +77,7 @@ data_availability <- function(dataframe_observe,
     dataframe_vms <- dataframe_vms %>%
       dplyr::filter(vesselname %in% vessel)
     # Ggplot
-    graph <- ggplot2::ggplot(data,
+    (graph <- ggplot2::ggplot(data,
                             ggplot2::aes(x = day,
                                          y = vessel)) +
       ggplot2::geom_blank() +
@@ -128,7 +128,7 @@ data_availability <- function(dataframe_observe,
                                              "logbook" = "red",
                                              "observe" = "blue")) +
       ggplot2::theme(legend.position = "bottom") +
-      ggplot2::labs(color = "")
+      ggplot2::labs(color = ""))
     return(graph)
   } else if (graph_type == "table") {
     data_availability <-  dataframe_vms %>%
