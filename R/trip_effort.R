@@ -59,7 +59,7 @@ trip_effort <- function(dataframe_observe,
   # 2 - Data design ----
   # Observe data
   dataframe_observe <- dataframe_observe %>%
-    dplyr::filter(flag_selected == flag) %>%
+    dplyr::filter(flag %in% flag_selected) %>%
     dplyr::mutate(year_dbq = as.numeric(substr(trip_end_date, 1, 4)),
                   year = as.numeric(substr(observation_date, 1, 4)),
                   quarter = ceiling(as.numeric(substr(observation_date, 6, 7)) / 3),
@@ -74,7 +74,7 @@ trip_effort <- function(dataframe_observe,
     dplyr::mutate(set_order = order(observation_timestamp))
   # T3 data
   dataframe_t3 <- dataframe_t3 %>%
-    dplyr::filter(flag_selected == flag) %>%
+    dplyr::filter(flag %in% flag_selected) %>%
     dplyr::filter(vessel_activity_code %in% c(0, 1, 2, 14)) %>%
     dplyr::mutate(year = as.numeric(substr(date, 1, 4)),
                   ocean = dplyr::case_when(ocean == "Atlantique" ~ "Atlantic",
@@ -86,18 +86,18 @@ trip_effort <- function(dataframe_observe,
                                                     TRUE ~ NA))
   # 3 - Graphic design ----
   if (database == "observe") {
-    trip_effort_data <-  dataframe_observe %>%
+    (trip_effort_data <-  dataframe_observe %>%
       dplyr::group_by(ocean,
                       year,
                       flag) %>%
-      dplyr::summarise(n_trips = dplyr::n_distinct(trip_id))
+      dplyr::summarise(n_trips = dplyr::n_distinct(trip_id)))
     as.data.frame(trip_effort_data)
   } else if (database == "t3") {
-    trip_effort_data <- dataframe_t3 %>%
+    (trip_effort_data <- dataframe_t3 %>%
       dplyr::group_by(ocean,
                       year,
                       flag) %>%
-      dplyr::summarise(n_trips = dplyr::n_distinct(trip_id))
+      dplyr::summarise(n_trips = dplyr::n_distinct(trip_id)))
     as.data.frame(trip_effort_data)
   }
 }
