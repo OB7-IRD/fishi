@@ -106,6 +106,7 @@ control_trip <- function(dataframe_observe,
   # 2 - Data design ----
   ## Observe data ----
   dataframe_observe <- dataframe_observe %>%
+    dplyr::filter(flag %in% flag_selected) %>%
     dplyr::mutate(year_dbq = as.numeric(substr(trip_end_date, 1, 4)),
                   year = as.numeric(substr(observation_date, 1, 4)),
                   quarter = ceiling(as.numeric(substr(observation_date, 6, 7)) / 3),
@@ -119,8 +120,8 @@ control_trip <- function(dataframe_observe,
                   obs_trip_id = trip_id)
   ## T3 data ----
   dataframe_t3 <- dataframe_t3 %>%
-    dplyr::filter(flag_selected == flag,
-                  vessel_activity_code %in% c(0, 1, 2, 14)) %>%
+    dplyr::filter(flag %in% flag_selected,
+                  vessel_activity_code %in% c(0, 1, 14, 2)) %>%
     dplyr::mutate(year = as.numeric(substr(date, 1, 4)),
                   ocean = dplyr::recode(ocean,
                                         "Atlantique" = "Atlantic",
