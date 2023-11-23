@@ -8,9 +8,9 @@ data_availability(
   dataframe_observe,
   dataframe_t3,
   dataframe_vms,
-  graph_type = "ggplot",
   reported_year,
-  ocean = "Atlantic"
+  ocean = "Atlantic",
+  path_to_png = NULL
 )
 }
 \arguments{
@@ -20,11 +20,11 @@ data_availability(
 
 \item{dataframe_vms}{{\link[base]{data.frame}} expected. Dataframe from the Vms database. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the data_availability() function.}
 
-\item{graph_type}{{\link[base]{character}} expected. plot or table. Plot by default.}
-
 \item{reported_year}{{\link[base]{integer}} expected. Year of the report.}
 
 \item{ocean}{{\link[base]{character}} expected. Atlantic or Indian Atlantic by default.}
+
+\item{path_to_png}{{\link[base]{character}} expected. Add a link to the path to save the figure as a png.}
 }
 \value{
 The function return ggplot R plot.
