@@ -11,7 +11,8 @@ control_trip_map(
   trip_i,
   graph_type = "plot",
   control_dist_vms = FALSE,
-  path_to_shp = NULL
+  path_to_shp = NULL,
+  path_to_png = NULL
 )
 }
 \arguments{
@@ -28,6 +29,8 @@ control_trip_map(
 \item{control_dist_vms}{TRUE or FALSE. FALSE by default.}
 
 \item{path_to_shp}{{\link[base]{character}} expected. Put a link, if you want to add a shapefile.}
+
+\item{path_to_png}{{\link[base]{character}} expected. Add a link to the path to save the figure as a png.}
 }
 \value{
 The function return ggplot R plot.

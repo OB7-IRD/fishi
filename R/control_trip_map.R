@@ -8,6 +8,7 @@
 #' @param trip_i {\link[base]{character}} expected. Date + # + vessel name.
 #' @param control_dist_vms TRUE or FALSE. FALSE by default.
 #' @param path_to_shp {\link[base]{character}} expected. Put a link, if you want to add a shapefile.
+#' @param path_to_png {\link[base]{character}} expected. Add a link to the path to save the figure as a png.
 #' @details
 #' The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:
 #' \itemize{
@@ -50,7 +51,7 @@
 #' @importFrom PBSmapping importShapefile addPolys
 #' @importFrom stringr str_split
 #' @importFrom stats time
-#' @importFrom grDevices x11
+#' @importFrom grDevices x11 dev.off png
 #' @importFrom cowplot ggdraw
 control_trip_map <- function(dataframe_observe,
                              dataframe_t3,
@@ -58,7 +59,8 @@ control_trip_map <- function(dataframe_observe,
                              trip_i,
                              graph_type = "plot",
                              control_dist_vms = FALSE,
-                             path_to_shp = NULL) {
+                             path_to_shp = NULL,
+                             path_to_png = NULL) {
   # 0 - Global variables assignement ----
   vessel <- NULL
   trip_end_date <- NULL
@@ -290,6 +292,44 @@ control_trip_map <- function(dataframe_observe,
   ylim <- mean(yrange) + (1 + maxrange / 2) * c(-1, 1)
   if (graph_type == "plot") {
     # 1 - MAP ----
+    filename <- paste0("control_trips_observe_logbook_vms_",
+                      paste(gsub("-",
+                                 "",
+                                 start_date_i),
+                            gsub("-",
+                                 "",
+                                 end_date_i),
+                            sep="-"),
+                      "_",
+                      vessel_i,
+                      "_",
+                      observer_i,
+                      "_",
+                      program_i)
+    if (!is.null(path_to_png)) {
+      png(filename = paste0(path_to_png,
+                            filename,
+                            "_",
+                            gsub("-",
+                                 "",
+                                 Sys.Date()),
+                            ".png"),
+          width = 7,
+          height = 10,
+          units = "in",
+          res = 300)
+    } else {
+      png(filename = paste0(filename,
+                            "_",
+                            gsub("-",
+                                 "",
+                                 Sys.Date()),
+                            ".png"),
+          width = 7,
+          height = 10,
+          units = "in",
+          res = 300)
+    }
     load(file = system.file("wrld_simpl.RData",
                             package = "fishi"))
     layout(matrix(c(rep(1, 12), 2, 2, 2, 3), 4, 4,
@@ -489,6 +529,7 @@ control_trip_map <- function(dataframe_observe,
                              "blue"),
                      pch = c(3, 4),
                      bg = "white")
+    dev.off()
   } else if (graph_type == "ggplot") {
     dataframe_t3_bis <- dataframe_t3 %>%
       dplyr::filter(vessel_activity_code %in% c(0, 1, 2, 14))
