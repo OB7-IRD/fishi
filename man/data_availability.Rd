@@ -10,6 +10,7 @@ data_availability(
   dataframe_vms,
   reported_year,
   ocean = "Atlantic",
+  graph_type = "plot",
   path_to_png = NULL
 )
 }
@@ -23,6 +24,8 @@ data_availability(
 \item{reported_year}{{\link[base]{integer}} expected. Year of the report.}
 
 \item{ocean}{{\link[base]{character}} expected. Atlantic or Indian Atlantic by default.}
+
+\item{graph_type}{{\link[base]{character}} expected. plot or plotly. Plot by default.}
 
 \item{path_to_png}{{\link[base]{character}} expected. Add a link to the path to save the figure as a png.}
 }

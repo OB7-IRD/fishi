@@ -5,6 +5,7 @@
 #' @param dataframe_t3 {\link[base]{data.frame}} expected. Dataframe from the T3 database. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the data_availability() function.
 #' @param dataframe_vms {\link[base]{data.frame}} expected. Dataframe from the Vms database. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the data_availability() function.
 #' @param reported_year  {\link[base]{integer}} expected. Year of the report.
+#' @param graph_type {\link[base]{character}} expected. plot or plotly. Plot by default.
 #' @param ocean {\link[base]{character}} expected. Atlantic or Indian Atlantic by default.
 #' @param path_to_png {\link[base]{character}} expected. Add a link to the path to save the figure as a png.
 #' @return The function return ggplot R plot.
@@ -17,6 +18,7 @@ data_availability <- function(dataframe_observe,
                               dataframe_vms,
                               reported_year,
                               ocean = "Atlantic",
+                              graph_type = "plot",
                               path_to_png = NULL) {
   # 0 - Global variables assignement ----
   vesselname <- NULL
@@ -69,7 +71,7 @@ data_availability <- function(dataframe_observe,
   dataframe_vms <- dataframe_vms %>%
     dplyr::filter(vesselname %in% vessel)
   # Ggplot
-  graph <- ggplot2::ggplot(data,
+  (graph <- ggplot2::ggplot(data,
                             ggplot2::aes(x = day,
                                          y = vessel)) +
       ggplot2::geom_blank() +
@@ -99,41 +101,46 @@ data_availability <- function(dataframe_observe,
                                        y = vesselname,
                                        color = "vms"),
                           shape = 3,
-                          size = 2,
-                          position = ggplot2::position_nudge(y = -0.1),
+                          size = 1.5,
+                          position = ggplot2::position_nudge(y = - 0.17),
                           na.rm = TRUE) +
       ggplot2::geom_point(data = dataframe_t3,
                           ggplot2::aes(x = date,
                                        y = vessel,
                                        color = "logbook"),
                           shape = 3,
-                          size = 2,
+                          size = 1.5,
                           na.rm = TRUE) +
       ggplot2::geom_point(data = dataframe_observe,
                           ggplot2::aes(x = observation_date,
                                        y = vessel,
                                        color = "observe"),
                           shape = 3,
-                          position = ggplot2::position_nudge(y = 0.1),
-                          size = 2,
+                          position = ggplot2::position_nudge(y = 0.17),
+                          size = 1.5,
                           na.rm = TRUE) +
       ggplot2::scale_color_manual(values = c("vms" = "grey",
                                              "logbook" = "red",
                                              "observe" = "blue")) +
       ggplot2::theme(legend.position = "bottom") +
-      ggplot2::labs(color = "")
-  if (!is.null(path_to_png)) {
-    ggplot2::ggsave(filename = paste0(path_to_png,
-                                     "availability_observe_vms_ps_fr_",
-                                     tolower(substr(ocean,1,3)),
-                                     "_",
-                                     reported_year,
-                                     ".png"),
-                    plot = graph,
-                    width = 15,
-                    height = 8,
-                    bg = "white",
-                    device='png')
+      ggplot2::labs(color = ""))
+  if (graph_type == "plot") {
+    if (!is.null(path_to_png)) {
+      ggplot2::ggsave(filename = paste0(path_to_png,
+                                        "availability_observe_vms_ps_fr_",
+                                        tolower(substr(ocean,1,3)),
+                                        "_",
+                                        reported_year,
+                                        ".png"),
+                      plot = graph,
+                      width = 15,
+                      height = 8,
+                      bg = "white",
+                      device='png')
+    }
+    return(graph)
+  } else if (graph_type == "plotly") {
+    graph_plotly <- plotly::ggplotly(graph)
+    return(graph_plotly)
   }
-  return(graph)
 }
