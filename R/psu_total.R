@@ -42,12 +42,13 @@ psu_total <- function(dataframe,
   port_departure <- NULL
   arrival <- NULL
   port_arrival <- NULL
-  ocean <- NULL
-  flag <- NULL
+  ocean_name <- NULL
+  fleet <- NULL
   country_id <- NULL
   ocean_id <- NULL
   harbour_id <- NULL
   vessel_well_number <- NULL
+  vessel_type <- NULL
   # 1 - Arguments verification ----
   # reported year
   if ((! is.null(x = reported_year))
@@ -82,8 +83,8 @@ psu_total <- function(dataframe,
                   landing_year %in% reported_year))
   if (selected_variable == "trip") {
     (psu_total_t2 <- psu_total_t1 %>%
-       dplyr::group_by(ocean,
-                       flag,
+       dplyr::group_by(ocean_name,
+                       fleet,
                        vessel_type,
                        vessel_name,
                        landing_year,
@@ -91,17 +92,17 @@ psu_total <- function(dataframe,
                        port_arrival,
                        country_id) %>%
        dplyr::summarise(.groups = "drop") %>%
-       dplyr::group_by(ocean,
-                       flag,
+       dplyr::group_by(ocean_name,
+                       fleet,
                        vessel_type,
                        landing_year,
                        port_arrival) %>%
-       dplyr::summarise("nb_trips" = dplyr::n(),
+       dplyr::summarise("nb_trip" = dplyr::n(),
                         .groups = "drop"))
   } else if (selected_variable == "well") {
     (psu_total_t2 <- psu_total_t1 %>%
-       dplyr::group_by(ocean,
-                       flag,
+       dplyr::group_by(ocean_name,
+                       fleet,
                        vessel_type,
                        vessel_name,
                        landing_year,
@@ -110,24 +111,24 @@ psu_total <- function(dataframe,
                        country_id,
                        vessel_well_number) %>%
        dplyr::summarise(.groups = "drop") %>%
-       dplyr::group_by(ocean,
-                       flag,
+       dplyr::group_by(ocean_name,
+                       fleet,
                        vessel_type,
                        landing_year,
                        port_arrival) %>%
-       dplyr::summarise(nb_well = dplyr::n(),
+       dplyr::summarise("nb_well" = dplyr::n(),
                         .groups = "drop"))
   } else if (selected_variable == "vessel") {
     psu_total_t2 <- psu_total_t1 %>%
-       dplyr::group_by(ocean,
-                       flag,
+       dplyr::group_by(ocean_name,
+                       fleet,
                        vessel_type,
                        vessel_name) %>%
        dplyr::summarise(.groups = "drop") %>%
-       dplyr::group_by(ocean,
-                       flag,
+       dplyr::group_by(ocean_name,
+                       fleet,
                        vessel_type) %>%
-       dplyr::summarise("nb_vessels" = dplyr::n(),
+       dplyr::summarise("nb_vessel" = dplyr::n(),
                         .groups = "drop")
   }
   # 3 - Graphic design ----
