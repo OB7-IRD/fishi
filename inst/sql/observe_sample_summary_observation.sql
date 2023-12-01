@@ -14,7 +14,7 @@ SELECT
 	,EXTRACT(YEAR FROM t.enddate) as landing_year
 	,t.landingtotalweight
 	,t.localmarkettotalweight
-	,t.landingtotalweight + t.localmarkettotalweight as total_landings
+	,t.landingtotalweight + t.localmarkettotalweight as total_landing
 	,t.topiaid as sample_number
 	,CASE
 		WHEN vt.code::numeric IN (1,2,3)	THEN 'BB'

@@ -69,6 +69,15 @@ sample_summary <- function(dataframe,
   harbour_name <- NULL
   nb_trip <- NULL
   nb_well <- NULL
+  ocean_name <- NULL
+  vessel_type <- NULL
+  departure <- NULL
+  port_departure <- NULL
+  arrival <- NULL
+  port_arrival <- NULL
+  total_landing <- NULL
+  sample_number <- NULL
+  number_of_samples <- NULL
   # 1 - Arguments verification ----
   # data type
   if (codama::r_type_checking(r_object = data_type,
@@ -425,7 +434,7 @@ sample_summary <- function(dataframe,
                          port_departure,
                          arrival,
                          port_arrival,
-                         total_landings) %>%
+                         total_landing) %>%
          dplyr::summarize("number_of_samples" = dplyr::n_distinct(sample_number,
                                                                 na.rm = TRUE))%>%
         dplyr::group_by(landing_year,
@@ -464,7 +473,7 @@ sample_summary <- function(dataframe,
                          port_departure,
                          arrival,
                          port_arrival,
-                         total_landings) %>%
+                         total_landing) %>%
          dplyr::summarize(.groups = "drop")%>%
          dplyr::group_by(landing_year,
                          fleet,
