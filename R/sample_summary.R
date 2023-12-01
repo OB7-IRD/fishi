@@ -416,8 +416,7 @@ sample_summary <- function(dataframe,
                     landing_year %in% reported_year)
     if (selected_variable == "trip") {
       (sample_summarize <- dataframe %>%
-         dplyr::group_by(program,
-                         ocean_name,
+         dplyr::group_by(ocean_name,
                          fleet,
                          vessel_type,
                          vessel_name,
@@ -437,8 +436,7 @@ sample_summary <- function(dataframe,
         dplyr::summarize("nb_trip" = sum(number_of_samples != 0)))
     } else if (selected_variable == "well") {
       (sample_summarize <- dataframe %>%
-         dplyr::group_by(program,
-                         ocean_name,
+         dplyr::group_by(ocean_name,
                          fleet,
                          vessel_type,
                          vessel_name,
@@ -457,8 +455,7 @@ sample_summary <- function(dataframe,
                           .groups = "drop"))
     } else if (selected_variable == "vessel") {
       (sample_summarize <- dataframe %>%
-         dplyr::group_by(program,
-                         ocean_name,
+         dplyr::group_by(ocean_name,
                          fleet,
                          vessel_type,
                          vessel_name,

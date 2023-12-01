@@ -1,6 +1,5 @@
 SELECT
 	t.topiaid
-	,lp.label2 as program
 	,o.label1 as ocean_name
 	,t.startdate AS departure
 	,t.enddate AS arrival
@@ -38,14 +37,10 @@ FROM ps_common.trip AS t
 	INNER JOIN common.country AS ct ON v.flagcountry = ct.topiaid
 	INNER JOIN ps_logbook.route AS r ON r.trip = t.topiaid
 	INNER JOIN ps_logbook.activity AS a ON a.route = r.topiaid
-	INNER JOIN ps_common.program lp ON (t.logbookprogram = lp.topiaid)
 	LEFT OUTER JOIN ps_logbook.sample s on (t.topiaid = s.trip)
 	
 WHERE
-	lp.label2 in ('AVDTH Atlantique (IRD)', 
-					  'AVDTH Indien (IRD)', 
-					  'Saisies en cours Abidjan (IRD)')
-	and EXTRACT(year FROM r.date) IN (?time_period)
+	EXTRACT(year FROM r.date) IN (?time_period)
 	AND EXTRACT(year FROM t.enddate) IN (?landing_year)
 	AND ct.code::numeric  IN (?country)
 	AND vt.code::numeric IN (?vessel_type)
