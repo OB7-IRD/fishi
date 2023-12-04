@@ -32,7 +32,7 @@
 #' @importFrom readxl read_excel
 #' @importFrom dplyr mutate filter select group_by summarise left_join join_by n_distinct
 #' @importFrom lubridate year
-#' @importFrom tidyr separate_longer_delim separate
+#' @importFrom tidyr separate_longer_delim
 #' @importFrom codama r_type_checking %>%
 sample_summary <- function(dataframe,
                            data_type,

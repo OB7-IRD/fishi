@@ -24,9 +24,7 @@
 #' @importFrom readxl read_excel
 #' @importFrom dplyr mutate filter group_by summarise full_join n reframe arrange desc bind_rows
 #' @importFrom lubridate year
-#' @importFrom graphics par plot axis lines abline legend text
 #' @importFrom ggplot2 ggplot aes geom_bar labs theme_light geom_text scale_fill_manual
-#' @importFrom plotly ggplotly layout
 #' @importFrom tidyr pivot_longer
 #' @importFrom codama r_type_checking
 #' @importFrom tibble column_to_rownames

@@ -11,13 +11,13 @@
 #' The input dataframe frome sql must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:
 #' \itemize{
 #'  \item{\code{  program}}
-#'  \item{\code{  ocean}}
-#'  \item{\code{  flag}}
+#'  \item{\code{  ocean_name}}
+#'  \item{\code{  fleet}}
 #'  \item{\code{  vessel_name}}
 #'  \item{\code{  vessel_type}}
-#'  \item{\code{  activity_date}}
-#'  \item{\code{  departure}}
-#'  \item{\code{  port_departure}}
+#'  \item{\code{  landing_year}}
+#'  \item{\code{  country_id}}
+#'  \item{\code{  vessel_well_number}}
 #'  \item{\code{  arrival}}
 #'  \item{\code{  port_arrival}}
 #' }

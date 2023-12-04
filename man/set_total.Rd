@@ -32,3 +32,19 @@ The function return a table.
 \description{
 Total sets events, sampled or not, with or without tuna landings.
 }
+\details{
+The input dataframe frome sql must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:
+\itemize{
+ \item{\code{  program}}
+ \item{\code{  ocean_name}}
+ \item{\code{  fleet}}
+ \item{\code{  vessel_type}}
+ \item{\code{  vessel_name}}
+ \item{\code{  departure}}
+ \item{\code{  arrival}}
+ \item{\code{  landing_date}}
+ \item{\code{  activity_date}}
+ \item{\code{  port_departure}}
+ \item{\code{  port_arrival}}
+}
+}

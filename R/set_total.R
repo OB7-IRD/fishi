@@ -7,11 +7,26 @@
 #' @param selected_country {\link[base]{integer}} expected. Country code to select the list of boat to count. If NULL give all the vessel for the given year.
 #' @param selected_ocean {\link[base]{integer}} expected. Ocean code to select the list of boat to count. If NULL give all the vessel for the given year, works only for 'data_type' == 'observe'
 #' @param selected_harbour {\link[base]{integer}} expected. Harbour code to select the list of boat to count. If NULL give all the vessel for the given year, works only for 'data_type' == 'observe'
+#' @details
+#' The input dataframe frome sql must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:
+#' \itemize{
+#'  \item{\code{  program}}
+#'  \item{\code{  ocean_name}}
+#'  \item{\code{  fleet}}
+#'  \item{\code{  vessel_type}}
+#'  \item{\code{  vessel_name}}
+#'  \item{\code{  departure}}
+#'  \item{\code{  arrival}}
+#'  \item{\code{  landing_date}}
+#'  \item{\code{  activity_date}}
+#'  \item{\code{  port_departure}}
+#'  \item{\code{  port_arrival}}
+#' }
+#'
 #' @return The function return a table.
 #' @export
-#' @importFrom dplyr mutate filter select group_by summarise left_join join_by n_distinct
+#' @importFrom dplyr mutate filter group_by summarise n_distinct mutate case_when
 #' @importFrom lubridate year
-#' @importFrom tidyr separate_longer_delim separate
 #' @importFrom codama r_type_checking %>%
 set_total <- function(dataframe,
                       graph_type = "table",
