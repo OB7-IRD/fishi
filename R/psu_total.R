@@ -33,13 +33,9 @@ psu_total <- function(dataframe,
                       selected_harbour = NULL,
                       selected_variable = "trip") {
   # 0 - Global variables assignement ----
-  activity_date <- NULL
-  program <- NULL
   vessel_type <- NULL
   vessel_name <- NULL
   landing_year <- NULL
-  departure <- NULL
-  port_departure <- NULL
   arrival <- NULL
   port_arrival <- NULL
   ocean_name <- NULL

@@ -16,13 +16,7 @@ SELECT
 	,t.localmarkettotalweight
 	,t.landingtotalweight + t.localmarkettotalweight as total_landing
 	,t.topiaid as sample_number
-	,CASE
-		WHEN vt.code::numeric IN (1,2,3)	THEN 'BB'
-		WHEN vt.code::numeric IN (4,5,6)	THEN 'PS'
-		WHEN vt.code::numeric IN (7)		THEN 'LL'
-		WHEN vt.code::numeric IN (10)		THEN 'SV'
-		ELSE 'OTH'
-	END AS vessel_type
+	,vt.code as vessel_type_code
 	,h1.label1 as port_departure
 	,h2.label1 as port_arrival
 

@@ -13,14 +13,7 @@ SELECT
 	,h1.code as harbour_id
 	,h1.label1 as harbour_name
 	,EXTRACT(YEAR FROM t.enddate) as landing_year
---	,s.well as vessel_well_number
-	,CASE
-		WHEN vt.code::numeric IN (1,2,3)	THEN 'BB'
-		WHEN vt.code::numeric IN (4,5,6)	THEN 'PS'
-		WHEN vt.code::numeric IN (7)		THEN 'LL'
-		WHEN vt.code::numeric IN (10)		THEN 'SV'
-		ELSE 'OTH'
-	END AS vessel_type
+	,vt.code as vessel_type_code
 	,h1.label1 as port_departure
 	,h2.label1 as port_arrival 
 	
@@ -35,7 +28,6 @@ FROM ps_common.trip AS t
 	INNER JOIN ps_logbook.route AS r ON r.trip = t.topiaid
 	INNER JOIN ps_logbook.activity AS a ON a.route = r.topiaid
 	INNER JOIN ps_common.program lp ON (t.logbookprogram = lp.topiaid)
---	INNER join ps_logbook.sample s ON (s.trip = t.topiaid)
 	
 WHERE
 	lp.label2 in ('AVDTH Atlantique (IRD)', 

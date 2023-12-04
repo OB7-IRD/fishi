@@ -92,6 +92,13 @@ set_total <- function(dataframe,
                   ocean_id %in% selected_ocean,
                   harbour_id %in% selected_harbour,
                   landing_year %in% reported_year)
+  # Vessel type
+  dataframe <- dataframe %>%
+    dplyr::mutate(vessel_type = dplyr::case_when(vessel_type_code %in% c(1, 2, 3) ~ "BB",
+                                                 vessel_type_code %in% c(4, 5, 6) ~ "PS",
+                                                 vessel_type_code %in% c(7) ~ "LL",
+                                                 vessel_type_code %in% c(10) ~ "SV",
+                                                 TRUE ~ "OTH"))
   (set_summarize <- dataframe %>%
       dplyr::group_by(program,
                       ocean_name,

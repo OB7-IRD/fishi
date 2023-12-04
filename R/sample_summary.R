@@ -50,7 +50,6 @@ sample_summary <- function(dataframe,
   NUMBAT <- NULL
   PAYS <- NULL
   FLOTTE <- NULL
-  boat_code <- NULL
   fleet <- NULL
   fish_sampling_date <- NULL
   landing_date <- NULL
@@ -423,6 +422,13 @@ sample_summary <- function(dataframe,
                     ocean_id %in% selected_ocean,
                     harbour_id %in% selected_harbour,
                     landing_year %in% reported_year)
+    # Vessel type
+    dataframe <- dataframe %>%
+      dplyr::mutate(vessel_type = dplyr::case_when(vessel_type_code %in% c(1, 2, 3) ~ "BB",
+                                                   vessel_type_code %in% c(4, 5, 6) ~ "PS",
+                                                   vessel_type_code %in% c(7) ~ "LL",
+                                                   vessel_type_code %in% c(10) ~ "SV",
+                                                   TRUE ~ "OTH"))
     if (selected_variable == "trip") {
       (sample_summarize <- dataframe %>%
          dplyr::group_by(ocean_name,
@@ -436,13 +442,13 @@ sample_summary <- function(dataframe,
                          port_arrival,
                          total_landing) %>%
          dplyr::summarize("number_of_samples" = dplyr::n_distinct(sample_number,
-                                                                na.rm = TRUE))%>%
-        dplyr::group_by(landing_year,
-                        port_arrival,
-                        fleet,
-                        vessel_type,
-                        vessel_name) %>%
-        dplyr::summarize("nb_trip" = sum(number_of_samples != 0)))
+                                                                  na.rm = TRUE)) %>%
+         dplyr::group_by(landing_year,
+                         port_arrival,
+                         fleet,
+                         vessel_type,
+                         vessel_name) %>%
+         dplyr::summarize("nb_trip" = sum(number_of_samples != 0)))
     } else if (selected_variable == "well") {
       (sample_summarize <- dataframe %>%
          dplyr::group_by(ocean_name,
@@ -455,7 +461,7 @@ sample_summary <- function(dataframe,
                          arrival,
                          port_arrival,
                          vessel_well_number) %>%
-         dplyr::summarize(.groups = "drop")%>%
+         dplyr::summarize(.groups = "drop") %>%
          dplyr::group_by(landing_year,
                          fleet,
                          vessel_type,
@@ -474,7 +480,7 @@ sample_summary <- function(dataframe,
                          arrival,
                          port_arrival,
                          total_landing) %>%
-         dplyr::summarize(.groups = "drop")%>%
+         dplyr::summarize(.groups = "drop") %>%
          dplyr::group_by(landing_year,
                          fleet,
                          vessel_type,
