@@ -8,21 +8,21 @@
 #' The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:
 #' \itemize{
 #'  \item{\code{  activity_date}}
-#'  \item{\code{  c_bat}}
+#'  \item{\code{  vessel_code}}
 #'  \item{\code{  flag}}
 #'  \item{\code{  fleet}}
-#'  \item{\code{  l_bat}}
+#'  \item{\code{  vessel_label}}
 #'  \item{\code{  landing_date}}
-#'  \item{\code{  ocean_id}}
-#'  \item{\code{  port}}
+#'  \item{\code{  ocean_code}}
+#'  \item{\code{  harbour_label}}
 #'  \item{\code{  v_dur_cal}}
-#'  \item{\code{  vessel_type_id}}
+#'  \item{\code{  vessel_type_code}}
 #'  \item{\code{  v_tmer}}
 #'  \item{\code{  v_tpec}}
 #' }
 #' Add these columns for an automatic title (optional):
 #' \itemize{
-#'  \item{\code{  country_id}}
+#'  \item{\code{  country_code}}
 #' }
 #' @return The function return ggplot R plot.
 #' @export
@@ -38,13 +38,13 @@ fishing_effort <- function(dataframe,
   # 0 - Global variables assignement ----
   activity_date <- NULL
   landing_date <- NULL
-  ocean_id <- NULL
+  ocean_code <- NULL
   fleet <- NULL
-  vessel_type_id <- NULL
+  vessel_type_code <- NULL
   flag <- NULL
-  c_bat <- NULL
-  l_bat <- NULL
-  port <- NULL
+  vessel_code <- NULL
+  vessel_label <- NULL
+  harbour_label <- NULL
   year <- NULL
   v_tmer <- NULL
   v_tpec <- NULL
@@ -81,13 +81,13 @@ fishing_effort <- function(dataframe,
                                                               TRUE ~ 0))
   #Adding columns by condition (vtmer, vtpec, ndurcal, nbdays)
   fishing_effort_t2 <- fishing_effort_t1 %>%
-    dplyr::group_by(ocean_id,
+    dplyr::group_by(ocean_code,
                     fleet,
-                    vessel_type_id,
+                    vessel_type_code,
                     flag,
-                    c_bat,
-                    l_bat,
-                    port,
+                    vessel_code,
+                    vessel_label,
+                    harbour_label,
                     landing_date,
                     year) %>%
     dplyr::summarise("v_tmer" = sum(v_tmer,
@@ -102,10 +102,10 @@ fishing_effort <- function(dataframe,
                      .groups = "drop")
   #Group rows by conditions
   fishing_effort_t2b <- fishing_effort_t2 %>%
-    dplyr::group_by(ocean_id,
+    dplyr::group_by(ocean_code,
                     fleet,
                     flag,
-                    vessel_type_id,
+                    vessel_type_code,
                     year,
                     v_tmer,
                     v_tpec,
@@ -119,17 +119,17 @@ fishing_effort <- function(dataframe,
                                              na.rm = TRUE)),
                    "nb_landings_in_activity_year" = sum(nb_landings_in_activity_year, na.rm = TRUE),
                    "average_nb_days_by_trip" = mean(nb_days, 0),
-                   "fishing_days_1000" = ifelse(test = ocean_id == 1,
+                   "fishing_days_1000" = ifelse(test = ocean_code == 1,
                                                 yes = round(sum(v_tpec / 12,
                                                                 na.rm = TRUE)),
                                                 no = round(sum(v_tpec / 13,
                                                                na.rm = TRUE))),
-                   "set_duration_in_days" = ifelse(test = ocean_id == 1,
+                   "set_duration_in_days" = ifelse(test = ocean_code == 1,
                                                    yes = round(sum(v_dur_cal / 12,
                                                                    na.rm = TRUE)),
                                                    no = round(sum(v_dur_cal / 13,
                                                                   na.rm = TRUE))),
-                   "searching_days_1000" = ifelse(test = ocean_id == 1,
+                   "searching_days_1000" = ifelse(test = ocean_code == 1,
                                                   yes = round(sum((v_tpec - v_dur_cal) / 12,
 
                                                                   na.rm = TRUE)),
@@ -150,15 +150,15 @@ fishing_effort <- function(dataframe,
   # 3 - Legend design ----
   if (title == TRUE) {
     #Ocean
-    ocean_legend <- code_manipulation(data         = dataframe$ocean_id,
+    ocean_legend <- code_manipulation(data         = dataframe$ocean_code,
                                       referential  = "ocean",
                                       manipulation = "legend")
     #country
-    country_legend <- code_manipulation(data         = dataframe$country_id,
+    country_legend <- code_manipulation(data         = dataframe$country_code,
                                         referential  = "country",
                                         manipulation = "legend")
     #vessel
-    vessel_type_legend <- code_manipulation(data         = dataframe$vessel_type_id,
+    vessel_type_legend <- code_manipulation(data         = dataframe$vessel_type_code,
                                             referential  = "vessel_simple_type",
                                             manipulation = "legend")
     # time_period
