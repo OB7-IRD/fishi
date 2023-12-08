@@ -30,10 +30,10 @@ The input dataframe must contain all these columns for the function to work [\hr
  \item{\code{  landing_date}}
  \item{\code{  ocean_code}}
  \item{\code{  harbour_label}}
- \item{\code{  v_dur_cal}}
+ \item{\code{  set_duration}}
  \item{\code{  vessel_type_code}}
- \item{\code{  v_tmer}}
- \item{\code{  v_tpec}}
+ \item{\code{  total_hour_at_sea}}
+ \item{\code{  total_hour_fished}}
 }
 Add these columns for an automatic title (optional):
 \itemize{

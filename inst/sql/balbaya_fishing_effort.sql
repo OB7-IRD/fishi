@@ -6,9 +6,9 @@ SELECT
 	,port.l_port AS harbour_label
 	,activite.d_act AS activity_date
 	,activite.d_dbq AS landing_date
-	,activite.v_tmer 
-	,activite.v_tpec 
-	,activite.v_dur_cal
+	,activite.v_tmer AS total_hour_at_sea
+	,activite.v_tpec AS total_hour_fished
+	,activite.v_dur_cal AS set_duration
 	,ocean.c_ocea::numeric AS ocean_code
 	,activite.c_engin::text AS vessel_type_code
 	,bateau.c_pav_b::numeric AS country_code 

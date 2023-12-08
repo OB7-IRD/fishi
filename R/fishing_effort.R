@@ -15,10 +15,10 @@
 #'  \item{\code{  landing_date}}
 #'  \item{\code{  ocean_code}}
 #'  \item{\code{  harbour_label}}
-#'  \item{\code{  v_dur_cal}}
+#'  \item{\code{  set_duration}}
 #'  \item{\code{  vessel_type_code}}
-#'  \item{\code{  v_tmer}}
-#'  \item{\code{  v_tpec}}
+#'  \item{\code{  total_hour_at_sea}}
+#'  \item{\code{  total_hour_fished}}
 #' }
 #' Add these columns for an automatic title (optional):
 #' \itemize{
@@ -46,9 +46,9 @@ fishing_effort <- function(dataframe,
   vessel_label <- NULL
   harbour_label <- NULL
   year <- NULL
-  v_tmer <- NULL
-  v_tpec <- NULL
-  v_dur_cal <- NULL
+  total_hour_at_sea <- NULL
+  total_hour_fished <- NULL
+  set_duration <- NULL
   fishing_days <- NULL
   searching_days <- NULL
   fishing_days_1000 <- NULL
@@ -90,11 +90,11 @@ fishing_effort <- function(dataframe,
                     harbour_label,
                     landing_date,
                     year) %>%
-    dplyr::summarise("v_tmer" = sum(v_tmer,
+    dplyr::summarise("total_hour_at_sea" = sum(total_hour_at_sea,
                                     na.rm = TRUE),
-                     "v_tpec" = sum(v_tpec,
+                     "total_hour_fished" = sum(total_hour_fished,
                                     na.rm = TRUE),
-                     "v_dur_cal" = sum(v_dur_cal,
+                     "set_duration" = sum(set_duration,
                                        na.rm = TRUE),
                      "nb_days" = max(activity_date) - min(activity_date),
                      "nb_landings_in_activity_year" = sum(landing_in_activity_year,
@@ -107,33 +107,33 @@ fishing_effort <- function(dataframe,
                     flag,
                     vessel_type_code,
                     year,
-                    v_tmer,
-                    v_tpec,
-                    v_dur_cal) %>%
+                    total_hour_at_sea,
+                    total_hour_fished,
+                    set_duration) %>%
     dplyr::reframe(nb_landings_in_activity_year = nb_landings_in_activity_year,
                    nb_days = nb_days)
   #Adding columns by years (daysatsea, fishingdays, ...)
   fishing_effort_t3 <- fishing_effort_t2b %>%
     dplyr::group_by(year) %>%
-    dplyr::reframe("days_at_sea" = round(sum(v_tmer / 24,
+    dplyr::reframe("days_at_sea" = round(sum(total_hour_at_sea / 24,
                                              na.rm = TRUE)),
                    "nb_landings_in_activity_year" = sum(nb_landings_in_activity_year, na.rm = TRUE),
                    "average_nb_days_by_trip" = mean(nb_days, 0),
                    "fishing_days_1000" = ifelse(test = ocean_code == 1,
-                                                yes = round(sum(v_tpec / 12,
+                                                yes = round(sum(total_hour_fished / 12,
                                                                 na.rm = TRUE)),
-                                                no = round(sum(v_tpec / 13,
+                                                no = round(sum(total_hour_fished / 13,
                                                                na.rm = TRUE))),
                    "set_duration_in_days" = ifelse(test = ocean_code == 1,
-                                                   yes = round(sum(v_dur_cal / 12,
+                                                   yes = round(sum(set_duration / 12,
                                                                    na.rm = TRUE)),
-                                                   no = round(sum(v_dur_cal / 13,
+                                                   no = round(sum(set_duration / 13,
                                                                   na.rm = TRUE))),
                    "searching_days_1000" = ifelse(test = ocean_code == 1,
-                                                  yes = round(sum((v_tpec - v_dur_cal) / 12,
+                                                  yes = round(sum((total_hour_fished - set_duration) / 12,
 
                                                                   na.rm = TRUE)),
-                                                  no = round(sum((v_tpec - v_dur_cal) / 13, na.rm = TRUE))))
+                                                  no = round(sum((total_hour_fished - set_duration) / 13, na.rm = TRUE))))
 
   #remove duplicates
   fishing_effort_t4 <- unique(fishing_effort_t3[, c("year",

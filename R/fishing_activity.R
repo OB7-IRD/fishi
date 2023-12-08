@@ -9,17 +9,16 @@
 #' The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:
 #' \itemize{
 #'  \item{\code{  activity_date}}
-#'  \item{\code{  c_tban}}
-#'  \item{\code{  v_dur_cal}}
-#'  \item{\code{  v_nb_calee_pos}}
-#'  \item{\code{  v_nb_calees}}
+#'  \item{\code{  school_code}}
+#'  \item{\code{  positive_set}}
+#'  \item{\code{  total_set}}
 #'  \item{\code{  v_tpec}}
 #' }
 #' Add these columns for an automatic title (optional):
 #' \itemize{
-#'  \item{\code{  country_id}}
-#'  \item{\code{  ocean_id}}
-#'  \item{\code{  vessel_type_id}}
+#'  \item{\code{  country_code}}
+#'  \item{\code{  ocean_code}}
+#'  \item{\code{  vessel_type_code}}
 #' }
 #' @return The function return ggplot R plot.
 #' @export
@@ -36,9 +35,9 @@ fishing_activity <- function(dataframe,
                              title = FALSE) {
   # 0 - Global variables assignement ----
   activity_date <- NULL
-  v_nb_calees <- NULL
-  v_nb_calee_pos <- NULL
-  c_tban <- NULL
+  total_set <- NULL
+  positive_set <- NULL
+  school_code <- NULL
   l_total <- NULL
   a_total <- NULL
   f_total <- NULL
@@ -74,33 +73,33 @@ fishing_activity <- function(dataframe,
   # db a1 - Add : Number of total, positive, and null sets by ALL
   a1 <- fishing_activity_t1 %>%
     dplyr::group_by(year) %>%
-    dplyr::summarise(a_total = sum(v_nb_calees,
+    dplyr::summarise(a_total = sum(total_set,
                                    na.rm = TRUE),
-                     a_positive = sum(v_nb_calee_pos,
+                     a_positive = sum(positive_set,
                                       na.rm = TRUE),
-                     a_null = sum(v_nb_calees - v_nb_calee_pos,
+                     a_null = sum(total_set - positive_set,
                                   na.rm = TRUE),
                      .groups = "drop")
   # db a2 - Add : Number of total, positive, and null sets by FOB
   a2 <- fishing_activity_t1 %>%
-    dplyr::filter(c_tban == 1) %>%
+    dplyr::filter(school_code == 1) %>%
     dplyr::group_by(year) %>%
-    dplyr::summarise(l_total = sum(v_nb_calees,
+    dplyr::summarise(l_total = sum(total_set,
                                    na.rm = TRUE),
-                     l_positive = sum(v_nb_calee_pos,
+                     l_positive = sum(positive_set,
                                       na.rm = TRUE),
-                     l_null = sum(v_nb_calees - v_nb_calee_pos,
+                     l_null = sum(total_set - positive_set,
                                   na.rm = TRUE),
                      .groups = "drop")
   # db a3 - Add : Number of total, positive, and null sets by FSC
   a3 <- fishing_activity_t1 %>%
-    dplyr::filter(c_tban == 2 | c_tban == 3) %>%
+    dplyr::filter(school_code == 2 | school_code == 3) %>%
     dplyr::group_by(year) %>%
-    dplyr::summarise(f_total = sum(v_nb_calees,
+    dplyr::summarise(f_total = sum(total_set,
                                    na.rm = TRUE),
-                     f_positive = sum(v_nb_calee_pos,
+                     f_positive = sum(positive_set,
                                       na.rm = TRUE),
-                     f_null = sum(v_nb_calees - v_nb_calee_pos,
+                     f_null = sum(total_set - positive_set,
                                   na.rm = TRUE),
                      .groups = "drop")
   # Merge db by Year
@@ -122,15 +121,15 @@ fishing_activity <- function(dataframe,
   # 3 - Legend design ----
   if (title == TRUE) {
     #Ocean
-    ocean_legend <- code_manipulation(data         = dataframe$ocean_id,
+    ocean_legend <- code_manipulation(data         = dataframe$ocean_code,
                                       referential  = "ocean",
                                       manipulation = "legend")
     #country
-    country_legend <- code_manipulation(data         = dataframe$country_id,
+    country_legend <- code_manipulation(data         = dataframe$country_code,
                                         referential  = "country",
                                         manipulation = "legend")
     #vessel
-    vessel_type_legend <- code_manipulation(data         = dataframe$vessel_type_id,
+    vessel_type_legend <- code_manipulation(data         = dataframe$vessel_type_code,
                                             referential  = "vessel_simple_type",
                                             manipulation = "legend")
     # time_period
