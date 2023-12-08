@@ -24,14 +24,14 @@ The input dataframe must contain all these columns for the function to work [\hr
 \itemize{
  \item{\code{  activity_date}}
  \item{\code{  cwp11_act}}
- \item{\code{  v_nb_calee_pos}}
- \item{\code{  v_nb_calees}}
- \item{\code{  v_tpec}}
+ \item{\code{  positive_set}}
+ \item{\code{  total_set}}
+ \item{\code{  total_hour_fished}}
 }
 Add these columns for an automatic title (optional):
 \itemize{
- \item{\code{  country_id}}
- \item{\code{  ocean_id}}
- \item{\code{  vessel_type_id}}
+ \item{\code{  country_code}}
+ \item{\code{  ocean_code}}
+ \item{\code{  vessel_type_code}}
 }
 }
