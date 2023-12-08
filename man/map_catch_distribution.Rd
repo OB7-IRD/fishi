@@ -30,19 +30,18 @@ Spatial distribution of tuna catches.
 The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:
 \itemize{
  \item{\code{  activity_date}}
- \item{\code{  c_bat}}
- \item{\code{  c_esp}}
- \item{\code{  c_ocea}}
- \item{\code{  c_tban}}
+ \item{\code{  vessel_code}}
+ \item{\code{  species_code}}
+ \item{\code{  ocean_code}}
+ \item{\code{  school_code}}
  \item{\code{  cwp11_act}}
- \item{\code{  n_act}}
- \item{\code{  v_nb_calee_pos}}
- \item{\code{  v_poids_capt}}
+ \item{\code{  activity_id}}
+ \item{\code{  positive_set}}
+ \item{\code{  total_catch_weight}}
 }
 Add these columns for an automatic title (optional):
 \itemize{
- \item{\code{  country_id}}
- \item{\code{  ocean_id}}
- \item{\code{  vessel_type_id}}
+ \item{\code{  country_code}}
+ \item{\code{  vessel_type_code}}
 }
 }
