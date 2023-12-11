@@ -9,15 +9,15 @@
 #' The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:
 #' \itemize{
 #'  \item{\code{  activity_date}}
-#'  \item{\code{  c_banc}}
-#'  \item{\code{  c_esp}}
+#'  \item{\code{  school_code}}
+#'  \item{\code{  species_code}}
 #'  \item{\code{  size_class}}
-#'  \item{\code{  v_mensur}}
+#'  \item{\code{  estimated_individual}}
 #' }
 #' Add these columns for an automatic title (optional):
 #' \itemize{
-#'  \item{\code{  country_id}}
-#'  \item{\code{  ocean_id}}
+#'  \item{\code{  country_code}}
+#'  \item{\code{  ocean_code}}
 #' }
 #' @return The function return ggplot R plot.
 #' @export
@@ -30,10 +30,10 @@ bio_weight_tuna <- function(dataframe,
                             graph_type = "plot",
                             title = FALSE) {
   # 0 - Global variables assignement ----
-  c_esp <- NULL
-  c_banc <- NULL
+  species_code <- NULL
+  school_code <- NULL
   activity_date <- NULL
-  v_mensur <- NULL
+  estimated_individual <- NULL
   size_class <- NULL
   log_avg_5_years <- NULL
   log_current_year <- NULL
@@ -68,54 +68,54 @@ bio_weight_tuna <- function(dataframe,
   five_previous <- c((report_year - 1):(report_year - 5))
   # Dataframe - Mode : LOG, Year : Report year
   t0 <- dataframe %>%
-    dplyr::filter(c_esp %in% 2,
-                  c_banc %in% 1,
+    dplyr::filter(species_code %in% 2,
+                  school_code %in% 1,
                   activity_date %in% report_year) %>%
     dplyr::group_by(size_class) %>%
-    dplyr::summarise(log_current_year = (unique(0.00000748 * (size_class + 0.5)^3.2526) * sum(v_mensur,
+    dplyr::summarise(log_current_year = (unique(0.00000748 * (size_class + 0.5)^3.2526) * sum(estimated_individual,
                                                                                               na.rm = TRUE)) / 1000,
                      .groups = "drop")
   # Dataframe - Mode : LOG, Year : Previous years
   t1 <- dataframe %>%
-    dplyr::filter(c_esp %in% 2,
-                  c_banc %in% 1,
+    dplyr::filter(species_code %in% 2,
+                  school_code %in% 1,
                   activity_date %in% five_previous) %>%
     dplyr::group_by(size_class) %>%
-    dplyr::summarise(log_avg_5_years = (unique(0.00000748 * (size_class + 0.5)^3.2526) * sum(v_mensur / 5,
+    dplyr::summarise(log_avg_5_years = (unique(0.00000748 * (size_class + 0.5)^3.2526) * sum(estimated_individual / 5,
                                                                                              na.rm = TRUE)) / 1000,
                      .groups = "drop")
   # Dataframe - Mode : FREE, Year : Report year
   t2 <- dataframe %>%
-    dplyr::filter(c_esp %in% 2,
-                  c_banc %in% c(2, 3, 9),
+    dplyr::filter(species_code %in% 2,
+                  school_code %in% c(2, 3, 9),
                   activity_date %in% report_year) %>%
     dplyr::group_by(size_class) %>%
-    dplyr::summarise(free_current_year = (unique(0.00000748 * (size_class + 0.5)^3.2526) * sum(v_mensur,
+    dplyr::summarise(free_current_year = (unique(0.00000748 * (size_class + 0.5)^3.2526) * sum(estimated_individual,
                                                                                                na.rm = TRUE)) / 1000,
                      .groups = "drop")
   # Dataframe - Mode : FREE, Year : Previous years
   t3 <- dataframe %>%
-    dplyr::filter(c_esp %in% 2,
-                  c_banc %in% c(2, 3, 9),
+    dplyr::filter(species_code %in% 2,
+                  school_code %in% c(2, 3, 9),
                   activity_date %in% five_previous) %>%
     dplyr::group_by(size_class) %>%
-    dplyr::summarise(free_avg_5_years = (unique(0.00000748 * (size_class + 0.5)^3.2526) * sum(v_mensur / 5,
+    dplyr::summarise(free_avg_5_years = (unique(0.00000748 * (size_class + 0.5)^3.2526) * sum(estimated_individual / 5,
                                                                                               na.rm = TRUE)) / 1000,
                      .groups = "drop")
   # Dataframe - Mode : ALL, Year : Report year
   t4 <- dataframe %>%
-    dplyr::filter(c_esp %in% 2,
+    dplyr::filter(species_code %in% 2,
                   activity_date %in% report_year) %>%
     dplyr::group_by(size_class) %>%
-    dplyr::summarise(all_current_year = (unique(0.00000748 * (size_class + 0.5)^3.2526) * sum(v_mensur,
+    dplyr::summarise(all_current_year = (unique(0.00000748 * (size_class + 0.5)^3.2526) * sum(estimated_individual,
                                                                                               na.rm = TRUE)) / 1000,
                      .groups = "drop")
   # Dataframe - Mode : ALL, Year : Previous years
   t5 <- dataframe %>%
-    dplyr::filter(c_esp %in% 2,
+    dplyr::filter(species_code %in% 2,
                   activity_date %in% five_previous) %>%
     dplyr::group_by(size_class) %>%
-    dplyr::summarise(all_avg_5_years = (unique(0.00000748 * (size_class + 0.5)^3.2526) * sum(v_mensur / 5,
+    dplyr::summarise(all_avg_5_years = (unique(0.00000748 * (size_class + 0.5)^3.2526) * sum(estimated_individual / 5,
                                                                                              na.rm = TRUE)) / 1000,
                      .groups = "drop")
   # Merge
@@ -128,54 +128,54 @@ bio_weight_tuna <- function(dataframe,
   # 3.b - Data design for BET ----
   # Dataframe - Mode : LOG, Year : Report year
   t0 <- dataframe %>%
-    dplyr::filter(c_esp %in% 3,
-                  c_banc %in% 1,
+    dplyr::filter(species_code %in% 3,
+                  school_code %in% 1,
                   activity_date %in% report_year) %>%
     dplyr::group_by(size_class) %>%
-    dplyr::summarise(log_current_year = (unique(0.00002396 * (size_class + 1)^2.9774) * sum(v_mensur,
+    dplyr::summarise(log_current_year = (unique(0.00002396 * (size_class + 1)^2.9774) * sum(estimated_individual,
                                                                                             na.rm = TRUE)) / 1000,
                      .groups = "drop")
   # Dataframe - Mode : LOG, Year : Previous years
   t1 <- dataframe %>%
-    dplyr::filter(c_esp %in% 3,
-                  c_banc %in% 1,
+    dplyr::filter(species_code %in% 3,
+                  school_code %in% 1,
                   activity_date %in% five_previous) %>%
     dplyr::group_by(size_class) %>%
-    dplyr::summarise(log_avg_5_years = (unique(0.00002396 * (size_class + 1)^2.9774) * sum(v_mensur / 5,
+    dplyr::summarise(log_avg_5_years = (unique(0.00002396 * (size_class + 1)^2.9774) * sum(estimated_individual / 5,
                                                                                            na.rm = TRUE)) / 1000,
                      .groups = "drop")
   # Dataframe - Mode : FREE, Year : Report year
   t2 <- dataframe %>%
-    dplyr::filter(c_esp %in% 3,
-                  c_banc %in% c(2, 3, 9),
+    dplyr::filter(species_code %in% 3,
+                  school_code %in% c(2, 3, 9),
                   activity_date %in% report_year) %>%
     dplyr::group_by(size_class) %>%
-    dplyr::summarise(free_current_year = (unique(0.00002396 * (size_class + 1)^2.9774) * sum(v_mensur,
+    dplyr::summarise(free_current_year = (unique(0.00002396 * (size_class + 1)^2.9774) * sum(estimated_individual,
                                                                                              na.rm = TRUE)) / 1000,
                      .groups = "drop")
   # Dataframe - Mode : FREE, Year : Previous years
   t3 <- dataframe %>%
-    dplyr::filter(c_esp %in% 3,
-                  c_banc %in% c(2, 3, 9),
+    dplyr::filter(species_code %in% 3,
+                  school_code %in% c(2, 3, 9),
                   activity_date %in% five_previous) %>%
     dplyr::group_by(size_class) %>%
-    dplyr::summarise(free_avg_5_years = (unique(0.00002396 * (size_class + 1)^2.9774) * sum(v_mensur / 5,
+    dplyr::summarise(free_avg_5_years = (unique(0.00002396 * (size_class + 1)^2.9774) * sum(estimated_individual / 5,
                                                                                             na.rm = TRUE)) / 1000,
                      .groups = "drop")
   # Dataframe - Mode : ALL, Year : Report year
   t4 <- dataframe %>%
-    dplyr::filter(c_esp %in% 3,
+    dplyr::filter(species_code %in% 3,
                   activity_date %in% report_year) %>%
     dplyr::group_by(size_class) %>%
-    dplyr::summarise(all_current_year = (unique(0.00002396 * (size_class + 1)^2.9774) * sum(v_mensur,
+    dplyr::summarise(all_current_year = (unique(0.00002396 * (size_class + 1)^2.9774) * sum(estimated_individual,
                                                                                             na.rm = TRUE)) / 1000,
                      .groups = "drop")
   # Dataframe - Mode : ALL, Year : Previous yearss
   t5 <- dataframe %>%
-    dplyr::filter(c_esp %in% 3,
+    dplyr::filter(species_code %in% 3,
                   activity_date %in% five_previous) %>%
     dplyr::group_by(size_class) %>%
-    dplyr::summarise(all_avg_5_years = (unique(0.00002396 * (size_class + 1)^2.9774) * sum(v_mensur / 5,
+    dplyr::summarise(all_avg_5_years = (unique(0.00002396 * (size_class + 1)^2.9774) * sum(estimated_individual / 5,
                                                                                            na.rm = TRUE)) / 1000,
                      .groups = "drop")
   # Merge
@@ -187,54 +187,54 @@ bio_weight_tuna <- function(dataframe,
   # 3.c - Data design for YFT ----
   # Dataframe - Mode : LOG, Year : Report year
   t0 <- dataframe %>%
-    dplyr::filter(c_esp %in% 1,
-                  c_banc %in% 1,
+    dplyr::filter(species_code %in% 1,
+                  school_code %in% 1,
                   activity_date %in% report_year) %>%
     dplyr::group_by(size_class) %>%
-    dplyr::summarise(log_current_year = (unique(0.000021527 * (size_class + 1)^2.976) * sum(v_mensur,
+    dplyr::summarise(log_current_year = (unique(0.000021527 * (size_class + 1)^2.976) * sum(estimated_individual,
                                                                                             na.rm = TRUE)) / 1000,
                      .groups = "drop")
   # Dataframe - Mode : LOG, Year : Previous years
   t1 <- dataframe %>%
-    dplyr::filter(c_esp %in% 1,
-                  c_banc %in% 1,
+    dplyr::filter(species_code %in% 1,
+                  school_code %in% 1,
                   activity_date %in% five_previous) %>%
     dplyr::group_by(size_class) %>%
-    dplyr::summarise(log_avg_5_years = (unique(0.000021527 * (size_class + 1)^2.976) * sum(v_mensur / 5,
+    dplyr::summarise(log_avg_5_years = (unique(0.000021527 * (size_class + 1)^2.976) * sum(estimated_individual / 5,
                                                                                            na.rm = TRUE)) / 1000,
                      .groups = "drop")
   # Dataframe - Mode : FREE, Year : Report year
   t2 <- dataframe %>%
-    dplyr::filter(c_esp %in% 1,
-                  c_banc %in% c(2, 3, 9),
+    dplyr::filter(species_code %in% 1,
+                  school_code %in% c(2, 3, 9),
                   activity_date == report_year) %>%
     dplyr::group_by(size_class) %>%
-    dplyr::summarise(free_current_year = (unique(0.000021527 * (size_class + 1)^2.976) * sum(v_mensur,
+    dplyr::summarise(free_current_year = (unique(0.000021527 * (size_class + 1)^2.976) * sum(estimated_individual,
                                                                                              na.rm = TRUE)) / 1000,
                      .groups = "drop")
   # Dataframe - Mode : FREE, Year : Previous years
   t3 <- dataframe %>%
-    dplyr::filter(c_esp %in% 1,
-                  c_banc %in% c(2, 3, 9),
+    dplyr::filter(species_code %in% 1,
+                  school_code %in% c(2, 3, 9),
                   activity_date %in% five_previous) %>%
     dplyr::group_by(size_class) %>%
-    dplyr::summarise(free_avg_5_years = (unique(0.000021527 * (size_class + 1)^2.976) * sum(v_mensur / 5,
+    dplyr::summarise(free_avg_5_years = (unique(0.000021527 * (size_class + 1)^2.976) * sum(estimated_individual / 5,
                                                                                             na.rm = TRUE)) / 1000,
                      .groups = "drop")
   # Dataframe - Mode : ALL, Year : Report year
   t4 <- dataframe %>%
-    dplyr::filter(c_esp %in% 1,
+    dplyr::filter(species_code %in% 1,
                   activity_date %in% report_year) %>%
     dplyr::group_by(size_class) %>%
-    dplyr::summarise(all_current_year = (unique(0.000021527 * (size_class + 1)^2.976) * sum(v_mensur,
+    dplyr::summarise(all_current_year = (unique(0.000021527 * (size_class + 1)^2.976) * sum(estimated_individual,
                                                                                             na.rm = TRUE)) / 1000,
                      .groups = "drop")
   # Dataframe - Mode : ALL, Year : Previous years
   t5 <- dataframe %>%
-    dplyr::filter(c_esp %in% 1,
+    dplyr::filter(species_code %in% 1,
                   activity_date %in% five_previous) %>%
     dplyr::group_by(size_class) %>%
-    dplyr::summarise(all_avg_5_years = (unique(0.000021527 * (size_class + 1)^2.976) * sum(v_mensur / 5,
+    dplyr::summarise(all_avg_5_years = (unique(0.000021527 * (size_class + 1)^2.976) * sum(estimated_individual / 5,
                                                                                            na.rm = TRUE)) / 1000,
                      .groups = "drop")
   # Merge
@@ -246,11 +246,11 @@ bio_weight_tuna <- function(dataframe,
   # 4 - Legend design ----
   if (title == TRUE) {
     #Ocean
-    ocean_legend <- code_manipulation(data         = dataframe$ocean_id,
+    ocean_legend <- code_manipulation(data         = dataframe$ocean_code,
                                       referential  = "ocean",
                                       manipulation = "legend")
     #country
-    country_legend <- code_manipulation(data         = dataframe$country_id,
+    country_legend <- code_manipulation(data         = dataframe$country_code,
                                         referential  = "country",
                                         manipulation = "legend")
   }

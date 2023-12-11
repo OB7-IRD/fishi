@@ -25,14 +25,14 @@ Size distribution of major tuna catches (in percentage of the total number of fi
 The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:
 \itemize{
  \item{\code{  activity_date}}
- \item{\code{  c_banc}}
- \item{\code{  c_esp}}
+ \item{\code{  school_code}}
+ \item{\code{  species_code}}
  \item{\code{  size_class}}
- \item{\code{  v_mensur}}
+ \item{\code{  estimated_individual}}
 }
 Add these columns for an automatic title (optional):
 \itemize{
- \item{\code{  country_id}}
- \item{\code{  ocean_id}}
+ \item{\code{  country_code}}
+ \item{\code{  ocean_code}}
 }
 }
