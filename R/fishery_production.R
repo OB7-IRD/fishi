@@ -10,19 +10,19 @@
 #' The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:
 #' \itemize{
 #'  \item{\code{  activity_date}}
-#'  \item{\code{  c_esp}}
+#'  \item{\code{  species_code}}
 #'  \item{\code{  flag}}
 #'  \item{\code{  fleet}}
 #'  \item{\code{  gear}}
-#'  \item{\code{  l4c_tban}}
-#'  \item{\code{  ocean_name}}
-#'  \item{\code{  v_poids_capt}}
+#'  \item{\code{  school_code}}
+#'  \item{\code{  ocean_label}}
+#'  \item{\code{  total_catch_weight}}
 #' }
 #' Add these columns for an automatic title (optional):
 #' \itemize{
-#'  \item{\code{  country_id}}
-#'  \item{\code{  ocean_id}}
-#'  \item{\code{  vessel_type_id}}
+#'  \item{\code{  country_code}}
+#'  \item{\code{  ocean_code}}
+#'  \item{\code{  vessel_type_code}}
 #' }
 #' @return The function return ggplot R plot.
 #' @export
@@ -40,8 +40,8 @@ fishery_production <- function(dataframe,
                                title = FALSE) {
   # 0 - Global variables assignement ----
   activity_date <- NULL
-  v_poids_capt <- NULL
-  ocean_name <- NULL
+  total_catch_weight <- NULL
+  ocean_label <- NULL
   gear <- NULL
   fleet <- NULL
   flag <- NULL
@@ -85,26 +85,26 @@ fishery_production <- function(dataframe,
   # Add columns year, school type and species
   fishery_production_t1 <- dataframe %>%
     dplyr::mutate(year = lubridate::year(x = activity_date),
-                  school_type = dplyr::case_when(l4c_tban == "IND" ~ "free",
-                                                 l4c_tban == "BL"  ~ "free",
-                                                 l4c_tban == "BO"  ~ "log",
+                  school_type = dplyr::case_when(school_code == "IND" ~ "free",
+                                                 school_code == "BL"  ~ "free",
+                                                 school_code == "BO"  ~ "log",
                                                  TRUE ~ "und"),
-                  YFT = dplyr::case_when(c_esp == 1 ~ v_poids_capt,
+                  YFT = dplyr::case_when(species_code == 1 ~ total_catch_weight,
                                          TRUE ~ 0),
-                  SKJ = dplyr::case_when(c_esp == 2 ~ v_poids_capt,
+                  SKJ = dplyr::case_when(species_code == 2 ~ total_catch_weight,
                                          TRUE ~ 0),
-                  BET = dplyr::case_when(c_esp == 3 ~ v_poids_capt,
+                  BET = dplyr::case_when(species_code == 3 ~ total_catch_weight,
                                          TRUE ~ 0),
-                  ALB = dplyr::case_when(c_esp == 4 ~ v_poids_capt,
+                  ALB = dplyr::case_when(species_code == 4 ~ total_catch_weight,
                                          TRUE ~ 0),
-                  DSC = dplyr::case_when(c_esp == 8 | (c_esp >= 800 & c_esp <= 899) ~ v_poids_capt,
+                  DSC = dplyr::case_when(species_code == 8 | (species_code >= 800 & species_code <= 899) ~ total_catch_weight,
                                          TRUE ~ 0),
-                  OTH = dplyr::case_when(c_esp == 1 | c_esp == 2 | c_esp == 3 | c_esp == 4 | c_esp == 8 | (c_esp >= 800 & c_esp <= 899) ~ 0,
-                                         TRUE ~ v_poids_capt),
-                  total_with_DSC = v_poids_capt)
+                  OTH = dplyr::case_when(species_code == 1 | species_code == 2 | species_code == 3 | species_code == 4 | species_code == 8 | (species_code >= 800 & species_code <= 899) ~ 0,
+                                         TRUE ~ total_catch_weight),
+                  total_with_DSC = total_catch_weight)
   # Sum columns species
   fishery_production_t2 <- fishery_production_t1 %>%
-    dplyr::group_by(ocean_name,
+    dplyr::group_by(ocean_label,
                     year,
                     gear,
                     fleet,
@@ -160,15 +160,15 @@ fishery_production <- function(dataframe,
   # 3 - Legend design ----
   if (title == TRUE) {
     #Ocean
-    ocean_legend <- code_manipulation(data         = dataframe$ocean_id,
+    ocean_legend <- code_manipulation(data         = dataframe$ocean_code,
                                       referential  = "ocean",
                                       manipulation = "legend")
     #country
-    country_legend <- code_manipulation(data         = dataframe$country_id,
+    country_legend <- code_manipulation(data         = dataframe$country_code,
                                         referential  = "country",
                                         manipulation = "legend")
     #vessel
-    vessel_type_legend <- code_manipulation(data         = dataframe$vessel_type_id,
+    vessel_type_legend <- code_manipulation(data         = dataframe$vessel_type_code,
                                             referential  = "vessel_simple_type",
                                             manipulation = "legend")
     # time_period
@@ -178,96 +178,14 @@ fishery_production <- function(dataframe,
   }
   # 4 - Graphic design ----
   if (graph_type == "plot") {
-    graphics::par(cex.axis = 1.4,
-                  cex.lab = 1.4,
-                  las = 2)
-    if (title == TRUE) {
-      plotrix::stackpoly(x = matrix(table_catch_all$year,
-                                    nrow = length(table_catch_all$year),
-                                    ncol = 3),
-                         y = table_catch_all[, c("YFT", "SKJ", "BET")] / 1000,
-                         stack = TRUE,
-                         cex.axis = 1.3,
-                         cex.lab = 1.3,
-                         xlab = "",
-                         ylab = "Catch (x1000 t)",
-                         main = paste0("Fishery production by ",
-                                       fishing_type,
-                                       " fishing mode. \nCatch by species of the ",
-                                       country_legend,
-                                       " ",
-                                       vessel_type_legend,
-                                       " fishing",
-                                       "\n",
-                                       "fleet during ",
-                                       min(time_period),
-                                       "-",
-                                       max(time_period),
-                                       ", in the ",
-                                       ocean_legend,
-                                       " ocean."),
-                         axis4 = FALSE,
-                         col = c("khaki1",
-                                 "firebrick2",
-                                 "cornflowerblue"),
-                         cex = 1.3,
-                         ylim = c(0,
-                                  max((table_catch_all$total * 1.02) / 1000,
-                                      na.rm = TRUE)))
-    } else {
-      plotrix::stackpoly(x = matrix(table_catch_all$year,
-                                    nrow = length(table_catch_all$year),
-                                    ncol = 3),
-                         y = table_catch_all[, c("YFT", "SKJ", "BET")] / 1000,
-                         stack = TRUE,
-                         cex.axis = 1.3,
-                         cex.lab = 1.3,
-                         xlab = "",
-                         ylab = "Catch (x1000 t)",
-                         main = "",
-                         axis4 = FALSE,
-                         col = c("khaki1",
-                                 "firebrick2",
-                                 "cornflowerblue"),
-                         cex = 1.3,
-                         ylim = c(0,
-                                  max((table_catch_all$total * 1.02) / 1000,
-                                      na.rm = TRUE)))
-    }
-    graphics::abline(h = seq(20,
-                             100,
-                             20),
-                     col = "lightgrey",
-                     lty = 2)
-    graphics::legend("topright",
-                     legend = c("BET",
-                                "SKJ",
-                                "YFT"),
-                     bty = "n",
-                     fill = c("cornflowerblue",
-                              "firebrick2",
-                              "khaki1"),
-                     cex = 1.3)
-    if (fishing_type == "FSC") {
-      graphics::legend("topleft",
-                       bty = "n",
-                       legend = "(FSC)",
-                       cex = 1.3)
-    } else if (fishing_type == "FOB") {
-      graphics::legend("topleft",
-                       bty = "n",
-                       legend = "(FOB)",
-                       cex = 1.3)
-    }
-  } else if (graph_type == "ggplot") {
-    table_long <- pivot_longer(table_catch_all,
+    table_long <- tidyr::pivot_longer(table_catch_all,
                                cols = c("YFT",
                                         "SKJ",
                                         "BET"),
                                names_to = "Species",
                                values_to = "Catch")
-    fishery_ggplot <- ggplot(table_long,
-                             aes(x = year,
+    (fishery_ggplot <- ggplot2::ggplot(table_long,
+                             ggplot2::aes(x = year,
                                  y = Catch / 1000,
                                  fill = Species)) +
       ggplot2::geom_area(position = "stack") +
@@ -292,23 +210,23 @@ fishery_production <- function(dataframe,
                      panel.grid.minor.x = ggplot2::element_blank(),
                      panel.grid.major.y = ggplot2::element_line(size = 0.2,
                                                                 color = "gray90")) +
-      ggplot2::labs(fill = NULL)
+      ggplot2::labs(fill = NULL))
     if (title == TRUE) {
       fishery_ggplot <- fishery_ggplot + ggplot2::ggtitle(paste0("Fishery production by ",
-                                               fishing_type,
-                                               " fishing mode. \nCatch by species of the ",
-                                               country_legend,
-                                               " ",
-                                               vessel_type_legend,
-                                               " fishing",
-                                               "\n",
-                                               "fleet during ",
-                                               min(time_period),
-                                               "-",
-                                               max(time_period),
-                                               ", in the ",
-                                               ocean_legend,
-                                               " ocean."))
+                                                                 fishing_type,
+                                                                 " fishing mode. \nCatch by species of the ",
+                                                                 country_legend,
+                                                                 " ",
+                                                                 vessel_type_legend,
+                                                                 " fishing",
+                                                                 "\n",
+                                                                 "fleet during ",
+                                                                 min(time_period),
+                                                                 "-",
+                                                                 max(time_period),
+                                                                 ", in the ",
+                                                                 ocean_legend,
+                                                                 " ocean."))
     }
     return(fishery_ggplot)
   } else if (graph_type == "plotly") {
