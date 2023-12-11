@@ -9,17 +9,17 @@
 #' The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:
 #' \itemize{
 #'  \item{\code{  activity_date}}
-#'  \item{\code{  c_tban}}
-#'  \item{\code{  v_dur_cal}}
-#'  \item{\code{  v_nb_calee_pos}}
-#'  \item{\code{  v_nb_calees}}
-#'  \item{\code{  v_tpec}}
+#'  \item{\code{  school_code}}
+#'  \item{\code{  set_duration}}
+#'  \item{\code{  positive_set}}
+#'  \item{\code{  total_set}}
+#'  \item{\code{  total_hour_fished}}
 #' }
 #' Add these columns for an automatic title (optional):
 #' \itemize{
-#'  \item{\code{  country_id}}
-#'  \item{\code{  ocean_id}}
-#'  \item{\code{  vessel_type_id}}
+#'  \item{\code{  country_code}}
+#'  \item{\code{  ocean_code}}
+#'  \item{\code{  vessel_type_code}}
 #' }
 #' @return The function return ggplot R plot.
 #' @export
@@ -36,11 +36,11 @@ set_per_searching_day <- function(dataframe,
                                   title = FALSE) {
   # 0 - Global variables assignement ----
   activity_date <- NULL
-  v_tpec <- NULL
-  v_dur_cal <- NULL
-  c_tban <- NULL
-  v_nb_calee_pos <- NULL
-  v_nb_calees <- NULL
+  total_hour_fished <- NULL
+  set_duration <- NULL
+  school_code <- NULL
+  positive_set <- NULL
+  total_set <- NULL
   sets_per_day_all <- NULL
   sets_per_day_fad <- NULL
   sets_per_day_fsc <- NULL
@@ -73,18 +73,18 @@ set_per_searching_day <- function(dataframe,
   # db t1 - Add columns : nb_sets_pos and nb_sets
   t1 <- dataframe %>%
     dplyr::group_by(year,
-                    c_tban) %>%
-    dplyr::summarise(nb_sets_pos = sum(v_nb_calee_pos,
+                    school_code) %>%
+    dplyr::summarise(nb_sets_pos = sum(positive_set,
                                        na.rm = TRUE),
-                     nb_sets = sum(v_nb_calees,
+                     nb_sets = sum(total_set,
                                    na.rm = TRUE),
                      .groups = "drop")
   # db t2 - Add columns t_peche and t_recherche
   t2 <- dataframe %>%
     dplyr::group_by(year) %>%
-    dplyr::summarise(t_peche = sum(v_tpec,
+    dplyr::summarise(t_peche = sum(total_hour_fished,
                                    na.rm = TRUE),
-                     t_recherche = sum(v_tpec - v_dur_cal,
+                     t_recherche = sum(total_hour_fished - set_duration,
                                        na.rm = TRUE),
                      .groups = "drop")
   # merge t1 and t2 by year
@@ -92,11 +92,11 @@ set_per_searching_day <- function(dataframe,
   # Create columns sets_per_day for ALL, FOB and FSC
   table_cpue_set_per_day <- table_cpue_set_per_day %>%
     dplyr::group_by(year) %>%
-    dplyr::reframe(sets_per_day_all = dplyr::case_when(c_tban == 1 | c_tban == 2 | c_tban == 3 ~ nb_sets / (t_recherche / 12),
+    dplyr::reframe(sets_per_day_all = dplyr::case_when(school_code == 1 | school_code == 2 | school_code == 3 ~ nb_sets / (t_recherche / 12),
                                                          TRUE ~ 0),
-                     sets_per_day_fad = dplyr::case_when(c_tban == 1 ~ nb_sets / (t_recherche / 12),
+                     sets_per_day_fad = dplyr::case_when(school_code == 1 ~ nb_sets / (t_recherche / 12),
                                                          TRUE ~ 0),
-                     sets_per_day_fsc = dplyr::case_when(c_tban %in% c(2:3) ~ nb_sets / (t_recherche / 12)))
+                     sets_per_day_fsc = dplyr::case_when(school_code %in% c(2:3) ~ nb_sets / (t_recherche / 12)))
   # Sum columns sets_per_day for ALL, FOB and FSC
   table_cpue_set_per_day <- table_cpue_set_per_day %>%
     dplyr::group_by(year) %>%
@@ -110,15 +110,15 @@ set_per_searching_day <- function(dataframe,
   # 4 - Legend design ----
   if (title == TRUE) {
     #Ocean
-    ocean_legend <- code_manipulation(data         = dataframe$ocean_id,
+    ocean_legend <- code_manipulation(data         = dataframe$ocean_code,
                                       referential  = "ocean",
                                       manipulation = "legend")
     #country
-    country_legend <- code_manipulation(data         = dataframe$country_id,
+    country_legend <- code_manipulation(data         = dataframe$country_code,
                                         referential  = "country",
                                         manipulation = "legend")
     #vessel
-    vessel_type_legend <- code_manipulation(data         = dataframe$vessel_type_id,
+    vessel_type_legend <- code_manipulation(data         = dataframe$vessel_type_code,
                                             referential  = "vessel_simple_type",
                                             manipulation = "legend")
     # time_period

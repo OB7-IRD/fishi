@@ -34,27 +34,27 @@ The input dataframe must contain all these columns for the function to work [\hr
 \itemize{
  Dataframe 1:
  \item{\code{  activity_date}}
- \item{\code{  c_esp}}
- \item{\code{  c_tban}}
- \item{\code{  v_dur_cal}}
- \item{\code{  v_nb_calee_pos}}
- \item{\code{  v_nb_calees}}
- \item{\code{  v_poids_capt}}
- \item{\code{  v_tpec}}
+ \item{\code{  species_code}}
+ \item{\code{  school_code}}
+ \item{\code{  set_duration}}
+ \item{\code{  positive_set}}
+ \item{\code{  set_duration}}
+ \item{\code{  total_catch_weight}}
+ \item{\code{  total_hour_fished}}
 }
 \itemize{
  Dataframe 2:
  \item{\code{  activity_date}}
- \item{\code{  c_tban}}
- \item{\code{  v_dur_cal}}
- \item{\code{  v_nb_calee_pos}}
- \item{\code{  v_nb_calees}}
- \item{\code{  v_tpec}}
+ \item{\code{  school_code}}
+ \item{\code{  set_duration}}
+ \item{\code{  positive_set}}
+ \item{\code{  set_duration}}
+ \item{\code{  total_hour_fished}}
 }
 Add these columns for an automatic title (optional):
 \itemize{
- \item{\code{  country_id}}
- \item{\code{  ocean_id}}
- \item{\code{  vessel_type_id}}
+ \item{\code{  country_code}}
+ \item{\code{  ocean_code}}
+ \item{\code{  vessel_type_code}}
 }
 }

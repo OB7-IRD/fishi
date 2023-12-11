@@ -4,6 +4,7 @@ select
 	,activite.v_nb_calee_pos AS positive_set
 	,activite.v_tpec AS total_hour_fished
 	,activite.c_tban AS school_code
+	,activite.v_dur_cal AS set_duration
 	,activite.c_ocea::numeric AS ocean_code
 	,bateau.c_pav_b::numeric AS country_code
 	,activite.c_engin::numeric AS vessel_type_code
