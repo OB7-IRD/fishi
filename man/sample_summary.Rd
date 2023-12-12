@@ -50,14 +50,14 @@ The input dataframe frome sql must contain all these columns for the function to
  \item{\code{  sampling_year}}
  \item{\code{  fish_sampling_date}}
  \item{\code{  landing_date}}
- \item{\code{  vessel_name}}
+ \item{\code{  vessel_label}}
  \item{\code{  boat_code}}
  \item{\code{  fleet}}
  \item{\code{  vessel_well_number}}
 }
 add these columns to select the country and ocean (optional):
 \itemize{
- \item{\code{  country_id}}
- \item{\code{  ocean_id}}
+ \item{\code{  country_code}}
+ \item{\code{  ocean_code}}
 }
 }
