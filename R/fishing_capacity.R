@@ -128,7 +128,7 @@ fishing_capacity <- function(dataframe,
                                               "400-600",
                                               "50-400"))
   # 3 - Legend design ----
-  if (title == TRUE ) {
+  if (title == TRUE) {
     #Ocean
     ocean_legend <- code_manipulation(data         = dataframe$ocean_code,
                                       referential  = "ocean",

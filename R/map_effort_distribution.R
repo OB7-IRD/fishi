@@ -103,7 +103,7 @@ map_effort_distribution <- function(dataframe,
   }
   lat <- quad2pos(as.numeric(datafile$cwp11_act + 5 * 1e6))$y
   long <- quad2pos(as.numeric(datafile$cwp11_act + 5 * 1e6))$x
-  if (title == TRUE){
+  if (title == TRUE) {
     #Ocean
     ocean_legend <- code_manipulation(data         = dataframe$ocean_code,
                                       referential  = "ocean",
@@ -293,7 +293,7 @@ map_effort_distribution <- function(dataframe,
     if (title == TRUE) {
       title(main = paste0("Spatial distribution of fishing effort (in searching days) of the ",
                           country_legend, " ",
-                          vessel_type_legend,"\n", " fishing fleet in ",
+                          vessel_type_legend, "\n", " fishing fleet in ",
                           ifelse(test = length(x = time_period) != 1,
                                  yes  = paste0(min(time_period), "-", max(time_period)),
                                  no   = time_period),
