@@ -7,7 +7,7 @@
 map_effort_distribution(dataframe, graph_type = "plot", title = FALSE)
 }
 \arguments{
-\item{dataframe}{{\link[base]{data.frame}} expected. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the map_effort_distribution() function.}
+\item{dataframe}{{\link[base]{data.frame}} expected. Csv or output of the function {\link[furdeb]{data_extraction}}, which must be done before using the map_effort_distribution() function.}
 
 \item{graph_type}{{\link[base]{character}} expected. plot or plotly. Plot by default.}
 
@@ -23,16 +23,14 @@ Spatial distribution of tuna effort.
 The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:
 \itemize{
  \item{\code{  activity_date}}
- \item{\code{  c_bat}}
  \item{\code{  cwp11_act}}
- \item{\code{  n_act}}
- \item{\code{  ocean_id}}
- \item{\code{  v_dur_cal}}
- \item{\code{  v_tpec}}
+ \item{\code{  ocean_code}}
+ \item{\code{  set_duration}}
+ \item{\code{  total_hour_fished}}
 }
 Add these columns for an automatic title (optional):
 \itemize{
- \item{\code{  country_id}}
- \item{\code{  vessel_type_id}}
+ \item{\code{  country_code}}
+ \item{\code{  vessel_type_code}}
 }
 }
