@@ -13,9 +13,9 @@ catch_per_unit_effort(
 )
 }
 \arguments{
-\item{dataframe1}{{\link[base]{data.frame}} expected. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the catch_per_searching_day() function.}
+\item{dataframe1}{{\link[base]{data.frame}} expected. Csv or output of the function {\link[furdeb]{data_extraction}}, which must be done before using the catch_per_searching_day() function.}
 
-\item{dataframe2}{{\link[base]{data.frame}} expected. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the catch_per_searching_day() function.}
+\item{dataframe2}{{\link[base]{data.frame}} expected. Csv or output of the function {\link[furdeb]{data_extraction}}, which must be done before using the catch_per_searching_day() function.}
 
 \item{fishing_type}{{\link[base]{character}} expected. FOB or FSC.}
 

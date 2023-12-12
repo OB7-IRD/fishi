@@ -1,7 +1,7 @@
 #' @name sample_summary
 #' @title Sample summary
 #' @description Give the number of trip, vessel or well sampled for a given year. Need to define your goal in the parameter.
-#' @param dataframe {\link[base]{data.frame}} expected. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the fishing_activity() function.
+#' @param dataframe {\link[base]{data.frame}} expected. Csv or output of the function {\link[furdeb]{data_extraction}}, which must be done before using the fishing_activity() function.
 #' @param data_type {\link[base]{character}} expected. 'tunabio' or 'observe'.
 #' @param graph_type {\link[base]{character}} expected. "number" or "table." Number by default.
 #' @param reported_year {\link[base]{integer}} expected. Write the wanted year of the report.

@@ -1,8 +1,8 @@
 #' @name catch_per_unit_effort
 #' @title  Annual catch rates (in t per searching day)
 #' @description Annual catch rates (in t per searching day) on FOB- associated and free-swimming tuna schools (FSC).
-#' @param dataframe1 {\link[base]{data.frame}} expected. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the catch_per_searching_day() function.
-#' @param dataframe2 {\link[base]{data.frame}} expected. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the catch_per_searching_day() function.
+#' @param dataframe1 {\link[base]{data.frame}} expected. Csv or output of the function {\link[furdeb]{data_extraction}}, which must be done before using the catch_per_searching_day() function.
+#' @param dataframe2 {\link[base]{data.frame}} expected. Csv or output of the function {\link[furdeb]{data_extraction}}, which must be done before using the catch_per_searching_day() function.
 #' @param fishing_type {\link[base]{character}} expected. FOB or FSC.
 #' @param graph_type {\link[base]{character}} expected. plot, plotly or table. Plot by default.
 #' @param title TRUE or FALSE expected. False by default.

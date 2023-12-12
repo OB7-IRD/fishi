@@ -1,7 +1,7 @@
 #' @name set_per_searching_day
 #' @title Annual number of sets per searching day
 #' @description Annual number of sets per searching day on FOB-associated and free-swimming schools.
-#' @param dataframe {\link[base]{data.frame}} expected. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the set_per_searching_day() function.
+#' @param dataframe {\link[base]{data.frame}} expected. Csv or output of the function {\link[furdeb]{data_extraction}}, which must be done before using the set_per_searching_day() function.
 #' @param fishing_type {\link[base]{character}} expected. FOB and FSC.
 #' @param graph_type {\link[base]{character}} expected. plot, plotly or table. Plot by default.
 #' @param title TRUE or FALSE expected. False by default.

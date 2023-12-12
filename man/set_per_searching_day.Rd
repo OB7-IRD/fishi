@@ -12,7 +12,7 @@ set_per_searching_day(
 )
 }
 \arguments{
-\item{dataframe}{{\link[base]{data.frame}} expected. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the set_per_searching_day() function.}
+\item{dataframe}{{\link[base]{data.frame}} expected. Csv or output of the function {\link[furdeb]{data_extraction}}, which must be done before using the set_per_searching_day() function.}
 
 \item{fishing_type}{{\link[base]{character}} expected. FOB and FSC.}
 

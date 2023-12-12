@@ -1,7 +1,7 @@
 #' @name species_biological_variable
 #' @title Sampled biological variables
 #' @description Give the number of each biological variable sampled for a given year.
-#' @param dataframe {\link[base]{data.frame}} expected. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the fishing_activity() function.
+#' @param dataframe {\link[base]{data.frame}} expected. Csv or output of the function {\link[furdeb]{data_extraction}}, which must be done before using the fishing_activity() function.
 #' @param data_type {\link[base]{character}} expected. 'tunabio' or 'observe'.
 #' @param graph_type {\link[base]{character}} expected. 'ggplot' or 'table'. table by default.
 #' @param reported_year {\link[base]{integer}} expected. Write the wanted year of the report
