@@ -113,49 +113,53 @@ with identical column names. Here’s what they correspond to :</p>
 service, transit, catch+ and catch+ weight, etc.). It is entered in
 dd/mm/yyyy format. The first record should correspond to the departure
 date for a trip.</p>
+<p><strong>activity_id</strong> : Numeric identifier of the activity
+(from 1 to n). This is the only field that can be used to differentiate
+one activity from another for the same day of the week. Note that an
+increasing range of numbers does not necessarily correspond to the
+chronological range.</p>
+<p><strong>boat_code</strong>: The boat’s internal code (note that the
+same boat may have several different codes when changing flag,
+etc.).</p>
 <p><strong>catch</strong> : Weight of fish caught during the current
 activity (commercial or non-commercial species, stored in tanks or
 dumped at sea).</p>
-<p><strong>c_bat</strong> : The boat’s internal code (note that the same
-boat may have several different codes when changing flag, etc.).</p>
-<p><strong>c_esp</strong> : Internal species code</p>
-<p><strong>country_id</strong> : Code of the country</p>
-<p><strong>c_tban</strong> : School type code.</p>
-<p><strong>c_quille</strong> : Keel coding (unique throughout the ship’s
-life).</p>
+<p><strong>country_code</strong> : Code of the country</p>
 <p><strong>cwp11_act</strong> : code of the 1x1 square in which the
 activity is located</p>
 <p><strong>fleet</strong> : Country’s fleet.</p>
 <p><strong>flag</strong> : Country’s flag.</p>
 <p><strong>gear</strong> : Name for type of vessel used.</p>
+<p><strong>keel_code</strong> : Keel coding (unique throughout the
+ship’s life).</p>
 <p><strong>landing_date</strong> : Boat landing date (dd/mm/yyyy
 format).</p>
-<p><strong>l_bat</strong> : Name of the ship.</p>
-<p><strong>n_act</strong> : Numeric identifier of the activity (from 1
-to n). This is the only field that can be used to differentiate one
-activity from another for the same day of the week. Note that an
-increasing range of numbers does not necessarily correspond to the
-chronological range.</p>
-<p><strong>ocean_id</strong> : Code of the ocean in which the
+<p><strong>ocean_code</strong>: Code of the ocean in which the
 geographical area is located</p>
-<p><strong>ocean_name</strong> : Name of the ocean in which the
+<p><strong>ocean_label</strong> : Name of the ocean in which the
 geographical area is located</p>
-<p><strong>port</strong> : Port designation (ORSTOM)</p>
-<p><strong>v_tpec</strong> : Total hours fished during the activity (=
-set +search +transit etc.). Approximately 12h in OA and 13h in OI. Note
-that if several activities take place on the same date, the first will
-take the total hours and the others 0.</p>
-<p><strong>v_tmer</strong> : Total hours at sea for the activity (from 0
-to 24h). Note that if several activities take place on the same date,
-the first will take 24h and the others 0.</p>
-<p><strong>v_dur_cal</strong> : set duration calculated using several
+<p><strong>port_code</strong> : Code of the port designation
+(ORSTOM)</p>
+<p><strong>port_label</strong> : Name of the port designation
+(ORSTOM)</p>
+<p><strong>positive_set</strong>: total number of positive sets during
+the activity.</p>
+<p><strong>set_duration</strong>: set duration calculated using several
 parameters: fishing method, tonnage and fishing year</p>
-<p><strong>v_nb_calees</strong> : total number of sets during the
+<p><strong>school_code</strong> : School type code.</p>
+<p><strong>school_label</strong>: Abbreviated name of school type</p>
+<p><strong>species_code</strong> : Internal species code</p>
+<p><strong>total_hour_at_sea</strong>: Total hours at sea for the
+activity (from 0 to 24h). Note that if several activities take place on
+the same date, the first will take 24h and the others 0.</p>
+<p><strong>total_hour_fished</strong>: Total hours fished during the
+activity (= set +search +transit etc.). Approximately 12h in OA and 13h
+in OI. Note that if several activities take place on the same date, the
+first will take the total hours and the others 0.</p>
+<p><strong>total_set</strong>: total number of sets during the
 activity.</p>
-<p><strong>v_nb_calee_pos</strong> : total number of positive sets
-during the activity.</p>
-<p><strong>vessel_type_id</strong> : Code for type of vessel used</p>
-<p><strong>l4c_tban</strong> : Abbreviated name of school type</p>
+<p><strong>vessel_label</strong> : Name of the ship.</p>
+<p><strong>vessel_type_code</strong> : Code for type of vessel used</p>
 </div>
   </div>
 
