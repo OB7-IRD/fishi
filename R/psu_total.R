@@ -11,12 +11,12 @@
 #' The input dataframe frome sql must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:
 #' \itemize{
 #'  \item{\code{  program}}
-#'  \item{\code{  ocean_name}}
+#'  \item{\code{  ocean_label}}
 #'  \item{\code{  fleet}}
-#'  \item{\code{  vessel_name}}
+#'  \item{\code{  vessel_label}}
 #'  \item{\code{  vessel_type}}
 #'  \item{\code{  landing_year}}
-#'  \item{\code{  country_id}}
+#'  \item{\code{  country_code}}
 #'  \item{\code{  vessel_well_number}}
 #'  \item{\code{  arrival}}
 #'  \item{\code{  port_arrival}}
@@ -34,15 +34,15 @@ psu_total <- function(dataframe,
                       selected_variable = "trip") {
   # 0 - Global variables assignement ----
   vessel_type <- NULL
-  vessel_name <- NULL
+  vessel_label <- NULL
   landing_year <- NULL
   arrival <- NULL
   port_arrival <- NULL
-  ocean_name <- NULL
+  ocean_label <- NULL
   fleet <- NULL
-  country_id <- NULL
-  ocean_id <- NULL
-  harbour_id <- NULL
+  country_code <- NULL
+  ocean_code <- NULL
+  port_code <- NULL
   vessel_well_number <- NULL
   vessel_type <- NULL
   # 1 - Arguments verification ----
@@ -73,22 +73,27 @@ psu_total <- function(dataframe,
   psu_total_t1 <- dataframe %>%
     dplyr::mutate(landing_year = lubridate::year(x = arrival))
   (psu_total_t1 <- psu_total_t1 %>%
-    dplyr::filter(country_id %in% selected_country,
-                  ocean_id %in% selected_ocean,
-                  harbour_id %in% selected_harbour,
-                  landing_year %in% reported_year))
+    dplyr::filter(country_code %in% selected_country,
+                  ocean_code %in% selected_ocean,
+                  port_code %in% selected_harbour,
+                  landing_year %in% reported_year) %>%
+    dplyr::mutate(vessel_type = dplyr::case_when(vessel_type_code %in% c(1, 2, 3) ~ "BB",
+                                                 vessel_type_code %in% c(4, 5, 6) ~ "PS",
+                                                 vessel_type_code %in% c(7) ~ "LL",
+                                                 vessel_type_code %in% c(10) ~ "SV",
+                                                 TRUE ~ "OTH")))
   if (selected_variable == "trip") {
     (psu_total_t2 <- psu_total_t1 %>%
-       dplyr::group_by(ocean_name,
+       dplyr::group_by(ocean_label,
                        fleet,
                        vessel_type,
-                       vessel_name,
+                       vessel_label,
                        landing_year,
                        arrival,
                        port_arrival,
-                       country_id) %>%
+                       country_code) %>%
        dplyr::summarise(.groups = "drop") %>%
-       dplyr::group_by(ocean_name,
+       dplyr::group_by(ocean_label,
                        fleet,
                        vessel_type,
                        landing_year,
@@ -97,17 +102,17 @@ psu_total <- function(dataframe,
                         .groups = "drop"))
   } else if (selected_variable == "well") {
     (psu_total_t2 <- psu_total_t1 %>%
-       dplyr::group_by(ocean_name,
+       dplyr::group_by(ocean_label,
                        fleet,
                        vessel_type,
-                       vessel_name,
+                       vessel_label,
                        landing_year,
                        arrival,
                        port_arrival,
-                       country_id,
+                       country_code,
                        vessel_well_number) %>%
        dplyr::summarise(.groups = "drop") %>%
-       dplyr::group_by(ocean_name,
+       dplyr::group_by(ocean_label,
                        fleet,
                        vessel_type,
                        landing_year,
@@ -116,12 +121,12 @@ psu_total <- function(dataframe,
                         .groups = "drop"))
   } else if (selected_variable == "vessel") {
     psu_total_t2 <- psu_total_t1 %>%
-       dplyr::group_by(ocean_name,
+       dplyr::group_by(ocean_label,
                        fleet,
                        vessel_type,
-                       vessel_name) %>%
+                       vessel_label) %>%
        dplyr::summarise(.groups = "drop") %>%
-       dplyr::group_by(ocean_name,
+       dplyr::group_by(ocean_label,
                        fleet,
                        vessel_type) %>%
        dplyr::summarise("nb_vessel" = dplyr::n(),

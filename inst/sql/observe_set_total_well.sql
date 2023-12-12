@@ -1,17 +1,16 @@
 SELECT
 	t.topiaid
 	,lp.label2 as program
-	,o.label1 as ocean_name
+	,o.label1 as ocean_label
 	,t.startdate AS departure
 	,t.enddate AS arrival
 	,t.enddate as landing_date
-	,v.label1 as vessel_name
+	,v.label1 as vessel_label
 	,v.code::numeric AS boat_code
 	,ct.iso3code AS fleet
-	,o.code::numeric as ocean_id
-	,ct.code::numeric as country_id
-	,h1.code as harbour_id
-	,h1.label1 as harbour_name
+	,o.code::numeric as ocean_code
+	,ct.code::numeric as country_code
+	,h1.code as port_code
 	,EXTRACT(YEAR FROM t.enddate) as landing_year
 	,s.well as vessel_well_number
 	,vt.code as vessel_type_code

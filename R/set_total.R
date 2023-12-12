@@ -11,10 +11,10 @@
 #' The input dataframe frome sql must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:
 #' \itemize{
 #'  \item{\code{  program}}
-#'  \item{\code{  ocean_name}}
+#'  \item{\code{  ocean_label}}
 #'  \item{\code{  fleet}}
 #'  \item{\code{  vessel_type}}
-#'  \item{\code{  vessel_name}}
+#'  \item{\code{  vessel_label}}
 #'  \item{\code{  departure}}
 #'  \item{\code{  arrival}}
 #'  \item{\code{  landing_date}}
@@ -37,13 +37,13 @@ set_total <- function(dataframe,
   # 0 - Global variables assignement ----
   fleet <- NULL
   landing_date <- NULL
-  vessel_name <- NULL
-  country_id <- NULL
-  ocean_id <- NULL
-  harbour_id <- NULL
+  vessel_label <- NULL
+  country_code <- NULL
+  ocean_code <- NULL
+  port_code <- NULL
   landing_year <- NULL
   program <- NULL
-  ocean_name <- NULL
+  ocean_label <- NULL
   departure <- NULL
   port_departure <- NULL
   arrival <- NULL
@@ -103,9 +103,9 @@ set_total <- function(dataframe,
   dataframe <- dataframe %>%
     dplyr::mutate(landing_year = lubridate::year(x = landing_date))
   dataframe <- dataframe %>%
-    dplyr::filter(country_id %in% selected_country,
-                  ocean_id %in% selected_ocean,
-                  harbour_id %in% selected_harbour,
+    dplyr::filter(country_code %in% selected_country,
+                  ocean_code %in% selected_ocean,
+                  port_code %in% selected_harbour,
                   landing_year %in% reported_year)
   # Vessel type
   dataframe <- dataframe %>%
@@ -116,10 +116,10 @@ set_total <- function(dataframe,
                                                  TRUE ~ "OTH"))
   (set_summarize <- dataframe %>%
       dplyr::group_by(program,
-                      ocean_name,
+                      ocean_label,
                       fleet,
                       vessel_type,
-                      vessel_name,
+                      vessel_label,
                       landing_year,
                       departure,
                       port_departure,
@@ -127,11 +127,11 @@ set_total <- function(dataframe,
                       port_arrival) %>%
       dplyr::summarise(.groups = "drop")  %>%
       dplyr::group_by(landing_year,
-                      ocean_name,
+                      ocean_label,
                       port_arrival,
                       fleet,
                       vessel_type,
-                      vessel_name) %>%
+                      vessel_label) %>%
       dplyr::summarise(nb_trip = dplyr::n_distinct(arrival),
                        .groups = "drop"))
   # 3 - Graphic design ----

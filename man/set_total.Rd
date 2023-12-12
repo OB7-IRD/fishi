@@ -36,10 +36,10 @@ Total sets events, sampled or not, with or without tuna landings.
 The input dataframe frome sql must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:
 \itemize{
  \item{\code{  program}}
- \item{\code{  ocean_name}}
+ \item{\code{  ocean_label}}
  \item{\code{  fleet}}
  \item{\code{  vessel_type}}
- \item{\code{  vessel_name}}
+ \item{\code{  vessel_label}}
  \item{\code{  departure}}
  \item{\code{  arrival}}
  \item{\code{  landing_date}}
