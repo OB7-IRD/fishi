@@ -106,7 +106,8 @@ control_trip <- function(dataframe_observe,
   # 2 - Data design ----
   ## Observe data ----
   dataframe_observe <- dataframe_observe %>%
-    dplyr::filter(flag %in% flag_selected) %>%
+    dplyr::filter(flag %in% flag_selected,
+                  vessel_activity_code %in% 6) %>%
     dplyr::mutate(year_dbq = as.numeric(substr(trip_end_date, 1, 4)),
                   year = as.numeric(substr(observation_date, 1, 4)),
                   quarter = ceiling(as.numeric(substr(observation_date, 6, 7)) / 3),

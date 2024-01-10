@@ -38,6 +38,7 @@ o.label1::text AS ocean
 	ELSE (CASE WHEN st.code='2' THEN 'FSC' END) END) END) AS school_type
 	,t.topiaid::text AS trip_id
 	,a.topiaid::text AS activity_id
+	,s.topiaid AS set_id
 
 FROM ps_common.trip t
 	INNER JOIN ps_common.program p ON (t.observationsprogram = p.topiaid)
@@ -98,6 +99,7 @@ o.label1
 ,t.topiaid
 ,a.topiaid
 ,st.code
+,s.topiaid
 
 ORDER BY
 o.label1
