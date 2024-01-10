@@ -530,7 +530,7 @@ control_trip_map <- function(dataframe_observe,
                      pch = c(3, 4),
                      bg = "white")
     dev.off()
-  } else if (graph_type == "ggplot") {
+  } else if (graph_type == "plotly") {
     dataframe_t3_bis <- dataframe_t3 %>%
       dplyr::filter(vessel_activity_code %in% c(0, 1, 2, 14))
     dataframe_observe_bis <- dataframe_observe %>%
@@ -617,24 +617,6 @@ control_trip_map <- function(dataframe_observe,
       ggplot2::theme(legend.position = "bottom")  +
       ggplot2::labs(color = "") +
       ggplot2::guides(color = ggplot2::guide_legend(override.aes = list(shape = c(1, 3, 16, 4, 19)))))
-    if (!is.null(path_to_shp)) {
-      zee_v11 <- PBSmapping::importShapefile(path_to_shp,
-                                             readDBF = TRUE,
-                                             projection = "LL")
-      zee_v11_trop <- zee_v11[zee_v11$PID %in% unique(zee_v11[zee_v11$X >= (-35) & zee_v11$X <= 90 & zee_v11$Y >= (-35) & zee_v11$Y <= 25, ]$PID), ]
-      # zee_v11_trop <- zee_v11_trop %>%
-      #   dplyr::filter(X >= min(xlim) & X <= max(xlim)) %>%
-      #   dplyr::filter(Y >= min(ylim) & Y <= max(ylim))
-      graph_map <- graph_map + ggplot2::geom_polygon(data = zee_v11_trop,
-                                                     ggplot2::aes(x = X,
-                                                                  y = Y,
-                                                                  group = PID), # Problème car trop de traits
-                                                     size = 0.5,
-                                                     #pch = 16,
-                                                     color = "pink",
-                                                     fill = "transparent")
-
-    }
     # 2 - sets ----
     graph_set <- ggplot2::ggplot(data = obsets,
                                  ggplot2::aes(x = observation_date,
@@ -750,24 +732,8 @@ control_trip_map <- function(dataframe_observe,
       ggplot2::theme(legend.position = "bottom")  +
       ggplot2::labs(color = "") +
       ggplot2::guides(color = ggplot2::guide_legend(override.aes = list(shape = c(3, 4))))
-    # Ggarrange ----
-    graph_final <- cowplot::ggdraw() +
-      cowplot::draw_plot(graph_map,
-                         x = 0,
-                         y = 0.17,
-                         width = 0.97,
-                         height = 0.97) +
-      cowplot::draw_plot(graph_set,
-                         x = 0,
-                         y = 0,
-                         width = 0.7,
-                         height = 0.3) +
-      cowplot::draw_plot(graph_dpl,
-                         x = 0.71,
-                         y = 0.05,
-                         width = 0.25,
-                         height = 0.25)
-    grDevices::x11(width = 15, height = 20)
-    return(graph_final)
+    # Plotly ----
+    plotly_map <- plotly::ggplotly(graph_map)
+    plotly_map
   }
 }
