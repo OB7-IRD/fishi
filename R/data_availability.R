@@ -2,7 +2,7 @@
 #' @title Assessing data availability
 #' @description Control to verify the availability of LB, OBS and OBS data.
 #' @param dataframe_observe {\link[base]{data.frame}} expected. Dataframe from the Observe database. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the data_availability() function.
-#' @param dataframe_t3 {\link[base]{data.frame}} expected. Dataframe from the T3 database. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the data_availability() function.
+#' @param dataframe_logbook {\link[base]{data.frame}} expected. Dataframe from the logbook database. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the data_availability() function.
 #' @param dataframe_vms {\link[base]{data.frame}} expected. Dataframe from the Vms database. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the data_availability() function.
 #' @param reported_year  {\link[base]{integer}} expected. Year of the report.
 #' @param graph_type {\link[base]{character}} expected. plot or plotly. Plot by default.
@@ -14,7 +14,7 @@
 #' @importFrom graphics par plot axis lines abline legend text
 #' @importFrom dplyr group_by summarize n_distinct
 data_availability <- function(dataframe_observe,
-                              dataframe_t3,
+                              dataframe_logbook,
                               dataframe_vms,
                               reported_year,
                               ocean = "Atlantic",
@@ -41,7 +41,7 @@ data_availability <- function(dataframe_observe,
   }
   # 2 - Data design ----
   # vessel
-  vessel <- as.character(sort(unique(dataframe_t3$vessel)))
+  vessel <- as.character(sort(unique(dataframe_logbook$vessel)))
   # day
   day <- seq(as.Date(paste(min(reported_year),
                            "01-01",
@@ -59,7 +59,7 @@ data_availability <- function(dataframe_observe,
   }
   # 3 - Graphic design ----
   # Creating a data frame for boat names
-  vessel_data <- data.frame(vessel = as.character(sort(unique(dataframe_t3$vessel))))
+  vessel_data <- data.frame(vessel = as.character(sort(unique(dataframe_logbook$vessel))))
   # Creating a data frame for dates
   day_data <- data.frame(day = seq(as.Date(paste(min(reported_year), "01-01", sep = "-")),
                                    as.Date(paste(max(reported_year) + 1, "01-01", sep = "-")),
@@ -104,7 +104,7 @@ data_availability <- function(dataframe_observe,
                           size = 1.5,
                           position = ggplot2::position_nudge(y = - 0.17),
                           na.rm = TRUE) +
-      ggplot2::geom_point(data = dataframe_t3,
+      ggplot2::geom_point(data = dataframe_logbook,
                           ggplot2::aes(x = date,
                                        y = vessel,
                                        color = "logbook"),

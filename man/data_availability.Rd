@@ -6,7 +6,7 @@
 \usage{
 data_availability(
   dataframe_observe,
-  dataframe_t3,
+  dataframe_logbook,
   dataframe_vms,
   reported_year,
   ocean = "Atlantic",
@@ -17,7 +17,7 @@ data_availability(
 \arguments{
 \item{dataframe_observe}{{\link[base]{data.frame}} expected. Dataframe from the Observe database. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the data_availability() function.}
 
-\item{dataframe_t3}{{\link[base]{data.frame}} expected. Dataframe from the T3 database. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the data_availability() function.}
+\item{dataframe_logbook}{{\link[base]{data.frame}} expected. Dataframe from the logbook database. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the data_availability() function.}
 
 \item{dataframe_vms}{{\link[base]{data.frame}} expected. Dataframe from the Vms database. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the data_availability() function.}
 
