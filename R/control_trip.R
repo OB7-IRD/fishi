@@ -2,7 +2,7 @@
 #' @title Control trip
 #' @description Control trip
 #' @param dataframe_observe {\link[base]{data.frame}} expected. Dataframe from the Observe database. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the control_trip() function.
-#' @param dataframe_t3 {\link[base]{data.frame}} expected. Dataframe from the T3 database. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the control_trip() function.
+#' @param dataframe_logbook {\link[base]{data.frame}} expected. Dataframe from the logbook database. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the control_trip() function.
 #' @param reported_year  {\link[base]{integer}} expected. Year of the report.
 #' @param ocean {\link[base]{character}} expected. Atlantic or Indian. Atlantic by default.
 #' @param flag_selected {\link[base]{character}} expected. Flag of the country; isocode.
@@ -22,7 +22,7 @@
 #'  \item{\code{  set_id}}
 #' }
 #' \itemize{
-#' Dataframe t3:
+#' Dataframe logbook:
 #'  \item{\code{  ocean}}
 #'  \item{\code{  flag}}
 #'  \item{\code{  vessel}}
@@ -40,7 +40,7 @@
 #' @importFrom utils write.csv
 #' @importFrom dplyr summarize mutate group_by select row_number recode case_when n_distinct full_join
 control_trip <- function(dataframe_observe,
-                         dataframe_t3,
+                         dataframe_logbook,
                          reported_year,
                          flag_selected,
                          table = "vessel_set",
@@ -49,7 +49,7 @@ control_trip <- function(dataframe_observe,
   # 0 - Global variables assignement ----
   flag <- NULL
   vessel_activity_code <- NULL
-  t3_trip_id <- NULL
+  logbook_trip_id <- NULL
   vessel <- NULL
   departure_date <- NULL
   landing_date <- NULL
@@ -59,7 +59,7 @@ control_trip <- function(dataframe_observe,
   program <- NULL
   code <- NULL
   common_trip_id <- NULL
-  t3_n_sets <- NULL
+  logbook_n_sets <- NULL
   obs_n_sets <- NULL
   set_id <- NULL
   observation_date <- NULL
@@ -118,34 +118,7 @@ control_trip <- function(dataframe_observe,
     dplyr::group_by(route_id) %>%
     dplyr::mutate(set_order = dplyr::row_number(),
                   obs_trip_id = trip_id)
-  ## T3 data ----
-  dataframe_t3 <- dataframe_t3 %>%
-    dplyr::filter(flag %in% flag_selected,
-                  vessel_activity_code %in% c(0, 1, 14, 2)) %>%
-    dplyr::mutate(year = as.numeric(substr(date, 1, 4)),
-                  ocean = dplyr::recode(ocean,
-                                        "Atlantique" = "Atlantic",
-                                        "Indien" = "Indian"),
-                  t3_school_type = dplyr::case_when(
-                    school_type == "BL" ~ "FSC",
-                    school_type == "BO" ~ "FAD",
-                    school_type == "IND" ~ "UNK",
-                    TRUE ~ NA),
-                  t3_trip_id = trip_id)
-  ## Trips ----
-  ### t3trips ----
-  t3trips <- dataframe_t3 %>%
-    dplyr::group_by(ocean,
-                    t3_trip_id,
-                    vessel,
-                    departure_date,
-                    landing_date) %>%
-    dplyr::summarize(t3_n_sets = dplyr::n_distinct(activity_id),
-                     .groups = "drop") %>%
-    dplyr::mutate(common_trip_id = paste(landing_date,
-                                         vessel,
-                                         sep = "#"))
-  ### obstrips ----
+  # obstrips
   obstrips <- dataframe_observe %>%
     dplyr::group_by(ocean,
                     obs_trip_id,
@@ -157,20 +130,45 @@ control_trip <- function(dataframe_observe,
     dplyr::mutate(common_trip_id = paste(trip_end_date,
                                          vessel,
                                          sep = "#"))
-  ### t3trips ----
-  t3trips <- t3trips %>%
-    dplyr::select(ocean, vessel, common_trip_id, t3_trip_id, t3_n_sets) %>%
+  ## logbook data ----
+  dataframe_logbook <- dataframe_logbook %>%
+    dplyr::filter(flag %in% flag_selected,
+                  vessel_activity_code %in% 6) %>%
+    dplyr::mutate(year = as.numeric(substr(date, 1, 4)),
+                  ocean = dplyr::recode(ocean,
+                                        "Atlantique" = "Atlantic",
+                                        "Indien" = "Indian"),
+                  logbook_school_type = dplyr::case_when(
+                    school_type == "BL" ~ "FSC",
+                    school_type == "BO" ~ "FAD",
+                    school_type == "IND" ~ "UNK",
+                    TRUE ~ NA),
+                  logbook_trip_id = trip_id)
+  # logbooktrips
+  logbooktrips <- dataframe_logbook %>%
+    dplyr::group_by(ocean,
+                    logbook_trip_id,
+                    vessel,
+                    departure_date,
+                    landing_date) %>%
+    dplyr::summarize(logbook_n_sets = dplyr::n_distinct(activity_id),
+                     .groups = "drop") %>%
+    dplyr::mutate(common_trip_id = paste(landing_date,
+                                         vessel,
+                                         sep = "#"))
+  ## controltrips ----
+  logbooktrips <- logbooktrips %>%
+    dplyr::select(ocean, vessel, common_trip_id, logbook_trip_id, logbook_n_sets) %>%
     dplyr::full_join(obstrips %>%
                        dplyr::select(ocean, vessel, common_trip_id, obs_trip_id, obs_n_sets, program),
                      by = c("ocean",
                             "common_trip_id",
                             "vessel"))
-  ## controltrips ----
-  controltrips <- merge(t3trips[, c("ocean",
+  controltrips <- merge(logbooktrips[, c("ocean",
                                     "vessel",
                                     "common_trip_id",
-                                    "t3_trip_id",
-                                    "t3_n_sets")],
+                                    "logbook_trip_id",
+                                    "logbook_n_sets")],
                         obstrips[, c("ocean",
                                      "vessel",
                                      "common_trip_id",
@@ -181,13 +179,13 @@ control_trip <- function(dataframe_observe,
                                "common_trip_id",
                                "vessel"),
                         all = TRUE)
-  controltrips$diff_n_sets <- rowSums(data.frame(bal_n_sets = controltrips$t3_n_sets * -1,
+  controltrips$diff_n_sets <- rowSums(data.frame(bal_n_sets = controltrips$logbook_n_sets * -1,
                                                  obs_n_sets = controltrips$obs_n_sets),
                                       na.rm = TRUE)
   controltrips <- controltrips %>%
-    dplyr::mutate(code = dplyr::case_when(!is.na(t3_trip_id) & !is.na(obs_trip_id) ~ 0, # trip match
-                                          is.na(t3_trip_id) & !is.na(obs_trip_id)  ~ 1, # no match, only OBS
-                                          !is.na(t3_trip_id) & is.na(obs_trip_id)  ~ 2, # no match, only LB
+    dplyr::mutate(code = dplyr::case_when(!is.na(logbook_trip_id) & !is.na(obs_trip_id) ~ 0, # trip match
+                                          is.na(logbook_trip_id) & !is.na(obs_trip_id)  ~ 1, # no match, only OBS
+                                          !is.na(logbook_trip_id) & is.na(obs_trip_id)  ~ 2, # no match, only LB
                                           TRUE ~ NA))
   # 3 - Graphic design ----
   if (table == "code_case") {
@@ -199,11 +197,11 @@ control_trip <- function(dataframe_observe,
   } else if (table == "vessel_set") {
     ct_data <- controltrips %>%
       dplyr::group_by(vessel) %>%
-      dplyr::summarize(t3_n_sets = sum(t3_n_sets,
+      dplyr::summarize(logbook_n_sets = sum(logbook_n_sets,
                                        na.rm = TRUE),
         obs_n_sets = sum(obs_n_sets,
                          na.rm = TRUE))
-    ct_data$perc_sets_obs <- round(100 * ct_data$obs_n_sets / ct_data$t3_n_sets)
+    ct_data$perc_sets_obs <- round(100 * ct_data$obs_n_sets / ct_data$logbook_n_sets)
     ct_data <- ct_data[order(ct_data$perc_sets_obs,
                              decreasing = TRUE), ]
   }

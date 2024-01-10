@@ -6,7 +6,7 @@
 \usage{
 control_trip(
   dataframe_observe,
-  dataframe_t3,
+  dataframe_logbook,
   reported_year,
   flag_selected,
   table = "vessel_set",
@@ -17,7 +17,7 @@ control_trip(
 \arguments{
 \item{dataframe_observe}{{\link[base]{data.frame}} expected. Dataframe from the Observe database. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the control_trip() function.}
 
-\item{dataframe_t3}{{\link[base]{data.frame}} expected. Dataframe from the T3 database. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the control_trip() function.}
+\item{dataframe_logbook}{{\link[base]{data.frame}} expected. Dataframe from the logbook database. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the control_trip() function.}
 
 \item{reported_year}{{\link[base]{integer}} expected. Year of the report.}
 
@@ -49,7 +49,7 @@ Dataframe observe:
  \item{\code{  set_id}}
 }
 \itemize{
-Dataframe t3:
+Dataframe logbook:
  \item{\code{  ocean}}
  \item{\code{  flag}}
  \item{\code{  vessel}}
