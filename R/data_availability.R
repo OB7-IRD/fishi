@@ -76,10 +76,10 @@ data_availability <- function(dataframe_observe,
                                          y = vessel)) +
       ggplot2::geom_blank() +
       ggplot2::geom_hline(yintercept = seq_along(vessel),
-                          linetype = "dashed",
+                          linetype = "dotted",
                           color = "grey") +
       ggplot2::geom_vline(xintercept = data$day[format(data$day, "%d") == "01"],
-                          linetype = "dashed",
+                          linetype = "dotted",
                           color = "grey") +
       ggplot2::scale_x_date(date_labels = "%Y-%m-%d",
                             date_breaks = "1 month") +
