@@ -6,7 +6,7 @@
 \usage{
 control_trip_map(
   dataframe_observe,
-  dataframe_t3,
+  dataframe_logbook,
   dataframe_vms,
   trip_i,
   graph_type = "plot",
@@ -18,7 +18,7 @@ control_trip_map(
 \arguments{
 \item{dataframe_observe}{{\link[base]{data.frame}} expected. Dataframe from the Observe database. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the data_availability() function.}
 
-\item{dataframe_t3}{{\link[base]{data.frame}} expected. Dataframe from the T3 database. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the data_availability() function.}
+\item{dataframe_logbook}{{\link[base]{data.frame}} expected. Dataframe from the logbook database. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the data_availability() function.}
 
 \item{dataframe_vms}{{\link[base]{data.frame}} expected. Dataframe from the Vms database. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the data_availability() function.}
 
@@ -56,7 +56,7 @@ Dataframe observe:
  \item{\code{  activity_id}}
 }
 \itemize{
-Dataframe t3:
+Dataframe logbook:
  \item{\code{  vessel}}
  \item{\code{  latitude}}
  \item{\code{  longitude}}
