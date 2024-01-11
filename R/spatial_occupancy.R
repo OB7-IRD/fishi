@@ -1,7 +1,7 @@
 #' @name spatial_occupancy
 #' @title Spatial occupancy
 #' @description Changes in the spatial extent of the fishery over time. Annual number of 1-degree squares explored by each vessel.
-#' @param dataframe {\link[base]{data.frame}} expected. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the spatial_occupancy function.
+#' @param dataframe {\link[base]{data.frame}} expected. Csv or output of the function {\link[furdeb]{data_extraction}}, which must be done before using the spatial_occupancy function.
 #' @param graph_type {\link[base]{character}} expected. plot, plotly or table. Plot by default.
 #' @param title TRUE or FALSE expected. False by default.
 #' @details
@@ -9,15 +9,15 @@
 #' \itemize{
 #'  \item{\code{  activity_date}}
 #'  \item{\code{  cwp11_act}}
-#'  \item{\code{  v_nb_calee_pos}}
-#'  \item{\code{  v_nb_calees}}
-#'  \item{\code{  v_tpec}}
+#'  \item{\code{  positive_set}}
+#'  \item{\code{  total_set}}
+#'  \item{\code{  total_hour_fished}}
 #' }
 #' Add these columns for an automatic title (optional):
 #' \itemize{
-#'  \item{\code{  country_id}}
-#'  \item{\code{  ocean_id}}
-#'  \item{\code{  vessel_type_id}}
+#'  \item{\code{  country_code}}
+#'  \item{\code{  ocean_code}}
+#'  \item{\code{  vessel_type_code}}
 #' }
 #' @return The function return ggplot R plot.
 #' @export
@@ -33,9 +33,9 @@ spatial_occupancy <- function(dataframe,
   # 0 - Global variables assignement ----
   activity_date <- NULL
   cwp11_act <- NULL
-  v_nb_calees <- NULL
-  v_nb_calee_pos <- NULL
-  v_tpec <- NULL
+  total_set <- NULL
+  positive_set <- NULL
+  total_hour_fished <- NULL
   t_pec <- NULL
   sumvtpec <- NULL
   total <- NULL
@@ -68,13 +68,13 @@ spatial_occupancy <- function(dataframe,
                      .groups = "drop")
   #db t1 - YEAR and #SETS
   t1 <- spatial_occupancy_t1 %>%
-    dplyr::filter(v_nb_calees > 0) %>%
+    dplyr::filter(total_set > 0) %>%
     dplyr::group_by(year) %>%
     dplyr::summarise("#sets" = dplyr::n_distinct(cwp11_act),
                      .groups = "drop")
   #db t2 - YEAR AND CATCH > 0
   t2 <- spatial_occupancy_t1 %>%
-    dplyr::filter(v_nb_calee_pos > 0) %>%
+    dplyr::filter(positive_set > 0) %>%
     dplyr::group_by(year) %>%
     dplyr::summarise("Catch > 0" = dplyr::n_distinct(cwp11_act),
                      .groups = "drop")
@@ -82,7 +82,7 @@ spatial_occupancy <- function(dataframe,
   spatial_occupancy_t2 <- spatial_occupancy_t1 %>%
     dplyr::group_by(year,
                     cwp11_act) %>%
-    dplyr::summarise("t_pec" = sum(v_tpec, na.rm = TRUE),
+    dplyr::summarise("t_pec" = sum(total_hour_fished, na.rm = TRUE),
                      "sumvtpec" = t_pec / 12,
                      .groups = "drop")
   #db t3 - YEAR and EFFORT > 1 D
@@ -106,15 +106,15 @@ spatial_occupancy <- function(dataframe,
   # 3 - Legend design ----
   if (title == TRUE) {
     #Ocean
-    ocean_legend <- code_manipulation(data         = dataframe$ocean_id,
+    ocean_legend <- code_manipulation(data         = dataframe$ocean_code,
                                       referential  = "ocean",
                                       manipulation = "legend")
     #country
-    country_legend <- code_manipulation(data         = dataframe$country_id,
+    country_legend <- code_manipulation(data         = dataframe$country_code,
                                         referential  = "country",
                                         manipulation = "legend")
     #vessel
-    vessel_type_legend <- code_manipulation(data         = dataframe$vessel_type_id,
+    vessel_type_legend <- code_manipulation(data         = dataframe$vessel_type_code,
                                             referential  = "vessel_simple_type",
                                             manipulation = "legend")
     # time_period

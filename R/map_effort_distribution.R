@@ -1,24 +1,22 @@
 #' @name map_effort_distribution
 #' @title Spatial distribution of tuna effort
 #' @description Spatial distribution of tuna effort.
-#' @param dataframe {\link[base]{data.frame}} expected. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the map_effort_distribution() function.
+#' @param dataframe {\link[base]{data.frame}} expected. Csv or output of the function {\link[furdeb]{data_extraction}}, which must be done before using the map_effort_distribution() function.
 #' @param graph_type {\link[base]{character}} expected. plot or plotly. Plot by default.
 #' @param title TRUE or FALSE expected. False by default.
 #' @details
 #' The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:
 #' \itemize{
 #'  \item{\code{  activity_date}}
-#'  \item{\code{  c_bat}}
 #'  \item{\code{  cwp11_act}}
-#'  \item{\code{  n_act}}
-#'  \item{\code{  ocean_id}}
-#'  \item{\code{  v_dur_cal}}
-#'  \item{\code{  v_tpec}}
+#'  \item{\code{  ocean_code}}
+#'  \item{\code{  set_duration}}
+#'  \item{\code{  total_hour_fished}}
 #' }
 #' Add these columns for an automatic title (optional):
 #' \itemize{
-#'  \item{\code{  country_id}}
-#'  \item{\code{  vessel_type_id}}
+#'  \item{\code{  country_code}}
+#'  \item{\code{  vessel_type_code}}
 #' }
 #' @return The function return ggplot R plot.
 #' @export
@@ -38,8 +36,8 @@ map_effort_distribution <- function(dataframe,
                                     title = FALSE) {
   # 0 - Global variables assignement ----
   cwp11_act <- NULL
-  v_tpec <- NULL
-  v_dur_cal <- NULL
+  total_hour_fished <- NULL
+  set_duration <- NULL
   effort <- NULL
   wrld_simpl <- NULL
   time_period <- NULL
@@ -64,17 +62,17 @@ map_effort_distribution <- function(dataframe,
   dataframe <- dataframe %>%
     dplyr::mutate(year = lubridate::year(x = activity_date))
   time_period <- c(unique(min(dataframe$year):max(dataframe$year)))
-  ocean <- dataframe$ocean_id[1]
+  ocean <- dataframe$ocean_code[1]
   # dataframe
   t1 <- dataframe %>%
     dplyr::group_by(cwp11_act,
-                    v_tpec,
-                    v_dur_cal) %>%
+                    total_hour_fished,
+                    set_duration) %>%
     dplyr::summarise(.groups = "drop")
 
   t2 <- t1 %>%
     dplyr::group_by(cwp11_act) %>%
-    dplyr::summarise(effort = sum(v_tpec - v_dur_cal),
+    dplyr::summarise(effort = sum(total_hour_fished - set_duration),
                      .groups = "drop")
 
   datafile <- t2 %>%
@@ -105,17 +103,17 @@ map_effort_distribution <- function(dataframe,
   }
   lat <- quad2pos(as.numeric(datafile$cwp11_act + 5 * 1e6))$y
   long <- quad2pos(as.numeric(datafile$cwp11_act + 5 * 1e6))$x
-  if (title == TRUE){
+  if (title == TRUE) {
     #Ocean
-    ocean_legend <- code_manipulation(data         = dataframe$ocean_id,
+    ocean_legend <- code_manipulation(data         = dataframe$ocean_code,
                                       referential  = "ocean",
                                       manipulation = "legend")
     #vessel
-    vessel_type_legend <- code_manipulation(data         = dataframe$vessel_type_id,
+    vessel_type_legend <- code_manipulation(data         = dataframe$vessel_type_code,
                                             referential  = "vessel_simple_type",
                                             manipulation = "legend")
     #country
-    country_legend <- code_manipulation(data         = dataframe$country_id,
+    country_legend <- code_manipulation(data         = dataframe$country_code,
                                         referential  = "country",
                                         manipulation = "legend")
   }
@@ -295,7 +293,7 @@ map_effort_distribution <- function(dataframe,
     if (title == TRUE) {
       title(main = paste0("Spatial distribution of fishing effort (in searching days) of the ",
                           country_legend, " ",
-                          vessel_type_legend,"\n", " fishing fleet in ",
+                          vessel_type_legend, "\n", " fishing fleet in ",
                           ifelse(test = length(x = time_period) != 1,
                                  yes  = paste0(min(time_period), "-", max(time_period)),
                                  no   = time_period),

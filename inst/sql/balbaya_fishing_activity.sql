@@ -1,20 +1,19 @@
 select
-	activite.d_act as activity_date
-	,activite.v_nb_calees
-	,activite.v_nb_calee_pos
-	,activite.v_tpec
-	,activite.v_dur_cal
-	,activite.c_tban
-	,activite.c_ocea::numeric as ocean_id
-	,bateau.c_pav_b::numeric as country_id 
-	,activite.c_engin::numeric as vessel_type_id
+	activite.d_act AS activity_date
+	,activite.v_nb_calees AS total_set
+	,activite.v_nb_calee_pos AS positive_set
+	,activite.v_tpec AS total_hour_fished
+	,activite.c_tban AS school_code
+	,activite.v_dur_cal AS set_duration
+	,activite.c_ocea::numeric AS ocean_code
+	,bateau.c_pav_b::numeric AS country_code
+	,activite.c_engin::numeric AS vessel_type_code
 FROM 
 	public.activite
-	join public.bateau on (activite.c_bat = bateau.c_bat)
-where
+	JOIN public.bateau on (activite.c_bat = bateau.c_bat)
+WHERE
 	EXTRACT(year FROM activite.d_act) IN (?time_period)
 	AND bateau.c_pav_b  IN (?country)
 	AND activite.c_engin  IN (?engin)
-	AND b.c_typ_b IN (?vessel_type)
 	AND activite.c_ocea IN (?ocean)
 ;

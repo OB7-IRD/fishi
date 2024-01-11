@@ -1,8 +1,8 @@
 #' @name catch_per_unit_effort
 #' @title  Annual catch rates (in t per searching day)
 #' @description Annual catch rates (in t per searching day) on FOB- associated and free-swimming tuna schools (FSC).
-#' @param dataframe1 {\link[base]{data.frame}} expected. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the catch_per_searching_day() function.
-#' @param dataframe2 {\link[base]{data.frame}} expected. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the catch_per_searching_day() function.
+#' @param dataframe1 {\link[base]{data.frame}} expected. Csv or output of the function {\link[furdeb]{data_extraction}}, which must be done before using the catch_per_searching_day() function.
+#' @param dataframe2 {\link[base]{data.frame}} expected. Csv or output of the function {\link[furdeb]{data_extraction}}, which must be done before using the catch_per_searching_day() function.
 #' @param fishing_type {\link[base]{character}} expected. FOB or FSC.
 #' @param graph_type {\link[base]{character}} expected. plot, plotly or table. Plot by default.
 #' @param title TRUE or FALSE expected. False by default.
@@ -11,28 +11,28 @@
 #' \itemize{
 #'  Dataframe 1:
 #'  \item{\code{  activity_date}}
-#'  \item{\code{  c_esp}}
-#'  \item{\code{  c_tban}}
-#'  \item{\code{  v_dur_cal}}
-#'  \item{\code{  v_nb_calee_pos}}
-#'  \item{\code{  v_nb_calees}}
-#'  \item{\code{  v_poids_capt}}
-#'  \item{\code{  v_tpec}}
+#'  \item{\code{  species_code}}
+#'  \item{\code{  school_code}}
+#'  \item{\code{  set_duration}}
+#'  \item{\code{  positive_set}}
+#'  \item{\code{  set_duration}}
+#'  \item{\code{  total_catch_weight}}
+#'  \item{\code{  total_hour_fished}}
 #' }
 #' \itemize{
 #'  Dataframe 2:
 #'  \item{\code{  activity_date}}
-#'  \item{\code{  c_tban}}
-#'  \item{\code{  v_dur_cal}}
-#'  \item{\code{  v_nb_calee_pos}}
-#'  \item{\code{  v_nb_calees}}
-#'  \item{\code{  v_tpec}}
+#'  \item{\code{  school_code}}
+#'  \item{\code{  set_duration}}
+#'  \item{\code{  positive_set}}
+#'  \item{\code{  set_duration}}
+#'  \item{\code{  total_hour_fished}}
 #' }
 #' Add these columns for an automatic title (optional):
 #' \itemize{
-#'  \item{\code{  country_id}}
-#'  \item{\code{  ocean_id}}
-#'  \item{\code{  vessel_type_id}}
+#'  \item{\code{  country_code}}
+#'  \item{\code{  ocean_code}}
+#'  \item{\code{  vessel_type_code}}
 #' }
 #' @return The function return ggplot R plot.
 #' @export
@@ -51,8 +51,8 @@ catch_per_unit_effort <- function(dataframe1,
                                   title = FALSE) {
   # 0 - Global variables assignement ----
   activity_date <- NULL
-  v_tpec <- NULL
-  v_dur_cal <- NULL
+  total_hour_fished <- NULL
+  set_duration <- NULL
   yft <- NULL
   t_recherche <- NULL
   skj <- NULL
@@ -91,21 +91,21 @@ catch_per_unit_effort <- function(dataframe1,
     dplyr::mutate(year = lubridate::year(x = activity_date))
   t0 <- dataframe2 %>%
     dplyr::group_by(year) %>%
-    dplyr::summarise(t_peche = sum(v_tpec, na.rm = TRUE),
-                     t_recherche = sum(v_tpec - v_dur_cal, na.rm = TRUE),
+    dplyr::summarise(t_peche = sum(total_hour_fished, na.rm = TRUE),
+                     t_recherche = sum(total_hour_fished - set_duration, na.rm = TRUE),
                      .groups = "drop")
   #Creation of t1 database from dataframe2
   t1 <- dataframe1 %>%
     dplyr::group_by(year) %>%
-    dplyr::summarise(yft = sum(dplyr::case_when(c_tban == 1 & c_esp == 1 ~ v_poids_capt,
+    dplyr::summarise(yft = sum(dplyr::case_when(school_code == 1 & species_code == 1 ~ total_catch_weight,
                                                 TRUE ~ 0), na.rm = TRUE),
-                     skj = sum(dplyr::case_when(c_tban == 1 & c_esp == 2 ~ v_poids_capt,
+                     skj = sum(dplyr::case_when(school_code == 1 & species_code == 2 ~ total_catch_weight,
                                                 TRUE ~ 0), na.rm = TRUE),
-                     bet = sum(dplyr::case_when(c_tban == 1 & c_esp == 3 ~ v_poids_capt,
+                     bet = sum(dplyr::case_when(school_code == 1 & species_code == 3 ~ total_catch_weight,
                                                 TRUE ~ 0), na.rm = TRUE),
-                     alb = sum(dplyr::case_when(c_tban == 1 & c_esp == 4 ~ v_poids_capt,
+                     alb = sum(dplyr::case_when(school_code == 1 & species_code == 4 ~ total_catch_weight,
                                                 TRUE ~ 0), na.rm = TRUE),
-                     total = sum(dplyr::case_when(c_tban == 1 ~ v_poids_capt,
+                     total = sum(dplyr::case_when(school_code == 1 ~ total_catch_weight,
                                                   TRUE ~ 0), na.rm = TRUE),
                      .groups = "drop")
   #merge t0 and t1
@@ -122,22 +122,22 @@ catch_per_unit_effort <- function(dataframe1,
   #Creation of t2 database from dataframe1
   t2 <- dataframe2 %>%
     dplyr::group_by(year) %>%
-    dplyr::summarise(t_peche = sum(v_tpec, na.rm = TRUE),
-                     t_recherche = sum(v_tpec - v_dur_cal,
+    dplyr::summarise(t_peche = sum(total_hour_fished, na.rm = TRUE),
+                     t_recherche = sum(total_hour_fished - set_duration,
                                        na.rm = TRUE),
                      .groups = "drop")
   #Creation of t3 database from dataframe2
   t3 <- dataframe1 %>%
     dplyr::group_by(year) %>%
-    dplyr::summarise(yft = sum(dplyr::case_when(c_tban %in% c(2, 3) & c_esp == 1 ~ v_poids_capt,
+    dplyr::summarise(yft = sum(dplyr::case_when(school_code %in% c(2, 3) & species_code == 1 ~ total_catch_weight,
                                                 TRUE ~ 0), na.rm = TRUE),
-                     skj = sum(dplyr::case_when(c_tban %in% c(2, 3) & c_esp == 2 ~ v_poids_capt,
+                     skj = sum(dplyr::case_when(school_code %in% c(2, 3) & species_code == 2 ~ total_catch_weight,
                                                 TRUE ~ 0), na.rm = TRUE),
-                     bet = sum(dplyr::case_when(c_tban %in% c(2, 3) & c_esp == 3 ~ v_poids_capt,
+                     bet = sum(dplyr::case_when(school_code %in% c(2, 3) & species_code == 3 ~ total_catch_weight,
                                                 TRUE ~ 0), na.rm = TRUE),
-                     alb = sum(dplyr::case_when(c_tban %in% c(2, 3) & c_esp == 4 ~ v_poids_capt,
+                     alb = sum(dplyr::case_when(school_code %in% c(2, 3) & species_code == 4 ~ total_catch_weight,
                                                 TRUE ~ 0), na.rm = TRUE),
-                     total = sum(dplyr::case_when(c_tban %in% c(2, 3) ~ v_poids_capt,
+                     total = sum(dplyr::case_when(school_code %in% c(2, 3) ~ total_catch_weight,
                                                   TRUE ~ 0), na.rm = TRUE),
                      .groups = "drop")
   #merge t2 and t3
@@ -153,15 +153,15 @@ catch_per_unit_effort <- function(dataframe1,
   # 4 - Legend design ----
   if (title == TRUE) {
     #Ocean
-    ocean_legend <- code_manipulation(data         = dataframe1$ocean_id,
+    ocean_legend <- code_manipulation(data         = dataframe1$ocean_code,
                                       referential  = "ocean",
                                       manipulation = "legend")
     #country
-    country_legend <- code_manipulation(data         = dataframe1$country_id,
+    country_legend <- code_manipulation(data         = dataframe1$country_code,
                                         referential  = "country",
                                         manipulation = "legend")
     #vessel
-    vessel_type_legend <- code_manipulation(data         = dataframe1$vessel_type_id,
+    vessel_type_legend <- code_manipulation(data         = dataframe1$vessel_type_code,
                                             referential  = "vessel_simple_type",
                                             manipulation = "legend")
     time_period <- c(unique(min(dataframe1$year):max(dataframe1$year)))

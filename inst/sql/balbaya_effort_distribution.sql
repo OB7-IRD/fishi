@@ -1,23 +1,20 @@
-select
-	a.d_act::date as activity_date
+SELECT
+	a.d_act::date AS activity_date
 	,a.cwp11_act 
-	,a.v_tpec 
-	,a.v_dur_cal
-	,o.c_ocea::numeric as ocean_id
-	,e.c_engin::numeric as vessel_type_id
-	,b.c_pav_b::numeric as country_id
-	,c.n_act 
-	,c.c_bat 
-from
+	,a.v_tpec AS total_hour_fished
+	,a.v_dur_cal AS set_duration
+	,o.c_ocea::numeric AS ocean_code
+	,e.c_engin::numeric AS vessel_type_code
+	,b.c_pav_b::numeric AS country_code
+FROM
 	public.activite a
-	join public.bateau b on (a.c_bat = b.c_bat)
-	JOIN public.capture c on (a.c_bat = c.c_bat and a.d_act = c.d_act and a.n_act = c.n_act)
-	JOIN public.engin e on (a.c_engin = e.c_engin)
-	JOIN public.ocean o on (a.c_ocea  = o.c_ocea)
-where
+	JOIN public.bateau b ON (a.c_bat = b.c_bat)
+	JOIN public.capture c ON (a.c_bat = c.c_bat AND a.d_act = c.d_act AND a.n_act = c.n_act)
+	JOIN public.engin e ON (a.c_engin = e.c_engin)
+	JOIN public.ocean o ON (a.c_ocea  = o.c_ocea)
+WHERE
 	EXTRACT(year FROM a.d_act) IN (?time_period)
 	AND b.c_pav_b  IN (?country)
 	AND a.c_engin IN (?engin)
-	AND b.c_typ_b IN (?vessel_type)
 	AND a.c_ocea IN (?ocean)
 ;

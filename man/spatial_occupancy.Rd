@@ -7,7 +7,7 @@
 spatial_occupancy(dataframe, graph_type = "plot", title = FALSE)
 }
 \arguments{
-\item{dataframe}{{\link[base]{data.frame}} expected. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the spatial_occupancy function.}
+\item{dataframe}{{\link[base]{data.frame}} expected. Csv or output of the function {\link[furdeb]{data_extraction}}, which must be done before using the spatial_occupancy function.}
 
 \item{graph_type}{{\link[base]{character}} expected. plot, plotly or table. Plot by default.}
 
@@ -24,14 +24,14 @@ The input dataframe must contain all these columns for the function to work [\hr
 \itemize{
  \item{\code{  activity_date}}
  \item{\code{  cwp11_act}}
- \item{\code{  v_nb_calee_pos}}
- \item{\code{  v_nb_calees}}
- \item{\code{  v_tpec}}
+ \item{\code{  positive_set}}
+ \item{\code{  total_set}}
+ \item{\code{  total_hour_fished}}
 }
 Add these columns for an automatic title (optional):
 \itemize{
- \item{\code{  country_id}}
- \item{\code{  ocean_id}}
- \item{\code{  vessel_type_id}}
+ \item{\code{  country_code}}
+ \item{\code{  ocean_code}}
+ \item{\code{  vessel_type_code}}
 }
 }

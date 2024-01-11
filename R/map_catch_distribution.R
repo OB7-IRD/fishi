@@ -1,7 +1,7 @@
 #' @name map_catch_distribution
 #' @title Spatial distribution of tuna catches
 #' @description Spatial distribution of tuna catches.
-#' @param dataframe {\link[base]{data.frame}} expected. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the map_catch_distribution() function.
+#' @param dataframe {\link[base]{data.frame}} expected. Csv or output of the function {\link[furdeb]{data_extraction}}, which must be done before using the map_catch_distribution() function.
 #' @param fishing_type {\link[base]{character}} expected. FOB, FSC or ALL. ALL by default.
 #' @param graph_type {\link[base]{character}} expected. plot or plotly. Plot by default.
 #' @param title TRUE or FALSE expected. False by default.
@@ -9,20 +9,19 @@
 #' The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:
 #' \itemize{
 #'  \item{\code{  activity_date}}
-#'  \item{\code{  c_bat}}
-#'  \item{\code{  c_esp}}
-#'  \item{\code{  c_ocea}}
-#'  \item{\code{  c_tban}}
+#'  \item{\code{  vessel_code}}
+#'  \item{\code{  species_code}}
+#'  \item{\code{  ocean_code}}
+#'  \item{\code{  school_code}}
 #'  \item{\code{  cwp11_act}}
-#'  \item{\code{  n_act}}
-#'  \item{\code{  v_nb_calee_pos}}
-#'  \item{\code{  v_poids_capt}}
+#'  \item{\code{  activity_id}}
+#'  \item{\code{  positive_set}}
+#'  \item{\code{  total_catch_weight}}
 #' }
 #' Add these columns for an automatic title (optional):
 #' \itemize{
-#'  \item{\code{  country_id}}
-#'  \item{\code{  ocean_id}}
-#'  \item{\code{  vessel_type_id}}
+#'  \item{\code{  country_code}}
+#'  \item{\code{  vessel_type_code}}
 #' }
 #' @return The function return ggplot R plot.
 #' @export
@@ -40,14 +39,14 @@ map_catch_distribution <- function(dataframe,
                                    graph_type = "plot",
                                    title = FALSE) {
   # 0 - Global variables assignement ----
-  n_act <- NULL
+  activity_id <- NULL
   activity_date <- NULL
-  c_bat <- NULL
-  c_esp <- NULL
-  v_nb_calee_pos <- NULL
-  c_tban <- NULL
+  vessel_code <- NULL
+  species_code <- NULL
+  positive_set <- NULL
+  school_code <- NULL
   cwp11_act <- NULL
-  v_poids_capt <- NULL
+  total_catch_weight <- NULL
   wrld_simpl <- NULL
   total <- NULL
   yft <- NULL
@@ -80,56 +79,56 @@ map_catch_distribution <- function(dataframe,
   dataframe <- dataframe %>%
     dplyr::mutate(year = lubridate::year(x = activity_date))
   time_period <- c(unique(min(dataframe$year):max(dataframe$year)))
-  ocean <- dataframe$c_ocea[1]
+  ocean <- dataframe$ocean_code[1]
   # dataframe
   t1 <- dataframe %>%
-    dplyr::group_by(n_act,
+    dplyr::group_by(activity_id,
                     activity_date,
-                    c_bat,
-                    c_esp,
-                    v_nb_calee_pos,
-                    c_tban,
+                    vessel_code,
+                    species_code,
+                    positive_set,
+                    school_code,
                     cwp11_act) %>%
-    dplyr::summarise(poids = sum(v_poids_capt,
+    dplyr::summarise(poids = sum(total_catch_weight,
                                  na.rm = TRUE),
                      .groups = "drop")
   if (fishing_type == "ALL") {
     datafile <- t1  %>%
-      dplyr::filter(v_nb_calee_pos > 0) %>%
+      dplyr::filter(positive_set > 0) %>%
       dplyr::group_by(cwp11_act) %>%
-      dplyr::summarise(yft = sum(dplyr::case_when(c_esp == 1 ~ poids,
+      dplyr::summarise(yft = sum(dplyr::case_when(species_code == 1 ~ poids,
                                                   TRUE ~ 0.00000001), na.rm = TRUE),
-                       skj = sum(dplyr::case_when(c_esp == 2 ~ poids,
+                       skj = sum(dplyr::case_when(species_code == 2 ~ poids,
                                                   TRUE ~ 0.00000001), na.rm = TRUE),
-                       bet = sum(dplyr::case_when(c_esp == 3 ~ poids,
+                       bet = sum(dplyr::case_when(species_code == 3 ~ poids,
                                                   TRUE ~ 0.00000001), na.rm = TRUE),
-                       total = sum(dplyr::case_when(c_esp %in% c(1:3) ~ poids,
+                       total = sum(dplyr::case_when(species_code %in% c(1:3) ~ poids,
                                                     TRUE ~ 0.00000001), na.rm = TRUE))
   } else if (fishing_type == "FSC") {
     datafile <- t1  %>%
-      dplyr::filter(v_nb_calee_pos > 0,
-                    c_tban %in% c(2:3)) %>%
+      dplyr::filter(positive_set > 0,
+                    school_code %in% c(2:3)) %>%
       dplyr::group_by(cwp11_act) %>%
-      dplyr::summarise(yft = sum(dplyr::case_when(c_esp == 1 ~ poids,
+      dplyr::summarise(yft = sum(dplyr::case_when(species_code == 1 ~ poids,
                                                   TRUE ~ 0.00000001), na.rm = TRUE),
-                       skj = sum(dplyr::case_when(c_esp == 2 ~ poids,
+                       skj = sum(dplyr::case_when(species_code == 2 ~ poids,
                                                   TRUE ~ 0.00000001), na.rm = TRUE),
-                       bet = sum(dplyr::case_when(c_esp == 3 ~ poids,
+                       bet = sum(dplyr::case_when(species_code == 3 ~ poids,
                                                   TRUE ~ 0.00000001), na.rm = TRUE),
-                       total = sum(dplyr::case_when(c_esp %in% c(1:3) ~ poids,
+                       total = sum(dplyr::case_when(species_code %in% c(1:3) ~ poids,
                                                     TRUE ~ 0.00000001), na.rm = TRUE))
   } else if (fishing_type == "FOB") {
     datafile <- t1  %>%
-      dplyr::filter(v_nb_calee_pos > 0,
-                    c_tban == 1) %>%
+      dplyr::filter(positive_set > 0,
+                    school_code == 1) %>%
       dplyr::group_by(cwp11_act) %>%
-      dplyr::summarise(yft = sum(dplyr::case_when(c_esp == 1 ~ poids,
+      dplyr::summarise(yft = sum(dplyr::case_when(species_code == 1 ~ poids,
                                                   TRUE ~ 0.00000001), na.rm = TRUE),
-                       skj = sum(dplyr::case_when(c_esp == 2 ~ poids,
+                       skj = sum(dplyr::case_when(species_code == 2 ~ poids,
                                                   TRUE ~ 0.00000001), na.rm = TRUE),
-                       bet = sum(dplyr::case_when(c_esp == 3 ~ poids,
+                       bet = sum(dplyr::case_when(species_code == 3 ~ poids,
                                                   TRUE ~ 0.00000001), na.rm = TRUE),
-                       total = sum(dplyr::case_when(c_esp %in% c(1:3) ~ poids,
+                       total = sum(dplyr::case_when(species_code %in% c(1:3) ~ poids,
                                                     TRUE ~ 0.00000001), na.rm = TRUE))
   } else {
     stop(format(x = Sys.time(),

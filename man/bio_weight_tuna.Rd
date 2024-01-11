@@ -7,7 +7,7 @@
 bio_weight_tuna(dataframe, report_year, graph_type = "plot", title = FALSE)
 }
 \arguments{
-\item{dataframe}{{\link[base]{data.frame}} expected. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the bio_weight_tuna() function.}
+\item{dataframe}{{\link[base]{data.frame}} expected. Csv or output of the function {\link[furdeb]{data_extraction}}, which must be done before using the bio_weight_tuna() function.}
 
 \item{report_year}{{\link[base]{integer}} expected. Year of the statistical report.}
 
@@ -25,14 +25,14 @@ Weight distribution of major tuna catches (in percentage of the total number of 
 The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:
 \itemize{
  \item{\code{  activity_date}}
- \item{\code{  c_banc}}
- \item{\code{  c_esp}}
+ \item{\code{  school_code}}
+ \item{\code{  species_code}}
  \item{\code{  size_class}}
- \item{\code{  v_mensur}}
+ \item{\code{  estimated_individual}}
 }
 Add these columns for an automatic title (optional):
 \itemize{
- \item{\code{  country_id}}
- \item{\code{  ocean_id}}
+ \item{\code{  country_code}}
+ \item{\code{  ocean_code}}
 }
 }
