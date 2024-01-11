@@ -77,10 +77,6 @@ control_trip_map <- function(dataframe_observe,
   long <- NULL
   lat <- NULL
   group <- NULL
-  X <- NULL
-  Y <- NULL
-  PID <- NULL
-  n_sets <- NULL
   # 1 - Arguments verification ----
   if (codama::r_type_checking(r_object = trip_i,
                               type = "character",
@@ -299,7 +295,7 @@ control_trip_map <- function(dataframe_observe,
                              gsub("-",
                                   "",
                                   end_date_i),
-                             sep="-"),
+                             sep = "-"),
                        "_",
                        vessel_i,
                        "_",
@@ -628,121 +624,6 @@ control_trip_map <- function(dataframe_observe,
         ggplot2::theme(legend.position = "bottom")  +
         ggplot2::labs(color = "") +
         ggplot2::guides(color = ggplot2::guide_legend(override.aes = list(shape = c(1, 3, 16, 4, 19)))))
-    # 2 - sets ----
-    graph_set <- ggplot2::ggplot(data = obsets,
-                                 ggplot2::aes(x = observation_date,
-                                              y = n_sets)) +
-      ggplot2::geom_blank() +
-      ggplot2::xlim(as.Date(start_date_i),
-                    as.Date(end_date_i)) +
-      ggplot2::ylim(0,
-                    max(c(obsets$n_sets,
-                          logbooksets$n_sets)) + 1) +
-      ggplot2::labs(x = "",
-                    y = "",
-                    title = "") +
-      ggplot2::theme_minimal() +
-      ggplot2::geom_vline(xintercept = seq(start_date_i,
-                                           end_date_i,
-                                           by = 1),
-                          linetype = "dotted",
-                          color = "grey") +
-      ggplot2::geom_hline(yintercept = 0:10,
-                          linetype = "dotted",
-                          color = "grey") +
-      ggplot2::geom_point(data = logbooksets,
-                          ggplot2::aes(x = as.Date(date),
-                                       y = n_sets,
-                                       color = "Logbook"),
-                          shape = 3,
-                          size = 3) +
-      ggplot2::geom_point(data = obsets,
-                          ggplot2::aes(x = as.Date(observation_date),
-                                       y = n_sets,
-                                       color = "Observe"),
-                          shape = 4,
-                          size = 3) +
-      ggplot2::scale_x_date(breaks = seq(as.Date(start_date_i),
-                                         as.Date(end_date_i),
-                                         by = "days"),
-                            labels = seq(as.Date(start_date_i),
-                                         as.Date(end_date_i),
-                                         by = "days"),
-                            date_labels = "%Y-%m-%d",
-                            date_breaks = "1 day",
-                            expand = c(0, 0),
-                            limits = c(as.Date(start_date_i), as.Date(end_date_i))) +
-      ggplot2::ggtitle("Number of sets") +
-      ggplot2::theme(panel.background = ggplot2::element_rect(fill = "NA"),
-                     # plot.margin = ggplot2::unit(c(6.1, 3.1, 3.1, 1.1),
-                     #                             "lines"),
-                     panel.border = ggplot2::element_rect(fill = "NA"),
-                     axis.title = ggplot2::element_blank(),
-                     plot.title = ggplot2::element_text(size = 11,
-                                                        face = "bold"),
-                     axis.text.x = ggplot2::element_text(angle = 90,
-                                                         hjust = 1))  +
-      ggplot2::scale_color_manual(values = c("Logbook" = "red",
-                                             "Observe" = "blue")) +
-      ggplot2::scale_shape_manual(values = c("Logbook" = 3,
-                                             "Observe" = 4)) +
-      ggplot2::theme(legend.position = "bottom")  +
-      ggplot2::labs(color = "") +
-      ggplot2::guides(color = ggplot2::guide_legend(override.aes = list(shape = c(3, 4))))
-    # 3 - fads and beacons  ----
-    graph_dpl <- ggplot2::ggplot() +
-      ggplot2::geom_blank() +
-      ggplot2::xlim(0, 3) +
-      ggplot2::ylim(0, 5 + max(c(logbookfadsdeployed,
-                                 logbookbuoysdeployed,
-                                 obsfadsdeployed,
-                                 obsbuoysdeployed),
-                               na.rm = TRUE)) +
-      ggplot2::labs(x = "", y = "") +
-      ggplot2::theme(axis.text.x = ggplot2::element_blank()) +
-      ggplot2::geom_hline(yintercept = seq(0, 200, by = 5),
-                          linetype = "dashed",
-                          color = "grey") +
-      ggplot2::geom_vline(xintercept = c(1, 2),
-                          linetype = "dashed",
-                          color = "grey") +
-      ggplot2::labs(title = "") +
-      ggplot2::geom_point(ggplot2::aes(x = 1
-                                       , y = logbookfadsdeployed,
-                                       col = "Logbook"),
-                          pch = 3,
-                          size = 3) +
-      ggplot2::geom_point(ggplot2::aes(x = 2,
-                                       y = obsfadsdeployed,
-                                       col = "Observe"),
-                          pch = 4,
-                          size = 3) +
-      ggplot2::geom_point(ggplot2::aes(x = 2,
-                                       y = logbookbuoysdeployed,
-                                       col = "Logbook"),
-                          pch = 3,
-                          size = 3) +
-      ggplot2::geom_point(ggplot2::aes(x = 1,
-                                       y = obsbuoysdeployed,
-                                       col = "Observe"),
-                          pch = 4,
-                          size = 3) +
-      ggplot2::ggtitle("Number of deployments") +
-      ggplot2::theme(panel.background = ggplot2::element_rect(fill = "NA"),
-                     # plot.margin = ggplot2::unit(c(6.1, 2.1, 3.1, 2.1),
-                     #                             "lines"),
-                     panel.border = ggplot2::element_rect(fill = "NA"),
-                     axis.title = ggplot2::element_blank(),
-                     plot.title = ggplot2::element_text(size = 11,
-                                                        face = "bold"),
-                     axis.text.x = ggplot2::element_text(angle = 90, hjust = 1)) +
-      ggplot2::scale_color_manual(values = c("Logbook" = "red",
-                                             "Observe" = "blue")) +
-      ggplot2::scale_shape_manual(values = c("Logbook" = 3,
-                                             "Observe" = 4)) +
-      ggplot2::theme(legend.position = "bottom")  +
-      ggplot2::labs(color = "") +
-      ggplot2::guides(color = ggplot2::guide_legend(override.aes = list(shape = c(3, 4))))
     # Plotly ----
     plotly_map <- plotly::ggplotly(graph_map,
                                    height = 750,

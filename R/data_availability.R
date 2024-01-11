@@ -22,7 +22,6 @@ data_availability <- function(dataframe_observe,
                               path_to_png = NULL) {
   # 0 - Global variables assignement ----
   vesselname <- NULL
-  id <- NULL
   observation_date <- NULL
   # 1 - Arguments verification ----
   if (codama::r_type_checking(r_object = reported_year,
@@ -128,7 +127,7 @@ data_availability <- function(dataframe_observe,
     if (!is.null(path_to_png)) {
       ggplot2::ggsave(filename = paste0(path_to_png,
                                         "availability_observe_vms_ps_fr_",
-                                        tolower(substr(ocean,1,3)),
+                                        tolower(substr(ocean, 1, 3)),
                                         "_",
                                         reported_year,
                                         ".png"),
@@ -136,7 +135,7 @@ data_availability <- function(dataframe_observe,
                       width = 15,
                       height = 8,
                       bg = "white",
-                      device='png')
+                      device = "png")
     }
     return(graph)
   } else if (graph_type == "plotly") {
