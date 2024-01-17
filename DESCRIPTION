@@ -47,6 +47,8 @@ Imports:
     scatterpie (>= 0.1.8),
     readxl (>= 1.4.3),
     tibble (>= 3.2.1),
+    cowplot (>= 1.1.1),
+    gridExtra (>= 2.3.0),
     grDevices,
     utils
 URL: https://github.com/OB7-IRD/fishi
