@@ -597,10 +597,10 @@ bio_size_tuna <- function(dataframe,
     common_legend <- cowplot::get_legend(yft_fob_leg)
     # grid extra
     (ggplot_final <- gridExtra::grid.arrange(yft_fob, bet_fob, skj_fob,
-                            yft_free, bet_free, skj_free,
-                            yft_all, bet_all, skj_all,
-                            bottom = common_legend))
-    return(ggplot_final)
+                                             yft_free, bet_free, skj_free,
+                                             yft_all, bet_all, skj_all,
+                                             bottom = common_legend))
+    return(grid::grid.draw(ggplot_final))
   } else if (graph_type == "plotly") {
     yft_fob <- plotly::ggplotly(yft_fob) %>%
       plotly::layout(showlegend = FALSE)

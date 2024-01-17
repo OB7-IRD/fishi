@@ -534,7 +534,7 @@ bio_weight_tuna <- function(dataframe,
                                              yft_free, bet_free, skj_free,
                                              yft_all, bet_all, skj_all,
                                              bottom = common_legend))
-    return(ggplot_final)
+    return(grid::grid.draw(ggplot_final))
   }  else if (graph_type == "plotly") {
     yft_fob <- plotly::ggplotly(yft_fob) %>%
       plotly::layout(showlegend = FALSE)
