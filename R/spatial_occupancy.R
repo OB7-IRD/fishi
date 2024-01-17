@@ -21,12 +21,6 @@
 #' }
 #' @return The function return ggplot R plot.
 #' @export
-#' @importFrom dplyr mutate tibble group_by summarise n_distinct filter
-#' @importFrom lubridate year
-#' @importFrom graphics par plot axis lines abline legend text
-#' @importFrom ggplot2 ggplot aes geom_line scale_color_manual geom_point labs ylim theme_bw
-#' @importFrom plotly ggplotly
-#' @importFrom codama r_type_checking
 spatial_occupancy <- function(dataframe,
                               graph_type = "plot",
                               title = FALSE) {

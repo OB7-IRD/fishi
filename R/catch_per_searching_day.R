@@ -36,12 +36,6 @@
 #' }
 #' @return The function return ggplot R plot.
 #' @export
-#' @importFrom dplyr mutate tibble group_by summarise case_when filter
-#' @importFrom lubridate year
-#' @importFrom ggplot2 ggplot aes geom_line scale_color_manual geom_point labs ylim theme_bw ggtitle
-#' @importFrom plotly ggplotly
-#' @importFrom graphics par plot axis lines abline legend text
-#' @importFrom codama r_type_checking
 catch_per_searching_day <- function(dataframe1,
                                     dataframe2,
                                     fishing_type,

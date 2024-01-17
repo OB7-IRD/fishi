@@ -22,13 +22,6 @@
 #' }
 #' @return The function return ggplot R plot.
 #' @export
-#' @importFrom dplyr mutate tibble group_by summarise
-#' @importFrom lubridate year
-#' @importFrom graphics par plot axis lines abline legend text
-#' @importFrom ggplot2 ggplot aes geom_bar geom_line scale_fill_manual geom_point scale_y_continuous labs ylim theme_bw ggplot
-#' @importFrom plotly ggplotly layout
-#' @importFrom tidyr pivot_longer
-#' @importFrom codama r_type_checking
 fishing_activity <- function(dataframe,
                              graph_type = "plot",
                              figure = "set",

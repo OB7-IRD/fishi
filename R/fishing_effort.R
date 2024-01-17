@@ -26,11 +26,6 @@
 #' }
 #' @return The function return ggplot R plot.
 #' @export
-#' @importFrom dplyr mutate tibble group_by summarise
-#' @importFrom lubridate year
-#' @importFrom ggplot2 ggplot aes geom_line scale_color_manual geom_point labs ylim theme_bw
-#' @importFrom plotly ggplotly layout
-#' @importFrom codama r_type_checking
 fishing_effort <- function(dataframe,
                            graph_type = "plot",
                            title = FALSE) {

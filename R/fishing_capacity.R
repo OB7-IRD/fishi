@@ -20,15 +20,6 @@
 #' }
 #' @return The function return ggplot R plot.
 #' @export
-#' @importFrom dplyr mutate tibble group_by summarise n_distinct
-#' @importFrom lubridate year
-#' @importFrom RColorBrewer brewer.pal
-#' @importFrom graphics par plot axis lines abline legend text mtext
-#' @importFrom ggplot2 ggplot aes geom_line geom_point scale_y_continuous sec_axis labs theme_bw
-#' @importFrom plotly ggplotly
-#' @importFrom tidyr pivot_longer
-#' @importFrom forcats fct_relevel
-#' @importFrom codama r_type_checking
 fishing_capacity <- function(dataframe,
                              graph_type = "plot",
                              figure = "vessel",

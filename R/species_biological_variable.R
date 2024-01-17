@@ -21,13 +21,6 @@
 #' }
 #' @return The function return ggplot or table R plot.
 #' @export
-#' @importFrom readxl read_excel
-#' @importFrom dplyr mutate filter group_by summarise full_join n reframe arrange desc bind_rows
-#' @importFrom lubridate year
-#' @importFrom ggplot2 ggplot aes geom_bar labs theme_light geom_text scale_fill_manual
-#' @importFrom tidyr pivot_longer
-#' @importFrom codama r_type_checking
-#' @importFrom tibble column_to_rownames
 species_biological_variable <- function(dataframe,
                                         data_type,
                                         graph_type = "table",

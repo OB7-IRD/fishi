@@ -23,11 +23,6 @@
 #' }
 #' @return The function return ggplot R plot.
 #' @export
-#' @importFrom dplyr mutate tibble group_by summarise case_when
-#' @importFrom lubridate year
-#' @importFrom ggplot2 ggplot aes geom_line geom_point labs ylim theme_bw ggtitle
-#' @importFrom plotly ggplotly
-#' @importFrom codama r_type_checking
 set_per_searching_day <- function(dataframe,
                                   fishing_type,
                                   graph_type = "plot",

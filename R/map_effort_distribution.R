@@ -20,17 +20,6 @@
 #' }
 #' @return The function return ggplot R plot.
 #' @export
-#' @importFrom DBI dbGetQuery sqlInterpolate SQL
-#' @importFrom dplyr tibble group_by summarise case_when filter
-#' @importFrom plotrix floating.pie pie.labels
-#' @importFrom maps map
-#' @importFrom ggplot2 ggplot geom_sf aes scale_fill_manual labs ylim xlim
-#' @importFrom plotly ggplotly
-#' @importFrom graphics par plot axis lines abline legend
-#' @importFrom scatterpie geom_scatterpie
-#' @importFrom rnaturalearth ne_countries
-#' @importFrom ggspatial coord_sf
-#' @importFrom grDevices adjustcolor
 map_effort_distribution <- function(dataframe,
                                     graph_type = "plot",
                                     title = FALSE) {
