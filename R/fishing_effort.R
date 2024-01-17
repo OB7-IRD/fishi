@@ -173,8 +173,9 @@ fishing_effort <- function(dataframe,
                                                              color = "black"),
                     axis.text.x = ggplot2::element_text(angle = 45,
                                                         hjust = 1,
-                                                        size = 10),
-                    axis.text.y = ggplot2::element_text(size = 10)) +
+                                                        size = 13),
+                    axis.text.y = ggplot2::element_text(size = 13),
+                    axis.title.y = ggplot2::element_text(size = 14)) +
      ggplot2::geom_line(ggplot2::aes(x = year,
                                      y = fishing_days,
                                      color = "Fishing")) +
@@ -192,10 +193,12 @@ fishing_effort <- function(dataframe,
 
      ggplot2::labs(x = "",
                    y = "Activity duration (x1000 days)") +
-     ggplot2::ylim(0.5, 5) +
+     ggplot2::ylim(0.5,
+                   5) +
      ggplot2::labs(colour = "") +
      ggplot2::scale_x_continuous(breaks = unique(table_effort$year)) +
-     ggplot2::theme(legend.position = c(0.84, 0.97), legend.justification = c(0, 1)))
+     ggplot2::theme(legend.position = c(0.84, 0.97),
+                    legend.justification = c(0, 1)))
   if (graph_type == "plot") {
     return(ggplot_table_effort)
   } else if (graph_type == "plotly") {
@@ -235,7 +238,5 @@ fishing_effort <- function(dataframe,
                     "Number of trips" = "nb_landings_in_activity_year",
                     "Mean duration in days" = "average_nb_days_by_trip")
     as.data.frame(table_effort)
-
-
   }
 }

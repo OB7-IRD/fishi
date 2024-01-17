@@ -184,32 +184,34 @@ fishery_production <- function(dataframe,
                                names_to = "Species",
                                values_to = "Catch")
     (fishery_ggplot <- ggplot2::ggplot(table_long,
-                             ggplot2::aes(x = year,
-                                 y = Catch / 1000,
-                                 fill = Species)) +
-      ggplot2::geom_area(position = "stack") +
-      ggplot2::scale_fill_manual(values = c("YFT" = "khaki1",
-                                            "SKJ" = "firebrick2",
-                                            "BET" = "cornflowerblue")) +
-      ggplot2::labs(x = "",
-                    y = "Catch (x1000 t)",
-                    title = "") +
-      ggplot2::ylim(0, max((table_catch_all$total * 1.02) / 1000,
-                           na.rm = TRUE)) +
-      ggplot2::scale_x_continuous(expand = c(0, 0),
-                                  breaks = table_long$year) +
-      ggplot2::scale_y_continuous(expand = c(0, 0)) +
-      ggplot2::theme_bw() +
-      ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 45,
-                                                         hjust = 1,
-                                                         size = 12),
-                     legend.position = "top",
-                     legend.justification = "right",
-                     panel.grid.major = ggplot2::element_blank(),
-                     panel.grid.minor.x = ggplot2::element_blank(),
-                     panel.grid.major.y = ggplot2::element_line(size = 0.2,
-                                                                color = "gray90")) +
-      ggplot2::labs(fill = NULL))
+                                       ggplot2::aes(x = year,
+                                                    y = Catch / 1000,
+                                                    fill = Species)) +
+        ggplot2::geom_area(position = "stack") +
+        ggplot2::scale_fill_manual(values = c("YFT" = "khaki1",
+                                              "SKJ" = "firebrick2",
+                                              "BET" = "cornflowerblue")) +
+        ggplot2::labs(x = "",
+                      y = "Catch (x1000 t)",
+                      title = "") +
+        ggplot2::ylim(0, max((table_catch_all$total * 1.02) / 1000,
+                             na.rm = TRUE)) +
+        ggplot2::scale_x_continuous(expand = c(0, 0),
+                                    breaks = table_long$year) +
+        ggplot2::scale_y_continuous(expand = c(0, 0)) +
+        ggplot2::theme_bw() +
+        ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 45,
+                                                           hjust = 1,
+                                                           size = 13),
+                       axis.text.y = ggplot2::element_text(size = 13),
+                       axis.title.y = ggplot2::element_text(size = 14),
+                       legend.position = "top",
+                       legend.justification = "right",
+                       panel.grid.major = ggplot2::element_blank(),
+                       panel.grid.minor.x = ggplot2::element_blank(),
+                       panel.grid.major.y = ggplot2::element_line(size = 0.2,
+                                                                  color = "gray90")) +
+        ggplot2::labs(fill = NULL))
     if (title == TRUE) {
       fishery_ggplot <- fishery_ggplot + ggplot2::ggtitle(paste0("Fishery production by ",
                                                                  fishing_type,

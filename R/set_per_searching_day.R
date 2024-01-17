@@ -105,7 +105,7 @@ set_per_searching_day <- function(dataframe,
                      sets_per_day_fsc = sum(sets_per_day_fsc,
                                             na.rm = TRUE),
                      .groups = "drop")
-  # 4 - Legend design ----
+  # 3 - Legend design ----
   if (title == TRUE) {
     #Ocean
     ocean_legend <- code_manipulation(data         = dataframe$ocean_code,
@@ -122,7 +122,7 @@ set_per_searching_day <- function(dataframe,
     # time_period
     time_period <- c(unique(min(dataframe$year):max(dataframe$year)))
   }
-  # 5 - Graphic design ----
+  # 4 - Graphic design ----
   if (fishing_type == "FOB") {
     table_cpue_set_per_day$sets_per_day_fad <- round(table_cpue_set_per_day$sets_per_day_fad, 3)
     (ggplot_table_cpue <- ggplot2::ggplot(data = table_cpue_set_per_day) +
@@ -145,8 +145,9 @@ set_per_searching_day <- function(dataframe,
                                                                 color = "black"),
                        axis.text.x = ggplot2::element_text(angle = 45,
                                                            hjust = 1,
-                                                           size = 10),
-                       axis.text.y = ggplot2::element_text(size = 10)) +
+                                                           size = 13),
+                       axis.text.y = ggplot2::element_text(size = 13),
+                       axis.title.y = ggplot2::element_text(size = 14)) +
         ggplot2::labs(colour = "") +
         ggplot2::scale_x_continuous(breaks = unique(table_cpue_set_per_day$year)) +
         ggplot2::theme(legend.position = c(0.84, 0.97),
@@ -179,8 +180,9 @@ set_per_searching_day <- function(dataframe,
                                                                 color = "black"),
                        axis.text.x = ggplot2::element_text(angle = 45,
                                                            hjust = 1,
-                                                           size = 10),
-                       axis.text.y = ggplot2::element_text(size = 10)) +
+                                                           size = 13),
+                       axis.text.y = ggplot2::element_text(size = 13),
+                       axis.title.y = ggplot2::element_text(size = 14)) +
         ggplot2::labs(colour = "") +
         ggplot2::scale_x_continuous(breaks = unique(table_cpue_set_per_day$year)) +
         ggplot2::theme(legend.position = c(0.84, 0.97),
