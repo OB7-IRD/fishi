@@ -14,9 +14,6 @@
 #'  \item{specie: }{code, name and color of species}
 #' }
 #' @export
-#' @importFrom dplyr tibble arrange inner_join last
-#' @importFrom utils read.table
-#' @importFrom codama r_type_checking
 code_manipulation <- function(data,
                               referential,
                               manipulation) {

@@ -38,6 +38,7 @@ fishing_activity <- function(dataframe,
   type <- NULL
   `%_log` <- NULL
   time_period <- NULL
+  year <- NULL
   # 1 - Arguments verification ----
   if (codama::r_type_checking(r_object = graph_type,
                               type = "character",

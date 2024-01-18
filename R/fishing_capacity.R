@@ -36,6 +36,7 @@ fishing_capacity <- function(dataframe,
   CC <- NULL
   time_period <- NULL
   month <- NULL
+  year <- NULL
   # 1 - Arguments verification ----
   if (codama::r_type_checking(r_object = graph_type,
                               type = "character",
@@ -136,7 +137,7 @@ fishing_capacity <- function(dataframe,
     time_period <- c(unique(min(fishing_capacity_t1$year):max(fishing_capacity_t1$year)))
   }
   # 4 - Graphic design ----
-  par(mar = c(5.1, 4.1, 4.1, 4.1))
+  graphics::par(mar = c(5.1, 4.1, 4.1, 4.1))
   if (graph_type == "plot") {
     if (title == TRUE) {
       barvessel <- graphics::barplot(t(fishing_capacity_data[, 2:7]),
@@ -182,7 +183,7 @@ fishing_capacity <- function(dataframe,
                    tick = TRUE,
                    labels = FALSE)
     graphics::text(x = barvessel,
-                   y = par("usr")[3] - 0.6,
+                   y = graphics::par("usr")[3] - 0.6,
                    labels = fishing_capacity_data$year,
                    srt = 45,
                    adj = 1,

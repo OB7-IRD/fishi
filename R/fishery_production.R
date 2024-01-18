@@ -51,6 +51,7 @@ fishery_production <- function(dataframe,
   time_period <- NULL
   Catch <- NULL
   Species <- NULL
+  year <- NULL
   # 1 - Arguments verification ----
   if (codama::r_type_checking(r_object = fishing_type,
                               type = "character",

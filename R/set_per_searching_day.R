@@ -38,6 +38,7 @@ set_per_searching_day <- function(dataframe,
   sets_per_day_fad <- NULL
   sets_per_day_fsc <- NULL
   time_period <- NULL
+  year <- NULL
   # 1 - Arguments verification ----
   if (codama::r_type_checking(r_object = fishing_type,
                               type = "character",

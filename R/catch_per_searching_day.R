@@ -43,6 +43,7 @@ catch_per_searching_day <- function(dataframe1,
                                     title = FALSE) {
   # 0 - Global variables assignement ----
   activity_date <- NULL
+  year <- NULL
   yft <- NULL
   skj <- NULL
   bet <- NULL
@@ -225,8 +226,8 @@ catch_per_searching_day <- function(dataframe1,
                      at = x_tick_pos,
                      tick = TRUE,
                      labels = FALSE)
-      text(x = x_tick_pos,
-           y = par("usr")[3] - 1,
+      graphics::text(x = x_tick_pos,
+           y = graphics::par("usr")[3] - 1,
            labels = table_cpue_fad_set$year,
            srt = 45,
            adj = 1,
@@ -410,7 +411,7 @@ catch_per_searching_day <- function(dataframe1,
                      tick = TRUE,
                      labels = FALSE)
       graphics::text(x = x_tick_pos,
-           y = par("usr")[3] - 1,
+           y = graphics::par("usr")[3] - 1,
            labels = table_cpue_fad_set$year,
            srt = 45,
            adj = 1,
@@ -482,7 +483,7 @@ catch_per_searching_day <- function(dataframe1,
                      tick = TRUE,
                      labels = FALSE)
       graphics::text(x = x_tick_pos,
-           y = par("usr")[3] - 1,
+           y = graphics::par("usr")[3] - 1,
            labels = table_cpue_fsc_set$year,
            srt = 45,
            adj = 1,
