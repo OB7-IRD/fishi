@@ -21,12 +21,6 @@
 #' }
 #' @return The function return ggplot R plot.
 #' @export
-#' @importFrom dplyr mutate tibble group_by summarise n_distinct filter
-#' @importFrom lubridate year
-#' @importFrom graphics par plot axis lines abline legend text
-#' @importFrom ggplot2 ggplot aes geom_line scale_color_manual geom_point labs ylim theme_bw
-#' @importFrom plotly ggplotly
-#' @importFrom codama r_type_checking
 spatial_occupancy <- function(dataframe,
                               graph_type = "plot",
                               title = FALSE) {
@@ -43,6 +37,7 @@ spatial_occupancy <- function(dataframe,
   `Effort > 1 d` <- NULL
   `#sets` <- NULL
   time_period <- NULL
+  year <- NULL
   # 1 - Arguments verification ----
   if (codama::r_type_checking(r_object = graph_type,
                               type = "character",
@@ -174,7 +169,7 @@ spatial_occupancy <- function(dataframe,
                    tick = TRUE,
                    labels = FALSE)
     graphics::text(x = x_tick_pos,
-                   y = par("usr")[3] - 10,
+                   y = graphics::par("usr")[3] - 10,
                    labels = table_occ$year,
                    srt = 45,
                    adj = 1,

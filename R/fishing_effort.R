@@ -26,12 +26,6 @@
 #' }
 #' @return The function return ggplot R plot.
 #' @export
-#' @importFrom dplyr mutate tibble group_by summarise
-#' @importFrom lubridate year
-#' @importFrom ggplot2 ggplot aes geom_line scale_color_manual geom_point labs ylim theme_bw
-#' @importFrom plotly ggplotly layout
-#' @importFrom graphics par plot axis lines abline legend text
-#' @importFrom codama r_type_checking
 fishing_effort <- function(dataframe,
                            graph_type = "plot",
                            title = FALSE) {
@@ -91,11 +85,11 @@ fishing_effort <- function(dataframe,
                     landing_date,
                     year) %>%
     dplyr::summarise("total_hour_at_sea" = sum(total_hour_at_sea,
-                                    na.rm = TRUE),
+                                               na.rm = TRUE),
                      "total_hour_fished" = sum(total_hour_fished,
-                                    na.rm = TRUE),
+                                               na.rm = TRUE),
                      "set_duration" = sum(set_duration,
-                                       na.rm = TRUE),
+                                          na.rm = TRUE),
                      "nb_days" = max(activity_date) - min(activity_date),
                      "nb_landings_in_activity_year" = sum(landing_in_activity_year,
                                                           na.rm = TRUE),
@@ -166,7 +160,7 @@ fishing_effort <- function(dataframe,
   }
   # 4 - Graphic design ----
   if (graph_type == "plot") {
-    par(mar = c(4, 4.7, 4.1, 1.5))
+    graphics::par(mar = c(4, 4.7, 4.1, 1.5))
     # Define the positions of the x-axis tick marks
     x_tick_pos <- seq(min(table_effort$year), max(table_effort$year))
     # plot the graph
@@ -210,30 +204,30 @@ fishing_effort <- function(dataframe,
                    tick = TRUE,
                    labels = FALSE)
     graphics::text(x = x_tick_pos,
-                   y = par("usr")[3] - 0.15,
+                   y = graphics::par("usr")[3] - 0.15,
                    labels = table_effort$year,
                    srt = 45,
                    adj = 1,
                    xpd = TRUE,
                    cex = 1.2)
 
-    lines(table_effort$year,
-          table_effort$searching_days,
-          type = "b",
-          lty = 2,
-          pch = 4)
-    legend("topleft",
-           legend = c("Fishing",
-                      "Searching"),
-           pch = c(18, 4),
-           bty = "n",
-           lty = c(1, 2),
-           cex = 1.3)
-    abline(h = seq(1,
-                   5,
-                   1),
-           lty = 2,
-           col = "lightgrey")
+    graphics::lines(table_effort$year,
+                    table_effort$searching_days,
+                    type = "b",
+                    lty = 2,
+                    pch = 4)
+    graphics::legend("topleft",
+                     legend = c("Fishing",
+                                "Searching"),
+                     pch = c(18, 4),
+                     bty = "n",
+                     lty = c(1, 2),
+                     cex = 1.3)
+    graphics::abline(h = seq(1,
+                             5,
+                             1),
+                     lty = 2,
+                     col = "lightgrey")
   } else if (graph_type == "plotly") {
     ggplot_table_effort <- ggplot2::ggplot(data = table_effort) +
       ggplot2::geom_line(ggplot2::aes(x = year,

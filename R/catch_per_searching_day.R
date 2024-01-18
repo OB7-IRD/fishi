@@ -36,12 +36,6 @@
 #' }
 #' @return The function return ggplot R plot.
 #' @export
-#' @importFrom dplyr mutate tibble group_by summarise case_when filter
-#' @importFrom lubridate year
-#' @importFrom ggplot2 ggplot aes geom_line scale_color_manual geom_point labs ylim theme_bw ggtitle
-#' @importFrom plotly ggplotly
-#' @importFrom graphics par plot axis lines abline legend text
-#' @importFrom codama r_type_checking
 catch_per_searching_day <- function(dataframe1,
                                     dataframe2,
                                     fishing_type,
@@ -49,6 +43,7 @@ catch_per_searching_day <- function(dataframe1,
                                     title = FALSE) {
   # 0 - Global variables assignement ----
   activity_date <- NULL
+  year <- NULL
   yft <- NULL
   skj <- NULL
   bet <- NULL
@@ -231,8 +226,8 @@ catch_per_searching_day <- function(dataframe1,
                      at = x_tick_pos,
                      tick = TRUE,
                      labels = FALSE)
-      text(x = x_tick_pos,
-           y = par("usr")[3] - 1,
+      graphics::text(x = x_tick_pos,
+           y = graphics::par("usr")[3] - 1,
            labels = table_cpue_fad_set$year,
            srt = 45,
            adj = 1,
@@ -416,7 +411,7 @@ catch_per_searching_day <- function(dataframe1,
                      tick = TRUE,
                      labels = FALSE)
       graphics::text(x = x_tick_pos,
-           y = par("usr")[3] - 1,
+           y = graphics::par("usr")[3] - 1,
            labels = table_cpue_fad_set$year,
            srt = 45,
            adj = 1,
@@ -488,7 +483,7 @@ catch_per_searching_day <- function(dataframe1,
                      tick = TRUE,
                      labels = FALSE)
       graphics::text(x = x_tick_pos,
-           y = par("usr")[3] - 1,
+           y = graphics::par("usr")[3] - 1,
            labels = table_cpue_fsc_set$year,
            srt = 45,
            adj = 1,

@@ -20,17 +20,6 @@
 #' }
 #' @return The function return ggplot R plot.
 #' @export
-#' @importFrom DBI dbGetQuery sqlInterpolate SQL
-#' @importFrom dplyr tibble group_by summarise case_when filter
-#' @importFrom plotrix floating.pie pie.labels
-#' @importFrom maps map
-#' @importFrom ggplot2 ggplot geom_sf aes scale_fill_manual labs ylim xlim
-#' @importFrom plotly ggplotly
-#' @importFrom graphics par plot axis lines abline legend
-#' @importFrom scatterpie geom_scatterpie
-#' @importFrom rnaturalearth ne_countries
-#' @importFrom ggspatial coord_sf
-#' @importFrom grDevices adjustcolor
 map_effort_distribution <- function(dataframe,
                                     graph_type = "plot",
                                     title = FALSE) {
@@ -204,8 +193,8 @@ map_effort_distribution <- function(dataframe,
                               c(datafile$effort[i]),
                               radius = ryrel[i],
                               edges = 100,
-                              col = adjustcolor("blue",
-                                                alpha.f = 0.45),
+                              col = grDevices::adjustcolor("blue",
+                                                           alpha.f = 0.45),
                               border = NA)
       }
       plotrix::floating.pie(-30,
@@ -213,15 +202,15 @@ map_effort_distribution <- function(dataframe,
                             c(1),
                             radius = 1,
                             edges = 100,
-                            col = adjustcolor("blue",
-                                              alpha.f = 0.45),
+                            col = grDevices::adjustcolor("blue",
+                                                         alpha.f = 0.45),
                             border = NA)
-      text(-27,
-           -20,
-           paste(50,
-                 " d",
-                 sep = ""),
-           cex = .9)
+      graphics::text(-27,
+                     -20,
+                     paste(50,
+                           " d",
+                           sep = ""),
+                     cex = .9)
     } else if (ocean == 2) {
       maps::map(wrld_simpl,
                 main = "",
@@ -247,23 +236,23 @@ map_effort_distribution <- function(dataframe,
                                     "E",
                                     sep = ""),
                      tick = TRUE)
-      axis(2,
-           at = seq(-40, 40, 10),
-           labels = c(NA, "30S", "20S", "1S", "0", "10N", "20N", "30N", NA),
-           las = 1,
-           tick = TRUE)
-      axis(3,
-           at = seq(30, 120, 20),
-           labels = FALSE)
-      axis(4,
-           labels = FALSE,
-           at = seq(-40, 40, 10))
-      abline(v = seq(30, 100, 10),
-             col = "darkgrey",
-             lty = 3)
-      abline(h = seq(-30, 30, 10),
-             col = "darkgrey",
-             lty = 3)
+      graphics::axis(2,
+                     at = seq(-40, 40, 10),
+                     labels = c(NA, "30S", "20S", "1S", "0", "10N", "20N", "30N", NA),
+                     las = 1,
+                     tick = TRUE)
+      graphics::axis(3,
+                     at = seq(30, 120, 20),
+                     labels = FALSE)
+      graphics::axis(4,
+                     labels = FALSE,
+                     at = seq(-40, 40, 10))
+      graphics::abline(v = seq(30, 100, 10),
+                       col = "darkgrey",
+                       lty = 3)
+      graphics::abline(h = seq(-30, 30, 10),
+                       col = "darkgrey",
+                       lty = 3)
       # Plot the data
       for (i in c(1:nrow(datafile))) {
         plotrix::floating.pie(long[i],
@@ -271,8 +260,8 @@ map_effort_distribution <- function(dataframe,
                               c(datafile$effort[i]),
                               radius = ryrel[i],
                               edges = 100,
-                              col = adjustcolor("blue",
-                                                alpha.f = 0.45),
+                              col = grDevices::adjustcolor("blue",
+                                                           alpha.f = 0.45),
                               border = NA)
       }
       plotrix::floating.pie(80,
@@ -280,15 +269,15 @@ map_effort_distribution <- function(dataframe,
                             c(1),
                             radius = 1,
                             edges = 100,
-                            col = adjustcolor("blue",
-                                              alpha.f = 0.45),
+                            col = grDevices::adjustcolor("blue",
+                                                         alpha.f = 0.45),
                             border = NA)
-      text(82.5,
-           -20,
-           paste(50,
-                 " d",
-                 sep = ""),
-           cex = .9)
+      graphics::text(82.5,
+                     -20,
+                     paste(50,
+                           " d",
+                           sep = ""),
+                     cex = .9)
     }
     if (title == TRUE) {
       title(main = paste0("Spatial distribution of fishing effort (in searching days) of the ",

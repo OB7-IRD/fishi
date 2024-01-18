@@ -25,15 +25,6 @@
 #' }
 #' @return The function return ggplot R plot.
 #' @export
-#' @importFrom dplyr tibble group_by summarise case_when filter
-#' @importFrom plotrix floating.pie pie.labels
-#' @importFrom maps map
-#' @importFrom ggplot2 ggplot geom_sf aes scale_fill_manual labs ylim xlim
-#' @importFrom plotly ggplotly
-#' @importFrom graphics par plot axis lines abline legend
-#' @importFrom scatterpie geom_scatterpie
-#' @importFrom rnaturalearth ne_countries
-#' @importFrom ggspatial coord_sf
 map_catch_distribution <- function(dataframe,
                                    fishing_type = "ALL",
                                    graph_type = "plot",
@@ -302,23 +293,23 @@ map_catch_distribution <- function(dataframe,
                                     "E",
                                     sep = ""),
                      tick = TRUE)
-      axis(2,
-           at = seq(-40, 40, 10),
-           labels = c(NA, "30S", "20S", "1S", "0", "10N", "20N", "30N", NA),
-           las = 1,
-           tick = TRUE)
-      axis(3,
-           at = seq(30, 120, 20),
-           labels = FALSE)
-      axis(4,
-           labels = FALSE,
-           at = seq(-40, 40, 10))
-      abline(v = seq(30, 100, 10),
-             col = "darkgrey",
-             lty = 3)
-      abline(h = seq(-30, 30, 10),
-             col = "darkgrey",
-             lty = 3)
+      graphics::axis(2,
+                     at = seq(-40, 40, 10),
+                     labels = c(NA, "30S", "20S", "1S", "0", "10N", "20N", "30N", NA),
+                     las = 1,
+                     tick = TRUE)
+      graphics::axis(3,
+                     at = seq(30, 120, 20),
+                     labels = FALSE)
+      graphics::axis(4,
+                     labels = FALSE,
+                     at = seq(-40, 40, 10))
+      graphics::abline(v = seq(30, 100, 10),
+                       col = "darkgrey",
+                       lty = 3)
+      graphics::abline(h = seq(-30, 30, 10),
+                       col = "darkgrey",
+                       lty = 3)
       angles <- plotrix::floating.pie(80,
                                       -12.5,
                                       c(1,

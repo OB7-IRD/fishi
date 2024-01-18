@@ -23,9 +23,6 @@
 #' }
 #' @return The function return a table.
 #' @export
-#' @importFrom dplyr mutate group_by summarise case_when
-#' @importFrom lubridate year
-#' @importFrom codama r_type_checking %>%
 psu_total <- function(dataframe,
                       reported_year = NULL,
                       selected_country = NULL,

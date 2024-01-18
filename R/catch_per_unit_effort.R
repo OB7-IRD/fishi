@@ -36,14 +36,6 @@
 #' }
 #' @return The function return ggplot R plot.
 #' @export
-#' @importFrom DBI dbGetQuery sqlInterpolate SQL
-#' @importFrom dplyr mutate tibble group_by summarise case_when
-#' @importFrom lubridate year
-#' @importFrom plotrix stackpoly
-#' @importFrom ggplot2 ggplot aes geom_line scale_color_manual geom_point labs ylim theme_bw ggtitle
-#' @importFrom plotly ggplotly
-#' @importFrom graphics par plot axis lines abline legend text
-#' @importFrom codama r_type_checking
 catch_per_unit_effort <- function(dataframe1,
                                   dataframe2,
                                   fishing_type,
@@ -60,6 +52,7 @@ catch_per_unit_effort <- function(dataframe1,
   alb <- NULL
   total <- NULL
   time_period <- NULL
+  year <- NULL
   # 1 - Arguments verification ----
   if (codama::r_type_checking(r_object = fishing_type,
                               type = "character",
@@ -167,7 +160,7 @@ catch_per_unit_effort <- function(dataframe1,
     time_period <- c(unique(min(dataframe1$year):max(dataframe1$year)))
   }
   # 5 - Graphic design ----
-  par(mar = c(4, 4.7, 4.1, 1.5))
+  graphics::par(mar = c(4, 4.7, 4.1, 1.5))
   # Define the positions of the x-axis tick marks
   x_tick_pos <- seq(min(table_cpue_fad$year), max(table_cpue_fad$year))
   if (fishing_type == "FOB") {
@@ -231,7 +224,7 @@ catch_per_unit_effort <- function(dataframe1,
                      tick = TRUE,
                      labels = FALSE)
       graphics::text(x = x_tick_pos,
-                     y = par("usr")[3] - 0.6,
+                     y = graphics::par("usr")[3] - 0.6,
                      labels = table_cpue_fad$year,
                      srt = 45,
                      adj = 1,
@@ -422,7 +415,7 @@ catch_per_unit_effort <- function(dataframe1,
                      tick = TRUE,
                      labels = FALSE)
       graphics::text(x = x_tick_pos,
-                     y = par("usr")[3] - 0.6,
+                     y = graphics::par("usr")[3] - 0.6,
                      labels = table_cpue_fsc$year,
                      srt = 45,
                      adj = 1,

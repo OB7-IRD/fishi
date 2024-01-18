@@ -23,13 +23,6 @@
 #' }
 #' @return The function return ggplot R plot.
 #' @export
-#' @importFrom dplyr mutate tibble group_by summarise case_when
-#' @importFrom lubridate year
-#' @importFrom plotrix stackpoly
-#' @importFrom ggplot2 ggplot aes geom_line geom_point labs ylim theme_bw ggtitle
-#' @importFrom plotly ggplotly
-#' @importFrom graphics par plot axis lines abline legend text
-#' @importFrom codama r_type_checking
 set_per_searching_day <- function(dataframe,
                                   fishing_type,
                                   graph_type = "plot",
@@ -45,6 +38,7 @@ set_per_searching_day <- function(dataframe,
   sets_per_day_fad <- NULL
   sets_per_day_fsc <- NULL
   time_period <- NULL
+  year <- NULL
   # 1 - Arguments verification ----
   if (codama::r_type_checking(r_object = fishing_type,
                               type = "character",
@@ -180,7 +174,7 @@ set_per_searching_day <- function(dataframe,
                      tick = TRUE,
                      labels = FALSE)
       graphics::text(x = x_tick_pos,
-           y = par("usr")[3] - 0.035,
+           y = graphics::par("usr")[3] - 0.035,
            labels = table_cpue_set_per_day$year,
            srt = 45,
            adj = 1,
@@ -244,7 +238,7 @@ set_per_searching_day <- function(dataframe,
                      tick = TRUE,
                      labels = FALSE)
       graphics::text(x = x_tick_pos,
-           y = par("usr")[3] - 0.035,
+           y = graphics::par("usr")[3] - 0.035,
            labels = table_cpue_set_per_day$year,
            srt = 45,
            adj = 1,

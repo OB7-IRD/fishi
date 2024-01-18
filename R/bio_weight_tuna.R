@@ -21,10 +21,6 @@
 #' }
 #' @return The function return ggplot R plot.
 #' @export
-#' @importFrom dplyr tibble group_by summarise filter mutate
-#' @importFrom graphics plot lines legend mtext
-#' @importFrom ggplot2 ggplot aes geom_line labs ylim xlim theme_bw theme element_blank ggtitle
-#' @importFrom codama r_type_checking
 bio_weight_tuna <- function(dataframe,
                             report_year,
                             graph_type = "plot",
@@ -348,7 +344,7 @@ bio_weight_tuna <- function(dataframe,
                     "",
                     "",
                     "")
-    par(mfcol = c(3,
+    graphics::par(mfcol = c(3,
                   3),
         mar = c(4,
                 4,
@@ -381,7 +377,7 @@ bio_weight_tuna <- function(dataframe,
     }
     # Title
     if (title == TRUE) {
-      mtext(paste0("Weight distribution of the catch for the ",
+      graphics::mtext(paste0("Weight distribution of the catch for the ",
                    country_legend,
                    " purse seine fleet in ",
                    report_year,

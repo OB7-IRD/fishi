@@ -25,9 +25,6 @@
 #'
 #' @return The function return a table.
 #' @export
-#' @importFrom dplyr mutate filter group_by summarise n_distinct mutate case_when
-#' @importFrom lubridate year
-#' @importFrom codama r_type_checking %>%
 set_total <- function(dataframe,
                       graph_type = "table",
                       reported_year = NULL,

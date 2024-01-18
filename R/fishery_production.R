@@ -26,14 +26,6 @@
 #' }
 #' @return The function return ggplot R plot.
 #' @export
-#' @importFrom dplyr mutate tibble group_by summarise case_when
-#' @importFrom lubridate year
-#' @importFrom plotrix stackpoly
-#' @importFrom ggplot2 ggplot aes geom_area scale_fill_manual scale_y_continuous labs theme_bw ggtitle
-#' @importFrom plotly ggplotly
-#' @importFrom graphics par plot axis lines abline legend
-#' @importFrom tidyr pivot_longer
-#' @importFrom codama r_type_checking
 fishery_production <- function(dataframe,
                                fishing_type = "ALL",
                                graph_type = "plot",
@@ -59,6 +51,7 @@ fishery_production <- function(dataframe,
   time_period <- NULL
   Catch <- NULL
   Species <- NULL
+  year <- NULL
   # 1 - Arguments verification ----
   if (codama::r_type_checking(r_object = fishing_type,
                               type = "character",
