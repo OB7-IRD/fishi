@@ -58,14 +58,18 @@ map_effort_distribution <- function(dataframe,
                     total_hour_fished,
                     set_duration) %>%
     dplyr::summarise(.groups = "drop")
-
   t2 <- t1 %>%
     dplyr::group_by(cwp11_act) %>%
     dplyr::summarise(effort = sum(total_hour_fished - set_duration),
                      .groups = "drop")
-
-  datafile <- t2 %>%
-    dplyr::mutate(effort = effort / 12)
+  # effort per ocean
+  if (ocean == 1) {
+    datafile <- t2 %>%
+      dplyr::mutate(effort = effort / 12)
+  } else if (ocean == 2) {
+    datafile <- t2 %>%
+      dplyr::mutate(effort = effort / 13)
+  }
   datafile[datafile == 0] <- 1e-8
   # 3 - Legend design ----
   # Define fuction quad2pos
@@ -107,224 +111,51 @@ map_effort_distribution <- function(dataframe,
                                         manipulation = "legend")
   }
   # 4 - Graphic design ----
+  if (ocean == 1) {
+    ocean_xlim = c(-40, 15)
+    ocean_ylim = c(-25, 25)
+    ocean_xintercept = c(-30, -20, -10, 0, 10)
+    ocean_yintercept = c(-20, -10, 0, 10, 20)
+  } else if (ocean == 2) {
+    ocean_xlim = c(30, 90)
+    ocean_ylim = c(-30, 20)
+    ocean_xintercept = c(40, 50, 60, 70, 80)
+    ocean_yintercept = c(10, 0, -10, -20)
+  }
+  datafile$lat <- quad2pos(as.numeric(datafile$cwp11_act + 5 * 1e6))$y
+  datafile$long <- quad2pos(as.numeric(datafile$cwp11_act + 5 * 1e6))$x
+  world_boundaries <- rnaturalearth::ne_countries(returnclass = "sf",
+                                                  scale       = "medium")
+  datafile$effort <- round(datafile$effort, 3)
+  (map <- ggplot2::ggplot() +
+      ggplot2::geom_sf(data = world_boundaries) +
+      ggspatial::coord_sf(xlim = ocean_xlim,
+                          ylim = ocean_ylim) +
+      ggplot2::geom_point(data = datafile,
+                          ggplot2::aes(x     = long,
+                                       y     = lat,
+                                       color = effort,
+                                       size  = effort),
+                          alpha = 0.65) +
+      ggplot2::scale_color_viridis_c(option = "plasma") +
+      ggplot2::guides(size = "none") +
+      ggplot2::labs(color = "Effort in d") +
+      ggplot2::theme(panel.background = ggplot2::element_rect(fill = "white"),
+                     panel.border = ggplot2::element_rect(color = "black", fill = NA, size = 0.3))  +
+      ggplot2::geom_hline(yintercept = ocean_yintercept,
+                          linetype = "dashed",
+                          color = "darkgrey",
+                          linewidth = 0.2) +
+      ggplot2::geom_vline(xintercept = ocean_xintercept,
+                          linetype = "dashed",
+                          color = "darkgrey",
+                          linewidth = 0.2) +
+      ggplot2::theme(axis.title.x = ggplot2::element_blank(),
+                     axis.title.y = ggplot2::element_blank()))
   if (graph_type == "plot") {
-    load(file = system.file("wrld_simpl.RData",
-                            package = "fishi"))
-    ryref <- sqrt(50)		#Radius of the reference effort
-    y <- datafile$effort
-    ry <- sqrt(y)			#Square root of total effort
-    ry[is.na(ry)] <- 0
-    ryrel <- ry / ryref
-    if (ocean == 1) {
-      maps::map(wrld_simpl,
-                main = "",
-                resolution = 0.1,
-                add = FALSE,
-                col = "lightgrey",
-                fill = TRUE,
-                xlim = c(-40,
-                         15),
-                ylim = c(-25,
-                         25),
-                xaxs = "i",
-                mar = c(4,
-                        4.1,
-                        3,
-                        2),
-                border = 0)
-      graphics::axis(1,
-                     at = seq(-40,
-                              15,
-                              5),
-                     labels = c("40W",
-                                "35W",
-                                "30W",
-                                "25W",
-                                "20W",
-                                "15W",
-                                "10W",
-                                "5W",
-                                "0",
-                                "5E",
-                                "10E",
-                                "15E"),
-                     tick = TRUE)
-      graphics::axis(2,
-                     at = seq(-25,
-                              25,
-                              5),
-                     labels = c("25S",
-                                "20S",
-                                "15S",
-                                "10S",
-                                "5S",
-                                "0",
-                                "5N",
-                                "10N",
-                                "15N",
-                                "20N",
-                                "25N"),
-                     las = 1,
-                     tick = TRUE)
-      graphics::axis(3,
-                     labels = FALSE,
-                     at = seq(-40,
-                              15,
-                              5))
-      graphics::axis(4,
-                     labels = FALSE,
-                     at = seq(-25,
-                              25,
-                              5))
-      graphics::abline(v = seq(-30,
-                               30,
-                               10),
-                       col = "darkgrey",
-                       lty = 3)
-      graphics::abline(h = seq(-30,
-                               30,
-                               10),
-                       col = "darkgrey",
-                       lty = 3)
-      # Plot the data
-      for (i in c(1:nrow(datafile))) {
-        plotrix::floating.pie(long[i],
-                              lat[i],
-                              c(datafile$effort[i]),
-                              radius = ryrel[i],
-                              edges = 100,
-                              col = grDevices::adjustcolor("blue",
-                                                           alpha.f = 0.45),
-                              border = NA)
-      }
-      plotrix::floating.pie(-30,
-                            -20,
-                            c(1),
-                            radius = 1,
-                            edges = 100,
-                            col = grDevices::adjustcolor("blue",
-                                                         alpha.f = 0.45),
-                            border = NA)
-      graphics::text(-27,
-                     -20,
-                     paste(50,
-                           " d",
-                           sep = ""),
-                     cex = .9)
-    } else if (ocean == 2) {
-      maps::map(wrld_simpl,
-                main = "",
-                resolution = 0.1,
-                add = FALSE,
-                col = "lightgrey",
-                fill = TRUE,
-                xlim = c(30,
-                         90),
-                ylim = c(-30,
-                         20),
-                xaxs = "i",
-                mar = c(4,
-                        4.1,
-                        3,
-                        2),
-                border = 0)
-      graphics::axis(1,
-                     at = seq(30,
-                              120,
-                              20),
-                     labels = paste(seq(30, 120, 20),
-                                    "E",
-                                    sep = ""),
-                     tick = TRUE)
-      graphics::axis(2,
-                     at = seq(-40, 40, 10),
-                     labels = c(NA, "30S", "20S", "1S", "0", "10N", "20N", "30N", NA),
-                     las = 1,
-                     tick = TRUE)
-      graphics::axis(3,
-                     at = seq(30, 120, 20),
-                     labels = FALSE)
-      graphics::axis(4,
-                     labels = FALSE,
-                     at = seq(-40, 40, 10))
-      graphics::abline(v = seq(30, 100, 10),
-                       col = "darkgrey",
-                       lty = 3)
-      graphics::abline(h = seq(-30, 30, 10),
-                       col = "darkgrey",
-                       lty = 3)
-      # Plot the data
-      for (i in c(1:nrow(datafile))) {
-        plotrix::floating.pie(long[i],
-                              lat[i],
-                              c(datafile$effort[i]),
-                              radius = ryrel[i],
-                              edges = 100,
-                              col = grDevices::adjustcolor("blue",
-                                                           alpha.f = 0.45),
-                              border = NA)
-      }
-      plotrix::floating.pie(80,
-                            -20,
-                            c(1),
-                            radius = 1,
-                            edges = 100,
-                            col = grDevices::adjustcolor("blue",
-                                                         alpha.f = 0.45),
-                            border = NA)
-      graphics::text(82.5,
-                     -20,
-                     paste(50,
-                           " d",
-                           sep = ""),
-                     cex = .9)
-    }
-    if (title == TRUE) {
-      title(main = paste0("Spatial distribution of fishing effort (in searching days) of the ",
-                          country_legend, " ",
-                          vessel_type_legend, "\n", " fishing fleet in ",
-                          ifelse(test = length(x = time_period) != 1,
-                                 yes  = paste0(min(time_period), "-", max(time_period)),
-                                 no   = time_period),
-                          ", in the ",
-                          ocean_legend,
-                          " ocean."),
-            cex.main = 1)
-    }
+    return(map)
   } else if (graph_type == "plotly") {
-    datafile$lat <- quad2pos(as.numeric(datafile$cwp11_act + 5 * 1e6))$y
-    datafile$long <- quad2pos(as.numeric(datafile$cwp11_act + 5 * 1e6))$x
-    world_boundaries <- rnaturalearth::ne_countries(returnclass = "sf",
-                                                    scale       = "medium")
-    datafile$effort <- round(datafile$effort, 3)
-    if (ocean == 1) {
-      map <- ggplot2::ggplot() +
-        ggplot2::geom_sf(data = world_boundaries) +
-        ggspatial::coord_sf(xlim = c(-40,
-                                     15),
-                            ylim = c(-25,
-                                     25)) +
-        ggplot2::geom_point(data = datafile,
-                            ggplot2::aes(x     = long,
-                                         y     = lat,
-                                         color = effort,
-                                         size  = effort)) +
-        ggplot2::scale_color_viridis_c(option = "plasma")
-    } else if (ocean == 2) {
-      map <- ggplot2::ggplot() +
-        ggplot2::geom_sf(data = world_boundaries) +
-        ggspatial::coord_sf(xlim = c(30,
-                                     90),
-                            ylim = c(-30,
-                                     20)) +
-        ggplot2::geom_point(data = datafile,
-                            ggplot2::aes(x     = long,
-                                         y     = lat,
-                                         color = effort,
-                                         size  = effort)) +
-        ggplot2::scale_color_viridis_c(option = "plasma")
-    }
-    # Plotly
+        # Plotly
     plotly_map <- plotly::ggplotly(map)
     # Add a title
     if (title == TRUE) {
