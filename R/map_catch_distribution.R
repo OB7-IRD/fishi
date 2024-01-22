@@ -366,6 +366,17 @@ map_catch_distribution <- function(dataframe,
                                     "cornflowerblue"))
     }
   } else if (graph_type == "plotly") {
+    if (ocean == 1) {
+      ocean_xlim = c(-40, 15)
+      ocean_ylim = c(-25, 25)
+      ocean_xintercept = c(-30, -20, -10, 0, 10)
+      ocean_yintercept = c(-20, -10, 0, 10, 20)
+    } else if (ocean == 2) {
+      ocean_xlim = c(30, 90)
+      ocean_ylim = c(-30, 20)
+      ocean_xintercept = c(40, 50, 60, 70, 80)
+      ocean_yintercept = c(10, 0, -10, -20)
+    }
     datafile$lat <- quad2pos(as.numeric(datafile$cwp11_act + 5 * 1e6))$y
     datafile$long <- quad2pos(as.numeric(datafile$cwp11_act + 5 * 1e6))$x
     world_boundaries <- rnaturalearth::ne_countries(returnclass = "sf",
@@ -379,39 +390,30 @@ map_catch_distribution <- function(dataframe,
                                       names_to = "specie",
                                       values_to = "catch (t)")
     data_pivot$`catch (t)` <- round(data_pivot$`catch (t)`, 3)
-    if (ocean == 1) {
-      map <- ggplot2::ggplot() +
-        ggplot2::geom_sf(data = world_boundaries) +
-        ggspatial::coord_sf(xlim = c(-40,
-                                     15),
-                            ylim = c(-25,
-                                     25)) +
-        ggplot2::geom_point(data = datafile,
-                            ggplot2::aes(x     = long,
-                                         y     = lat,
-                                         color = total,
-                                         size  = total,
-                                         text  = paste("yft :", yft, "\n",
-                                                       "skj :", skj, "\n",
-                                                       "bet:", bet))) +
-        ggplot2::scale_color_viridis_c(option = "plasma")
-    } else if (ocean == 2) {
-      map <- ggplot2::ggplot() +
-        ggplot2::geom_sf(data = world_boundaries) +
-        ggspatial::coord_sf(xlim = c(30,
-                                     90),
-                            ylim = c(-30,
-                                     20)) +
-        ggplot2::geom_point(data = datafile,
-                            ggplot2::aes(x     = long,
-                                         y     = lat,
-                                         color = total,
-                                         size  = total,
-                                         text  = paste("yft :", yft, "\n",
-                                                       "skj :", skj, "\n",
-                                                       "bet:", bet))) +
-        ggplot2::scale_color_viridis_c(option = "plasma")
-    }
+    radius <- (sqrt(datafile$total) / sqrt(2000))
+    (map <- ggplot2::ggplot() +
+      ggplot2::geom_sf(data = world_boundaries) +
+      ggspatial::coord_sf(xlim = ocean_xlim,
+                          ylim = ocean_ylim) +
+      scatterpie::geom_scatterpie(data = datafile,
+                                  ggplot2::aes(x = long,
+                                               y = lat,
+                                               r = (sqrt(total) / sqrt(2000)),
+                                               group = cwp11_act),
+                                  cols = c("yft", "skj", "bet"))  +
+      ggplot2::scale_fill_manual(values = c("yft" = "khaki1",
+                                            "skj" = "firebrick2",
+                                            "bet" = "cornflowerblue"))+
+      ggplot2::theme(panel.background = ggplot2::element_rect(fill = "white"),
+                     panel.border = ggplot2::element_rect(color = "black", fill = NA, size = 0.3))  +
+      ggplot2::geom_hline(yintercept = ocean_yintercept,
+                          linetype = "dashed",
+                          color = "darkgrey",
+                          linewidth = 0.2) +
+      ggplot2::geom_vline(xintercept = ocean_xintercept,
+                          linetype = "dashed",
+                          color = "darkgrey",
+                          linewidth = 0.2))
     # Plotly
     plotly_map <- plotly::ggplotly(map)
     # Add a title
