@@ -160,7 +160,6 @@ catch_per_unit_effort <- function(dataframe1,
     time_period <- c(unique(min(dataframe1$year):max(dataframe1$year)))
   }
   # 5 - Graphic design ----
-  x_tick_pos <- seq(min(table_cpue_fad$year), max(table_cpue_fad$year))
   # round values
   table_cpue_fad$yft <- round(table_cpue_fad$yft, 3)
   table_cpue_fad$skj <- round(table_cpue_fad$skj, 3)

@@ -116,7 +116,7 @@ spatial_occupancy <- function(dataframe,
     time_period <- c(unique(min(spatial_occupancy_t1$year):max(spatial_occupancy_t1$year)))
   }
   # 4 - Graphic design ----
-  ggplot_table_occ <-ggplot2::ggplot(data = table_occ) +
+  ggplot_table_occ <- ggplot2::ggplot(data = table_occ) +
     # Theme and background
     ggplot2::geom_hline(yintercept = c(100, 200, 300, 400),
                         color = "grey",

@@ -185,7 +185,6 @@ catch_per_searching_day <- function(dataframe1,
   # 4 - Graphic design ----
   graphics::par(mar = c(4, 4.7, 4.1, 1.5))
   # Define the positions of the x-axis tick marks
-  x_tick_pos <- seq(min(table_cpue_fad_set$year), max(table_cpue_fad_set$year))
   if (fishing_type == "FOB") {
     label_ft <- " (FOB) "
     dataframe <- table_cpue_fad_set
@@ -262,7 +261,7 @@ catch_per_searching_day <- function(dataframe1,
                          color = "black"))
   if (graph_type == "plot") {
     return(ggplot_graph)
-  } else if (graph_type == "plotly"){
+  } else if (graph_type == "plotly") {
     plotly_graph <- plotly::ggplotly(ggplot_graph)
     # Add a title
     if (title == TRUE) {

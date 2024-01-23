@@ -28,7 +28,6 @@ map_effort_distribution <- function(dataframe,
   total_hour_fished <- NULL
   set_duration <- NULL
   effort <- NULL
-  wrld_simpl <- NULL
   time_period <- NULL
   activity_date <- NULL
   # 1 - Arguments verification ----
@@ -112,15 +111,15 @@ map_effort_distribution <- function(dataframe,
   }
   # 4 - Graphic design ----
   if (ocean == 1) {
-    ocean_xlim = c(-40, 15)
-    ocean_ylim = c(-25, 25)
-    ocean_xintercept = c(-30, -20, -10, 0, 10)
-    ocean_yintercept = c(-20, -10, 0, 10, 20)
+    ocean_xlim <- c(-40, 15)
+    ocean_ylim <- c(-25, 25)
+    ocean_xintercept <- c(-30, -20, -10, 0, 10)
+    ocean_yintercept <- c(-20, -10, 0, 10, 20)
   } else if (ocean == 2) {
-    ocean_xlim = c(30, 90)
-    ocean_ylim = c(-30, 20)
-    ocean_xintercept = c(40, 50, 60, 70, 80)
-    ocean_yintercept = c(10, 0, -10, -20)
+    ocean_xlim <- c(30, 90)
+    ocean_ylim <- c(-30, 20)
+    ocean_xintercept <- c(40, 50, 60, 70, 80)
+    ocean_yintercept <- c(10, 0, -10, -20)
   }
   datafile$lat <- quad2pos(as.numeric(datafile$cwp11_act + 5 * 1e6))$y
   datafile$long <- quad2pos(as.numeric(datafile$cwp11_act + 5 * 1e6))$x

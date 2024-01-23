@@ -32,7 +32,6 @@ fishing_capacity <- function(dataframe,
   cc <- NULL
   activity_date <- NULL
   keel_code_nb_months <- NULL
-  nb_vessel <- NULL
   CC <- NULL
   time_period <- NULL
   month <- NULL
@@ -185,7 +184,7 @@ fishing_capacity <- function(dataframe,
                         color = "black") +
     ggplot2::scale_y_continuous(name = "Number of vessel",
 
-                                sec.axis = ggplot2::sec_axis(~ . /2,
+                                sec.axis = ggplot2::sec_axis(~ . / 2,
                                                              name = "Carrying capacity (x1000m^3)"))
   if (graph_type == "plot") {
    return(ggplot_graph)
