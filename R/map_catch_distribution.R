@@ -40,6 +40,7 @@ map_catch_distribution <- function(dataframe,
   total_catch_weight <- NULL
   wrld_simpl <- NULL
   total <- NULL
+  mean_size <- NULL
   # 1 - Arguments verification ----
   if (codama::r_type_checking(r_object = fishing_type,
                               type = "character",
