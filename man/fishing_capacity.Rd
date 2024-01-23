@@ -4,19 +4,12 @@
 \alias{fishing_capacity}
 \title{Annual changes in the number of vessel}
 \usage{
-fishing_capacity(
-  dataframe,
-  graph_type = "plot",
-  figure = "vessel",
-  title = FALSE
-)
+fishing_capacity(dataframe, graph_type = "plot", title = FALSE)
 }
 \arguments{
 \item{dataframe}{{\link[base]{data.frame}} expected. Csv or output of the function {\link[furdeb]{data_extraction}}, which must be done before using the fishing_capacity() function.}
 
 \item{graph_type}{{\link[base]{character}} expected. plot, plotly or table. Plot by default.}
-
-\item{figure}{{\link[base]{character}} expected. For plotly figure: vessel (for number of vessel graph) or capacity (for carrying capacity graph). vessel by default.}
 
 \item{title}{TRUE or FALSE expected. False by default.}
 }

@@ -3,7 +3,6 @@
 #' @description Fishing operations. Annual number of fishing sets on FOB-associated and free-swimming tuna schools.
 #' @param dataframe {\link[base]{data.frame}} expected. Csv or output of the function {\link[furdeb]{data_extraction}}, which must be done before using the fishing_activity() function.
 #' @param graph_type {\link[base]{character}} expected. plot, plotly or table. Plot by default.
-#' @param figure {\link[base]{character}} expected. For plotly figure: set (for number of sets graph) or log (for percentage FOB-associated sets graph). set by default.
 #' @param title TRUE or FALSE expected. False by default.
 #' @details
 #' The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:
@@ -23,9 +22,7 @@
 #' @return The function return ggplot R plot.
 #' @export
 fishing_activity <- function(dataframe,
-                             graph_type = "plot",
-                             figure = "set",
-                             title = FALSE) {
+                             graph_type = "plot",title = FALSE) {
   # 0 - Global variables assignement ----
   activity_date <- NULL
   total_set <- NULL
@@ -44,13 +41,6 @@ fishing_activity <- function(dataframe,
                               type = "character",
                               output = "logical") != TRUE) {
     return(codama::r_type_checking(r_object = graph_type,
-                                   type = "character",
-                                   output = "message"))
-  }
-  if (codama::r_type_checking(r_object = figure,
-                              type = "character",
-                              output = "logical") != TRUE) {
-    return(codama::r_type_checking(r_object = figure,
                                    type = "character",
                                    output = "message"))
   }
@@ -130,109 +120,51 @@ fishing_activity <- function(dataframe,
     time_period <- c(unique(min(fishing_activity_t1$year):max(fishing_activity_t1$year)))
   }
   # 4 - Graphic design ----
-  if (graph_type == "plot") {
-    graphics::par(mar = c(5, 4, 4, 4))
-    set <- as.matrix(table_sets[, c(5,
-                                    8)])
-    if (title == TRUE) {
-      fig_sets <- graphics::barplot(t(set),
-                                    beside = FALSE,
-                                    ylab = "Number of sets",
-                                    ylim = c(0, max(set) * 1.6),
-                                    main = paste0("Annual number of fishing sets in the ",
-                                                  country_legend, " ",
-                                                  vessel_type_legend,
-                                                  " fishery on FOB-associated", "\n",
-                                                  "and free-swimming tuna schools during ",
-                                                  min(time_period),
-                                                  "-", max(time_period),
-                                                  ", in the ",
-                                                  ocean_legend,
-                                                  " ocean.", "\n",
-                                                  "Line with solid circles indicates the percentage of sets on FOB-associated schools."),
-                                    cex.axis = 1.3,
-                                    cex.lab = 1.3,
-                                    cex.main = 1,
-                                    xaxt = "n")
+    t_set$`%_log` <- round(t_set$`%_log`, 3)
+    ggplot_graph <- ggplot2::ggplot() +
+      # Theme and background
+      ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 45,
+                                                         hjust = 1,
+                                                         size = 13),
+                     axis.text.y = ggplot2::element_text(size = 13),
+                     axis.title.y = ggplot2::element_text(size = 14),
+                     legend.position = "top",
+                     legend.justification = "right",
+                     panel.background = ggplot2::element_rect(fill = "white",
+                                                              color = "black"),
+                     panel.grid.major = ggplot2::element_blank(),
+                     panel.grid.minor.x = ggplot2::element_blank(),
+                     panel.grid.major.y = ggplot2::element_line(linewidth = 0.2,
+                                                                color = "gray90")) +
+      ggplot2::scale_x_continuous(breaks = t_set$year) +
+      # Lines and point
+      ggplot2::geom_bar(data = t_set_pivot,
+                        mapping = ggplot2::aes(x = year,
+                                               y = nb_sets,
+                                               fill = type),
+                        stat = "identity",
+                        colour = "black") +
+      ggplot2::scale_fill_manual(values = c("grey95", "grey26")) +
+      ggplot2::geom_line(data = t_set,
+                         ggplot2::aes(x = year,
+                                      y = `%_log` * 35),
+                         size = 0.5,
+                         linetype = "longdash",
+                         color = "black") +
+      ggplot2::geom_point(data = t_set,
+                          ggplot2::aes(x = year,
+                                       y = `%_log` * 35)) +
+      ggplot2::labs(fill = "",
+                    x = "") +
+      ggplot2::scale_y_continuous(name = "Number of sets",
 
-    } else {
-      fig_sets <- graphics::barplot(t(set),
-                                    beside = FALSE,
-                                    ylab = "Number of sets",
-                                    ylim = c(0, max(set) * 1.6),
-                                    main = "",
-                                    cex.axis = 1.3,
-                                    cex.lab = 1.3,
-                                    xaxt = "n",
-                                    col = c("gray19",
-                                            "lightgrey"))
-    }
-    graphics::axis(1,
-                   at = fig_sets,
-                   tick = TRUE,
-                   labels = FALSE)
-    graphics::text(x = fig_sets,
-                   y = -100,
-                   labels = table_sets$year,
-                   srt = 45,
-                   adj = 1,
-                   xpd = TRUE,
-                   cex = 1.1)
-    graphics::legend("topleft",
-                     legend = c("FOB-associated schools",
-                                "Free swimming schools"),
-                     col = c("gray19",
-                             "lightgrey"),
-                     bty = "n",
-                     fill = c("gray19",
-                              "lightgrey"))
-    graphics::par(new = TRUE)
-    plot(fig_sets,
-         table_sets$`%_log`,
-         type = "b",
-         col = "black",
-         lwd = 2,
-         lty = 1,
-         xaxt = "n",
-         yaxt = "n",
-         pch = 16,
-         xlab = "",
-         ylab = "",
-         ylim = c(0,
-                  100),
-         yaxs = "i")
-    graphics::abline(h = 50,
-                     col = "darkgrey",
-                     lwd = 1.3)
-    graphics::axis(4,
-                   at = seq(0,
-                            100,
-                            20),
-                   tick = TRUE,
-                   labels = TRUE,
-                   las = 0,
-                   cex.axis = 1.3,
-                   cex.lab = 1.3,
-                   yaxs = "i")
-    graphics::mtext("% FOB-associated sets",
-                    side = 4,
-                    line = 2,
-                    cex = 1.3)
+                                  sec.axis = ggplot2::sec_axis(~ . /35,
+                                                               name = "% FOB-associated sets"))
+
+if (graph_type == "plot") {
+  return(ggplot_graph)
   } else if (graph_type == "plotly") {
-    if (figure == "set") {
-      ggplot_set <- ggplot2::ggplot() +
-        ggplot2::geom_bar(data = t_set_pivot,
-                          mapping = ggplot2::aes(x = year,
-                                                 y = nb_sets,
-                                                 fill = type),
-                          stat = "identity",
-                          colour = "black") +
-        ggplot2::scale_fill_manual(values = c("grey95", "grey26")) +
-        ggplot2::scale_y_continuous(name = "Number of sets") +
-        ggplot2::theme_bw() +
-        ggplot2::labs(fill = "")
-      # Plotly
-      plotly_graph <- plotly::ggplotly(ggplot_set)
+      plotly_graph <- plotly::ggplotly(ggplot_graph)
       # Add a title
       if (title == TRUE) {
         plotly_graph <- plotly_graph %>%
@@ -256,40 +188,6 @@ fishing_activity <- function(dataframe,
         plotly::layout(legend = list(orientation = "v",
                                      x = 0.7,
                                      y = 0.95))
-    } else if (figure == "log") {
-      t_set$`%_log` <- round(t_set$`%_log`, 3)
-      ggplot_set <- ggplot2::ggplot() +
-        ggplot2::geom_line(data = t_set,
-                           ggplot2::aes(x = year,
-                                        y = `%_log`)) +
-        ggplot2::geom_point(data = t_set,
-                            ggplot2::aes(x = year,
-                                         y = `%_log`)) +
-        ggplot2::scale_y_continuous(name = "% FOB-associated sets") +
-        ggplot2::theme_bw() +
-        ggplot2::labs(fill = "")
-      # Plotly
-      plotly_graph <- plotly::ggplotly(ggplot_set)
-      # Add a title
-      if (title == TRUE) {
-        plotly_graph <- plotly_graph %>%
-          plotly::layout(title = list(text = paste0("Fishing operations. Percentage of sets on FOB-associated schools in the ",
-                                                    country_legend, " ",
-                                                    vessel_type_legend,
-                                                    "\n",
-                                                    "during ",
-                                                    min(time_period),
-                                                    "-",
-                                                    max(time_period),
-                                                    " in the ",
-                                                    ocean_legend,
-                                                    " ocean."),
-                                      font = list(size = 15)),
-                         margin = list(t = 120))
-
-      }
-      plotly::ggplotly(plotly_graph)
-    }
   } else if (graph_type == "table") {
     table_sets <- table_sets %>%
       dplyr::rename("% on FOB" = "%_log")
