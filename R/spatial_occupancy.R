@@ -66,13 +66,13 @@ spatial_occupancy <- function(dataframe,
                                                  TRUE ~ "und"))
   # Fishing type
   if (fishing_type == "ALL") {
-    st = c("free", "log")
+    st <- c("free", "log")
     label_ft <- ""
   } else if (fishing_type == "FSC") {
-    st = "free"
+    st <- "free"
     label_ft <- " (FSC) "
   } else if (fishing_type == "FOB") {
-    st = "log"
+    st <- "log"
     label_ft <- " (FOB) "
   }
   #db t0 - YEAR and total
