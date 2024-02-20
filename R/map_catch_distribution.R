@@ -388,40 +388,23 @@ map_catch_distribution <- function(dataframe,
                                       names_to = "specie",
                                       values_to = "catch (t)")
     data_pivot$`catch (t)` <- round(data_pivot$`catch (t)`, 3)
-    size_data <- datafile %>%
-      dplyr::group_by(cwp11_act) %>%
-      dplyr::summarize(mean_size = mean(total))
     (map <- ggplot2::ggplot() +
-        ggplot2::theme(legend.position = "top",
-                       legend.justification = "right",
-                       panel.background = ggplot2::element_rect(fill = "white"),
-                       panel.border = ggplot2::element_rect(color = "black",
-                                                            fill = NA,
-                                                            linewidth = 0.3)) +
         ggplot2::geom_sf(data = world_boundaries) +
-        ggplot2::coord_sf(xlim = ocean_xlim,
-                          ylim = ocean_ylim) +
-        ggplot2::geom_point(data = size_data,
-                            ggplot2::aes(x = long,
-                                         y = lat,
-                                         size = mean_size),
-                            shape = 21,
-                            stroke = 0.1,
-                            fill = "black") +
+        ggspatial::coord_sf(xlim = ocean_xlim,
+                            ylim = ocean_ylim) +
         scatterpie::geom_scatterpie(data = datafile,
                                     ggplot2::aes(x = long,
                                                  y = lat,
                                                  r = (sqrt(total) / sqrt(2000)),
                                                  group = cwp11_act),
-                                    cols = c("yft", "skj", "bet"),
-                                    size = total) +
+                                    cols = c("yft", "skj", "bet"))  +
         ggplot2::scale_fill_manual(values = c("yft" = "khaki1",
                                               "skj" = "firebrick2",
-                                              "bet" = "cornflowerblue"),
-                                   name = "Species") +
-        ggplot2::scale_size_continuous(name = "Size in tons",
-                                       breaks = pretty(size_data$mean_size),
-                                       labels = pretty(size_data$mean_size)) +
+                                              "bet" = "cornflowerblue")) +
+        ggplot2::theme(panel.background = ggplot2::element_rect(fill = "white"),
+                       panel.border = ggplot2::element_rect(color = "black",
+                                                            fill = NA,
+                                                            size = 0.3))  +
         ggplot2::geom_hline(yintercept = ocean_yintercept,
                             linetype = "dashed",
                             color = "darkgrey",
@@ -429,10 +412,7 @@ map_catch_distribution <- function(dataframe,
         ggplot2::geom_vline(xintercept = ocean_xintercept,
                             linetype = "dashed",
                             color = "darkgrey",
-                            linewidth = 0.2) +
-        ggplot2::labs(fill = "In tons",
-                      x = "",
-                      y = ""))
+                            linewidth = 0.2))
     return(map)
   } else if (graph_type == "plotly") {
     if (ocean == 1) {
@@ -460,32 +440,42 @@ map_catch_distribution <- function(dataframe,
                                       values_to = "catch (t)")
     data_pivot$`catch (t)` <- round(data_pivot$`catch (t)`, 3)
     (map <- ggplot2::ggplot() +
-      ggplot2::geom_sf(data = world_boundaries) +
-      ggspatial::coord_sf(xlim = ocean_xlim,
-                          ylim = ocean_ylim) +
-      scatterpie::geom_scatterpie(data = datafile,
-                                  ggplot2::aes(x = long,
-                                               y = lat,
-                                               r = (sqrt(total) / sqrt(2000)),
-                                               group = cwp11_act),
-                                  cols = c("yft", "skj", "bet"))  +
-      ggplot2::scale_fill_manual(values = c("yft" = "khaki1",
-                                            "skj" = "firebrick2",
-                                            "bet" = "cornflowerblue")) +
-      ggplot2::theme(panel.background = ggplot2::element_rect(fill = "white"),
-                     panel.border = ggplot2::element_rect(color = "black",
-                                                          fill = NA,
-                                                          size = 0.3))  +
-      ggplot2::geom_hline(yintercept = ocean_yintercept,
-                          linetype = "dashed",
-                          color = "darkgrey",
-                          linewidth = 0.2) +
-      ggplot2::geom_vline(xintercept = ocean_xintercept,
-                          linetype = "dashed",
-                          color = "darkgrey",
-                          linewidth = 0.2))
-    # Plotly
-    plotly_map <- plotly::ggplotly(map)
+        ggplot2::theme(legend.position = "top",
+                       legend.justification = "right",
+                       panel.background = ggplot2::element_rect(fill = "white"),
+                       panel.border = ggplot2::element_rect(color = "black",
+                                                            fill = NA,
+                                                            linewidth = 0.3),
+                       axis.title.x = ggplot2::element_blank(),
+                       axis.title.y = ggplot2::element_blank()) +
+        ggplot2::geom_sf(data = world_boundaries) +
+        ggspatial::coord_sf(xlim = ocean_xlim,
+                            ylim = ocean_ylim) +
+        ggplot2::geom_point(data = datafile,
+                            ggplot2::aes(x     = long,
+                                         y     = lat,
+                                         color = total,
+                                         size  = total,
+                                         text  = paste("bet: ", bet,
+                                                       "<br>yft: ", yft,
+                                                       "<br>skj: ", skj)),
+                            alpha = 0.65) +
+        ggplot2::scale_color_viridis_c(option = "plasma") +
+        ggplot2::guides(size = "none") +
+        ggplot2::labs(color = "Catch in t") +
+        ggplot2::theme(panel.background = ggplot2::element_rect(fill = "white"),
+                       panel.border = ggplot2::element_rect(color = "black", fill = NA, size = 0.3))  +
+        ggplot2::geom_hline(yintercept = ocean_yintercept,
+                            linetype = "dashed",
+                            color = "darkgrey",
+                            linewidth = 0.2) +
+        ggplot2::geom_vline(xintercept = ocean_xintercept,
+                            linetype = "dashed",
+                            color = "darkgrey",
+                            linewidth = 0.2))
+
+    plotly_map <- plotly::ggplotly(map) %>%
+      plotly::style(hoverinfo = "text")
     # Add a title
     if (title == TRUE) {
       plotly_map <- plotly_map %>%

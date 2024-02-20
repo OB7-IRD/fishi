@@ -22,7 +22,8 @@
 #' @return The function return ggplot R plot.
 #' @export
 fishing_activity <- function(dataframe,
-                             graph_type = "plot",title = FALSE) {
+                             graph_type = "plot",
+                             title = FALSE) {
   # 0 - Global variables assignement ----
   activity_date <- NULL
   total_set <- NULL

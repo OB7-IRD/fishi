@@ -240,8 +240,8 @@ catch_per_unit_effort <- function(dataframe1,
                     y = "Catch per unit effort (t/d)") +
       ggplot2::ylim(0, 20) +
       ggplot2::guides(shape = ggplot2::guide_legend(title = NULL)) +
-      ggplot2::annotate("text", x = max(dataframe$year),
-                        y = max(dataframe$total),
+      ggplot2::annotate("text", x = max(dataframe$year) - 1,
+                        y = max(dataframe$total) - 1,
                         label = label_ft,
                         hjust = 1.2,
                         vjust = 0.002,
