@@ -1,6 +1,6 @@
 select
 	r.date as activity_date
-	,v.keelcode::numeric as c_quille
+	,v.keelcode::numeric as keel_code
 	,c.weight::numeric as catch 
 	,o.code::numeric as ocean_id
 	,ct.code::numeric as country_id
