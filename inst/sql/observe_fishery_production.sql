@@ -1,6 +1,6 @@
 select
 	r.date as activity_date
-	,o.label1 AS ocean_name
+	,o.label1 AS ocean_label
 	,CASE
 	WHEN vt.code::numeric IN (1,2,3)	THEN 'BB'
 	WHEN vt.code::numeric IN (4,5,6)	THEN 'PS'
@@ -10,16 +10,17 @@ select
 	END AS gear
 	,ct.iso3code as fleet
 	,ct.iso3code as flag
-	,s.code as c_esp
-	,c.weight::numeric as catch 
-	,CASE
-	WHEN st.code::numeric IN (0) THEN 'IND'
-	WHEN st.code::numeric IN (1) THEN 'BO'
-	WHEN st.code::numeric IN (2) THEN 'BL'
-	END AS l4c_tban
-	,o.code::numeric as ocean_id
-	,vt.code::numeric as vessel_type_id
-	,ct.code::numeric as country_id
+	,s.code as species_code
+	,c.weight::numeric as total_catch_weight 
+	-- ,CASE
+	-- WHEN st.code::numeric IN (0) THEN 'IND'
+	-- WHEN st.code::numeric IN (1) THEN 'BO'
+	-- WHEN st.code::numeric IN (2) THEN 'BL'
+	-- END AS l4c_tban
+	,st.code::numeric as school_code
+	,o.code::numeric as ocean_code
+	,vt.code::numeric as vessel_type_code
+	,ct.code::numeric as country_code
 from
 	ps_logbook.catch c
 	INNER JOIN ps_logbook.activity a ON c.activity = a.topiaid 

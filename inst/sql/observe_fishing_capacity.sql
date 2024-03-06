@@ -1,10 +1,10 @@
 select
 	r.date as activity_date
-	,v.keelcode::numeric as c_quille
+	,v.keelcode::numeric as keel_code
 	,c.weight::numeric as catch 
-	,o.code::numeric as ocean_id
-	,ct.code::numeric as country_id
-	,vt.code::numeric as vessel_type_id
+	,o.code::numeric as ocean_code
+	,ct.code::numeric as country_code
+	,vt.code::numeric as vessel_type_code
 from
 	ps_logbook.catch c
 	INNER JOIN ps_logbook.activity a ON c.activity = a.topiaid 
@@ -20,4 +20,3 @@ where
 	AND vt.code::numeric IN (?vessel_type)
 	AND o.code::numeric IN (?ocean)
 ;
-
