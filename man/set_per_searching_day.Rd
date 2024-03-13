@@ -12,7 +12,7 @@ set_per_searching_day(
 )
 }
 \arguments{
-\item{dataframe}{{\link[base]{data.frame}} expected. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the set_per_searching_day() function.}
+\item{dataframe}{{\link[base]{data.frame}} expected. Csv or output of the function {\link[furdeb]{data_extraction}}, which must be done before using the set_per_searching_day() function.}
 
 \item{fishing_type}{{\link[base]{character}} expected. FOB and FSC.}
 
@@ -30,16 +30,16 @@ Annual number of sets per searching day on FOB-associated and free-swimming scho
 The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:
 \itemize{
  \item{\code{  activity_date}}
- \item{\code{  c_tban}}
- \item{\code{  v_dur_cal}}
- \item{\code{  v_nb_calee_pos}}
- \item{\code{  v_nb_calees}}
- \item{\code{  v_tpec}}
+ \item{\code{  school_code}}
+ \item{\code{  set_duration}}
+ \item{\code{  positive_set}}
+ \item{\code{  total_set}}
+ \item{\code{  total_hour_fished}}
 }
 Add these columns for an automatic title (optional):
 \itemize{
- \item{\code{  country_id}}
- \item{\code{  ocean_id}}
- \item{\code{  vessel_type_id}}
+ \item{\code{  country_code}}
+ \item{\code{  ocean_code}}
+ \item{\code{  vessel_type_code}}
 }
 }

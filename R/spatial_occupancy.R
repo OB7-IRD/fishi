@@ -1,41 +1,38 @@
 #' @name spatial_occupancy
 #' @title Spatial occupancy
 #' @description Changes in the spatial extent of the fishery over time. Annual number of 1-degree squares explored by each vessel.
-#' @param dataframe {\link[base]{data.frame}} expected. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the spatial_occupancy function.
+#' @param dataframe {\link[base]{data.frame}} expected. Csv or output of the function {\link[furdeb]{data_extraction}}, which must be done before using the spatial_occupancy function.
 #' @param graph_type {\link[base]{character}} expected. plot, plotly or table. Plot by default.
+#' @param fishing_type {\link[base]{character}} expected. ALL, FOB and FSC.
 #' @param title TRUE or FALSE expected. False by default.
 #' @details
 #' The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:
 #' \itemize{
 #'  \item{\code{  activity_date}}
 #'  \item{\code{  cwp11_act}}
-#'  \item{\code{  v_nb_calee_pos}}
-#'  \item{\code{  v_nb_calees}}
-#'  \item{\code{  v_tpec}}
+#'  \item{\code{  positive_set}}
+#'  \item{\code{  total_set}}
+#'  \item{\code{  total_hour_fished}}
+#'  \item{\code{  school_type}}
 #' }
 #' Add these columns for an automatic title (optional):
 #' \itemize{
-#'  \item{\code{  country_id}}
-#'  \item{\code{  ocean_id}}
-#'  \item{\code{  vessel_type_id}}
+#'  \item{\code{  country_code}}
+#'  \item{\code{  ocean_code}}
+#'  \item{\code{  vessel_type_code}}
 #' }
 #' @return The function return ggplot R plot.
 #' @export
-#' @importFrom dplyr mutate tibble group_by summarise n_distinct filter
-#' @importFrom lubridate year
-#' @importFrom graphics par plot axis lines abline legend text
-#' @importFrom ggplot2 ggplot aes geom_line scale_color_manual geom_point labs ylim theme_bw
-#' @importFrom plotly ggplotly
-#' @importFrom codama r_type_checking
 spatial_occupancy <- function(dataframe,
                               graph_type = "plot",
+                              fishing_type = "ALL",
                               title = FALSE) {
   # 0 - Global variables assignement ----
   activity_date <- NULL
   cwp11_act <- NULL
-  v_nb_calees <- NULL
-  v_nb_calee_pos <- NULL
-  v_tpec <- NULL
+  total_set <- NULL
+  positive_set <- NULL
+  total_hour_fished <- NULL
   t_pec <- NULL
   sumvtpec <- NULL
   total <- NULL
@@ -43,6 +40,8 @@ spatial_occupancy <- function(dataframe,
   `Effort > 1 d` <- NULL
   `#sets` <- NULL
   time_period <- NULL
+  year <- NULL
+  school_type <- NULL
   # 1 - Arguments verification ----
   if (codama::r_type_checking(r_object = graph_type,
                               type = "character",
@@ -60,40 +59,61 @@ spatial_occupancy <- function(dataframe,
   }
   # 2 - Data design ----
   spatial_occupancy_t1 <- dataframe %>%
-    dplyr::mutate(year = lubridate::year(x = activity_date))
+    dplyr::mutate(year = lubridate::year(x = activity_date),
+                  school_type = dplyr::case_when(school_code == "IND" ~ "free",
+                                                 school_code == "BL"  ~ "free",
+                                                 school_code == "BO"  ~ "log",
+                                                 TRUE ~ "und"))
+  # Fishing type
+  if (fishing_type == "ALL") {
+    st <- c("free", "log")
+    label_ft <- ""
+  } else if (fishing_type == "FSC") {
+    st <- "free"
+    label_ft <- " (FSC) "
+  } else if (fishing_type == "FOB") {
+    st <- "log"
+    label_ft <- " (FOB) "
+  }
   #db t0 - YEAR and total
   t0 <- spatial_occupancy_t1 %>%
     dplyr::group_by(year) %>%
+    dplyr::filter(school_type %in% st) %>%
     dplyr::summarise("total" = dplyr::n_distinct(cwp11_act),
                      .groups = "drop")
   #db t1 - YEAR and #SETS
   t1 <- spatial_occupancy_t1 %>%
-    dplyr::filter(v_nb_calees > 0) %>%
+    dplyr::filter(total_set > 0) %>%
+    dplyr::filter(school_type %in% st) %>%
     dplyr::group_by(year) %>%
     dplyr::summarise("#sets" = dplyr::n_distinct(cwp11_act),
                      .groups = "drop")
   #db t2 - YEAR AND CATCH > 0
   t2 <- spatial_occupancy_t1 %>%
-    dplyr::filter(v_nb_calee_pos > 0) %>%
+    dplyr::filter(positive_set > 0) %>%
+    dplyr::filter(school_type %in% st) %>%
     dplyr::group_by(year) %>%
     dplyr::summarise("Catch > 0" = dplyr::n_distinct(cwp11_act),
                      .groups = "drop")
   #db Effort > x d
   spatial_occupancy_t2 <- spatial_occupancy_t1 %>%
     dplyr::group_by(year,
-                    cwp11_act) %>%
-    dplyr::summarise("t_pec" = sum(v_tpec, na.rm = TRUE),
-                     "sumvtpec" = t_pec / 12,
-                     .groups = "drop")
+                    cwp11_act,
+                    school_type) %>%
+    dplyr::reframe("t_pec" = sum(total_hour_fished, na.rm = TRUE),
+                   "sumvtpec" = t_pec / 12)
+
   #db t3 - YEAR and EFFORT > 1 D
   t3 <- spatial_occupancy_t2 %>%
     dplyr::filter(sumvtpec >= 1.5) %>%
+    dplyr::filter(school_type %in% st) %>%
     dplyr::group_by(year) %>%
     dplyr::summarise("Effort > 1 d" = dplyr::n_distinct(cwp11_act),
                      .groups = "drop")
   #db t4 - YEAR and EFFORT > 5 D
   t4 <- spatial_occupancy_t2 %>%
     dplyr::filter(sumvtpec >= 5.5) %>%
+    dplyr::filter(school_type %in% st) %>%
     dplyr::group_by(year) %>%
     dplyr::summarise("Effort > 5 d" = dplyr::n_distinct(cwp11_act),
                      .groups = "drop")
@@ -106,153 +126,94 @@ spatial_occupancy <- function(dataframe,
   # 3 - Legend design ----
   if (title == TRUE) {
     #Ocean
-    ocean_legend <- code_manipulation(data         = dataframe$ocean_id,
+    ocean_legend <- code_manipulation(data         = dataframe$ocean_code,
                                       referential  = "ocean",
                                       manipulation = "legend")
     #country
-    country_legend <- code_manipulation(data         = dataframe$country_id,
+    country_legend <- code_manipulation(data         = dataframe$country_code,
                                         referential  = "country",
                                         manipulation = "legend")
     #vessel
-    vessel_type_legend <- code_manipulation(data         = dataframe$vessel_type_id,
+    vessel_type_legend <- code_manipulation(data         = dataframe$vessel_type_code,
                                             referential  = "vessel_simple_type",
                                             manipulation = "legend")
     # time_period
     time_period <- c(unique(min(spatial_occupancy_t1$year):max(spatial_occupancy_t1$year)))
   }
   # 4 - Graphic design ----
+  (ggplot_table_occ <- ggplot2::ggplot(data = table_occ) +
+     # Theme and background
+     ggplot2::geom_hline(yintercept = c(100, 200, 300, 400),
+                         color = "grey",
+                         linetype = "longdash",
+                         alpha = 0.5) +
+     ggplot2::scale_x_continuous(expand = c(0, 0),
+                                 breaks = table_occ$year) +
+     ggplot2::theme_bw() +
+     ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 45,
+                                                        hjust = 1,
+                                                        size = 13),
+                    axis.text.y = ggplot2::element_text(size = 13),
+                    axis.title.y = ggplot2::element_text(size = 14),
+                    legend.position = "top",
+                    legend.justification = "right",
+                    panel.background = ggplot2::element_rect(fill = "white",
+                                                             color = "black"),
+                    panel.grid.major = ggplot2::element_blank(),
+                    panel.grid.minor.x = ggplot2::element_blank(),
+                    panel.grid.major.y = ggplot2::element_line(size = 0.2,
+                                                               color = "gray90")) +
+     # Lines and points
+     ggplot2::geom_line(ggplot2::aes(x = year,
+                                     y = total),
+                        size = 0.15) +
+     ggplot2::geom_line(ggplot2::aes(x = year,
+                                     y = `#sets`),
+                        linetype = "dashed",
+                        size = 0.15) +
+     ggplot2::geom_line(ggplot2::aes(x = year,
+                                     y = `Catch > 0`),
+                        linetype = "dashed",
+                        size = 0.15) +
+     ggplot2::geom_line(ggplot2::aes(x = year,
+                                     y = `Effort > 1 d`),
+                        linetype = "dashed",
+                        size = 0.15) +
+     ggplot2::geom_point(ggplot2::aes(x = year,
+                                      y = total,
+                                      shape = "total")) +
+     ggplot2::geom_point(ggplot2::aes(x = year,
+                                      y = `Catch > 0`,
+                                      shape = "With catch > 0"),
+                         size = 2) +
+     ggplot2::geom_point(ggplot2::aes(x = year,
+                                      y = `Effort > 1 d`,
+                                      shape = "With Effort > 1 d"),
+                         size = 2) +
+     ggplot2::geom_point(ggplot2::aes(x = year,
+                                      y = `#sets`,
+                                      shape = "With #sets > 1"),
+                         size = 2) +
+     ggplot2::scale_shape_manual(values = c("total" =  18,
+                                            "With #sets > 1" = 4,
+                                            "With Effort > 1 d" = 17,
+                                            "With catch > 0" = 15)) +
+     ggplot2::labs(x = "",
+                   y = "Spatial occupancy",
+                   color = "") +
+     ggplot2::ylim(0, 500)  +
+     ggplot2::guides(shape = ggplot2::guide_legend(title = NULL)) +
+     ggplot2::annotate("text",
+                       x = max(table_occ$year),
+                       y = 500,
+                       label = label_ft,
+                       hjust = 1.2,
+                       vjust = 0.9,
+                       size = 5,
+                       color = "black"))
   if (graph_type == "plot") {
-    graphics::par(mar = c(5, 4.7, 4.1, 1.5))
-    # Define the positions of the x-axis tick marks
-    x_tick_pos <- seq(min(table_occ$year), max(table_occ$year))
-    if (title == TRUE) {
-      graphics::plot(table_occ$year,
-                     table_occ$total,
-                     type = "b",
-                     xlab = "",
-                     ylab = "Spatial occupancy",
-                     cex.axis = 1.4,
-                     cex.lab = 1.4,
-                     cex.main = 1,
-                     main = paste0("Changes in the spatial extent of the fishery over time. Annual number of 1 degree",
-                                   "\n",
-                                   "squares explored by each vessel of the ",
-                                   country_legend,
-                                   " ",
-                                   vessel_type_legend,
-                                   " fishing fleet during ",
-                                   "\n",
-                                   min(time_period),
-                                   "-",
-                                   max(time_period),
-                                   " in the ",
-                                   ocean_legend,
-                                   " ocean."),
-                     ylim = c(0,
-                              max(table_occ$total,
-                                  na.rm = TRUE) * 1.05),
-                     pch = 18,
-                     xaxt = "n")
-    } else {
-      graphics::plot(table_occ$year,
-                     table_occ$total,
-                     type = "b",
-                     xlab = "",
-                     ylab = "Spatial occupancy",
-                     cex.axis = 1.4,
-                     cex.lab = 1.4,
-                     main = "",
-                     ylim = c(0,
-                              max(table_occ$total,
-                                  na.rm = TRUE) * 1.05),
-                     pch = 18,
-                     xaxt = "n")
-    }
-    # Add the x-axis tick marks without labels
-    graphics::axis(1,
-                   at = x_tick_pos,
-                   tick = TRUE,
-                   labels = FALSE)
-    graphics::text(x = x_tick_pos,
-                   y = par("usr")[3] - 10,
-                   labels = table_occ$year,
-                   srt = 45,
-                   adj = 1,
-                   xpd = TRUE,
-                   cex = 1.2)
-    graphics::lines(table_occ$year,
-                    table_occ[, 3],
-                    type = "b",
-                    lty = 2,
-                    pch = 4)
-    graphics::lines(table_occ$year,
-                    table_occ[, 4],
-                    type = "b",
-                    lty = 2,
-                    pch = 15)
-    graphics::lines(table_occ$year,
-                    table_occ[, 5],
-                    type = "b",
-                    lty = 2,
-                    pch = 17)
-    graphics::legend("topright",
-                     legend = c("total",
-                                "With # sets > 1",
-                                "With catch > 0",
-                                "With effort > 1 d"),
-                     pch = c(18,
-                             4,
-                             15,
-                             17),
-                     bty = "n",
-                     lty = c(1,
-                             2,
-                             2,
-                             2),
-                     cex = 1.3)
-    graphics::abline(h = seq(100,
-                             400,
-                             100),
-                     lty = 2,
-                     col = "lightgrey")
+    return(ggplot_table_occ)
   } else if (graph_type == "plotly") {
-    ggplot_table_occ <- ggplot2::ggplot(data = table_occ) +
-      ggplot2::geom_line(ggplot2::aes(x = year,
-                                      y = total)) +
-      ggplot2::geom_line(ggplot2::aes(x = year,
-                                      y = `Catch > 0`),
-                         linetype = "dashed") +
-      ggplot2::geom_line(ggplot2::aes(x = year,
-                                      y = `Effort > 1 d`),
-                         linetype = "dashed") +
-      ggplot2::geom_line(ggplot2::aes(x = year,
-                                      y = `#sets`),
-                         linetype = "dashed") +
-      ggplot2::scale_color_manual(values = c("black",
-                                             "black",
-                                             "black",
-                                             "black")) +
-      ggplot2::geom_point(ggplot2::aes(x = year,
-                                       y = total,
-                                       color = "total")) +
-      ggplot2::geom_point(ggplot2::aes(x = year,
-                                       y = `Catch > 0`,
-                                       color = "With catch > 0"),
-                          shape = 15, size = 2) +
-      ggplot2::geom_point(ggplot2::aes(x = year,
-                                       y = `Effort > 1 d`,
-                                       color = "With Effort > 1 d"),
-                          shape = 17, size = 2) +
-      ggplot2::geom_point(ggplot2::aes(x = year,
-                                       y = `#sets`,
-                                       color = "With #sets > 1"),
-                          shape = 4, size = 2) +
-
-      ggplot2::labs(x = "",
-                    y = "Spatial occupancy",
-                    colour = "") +
-      ggplot2::ylim(0, 500) +
-      ggplot2::theme_bw()
     # Plotly
     plotly_graph <- plotly::ggplotly(ggplot_table_occ)
     # Add a title

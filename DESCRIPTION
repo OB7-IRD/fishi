@@ -31,7 +31,6 @@ LazyData: true
 RoxygenNote: 7.2.1
 Imports: 
     magrittr,
-    DBI (>= 1.1.1),
     dplyr (>= 1.0.10),
     ggplot2 (>= 3.3.5),
     ggspatial (>= 1.1.7),
@@ -39,15 +38,14 @@ Imports:
     rnaturalearth (>= 0.1.0),
     forcats (>= 0.5.2),
     codama (>= 0.9.0),
-    RColorBrewer (>= 1.1.3),
     plotrix (>= 3.8.2),
     maps (>= 3.4.1),
     plotly (>= 4.10.1),
     tidyr (>= 1.3.0),
-    scatterpie (>= 0.1.8),
-    readr (>= 2.1.4),
     readxl (>= 1.4.3),
-    grDevices,
+    cowplot (>= 1.1.1),
+    gridExtra (>= 2.3.0),
+    scatterpie, 
     utils
 URL: https://github.com/OB7-IRD/fishi
 BugReports: https://github.com/OB7-IRD/fishi/issues

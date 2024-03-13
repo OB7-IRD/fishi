@@ -7,10 +7,6 @@
 #' @param end_date {\link[base]{date}} expected. Write the end date of the contract
 #' @return The function return table.
 #' @export
-#' @importFrom readxl read_excel
-#' @importFrom dplyr mutate filter group_by summarize n
-#' @importFrom lubridate date
-
 biological_UO_count <- function(path_file,
                                 graph_type = "number",
                                 start_date = NULL,

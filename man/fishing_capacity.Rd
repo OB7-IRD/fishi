@@ -2,21 +2,14 @@
 % Please edit documentation in R/fishing_capacity.R
 \name{fishing_capacity}
 \alias{fishing_capacity}
-\title{Annual changes in the number of vessels}
+\title{Annual changes in the number of vessel}
 \usage{
-fishing_capacity(
-  dataframe,
-  graph_type = "plot",
-  figure = "vessel",
-  title = FALSE
-)
+fishing_capacity(dataframe, graph_type = "plot", title = FALSE)
 }
 \arguments{
-\item{dataframe}{{\link[base]{data.frame}} expected. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the fishing_capacity() function.}
+\item{dataframe}{{\link[base]{data.frame}} expected. Csv or output of the function {\link[furdeb]{data_extraction}}, which must be done before using the fishing_capacity() function.}
 
 \item{graph_type}{{\link[base]{character}} expected. plot, plotly or table. Plot by default.}
-
-\item{figure}{{\link[base]{character}} expected. For plotly figure: vessel (for number of vessels graph) or capacity (for carrying capacity graph). vessel by default.}
 
 \item{title}{TRUE or FALSE expected. False by default.}
 }
@@ -31,12 +24,12 @@ The input dataframe must contain all these columns for the function to work [\hr
 \itemize{
  \item{\code{  activity_date}}
  \item{\code{  catch}}
- \item{\code{  c_quille}}
+ \item{\code{  keel_code}}
 }
 Add these columns for an automatic title (optional):
 \itemize{
- \item{\code{  country_id}}
- \item{\code{  ocean_id}}
- \item{\code{  vessel_type_id}}
+ \item{\code{  country_code}}
+ \item{\code{  ocean_code}}
+ \item{\code{  vessel_type_code}}
 }
 }
