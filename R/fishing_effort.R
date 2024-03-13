@@ -159,98 +159,44 @@ fishing_effort <- function(dataframe,
     time_period <- c(unique(min(fishing_effort_t1$year):max(fishing_effort_t1$year)))
   }
   # 4 - Graphic design ----
+  (ggplot_table_effort <- ggplot2::ggplot(data = table_effort) +
+     ggplot2::geom_hline(yintercept = c(1:5),
+                         color = "grey",
+                         linetype = "longdash",
+                         alpha = 0.5) +
+     ggplot2::theme(panel.background = ggplot2::element_rect(fill = "white",
+                                                             color = "black"),
+                    axis.text.x = ggplot2::element_text(angle = 45,
+                                                        hjust = 1,
+                                                        size = 13),
+                    axis.text.y = ggplot2::element_text(size = 13),
+                    axis.title.y = ggplot2::element_text(size = 14)) +
+     ggplot2::geom_line(ggplot2::aes(x = year,
+                                     y = fishing_days,
+                                     color = "Fishing")) +
+     ggplot2::geom_line(ggplot2::aes(x = year,
+                                     y = searching_days,
+                                     color = "Searching"),
+                        linetype = "dashed") +
+     ggplot2::scale_color_manual(values = c("black",
+                                            "grey")) +
+     ggplot2::geom_point(ggplot2::aes(x = year,
+                                      y = fishing_days)) +
+     ggplot2::geom_point(ggplot2::aes(x = year,
+                                      y = searching_days),
+                         shape = 4) +
+
+     ggplot2::labs(x = "",
+                   y = "Activity duration (x1000 days)") +
+     ggplot2::ylim(0.5,
+                   5) +
+     ggplot2::labs(colour = "") +
+     ggplot2::scale_x_continuous(breaks = unique(table_effort$year)) +
+     ggplot2::theme(legend.position = c(0.84, 0.97),
+                    legend.justification = c(0, 1)))
   if (graph_type == "plot") {
-    graphics::par(mar = c(4, 4.7, 4.1, 1.5))
-    # Define the positions of the x-axis tick marks
-    x_tick_pos <- seq(min(table_effort$year), max(table_effort$year))
-    # plot the graph
-    if (title == TRUE) {
-      graphics::plot(table_effort$year,
-                     table_effort$fishing_days,
-                     type = "b",
-                     xlab = "",
-                     ylab = "Activity duration (x1000 days)",
-                     cex.axis = 1.4,
-                     cex.lab = 1.4,
-                     cex.main = 1,
-                     main =       paste0("Changes in nominal effort over time. Annual total number of fishing and searching", "\n",
-                                         "days for the ", country_legend, " ",
-                                         vessel_type_legend,
-                                         " in the ",
-                                         ocean_legend,
-                                         " ocean during ",
-                                         min(time_period),
-                                         "-",
-                                         max(time_period), "."),
-                     ylim = c(0, max(table_effort$fishing_days * 1.1, na.rm = TRUE)),
-                     pch = 18,
-                     xaxt = "n")
-    } else {
-      graphics::plot(table_effort$year,
-                     table_effort$fishing_days,
-                     type = "b",
-                     xlab = "",
-                     ylab = "Activity duration (x1000 days)",
-                     cex.axis = 1.4,
-                     cex.lab = 1.4,
-                     main = "",
-                     ylim = c(0, max(table_effort$fishing_days * 1.1, na.rm = TRUE)),
-                     pch = 18,
-                     xaxt = "n")
-    }
-    # Add the x-axis tick marks without labels
-    graphics::axis(1,
-                   at = x_tick_pos,
-                   tick = TRUE,
-                   labels = FALSE)
-    graphics::text(x = x_tick_pos,
-                   y = graphics::par("usr")[3] - 0.15,
-                   labels = table_effort$year,
-                   srt = 45,
-                   adj = 1,
-                   xpd = TRUE,
-                   cex = 1.2)
-
-    graphics::lines(table_effort$year,
-                    table_effort$searching_days,
-                    type = "b",
-                    lty = 2,
-                    pch = 4)
-    graphics::legend("topleft",
-                     legend = c("Fishing",
-                                "Searching"),
-                     pch = c(18, 4),
-                     bty = "n",
-                     lty = c(1, 2),
-                     cex = 1.3)
-    graphics::abline(h = seq(1,
-                             5,
-                             1),
-                     lty = 2,
-                     col = "lightgrey")
+    return(ggplot_table_effort)
   } else if (graph_type == "plotly") {
-    ggplot_table_effort <- ggplot2::ggplot(data = table_effort) +
-      ggplot2::geom_line(ggplot2::aes(x = year,
-                                      y = fishing_days,
-                                      color = "Fishing")) +
-      ggplot2::geom_line(ggplot2::aes(x = year,
-                                      y = searching_days,
-                                      color = "Searching"),
-                         linetype = "dashed") +
-      ggplot2::scale_color_manual(values = c("black",
-                                             "grey")) +
-      ggplot2::geom_point(ggplot2::aes(x = year,
-                                       y = fishing_days)) +
-      ggplot2::geom_point(ggplot2::aes(x = year,
-                                       y = searching_days),
-                          shape = 4) +
-
-      ggplot2::labs(x = "",
-                    y = "Activity duration (x1000 days)") +
-      ggplot2::ylim(0, 5) +
-      ggplot2::theme_bw() +
-      ggplot2::labs(colour = "")
-    # Plotly
     plotly_graph <- plotly::ggplotly(ggplot_table_effort)
     # Add a title
     if (title == TRUE) {
@@ -287,7 +233,5 @@ fishing_effort <- function(dataframe,
                     "Number of trips" = "nb_landings_in_activity_year",
                     "Mean duration in days" = "average_nb_days_by_trip")
     as.data.frame(table_effort)
-
-
   }
 }

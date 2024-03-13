@@ -4,14 +4,12 @@
 \alias{fishing_activity}
 \title{Annual number of fishing sets}
 \usage{
-fishing_activity(dataframe, graph_type = "plot", figure = "set", title = FALSE)
+fishing_activity(dataframe, graph_type = "plot", title = FALSE)
 }
 \arguments{
 \item{dataframe}{{\link[base]{data.frame}} expected. Csv or output of the function {\link[furdeb]{data_extraction}}, which must be done before using the fishing_activity() function.}
 
 \item{graph_type}{{\link[base]{character}} expected. plot, plotly or table. Plot by default.}
-
-\item{figure}{{\link[base]{character}} expected. For plotly figure: set (for number of sets graph) or log (for percentage FOB-associated sets graph). set by default.}
 
 \item{title}{TRUE or FALSE expected. False by default.}
 }

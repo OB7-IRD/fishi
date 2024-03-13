@@ -40,9 +40,10 @@ map_catch_distribution <- function(dataframe,
   total_catch_weight <- NULL
   wrld_simpl <- NULL
   total <- NULL
+  mean_size <- NULL
+  bet <- NULL
   yft <- NULL
   skj <- NULL
-  bet <- NULL
   # 1 - Arguments verification ----
   if (codama::r_type_checking(r_object = fishing_type,
                               type = "character",
@@ -365,7 +366,18 @@ map_catch_distribution <- function(dataframe,
                                     "firebrick2",
                                     "cornflowerblue"))
     }
-  } else if (graph_type == "plotly") {
+  } else if (graph_type == "ggplot") {
+    if (ocean == 1) {
+      ocean_xlim <- c(-40, 15)
+      ocean_ylim <- c(-25, 25)
+      ocean_xintercept <- c(-30, -20, -10, 0, 10)
+      ocean_yintercept <- c(-20, -10, 0, 10, 20)
+    } else if (ocean == 2) {
+      ocean_xlim <- c(30, 90)
+      ocean_ylim <- c(-30, 20)
+      ocean_xintercept <- c(40, 50, 60, 70, 80)
+      ocean_yintercept <- c(10, 0, -10, -20)
+    }
     datafile$lat <- quad2pos(as.numeric(datafile$cwp11_act + 5 * 1e6))$y
     datafile$long <- quad2pos(as.numeric(datafile$cwp11_act + 5 * 1e6))$x
     world_boundaries <- rnaturalearth::ne_countries(returnclass = "sf",
@@ -379,41 +391,97 @@ map_catch_distribution <- function(dataframe,
                                       names_to = "specie",
                                       values_to = "catch (t)")
     data_pivot$`catch (t)` <- round(data_pivot$`catch (t)`, 3)
+    (map <- ggplot2::ggplot() +
+        ggplot2::theme(legend.position = "top",
+                       legend.justification = "right",
+                       panel.background = ggplot2::element_rect(fill = "white"),
+                       panel.border = ggplot2::element_rect(color = "black",
+                                                            fill = NA,
+                                                            size = 0.3))  +
+        ggplot2::geom_sf(data = world_boundaries) +
+        ggspatial::coord_sf(xlim = ocean_xlim,
+                            ylim = ocean_ylim) +
+        scatterpie::geom_scatterpie(data = datafile,
+                                    ggplot2::aes(x = long,
+                                                 y = lat,
+                                                 r = (sqrt(total) / sqrt(2000)),
+                                                 group = cwp11_act),
+                                    cols = c("yft", "skj", "bet"))  +
+        ggplot2::scale_fill_manual(values = c("yft" = "khaki1",
+                                              "skj" = "firebrick2",
+                                              "bet" = "cornflowerblue")) +
+        ggplot2::geom_hline(yintercept = ocean_yintercept,
+                            linetype = "dashed",
+                            color = "darkgrey",
+                            linewidth = 0.2) +
+        ggplot2::labs(fill = "Catch in t") +
+        ggplot2::geom_vline(xintercept = ocean_xintercept,
+                            linetype = "dashed",
+                            color = "darkgrey",
+                            linewidth = 0.2))
+    return(map)
+  } else if (graph_type == "plotly") {
     if (ocean == 1) {
-      map <- ggplot2::ggplot() +
-        ggplot2::geom_sf(data = world_boundaries) +
-        ggspatial::coord_sf(xlim = c(-40,
-                                     15),
-                            ylim = c(-25,
-                                     25)) +
-        ggplot2::geom_point(data = datafile,
-                            ggplot2::aes(x     = long,
-                                         y     = lat,
-                                         color = total,
-                                         size  = total,
-                                         text  = paste("yft :", yft, "\n",
-                                                       "skj :", skj, "\n",
-                                                       "bet:", bet))) +
-        ggplot2::scale_color_viridis_c(option = "plasma")
+      ocean_xlim <- c(-40, 15)
+      ocean_ylim <- c(-25, 25)
+      ocean_xintercept <- c(-30, -20, -10, 0, 10)
+      ocean_yintercept <- c(-20, -10, 0, 10, 20)
     } else if (ocean == 2) {
-      map <- ggplot2::ggplot() +
+      ocean_xlim <- c(30, 90)
+      ocean_ylim <- c(-30, 20)
+      ocean_xintercept <- c(40, 50, 60, 70, 80)
+      ocean_yintercept <- c(10, 0, -10, -20)
+    }
+    datafile$lat <- quad2pos(as.numeric(datafile$cwp11_act + 5 * 1e6))$y
+    datafile$long <- quad2pos(as.numeric(datafile$cwp11_act + 5 * 1e6))$x
+    world_boundaries <- rnaturalearth::ne_countries(returnclass = "sf",
+                                                    scale       = "medium")
+    datafile$total <- round(datafile$total, 3)
+    datafile$yft <- round(datafile$yft, 3)
+    datafile$skj <- round(datafile$skj, 3)
+    datafile$bet <- round(datafile$bet, 3)
+    data_pivot <- tidyr::pivot_longer(datafile,
+                                      cols = c(2:4),
+                                      names_to = "specie",
+                                      values_to = "catch (t)")
+    data_pivot$`catch (t)` <- round(data_pivot$`catch (t)`, 3)
+    (map <- ggplot2::ggplot() +
+        ggplot2::theme(legend.position = "top",
+                       legend.justification = "right",
+                       panel.background = ggplot2::element_rect(fill = "white"),
+                       panel.border = ggplot2::element_rect(color = "black",
+                                                            fill = NA,
+                                                            linewidth = 0.3),
+                       axis.title.x = ggplot2::element_blank(),
+                       axis.title.y = ggplot2::element_blank()) +
         ggplot2::geom_sf(data = world_boundaries) +
-        ggspatial::coord_sf(xlim = c(30,
-                                     90),
-                            ylim = c(-30,
-                                     20)) +
+        ggspatial::coord_sf(xlim = ocean_xlim,
+                            ylim = ocean_ylim) +
         ggplot2::geom_point(data = datafile,
                             ggplot2::aes(x     = long,
                                          y     = lat,
                                          color = total,
                                          size  = total,
-                                         text  = paste("yft :", yft, "\n",
-                                                       "skj :", skj, "\n",
-                                                       "bet:", bet))) +
-        ggplot2::scale_color_viridis_c(option = "plasma")
-    }
-    # Plotly
-    plotly_map <- plotly::ggplotly(map)
+                                         text  = paste("bet: ", bet,
+                                                       "<br>yft: ", yft,
+                                                       "<br>skj: ", skj)),
+                            alpha = 0.65) +
+        ggplot2::scale_color_viridis_c(option = "plasma") +
+        ggplot2::guides(size = "none") +
+        ggplot2::labs(color = "Catch in t") +
+        ggplot2::theme(panel.background = ggplot2::element_rect(fill = "white"),
+                       panel.border = ggplot2::element_rect(color = "black", fill = NA, size = 0.3))  +
+        ggplot2::geom_hline(yintercept = ocean_yintercept,
+                            linetype = "dashed",
+                            color = "darkgrey",
+                            linewidth = 0.2) +
+        ggplot2::geom_vline(xintercept = ocean_xintercept,
+                            linetype = "dashed",
+                            color = "darkgrey",
+                            linewidth = 0.2))
+
+    plotly_map <- plotly::ggplotly(map) %>%
+      plotly::style(hoverinfo = "text")
     # Add a title
     if (title == TRUE) {
       plotly_map <- plotly_map %>%

@@ -3,7 +3,7 @@
 -------------------------------------------------------------------------------
  -- Generic extraction of vessels, sets, catches, and effort from Balbaya
 -------------------------------------------------------------------------------
--- Clara Lerebourg <clara.lereboourg@ird.fr>
+-- Clara Lerebourg <clara.lerebourg@ird.fr>
 -------------------------------------------------------------------------------
 -- 2024-01-17 -- v1.0 -- CL -- initial version
 -------------------------------------------------------------------------------
@@ -22,6 +22,7 @@ SELECT
 	,a.v_nb_calee_pos AS positive_set
 	,a.v_dur_cal AS set_duration
 	,b.c_quille AS keel_code
+	,tb.l4c_tban AS school_code
 	,a.cwp11_act
 	,b.v_ct_m3::numeric AS catch
 	,o.c_ocea::numeric AS ocean_code
@@ -34,6 +35,8 @@ FROM
 	JOIN public.bateau b ON (a.c_bat = b.c_bat)
 	JOIN public.pavillon p ON (b.c_pav_b = p.c_pav_b)
 	JOIN public.port p2 ON (a.c_port = p2.c_port)
+	JOIN public.type_banc tb ON(a.c_tban = tb.c_tban)
+	
 WHERE
 	EXTRACT(year FROM a.d_act) IN (?time_period)
 	AND b.c_pav_b  IN (?country)

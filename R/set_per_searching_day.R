@@ -101,7 +101,7 @@ set_per_searching_day <- function(dataframe,
                      sets_per_day_fsc = sum(sets_per_day_fsc,
                                             na.rm = TRUE),
                      .groups = "drop")
-  # 4 - Legend design ----
+  # 3 - Legend design ----
   if (title == TRUE) {
     #Ocean
     ocean_legend <- code_manipulation(data         = dataframe$ocean_code,
@@ -118,146 +118,14 @@ set_per_searching_day <- function(dataframe,
     # time_period
     time_period <- c(unique(min(dataframe$year):max(dataframe$year)))
   }
-  # 5 - Graphic design ----
-  graphics::par(mar = c(4,
-                        4.7,
-                        4.1,
-                        1.5))
-  if (graph_type == "plot") {
-    # Define the positions of the x-axis tick marks
-    x_tick_pos <- seq(min(table_cpue_set_per_day$year),
-                      max(table_cpue_set_per_day$year))
-    if (fishing_type == "FOB") {
-      if (title == TRUE) {
-        graphics::plot(table_cpue_set_per_day$year,
-                       table_cpue_set_per_day$sets_per_day_fad,
-                       type = "b",
-                       xlab = "",
-                       ylab = "Number of sets per searching day",
-                       cex.axis = 1.4,
-                       cex.lab = 1.4,
-                       cex.main = 1,
-                       main = paste0("Annual number of sets per searching day on ",
-                                     fishing_type,
-                                     " fishing mode schools for the ",
-                                     country_legend,
-                                     "\n",
-                                     vessel_type_legend,
-                                     " fishing fleet in the Atlantic Ocean during ",
-                                     min(time_period),
-                                     "-",
-                                     max(time_period),
-                                     ", in the ",
-                                     ocean_legend,
-                                     " ocean."),
-                       ylim = c(0, 1),
-                       las = 1,
-                       xaxt = "n",
-                       pch = 19)
-      } else {
-        graphics::plot(table_cpue_set_per_day$year,
-                       table_cpue_set_per_day$sets_per_day_fad,
-                       type = "b",
-                       xlab = "",
-                       ylab = "Number of sets per searching day",
-                       cex.axis = 1.4,
-                       cex.lab = 1.4,
-                       main = "",
-                       ylim = c(0, 1),
-                       las = 1,
-                       xaxt = "n",
-                       pch = 19)
-      }
-      # Add the x-axis tick marks without labels
-      graphics::axis(1,
-                     at = x_tick_pos,
-                     tick = TRUE,
-                     labels = FALSE)
-      graphics::text(x = x_tick_pos,
-           y = graphics::par("usr")[3] - 0.035,
-           labels = table_cpue_set_per_day$year,
-           srt = 45,
-           adj = 1,
-           xpd = TRUE,
-           cex = 1.2)
-      graphics::abline(h = seq(.2,
-                               1,
-                               .2),
-                       lty = 2,
-                       col = "lightgrey")
-      graphics::legend("topleft",
-                       legend = "(FOB)",
-                       bty = "n",
-                       cex = 2)
-    } else if (fishing_type == "FSC") {
-      if (title == TRUE) {
-        graphics::plot(table_cpue_set_per_day$year,
-                       table_cpue_set_per_day$sets_per_day_fsc,
-                       type = "b",
-                       xlab = "",
-                       ylab = "Number of sets per searching day",
-                       cex.axis = 1.4,
-                       cex.lab = 1.4,
-                       cex.main = 1,
-                       main = paste0("Annual number of sets per searching day on ",
-                                     fishing_type,
-                                     " fishing mode schools for the ",
-                                     country_legend,
-                                     "\n",
-                                     vessel_type_legend,
-                                     " fishing fleet in the Atlantic Ocean during ",
-                                     min(time_period),
-                                     "-",
-                                     max(time_period),
-                                     ", in the ",
-                                     ocean_legend,
-                                     " ocean."),
-                       ylim = c(0,
-                                1),
-                       las = 1,
-                       xaxt = "n",
-                       pch = 19)
-      } else {
-        graphics::plot(table_cpue_set_per_day$year,
-                       table_cpue_set_per_day$sets_per_day_fsc,
-                       type = "b",
-                       xlab = "",
-                       ylab = "Number of sets per searching day",
-                       cex.axis = 1.4,
-                       cex.lab = 1.4,
-                       main = "",
-                       ylim = c(0,
-                                1),
-                       las = 1,
-                       xaxt = "n",
-                       pch = 19)
-      }
-      # Add the x-axis tick marks without labels
-      graphics::axis(1,
-                     at = x_tick_pos,
-                     tick = TRUE,
-                     labels = FALSE)
-      graphics::text(x = x_tick_pos,
-           y = graphics::par("usr")[3] - 0.035,
-           labels = table_cpue_set_per_day$year,
-           srt = 45,
-           adj = 1,
-           xpd = TRUE,
-           cex = 1.2)
-      graphics::abline(h = seq(.2,
-                               1,
-                               .2),
-                       lty = 2,
-                       col = "lightgrey")
-      graphics::legend("topleft",
-                       legend = "(FSC)",
-                       bty = "n",
-                       cex = 2)
-    }
-    } else if (graph_type == "plotly") {
-    if (fishing_type == "FOB") {
-      table_cpue_set_per_day$sets_per_day_fad <- round(table_cpue_set_per_day$sets_per_day_fad, 3)
-      ggplot_table_cpue <- ggplot2::ggplot(data = table_cpue_set_per_day) +
+  # 4 - Graphic design ----
+  if (fishing_type == "FOB") {
+    table_cpue_set_per_day$sets_per_day_fad <- round(table_cpue_set_per_day$sets_per_day_fad, 3)
+    (ggplot_table_cpue <- ggplot2::ggplot(data = table_cpue_set_per_day) +
+        ggplot2::geom_hline(yintercept = c(0.25, 0.5, 0.75, 1),
+                            color = "grey",
+                            linetype = "longdash",
+                            alpha = 0.5) +
         ggplot2::geom_line(ggplot2::aes(x = year,
                                         y = sets_per_day_fad),
                            color = "black") +
@@ -269,34 +137,30 @@ set_per_searching_day <- function(dataframe,
                       y = "Number of sets per searching day") +
         ggplot2::ylim(0,
                       1) +
-        ggplot2::theme_bw() +
-        ggplot2::labs(colour = "")
-      # Plotly
-      plotly_graph <- plotly::ggplotly(ggplot_table_cpue)
-      # Add a title
-      if (title == TRUE) {
-        plotly_graph <- plotly_graph %>%
-          plotly::layout(title = list(text = paste0("Annual number of sets per searching day on ",
-                                                    fishing_type,
-                                                    " fishing mode schools for the ",
-                                                    country_legend,
-                                                    "\n",
-                                                    vessel_type_legend,
-                                                    " fishing fleet in the Atlantic Ocean during ",
-                                                    min(time_period),
-                                                    "-",
-                                                    max(time_period),
-                                                    ", in the ",
-                                                    ocean_legend,
-                                                    " ocean."),
-                                      font = list(size = 15)),
-                         margin = list(t = 120))
-      }
-      # Plot the plotly
-      plotly_graph
-    } else if (fishing_type == "FSC") {
-      table_cpue_set_per_day$sets_per_day_fsc <- round(table_cpue_set_per_day$sets_per_day_fsc, 3)
-      ggplot_table_cpue <- ggplot2::ggplot(data = table_cpue_set_per_day) +
+        ggplot2::theme(panel.background = ggplot2::element_rect(fill = "white",
+                                                                color = "black"),
+                       axis.text.x = ggplot2::element_text(angle = 45,
+                                                           hjust = 1,
+                                                           size = 13),
+                       axis.text.y = ggplot2::element_text(size = 13),
+                       axis.title.y = ggplot2::element_text(size = 14)) +
+        ggplot2::labs(colour = "") +
+        ggplot2::scale_x_continuous(breaks = unique(table_cpue_set_per_day$year)) +
+        ggplot2::theme(legend.position = c(0.84, 0.97),
+                       legend.justification = c(0, 1)) +
+        ggplot2::annotate("text", x = max(table_cpue_set_per_day$year),
+                          y = 0.95,
+                          label = "(FOB)", color = "black",
+                          hjust = 1,
+                          vjust = 1,
+                          size = 7))
+  } else if (fishing_type == "FSC") {
+    table_cpue_set_per_day$sets_per_day_fsc <- round(table_cpue_set_per_day$sets_per_day_fsc, 3)
+    (ggplot_table_cpue <- ggplot2::ggplot(data = table_cpue_set_per_day) +
+        ggplot2::geom_hline(yintercept = c(0.25, 0.5, 0.75, 1),
+                            color = "grey",
+                            linetype = "longdash",
+                            alpha = 0.5) +
         ggplot2::geom_line(ggplot2::aes(x = year,
                                         y = sets_per_day_fsc),
                            color = "black") +
@@ -308,33 +172,49 @@ set_per_searching_day <- function(dataframe,
         ggplot2::labs(x = "",
                       y = "Number of sets per searching day") +
         ggplot2::ylim(0, 1) +
-        ggplot2::theme_bw() +
-        ggplot2::labs(colour = "")
-      # Plotly
-      plotly_graph <- plotly::ggplotly(ggplot_table_cpue)
-      # Add a title
-      if (title == TRUE) {
-        plotly_graph <- plotly_graph %>%
-          plotly::layout(title = list(text = paste0("Annual number of sets per searching day on ",
-                                                    fishing_type,
-                                                    " fishing mode schoolsfor the ",
-                                                    country_legend,
-                                                    "\n",
-                                                    vessel_type_legend,
-                                                    " fishing fleet in the Atlantic Ocean during ",
-                                                    min(time_period),
-                                                    "-",
-                                                    max(time_period),
-                                                    ", in the ",
-                                                    ocean_legend,
-                                                    " ocean."),
-                                      font = list(size = 15)),
-                         margin = list(t = 120))
+        ggplot2::theme(panel.background = ggplot2::element_rect(fill = "white",
+                                                                color = "black"),
+                       axis.text.x = ggplot2::element_text(angle = 45,
+                                                           hjust = 1,
+                                                           size = 13),
+                       axis.text.y = ggplot2::element_text(size = 13),
+                       axis.title.y = ggplot2::element_text(size = 14)) +
+        ggplot2::labs(colour = "") +
+        ggplot2::scale_x_continuous(breaks = unique(table_cpue_set_per_day$year)) +
+        ggplot2::theme(legend.position = c(0.84, 0.97),
+                       legend.justification = c(0, 1)) +
+        ggplot2::annotate("text", x = max(table_cpue_set_per_day$year),
+                          y = 0.95,
+                          label = "(FSC)",
+                          color = "black",
+                          hjust = 1,
+                          vjust = 1,
+                          size = 7))
+  }
+  if (graph_type == "plot") {
+    return(ggplot_table_cpue)
+  } else if (graph_type == "plotly") {
+    plotly_graph <- plotly::ggplotly(ggplot_table_cpue)
+    if (title == TRUE) {
+      plotly_graph <- plotly_graph %>%
+        plotly::layout(title = list(text = paste0("Annual number of sets per searching day on ",
+                                                  fishing_type,
+                                                  " fishing mode schoolsfor the ",
+                                                  country_legend,
+                                                  "\n",
+                                                  vessel_type_legend,
+                                                  " fishing fleet in the Atlantic Ocean during ",
+                                                  min(time_period),
+                                                  "-",
+                                                  max(time_period),
+                                                  ", in the ",
+                                                  ocean_legend,
+                                                  " ocean."),
+                                    font = list(size = 15)),
+                       margin = list(t = 120))
 
-      }
-      # Plot the plotly
-      plotly_graph
     }
+    return(plotly_graph)
   } else if (graph_type == "table") {
     table_cpue_set_per_day <- table_cpue_set_per_day %>%
       dplyr::rename("Year" = year,

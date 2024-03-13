@@ -4,12 +4,19 @@
 \alias{spatial_occupancy}
 \title{Spatial occupancy}
 \usage{
-spatial_occupancy(dataframe, graph_type = "plot", title = FALSE)
+spatial_occupancy(
+  dataframe,
+  graph_type = "plot",
+  fishing_type = "ALL",
+  title = FALSE
+)
 }
 \arguments{
 \item{dataframe}{{\link[base]{data.frame}} expected. Csv or output of the function {\link[furdeb]{data_extraction}}, which must be done before using the spatial_occupancy function.}
 
 \item{graph_type}{{\link[base]{character}} expected. plot, plotly or table. Plot by default.}
+
+\item{fishing_type}{{\link[base]{character}} expected. ALL, FOB and FSC.}
 
 \item{title}{TRUE or FALSE expected. False by default.}
 }
@@ -27,6 +34,7 @@ The input dataframe must contain all these columns for the function to work [\hr
  \item{\code{  positive_set}}
  \item{\code{  total_set}}
  \item{\code{  total_hour_fished}}
+ \item{\code{  school_type}}
 }
 Add these columns for an automatic title (optional):
 \itemize{
