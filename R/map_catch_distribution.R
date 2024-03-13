@@ -392,6 +392,12 @@ map_catch_distribution <- function(dataframe,
                                       values_to = "catch (t)")
     data_pivot$`catch (t)` <- round(data_pivot$`catch (t)`, 3)
     (map <- ggplot2::ggplot() +
+        ggplot2::theme(legend.position = "top",
+                       legend.justification = "right",
+                       panel.background = ggplot2::element_rect(fill = "white"),
+                       panel.border = ggplot2::element_rect(color = "black",
+                                                            fill = NA,
+                                                            size = 0.3))  +
         ggplot2::geom_sf(data = world_boundaries) +
         ggspatial::coord_sf(xlim = ocean_xlim,
                             ylim = ocean_ylim) +
@@ -404,14 +410,11 @@ map_catch_distribution <- function(dataframe,
         ggplot2::scale_fill_manual(values = c("yft" = "khaki1",
                                               "skj" = "firebrick2",
                                               "bet" = "cornflowerblue")) +
-        ggplot2::theme(panel.background = ggplot2::element_rect(fill = "white"),
-                       panel.border = ggplot2::element_rect(color = "black",
-                                                            fill = NA,
-                                                            size = 0.3))  +
         ggplot2::geom_hline(yintercept = ocean_yintercept,
                             linetype = "dashed",
                             color = "darkgrey",
                             linewidth = 0.2) +
+        ggplot2::labs(fill = "Catch in t") +
         ggplot2::geom_vline(xintercept = ocean_xintercept,
                             linetype = "dashed",
                             color = "darkgrey",
