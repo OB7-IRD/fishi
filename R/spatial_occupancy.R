@@ -157,6 +157,7 @@ spatial_occupancy <- function(dataframe,
                     axis.title.y = ggplot2::element_text(size = 14),
                     legend.position = "top",
                     legend.justification = "right",
+                    legend.text = ggplot2::element_text(size = 10),
                     panel.background = ggplot2::element_rect(fill = "white",
                                                              color = "black"),
                     panel.grid.major = ggplot2::element_blank(),
@@ -201,7 +202,7 @@ spatial_occupancy <- function(dataframe,
      ggplot2::labs(x = "",
                    y = "Spatial occupancy",
                    color = "") +
-     ggplot2::ylim(0, 500)  +
+     ggplot2::ylim(0, max(table_occ$total) + 50)  +
      ggplot2::guides(shape = ggplot2::guide_legend(title = NULL)) +
      ggplot2::annotate("text",
                        x = max(table_occ$year),
@@ -210,7 +211,8 @@ spatial_occupancy <- function(dataframe,
                        hjust = 1.2,
                        vjust = 0.9,
                        size = 5,
-                       color = "black"))
+                       color = "black") +
+     ggplot2::scale_x_continuous(breaks = unique(table_occ$year)))
   if (graph_type == "plot") {
     return(ggplot_table_occ)
   } else if (graph_type == "plotly") {

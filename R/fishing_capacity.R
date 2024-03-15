@@ -138,6 +138,7 @@ fishing_capacity <- function(dataframe,
                    axis.title.y = ggplot2::element_text(size = 14),
                    legend.position = "top",
                    legend.justification = "right",
+                   legend.text = ggplot2::element_text(size = 10),
                    panel.background = ggplot2::element_rect(fill = "white",
                                                             color = "black"),
                    panel.grid.major = ggplot2::element_blank(),
@@ -174,7 +175,6 @@ fishing_capacity <- function(dataframe,
                                      y = fishing_capacity * 2),
                         color = "black") +
     ggplot2::scale_y_continuous(name = "Number of vessel",
-
                                 sec.axis = ggplot2::sec_axis(~ . / 2,
                                                              name = "Carrying capacity (x1000m^3)"))
   if (graph_type == "plot") {
