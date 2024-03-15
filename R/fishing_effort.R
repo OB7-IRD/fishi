@@ -160,17 +160,20 @@ fishing_effort <- function(dataframe,
   }
   # 4 - Graphic design ----
   (ggplot_table_effort <- ggplot2::ggplot(data = table_effort) +
-     ggplot2::geom_hline(yintercept = c(1:5),
-                         color = "grey",
-                         linetype = "longdash",
-                         alpha = 0.5) +
      ggplot2::theme(panel.background = ggplot2::element_rect(fill = "white",
                                                              color = "black"),
                     axis.text.x = ggplot2::element_text(angle = 45,
                                                         hjust = 1,
                                                         size = 13),
                     axis.text.y = ggplot2::element_text(size = 13),
-                    axis.title.y = ggplot2::element_text(size = 14)) +
+                    axis.title.y = ggplot2::element_text(size = 14),
+                    legend.position = "top",
+                    legend.justification = "right",
+                    legend.text = ggplot2::element_text(size = 10)) +
+     ggplot2::geom_hline(yintercept = c(1:5),
+                         color = "grey",
+                         linetype = "longdash",
+                         alpha = 0.5) +
      ggplot2::geom_line(ggplot2::aes(x = year,
                                      y = fishing_days,
                                      color = "Fishing")) +
@@ -185,15 +188,12 @@ fishing_effort <- function(dataframe,
      ggplot2::geom_point(ggplot2::aes(x = year,
                                       y = searching_days),
                          shape = 4) +
-
-     ggplot2::labs(x = "",
+     ggplot2::labs(colour = "",
+                   x = "",
                    y = "Activity duration (x1000 days)") +
      ggplot2::ylim(0.5,
                    5) +
-     ggplot2::labs(colour = "") +
-     ggplot2::scale_x_continuous(breaks = unique(table_effort$year)) +
-     ggplot2::theme(legend.position = c(0.84, 0.97),
-                    legend.justification = c(0, 1)))
+     ggplot2::scale_x_continuous(breaks = unique(table_effort$year)))
   if (graph_type == "plot") {
     return(ggplot_table_effort)
   } else if (graph_type == "plotly") {

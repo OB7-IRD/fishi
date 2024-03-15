@@ -208,6 +208,7 @@ catch_per_searching_day <- function(dataframe1,
                       axis.title.y = ggplot2::element_text(size = 14),
                       legend.position = "top",
                       legend.justification = "right",
+                      legend.text = ggplot2::element_text(size = 10),
                       panel.background = ggplot2::element_rect(fill = "white",
                                                                color = "black"),
                       panel.grid.major = ggplot2::element_blank(),
@@ -258,7 +259,8 @@ catch_per_searching_day <- function(dataframe1,
                          hjust = 1.2,
                          vjust = 0.9,
                          size = 5,
-                         color = "black"))
+                         color = "black") +
+        ggplot2::scale_x_continuous(breaks = unique(dataframe$year)))
   if (graph_type == "plot") {
     return(ggplot_graph)
   } else if (graph_type == "plotly") {
