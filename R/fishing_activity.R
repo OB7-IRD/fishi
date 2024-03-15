@@ -131,6 +131,7 @@ fishing_activity <- function(dataframe,
                      axis.title.y = ggplot2::element_text(size = 14),
                      legend.position = "top",
                      legend.justification = "right",
+                     legend.text = ggplot2::element_text(size = 10),
                      panel.background = ggplot2::element_rect(fill = "white",
                                                               color = "black"),
                      panel.grid.major = ggplot2::element_blank(),
@@ -159,7 +160,7 @@ fishing_activity <- function(dataframe,
                     x = "") +
       ggplot2::scale_y_continuous(name = "Number of sets",
 
-                                  sec.axis = ggplot2::sec_axis(~ . /35,
+                                  sec.axis = ggplot2::sec_axis(~ . / 35,
                                                                name = "% FOB-associated sets"))
 
 if (graph_type == "plot") {

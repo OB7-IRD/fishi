@@ -40,10 +40,13 @@ map_catch_distribution <- function(dataframe,
   total_catch_weight <- NULL
   wrld_simpl <- NULL
   total <- NULL
-  mean_size <- NULL
   bet <- NULL
   yft <- NULL
   skj <- NULL
+  LONG <- NULL
+  LAT <- NULL
+  TOTAL <- NULL
+  CWP11_ACT <- NULL
   # 1 - Arguments verification ----
   if (codama::r_type_checking(r_object = fishing_type,
                               type = "character",
@@ -386,6 +389,8 @@ map_catch_distribution <- function(dataframe,
     datafile$yft <- round(datafile$yft, 3)
     datafile$skj <- round(datafile$skj, 3)
     datafile$bet <- round(datafile$bet, 3)
+    datafile <- datafile %>%
+      dplyr::rename_all(toupper)
     data_pivot <- tidyr::pivot_longer(datafile,
                                       cols = c(2:4),
                                       names_to = "specie",
@@ -394,6 +399,7 @@ map_catch_distribution <- function(dataframe,
     (map <- ggplot2::ggplot() +
         ggplot2::theme(legend.position = "top",
                        legend.justification = "right",
+                       legend.text = ggplot2::element_text(size = 10),
                        panel.background = ggplot2::element_rect(fill = "white"),
                        panel.border = ggplot2::element_rect(color = "black",
                                                             fill = NA,
@@ -402,14 +408,14 @@ map_catch_distribution <- function(dataframe,
         ggspatial::coord_sf(xlim = ocean_xlim,
                             ylim = ocean_ylim) +
         scatterpie::geom_scatterpie(data = datafile,
-                                    ggplot2::aes(x = long,
-                                                 y = lat,
-                                                 r = (sqrt(total) / sqrt(2000)),
-                                                 group = cwp11_act),
-                                    cols = c("yft", "skj", "bet"))  +
-        ggplot2::scale_fill_manual(values = c("yft" = "khaki1",
-                                              "skj" = "firebrick2",
-                                              "bet" = "cornflowerblue")) +
+                                    ggplot2::aes(x = LONG,
+                                                 y = LAT,
+                                                 r = (sqrt(TOTAL) / sqrt(2000)),
+                                                 group = CWP11_ACT),
+                                    cols = c("YFT", "SKJ", "BET"))  +
+        ggplot2::scale_fill_manual(values = c("YFT" = "khaki1",
+                                              "SKJ" = "firebrick2",
+                                              "BET" = "cornflowerblue")) +
         ggplot2::geom_hline(yintercept = ocean_yintercept,
                             linetype = "dashed",
                             color = "darkgrey",
