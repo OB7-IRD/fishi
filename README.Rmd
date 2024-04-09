@@ -26,7 +26,10 @@ options(tibble.print_min = 5, tibble.print_max = 5)
 
 ## Overview
 
-Working in progress for this section. Be patient.
+The fishi package is designed to facilitate fisheries and marine science research by providing a set of functions. It aims to simplify common tasks in fisheries research and to improve the efficiency and effectiveness of data analysis and interpretation in this field. It can be used with csv/excel datasets and sql queries.
+
+This version contains a large number of indicators for running the statistical report (https://forge.ird.fr/marbec/ob7/statistical-report)
+and the RShiny (https://forge.ird.fr/marbec/ob7/rshiny-fishi).
 
 ## Installation
 
