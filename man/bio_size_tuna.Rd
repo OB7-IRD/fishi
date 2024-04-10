@@ -7,11 +7,11 @@
 bio_size_tuna(dataframe, report_year, graph_type = "plot", title = FALSE)
 }
 \arguments{
-\item{dataframe}{{\link[base]{data.frame}} expected. Csv or output of the function {\link[furdeb]{data_extraction}}, which must be done before using the bio_size_tuna() function.}
+\item{dataframe}{{\link[base]{data.frame}} expected. 'Csv' or 'output' of the function {\link[furdeb]{data_extraction}}, which must be done before using the bio_size_tuna() function.}
 
 \item{report_year}{{\link[base]{integer}} expected. Year of the statistical report.}
 
-\item{graph_type}{{\link[base]{character}} expected. plot or plotly. Plot by default.}
+\item{graph_type}{{\link[base]{character}} expected. 'plot' or 'plotly'. Plot by default.}
 
 \item{title}{TRUE or FALSE expected. False by default.}
 }

@@ -12,11 +12,11 @@ map_catch_distribution(
 )
 }
 \arguments{
-\item{dataframe}{{\link[base]{data.frame}} expected. Csv or output of the function {\link[furdeb]{data_extraction}}, which must be done before using the map_catch_distribution() function.}
+\item{dataframe}{{\link[base]{data.frame}} expected. 'Csv' or 'output' of the function {\link[furdeb]{data_extraction}}, which must be done before using the map_catch_distribution() function.}
 
-\item{fishing_type}{{\link[base]{character}} expected. FOB, FSC or ALL. ALL by default.}
+\item{fishing_type}{{\link[base]{character}} expected. 'FOB', 'FSC' or 'ALL'. ALL by default.}
 
-\item{graph_type}{{\link[base]{character}} expected. plot or plotly. Plot by default.}
+\item{graph_type}{{\link[base]{character}} expected. 'plot' or 'plotly'. Plot by default.}
 
 \item{title}{TRUE or FALSE expected. False by default.}
 }

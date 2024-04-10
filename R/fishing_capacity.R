@@ -1,8 +1,8 @@
 #' @name fishing_capacity
 #' @title Annual changes in the number of vessel
 #' @description Fishing capacity. Annual changes in the number of purse seiners by tonnage categories (barplots) and total carrying capacity (dashed line with circles).
-#' @param dataframe {\link[base]{data.frame}} expected. Csv or output of the function {\link[furdeb]{data_extraction}}, which must be done before using the fishing_capacity() function.
-#' @param graph_type {\link[base]{character}} expected. plot, plotly or table. Plot by default.
+#' @param dataframe {\link[base]{data.frame}} expected. 'Csv' or 'output' of the function {\link[furdeb]{data_extraction}}, which must be done before using the fishing_capacity() function.
+#' @param graph_type {\link[base]{character}} expected. 'plot', 'plotly' or 'table'. Plot by default.
 #' @param title TRUE or FALSE expected. False by default.
 #' @details
 #' The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:

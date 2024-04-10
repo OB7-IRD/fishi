@@ -1,8 +1,8 @@
 #' @name spatial_occupancy
 #' @title Spatial occupancy
 #' @description Changes in the spatial extent of the fishery over time. Annual number of 1-degree squares explored by each vessel.
-#' @param dataframe {\link[base]{data.frame}} expected. Csv or output of the function {\link[furdeb]{data_extraction}}, which must be done before using the spatial_occupancy function.
-#' @param graph_type {\link[base]{character}} expected. plot, plotly or table. Plot by default.
+#' @param dataframe {\link[base]{data.frame}} expected. 'Csv' or 'output' of the function {\link[furdeb]{data_extraction}}, which must be done before using the spatial_occupancy() function.
+#' @param graph_type {\link[base]{character}} expected. 'plot', 'plotly' or 'table'. Plot by default.
 #' @param fishing_type {\link[base]{character}} expected. ALL, FOB and FSC.
 #' @param title TRUE or FALSE expected. False by default.
 #' @details

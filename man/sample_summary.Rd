@@ -18,11 +18,11 @@ sample_summary(
 )
 }
 \arguments{
-\item{dataframe}{{\link[base]{data.frame}} expected. Csv or output of the function {\link[furdeb]{data_extraction}}, which must be done before using the fishing_activity() function.}
+\item{dataframe}{{\link[base]{data.frame}} expected. Csv or output of the function {\link[furdeb]{data_extraction}}, which must be done before using the sample_summary() function.}
 
 \item{data_type}{{\link[base]{character}} expected. 'tunabio' or 'observe'.}
 
-\item{graph_type}{{\link[base]{character}} expected. "number" or "table." Number by default.}
+\item{graph_type}{{\link[base]{character}} expected. 'number' or 'table'. Number by default.}
 
 \item{reported_year}{{\link[base]{integer}} expected. Write the wanted year of the report.}
 

@@ -1,9 +1,9 @@
 #' @name sample_summary
 #' @title Sample summary
 #' @description Give the number of trip, vessel or well sampled for a given year. Need to define your goal in the parameter.
-#' @param dataframe {\link[base]{data.frame}} expected. Csv or output of the function {\link[furdeb]{data_extraction}}, which must be done before using the fishing_activity() function.
+#' @param dataframe {\link[base]{data.frame}} expected. Csv or output of the function {\link[furdeb]{data_extraction}}, which must be done before using the sample_summary() function.
 #' @param data_type {\link[base]{character}} expected. 'tunabio' or 'observe'.
-#' @param graph_type {\link[base]{character}} expected. "number" or "table." Number by default.
+#' @param graph_type {\link[base]{character}} expected. 'number' or 'table'. Number by default.
 #' @param reported_year {\link[base]{integer}} expected. Write the wanted year of the report.
 #' @param start_date {\link[base]{character}} expected. if reported_year is not given. Write the start date of the time range of the report.
 #' @param end_date {\link[base]{character}} expected. if reported_year is not given. Write the end date of the time range of the report

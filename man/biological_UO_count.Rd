@@ -14,7 +14,7 @@ biological_UO_count(
 \arguments{
 \item{path_file}{{\link[base]{character}} expected. File path to the Tunabio file.}
 
-\item{graph_type}{{\link[base]{character}} expected. "number" or "table." Number give the total number of each biological UO and table give the detail per month. Number by default.}
+\item{graph_type}{{\link[base]{character}} expected. 'number' or 'table.' Number give the total number of each biological UO and table give the detail per month. Number by default.}
 
 \item{start_date}{{\link[base]{date}} expected. Write the start date of the contract}
 

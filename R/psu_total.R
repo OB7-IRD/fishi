@@ -1,12 +1,12 @@
 #' @name psu_total
 #' @title PSU Total
 #' @description Give the number of total psu for a given year.
-#' @param dataframe {\link[base]{data.frame}} expected. Csv or output of the function {\link[furdeb]{data_extraction}}, which must be done before using the fishing_activity() function.
+#' @param dataframe {\link[base]{data.frame}} expected. 'Csv' or 'output' of the function {\link[furdeb]{data_extraction}}, which must be done before using the psu_total() function.
 #' @param reported_year {\link[base]{integer}} expected. Write the wanted year of the report.
 #' @param selected_country {\link[base]{integer}} expected. Country code to select the list of boat to count. If NULL give all the vessel for the given year.
 #' @param selected_ocean {\link[base]{integer}} expected. Ocean code to select the list of boat to count. If NULL give all the vessel for the given year, works only for 'data_type' == 'observe'
 #' @param selected_harbour {\link[base]{integer}} expected. Harbour code to select the list of boat to count. If NULL give all the vessel for the given year, works only for 'data_type' == 'observe'
-#' @param selected_variable {\link[base]{character}} expected. Write the variable of the PSU. Can be "trip", "vessel" or "well. "trip" by default.
+#' @param selected_variable {\link[base]{character}} expected. Write the variable of the PSU. Can be 'trip', 'vessel' or 'well'. 'trip' by default.
 #' @details
 #' The input dataframe frome sql must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:
 #' \itemize{

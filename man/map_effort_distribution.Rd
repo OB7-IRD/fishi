@@ -7,9 +7,9 @@
 map_effort_distribution(dataframe, graph_type = "plot", title = FALSE)
 }
 \arguments{
-\item{dataframe}{{\link[base]{data.frame}} expected. Csv or output of the function {\link[furdeb]{data_extraction}}, which must be done before using the map_effort_distribution() function.}
+\item{dataframe}{{\link[base]{data.frame}} expected. 'Csv' or 'output' of the function {\link[furdeb]{data_extraction}}, which must be done before using the map_effort_distribution() function.}
 
-\item{graph_type}{{\link[base]{character}} expected. plot or plotly. Plot by default.}
+\item{graph_type}{{\link[base]{character}} expected. 'plot' or 'plotly.' Plot by default.}
 
 \item{title}{TRUE or FALSE expected. False by default.}
 }

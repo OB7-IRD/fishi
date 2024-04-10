@@ -14,7 +14,7 @@ psu_total(
 )
 }
 \arguments{
-\item{dataframe}{{\link[base]{data.frame}} expected. Csv or output of the function {\link[furdeb]{data_extraction}}, which must be done before using the fishing_activity() function.}
+\item{dataframe}{{\link[base]{data.frame}} expected. 'Csv' or 'output' of the function {\link[furdeb]{data_extraction}}, which must be done before using the psu_total() function.}
 
 \item{reported_year}{{\link[base]{integer}} expected. Write the wanted year of the report.}
 
@@ -24,7 +24,7 @@ psu_total(
 
 \item{selected_harbour}{{\link[base]{integer}} expected. Harbour code to select the list of boat to count. If NULL give all the vessel for the given year, works only for 'data_type' == 'observe'}
 
-\item{selected_variable}{{\link[base]{character}} expected. Write the variable of the PSU. Can be "trip", "vessel" or "well. "trip" by default.}
+\item{selected_variable}{{\link[base]{character}} expected. Write the variable of the PSU. Can be 'trip', 'vessel' or 'well'. 'trip' by default.}
 }
 \value{
 The function return a table.

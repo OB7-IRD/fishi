@@ -2,9 +2,9 @@
 #' @title Total fishery production
 #' @description Total fishery production (catch by species).
 #' Generates a figure for catches (x 1000 t) of the three main tunas: BET, SKJ and YFT.
-#' @param dataframe {\link[base]{data.frame}} expected. Csv or output of the function {\link[furdeb]{data_extraction}}, which must be done before using the fishery_production() function.
-#' @param fishing_type  {\link[base]{character}} expected. FSC, FOB or ALL. ALL by default.
-#' @param graph_type {\link[base]{character}} expected. plot, plotly, table or percentage. Plot by default.
+#' @param dataframe {\link[base]{data.frame}} expected. 'Csv' or 'output' of the function {\link[furdeb]{data_extraction}}, which must be done before using the fishery_production() function.
+#' @param fishing_type  {\link[base]{character}} expected. 'FSC', 'FOB' or 'ALL'. ALL by default.
+#' @param graph_type {\link[base]{character}} expected. 'plot', 'plotly', 'table' or 'percentage'. Plot by default.
 #' @param title TRUE or FALSE expected. False by default.
 #' @details
 #' The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:

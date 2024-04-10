@@ -16,7 +16,7 @@ species_biological_variable(
 )
 }
 \arguments{
-\item{dataframe}{{\link[base]{data.frame}} expected. Csv or output of the function {\link[furdeb]{data_extraction}}, which must be done before using the fishing_activity() function.}
+\item{dataframe}{{\link[base]{data.frame}} expected. Csv or output of the function {\link[furdeb]{data_extraction}}, which must be done before using the species_biological_variable() function.}
 
 \item{data_type}{{\link[base]{character}} expected. 'tunabio' or 'observe'.}
 

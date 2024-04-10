@@ -12,11 +12,11 @@ set_per_searching_day(
 )
 }
 \arguments{
-\item{dataframe}{{\link[base]{data.frame}} expected. Csv or output of the function {\link[furdeb]{data_extraction}}, which must be done before using the set_per_searching_day() function.}
+\item{dataframe}{{\link[base]{data.frame}} expected. 'Csv' or 'output' of the function {\link[furdeb]{data_extraction}}, which must be done before using the set_per_searching_day() function.}
 
-\item{fishing_type}{{\link[base]{character}} expected. FOB and FSC.}
+\item{fishing_type}{{\link[base]{character}} expected. 'FOB' and 'FSC'.}
 
-\item{graph_type}{{\link[base]{character}} expected. plot, plotly or table. Plot by default.}
+\item{graph_type}{{\link[base]{character}} expected. 'plot', 'plotly' or 'table.' Plot by default.}
 
 \item{title}{TRUE or FALSE expected. False by default.}
 }

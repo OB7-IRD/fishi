@@ -1,10 +1,10 @@
 #' @name catch_per_searching_day
 #' @title Annual number of catch per positive set
 #' @description Annual number of catch per positive set on FOB-associated and free-swimming schools.
-#' @param dataframe1 {\link[base]{data.frame}} expected. Csv or output of the function {\link[furdeb]{data_extraction}}, which must be done before using the catch_per_searching_day() function.
-#' @param dataframe2 {\link[base]{data.frame}} expected. Csv or output of the function {\link[furdeb]{data_extraction}}, which must be done before using the catch_per_searching_day() function.
-#' @param fishing_type {\link[base]{character}} expected. FOB and FSC.
-#' @param graph_type {\link[base]{character}} expected. plot, plotly or table. Plot by default.
+#' @param dataframe1 {\link[base]{data.frame}} expected. 'Csv' or 'output' of the function {\link[furdeb]{data_extraction}}, which must be done before using the catch_per_searching_day() function.
+#' @param dataframe2 {\link[base]{data.frame}} expected. 'Csv' or 'output' of the function {\link[furdeb]{data_extraction}}, which must be done before using the catch_per_searching_day() function.
+#' @param fishing_type {\link[base]{character}} expected. 'FOB' and 'FSC'.
+#' @param graph_type {\link[base]{character}} expected. 'plot', 'plotly' or 'table'. Plot by default.
 #' @param title TRUE or FALSE expected. False by default.
 #' @details
 #' The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:

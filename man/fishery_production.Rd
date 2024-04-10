@@ -12,11 +12,11 @@ fishery_production(
 )
 }
 \arguments{
-\item{dataframe}{{\link[base]{data.frame}} expected. Csv or output of the function {\link[furdeb]{data_extraction}}, which must be done before using the fishery_production() function.}
+\item{dataframe}{{\link[base]{data.frame}} expected. 'Csv' or 'output' of the function {\link[furdeb]{data_extraction}}, which must be done before using the fishery_production() function.}
 
-\item{fishing_type}{{\link[base]{character}} expected. FSC, FOB or ALL. ALL by default.}
+\item{fishing_type}{{\link[base]{character}} expected. 'FSC', 'FOB' or 'ALL'. ALL by default.}
 
-\item{graph_type}{{\link[base]{character}} expected. plot, plotly, table or percentage. Plot by default.}
+\item{graph_type}{{\link[base]{character}} expected. 'plot', 'plotly', 'table' or 'percentage'. Plot by default.}
 
 \item{title}{TRUE or FALSE expected. False by default.}
 }
