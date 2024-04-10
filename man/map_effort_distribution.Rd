@@ -28,6 +28,13 @@ The input dataframe must contain all these columns for the function to work [\hr
  \item{\code{  set_duration}}
  \item{\code{  total_hour_fished}}
 }
+\preformatted{
+   activity_date | cwp11_act | ocean_code | set_duration | total_hour_fished
+   --------------------------------------------------------------------------
+   2022-01-02    | 301000    | 1          | 2.61         |  6.17
+   2022-01-02    | 301000    | 1          | 2.61         |  6.17
+   2022-01-02    | 301000    | 1          | 2.42         |  5.98
+}
 Add these columns for an automatic title (optional):
 \itemize{
  \item{\code{  country_code}}

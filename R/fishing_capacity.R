@@ -11,6 +11,13 @@
 #'  \item{\code{  catch}}
 #'  \item{\code{  keel_code}}
 #' }
+#' \preformatted{
+#'    activity_date | catch | keel_code
+#'    ----------------------------------
+#'    2010-03-06    | 1742  | 466
+#'    2010-12-04    | 1800  | 426
+#'    2010-05-19    | 1500  | 165
+#' }
 #' Add these columns for an automatic title (optional):
 #' \itemize{
 #'  \item{\code{  country_code}}

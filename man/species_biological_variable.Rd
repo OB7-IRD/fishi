@@ -48,4 +48,11 @@ The input dataframe frome sql must contain all these columns for the function to
  \item{\code{  species_code_fao}}
  \item{\code{  count}}
 }
+\preformatted{
+   fish_sampling_date | weight  | length | sex | species_code_fao | count
+   -------------------------------------------------------------------------------
+   2022               | 35.2    | 200    | 4   | SAI              | 1
+   2022               |  9.93   |  44    | 2   | LKV              | 1
+   2022               |  0.058  |  24    | 4   | REO              | 1
+}
 }

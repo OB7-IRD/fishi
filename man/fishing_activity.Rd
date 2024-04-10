@@ -26,7 +26,13 @@ The input dataframe must contain all these columns for the function to work [\hr
  \item{\code{  school_code}}
  \item{\code{  positive_set}}
  \item{\code{  total_set}}
- \item{\code{  v_tpec}}
+}
+\preformatted{
+   activity_date | school_code | positive_set | total_set
+   ------------------------------------------------------
+   2010-03-06    | 3           | 0            | 0
+   2010-12-04    | 3           | 0            | 0
+   2010-05-19    | 3           | 0            | 0
 }
 Add these columns for an automatic title (optional):
 \itemize{

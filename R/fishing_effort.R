@@ -20,6 +20,13 @@
 #'  \item{\code{  total_hour_at_sea}}
 #'  \item{\code{  total_hour_fished}}
 #' }
+#' \preformatted{
+#'    activity_date | vessel_code | flag   | fleet  | vessel_label  | landing_date | ocean_code | harbour_label | set_duration | vessel_type_code | total_hour_at_sea | total_hour_fished
+#'    --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+#'    2010-03-06    | 679         | France | France | MEN GOE       | 2010-03-06   | 1          | ABIDJAN       | 0.0          | 1                |  7.0              |  1.005
+#'    2010-12-04    | 492         | France | France | GUERIDEN      | 2010-12-05   | 1          | TEMA          | 0.0          | 1                | 24.0              | 11.838
+#'    2010-05-19    | 401         | France | France | VIA HARMATTAN | 2010-05-19   | 1          | ABIDJAN       | 0.0          | 1                |  8.0              |  2.048
+#' }
 #' Add these columns for an automatic title (optional):
 #' \itemize{
 #'  \item{\code{  country_code}}

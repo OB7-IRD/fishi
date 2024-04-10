@@ -19,6 +19,14 @@
 #'  \item{\code{  total_catch_weight}}
 #'  \item{\code{  total_hour_fished}}
 #' }
+#' \preformatted{
+#'    activity_date | species_code | school_code | set_duration | positive_set | total_set | total_catch_weight | total_hour_fished
+#'    -------------------------------------------------------------------------------------------------------------------------------
+#'    1999-07-09    | 2            | 1            | 3.54        | 1            | 1         | 119.0              | 12.1
+#'    1999-07-09    | 1            | 1            | 3.54        | 1            | 1         | 20.6               | 12.1
+#'    1999-07-09    | 1            | 1            | 3.54        | 1            | 1         | 24.4               | 12.1
+#' }
+#'
 #' \itemize{
 #' Dataframe 2:
 #'  \item{\code{  activity_date}}
@@ -27,6 +35,13 @@
 #'  \item{\code{  positive_set}}
 #'  \item{\code{  total_set}}
 #'  \item{\code{  total_hour_fished}}
+#' }
+#' \preformatted{
+#'    activity_date | school_code | set_duration | positive_set | total_set | total_hour_fished
+#'    -----------------------------------------------------------------------------------------
+#'    2010-03-06    | 3           | 0            | 0            | 0         |  1.00
+#'    2010-12-04    | 3           | 0            | 0            | 0         | 11.8
+#'    2010-05-19    | 3           | 0            | 0            | 0         |  2.05
 #' }
 #' Add these columns for an automatic title (optional):
 #' \itemize{

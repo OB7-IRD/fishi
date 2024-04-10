@@ -47,13 +47,23 @@ Give the number of trip, vessel or well sampled for a given year. Need to define
 \details{
 The input dataframe frome sql must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:
 \itemize{
- \item{\code{  sampling_year}}
- \item{\code{  fish_sampling_date}}
- \item{\code{  landing_date}}
- \item{\code{  vessel_label}}
- \item{\code{  boat_code}}
+ \item{\code{  ocean_label}}
  \item{\code{  fleet}}
- \item{\code{  vessel_well_number}}
+ \item{\code{  vessel_type}}
+ \item{\code{  vessel_label}}
+ \item{\code{  landing_year}}
+ \item{\code{  departure}}
+ \item{\code{  port_departure}}
+ \item{\code{  arrival}}
+ \item{\code{  port_arrival}}
+ \item{\code{  total_landing}}
+}
+\preformatted{
+   ocean_label | fleet | vessel_type_code | vessel_label | landing_year | departure  | port_departure | arrival     | port_arrival | total_landing
+   ------------------------------------------------------------------------------------------------------------------------------------------
+   Atlantic    | FRA   | 6                | VIA AVENIR   | 2022         | 2022-01-13 | ABIDJAN        | 2022-02-03  | ABIDJAN      |
+   Atlantic    | FRA   | 6                | VIA AVENIR   | 2022         | 2022-01-13 | ABIDJAN        | 2022-02-03  | ABIDJAN      |
+   Atlantic    | FRA   | 6                | VIA AVENIR   | 2022         | 2022-01-16 | ABIDJAN        | 2022-10-05  | ABIDJAN      |
 }
 add these columns to select the country and ocean (optional):
 \itemize{

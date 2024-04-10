@@ -13,7 +13,14 @@
 #'  \item{\code{  positive_set}}
 #'  \item{\code{  total_set}}
 #'  \item{\code{  total_hour_fished}}
-#'  \item{\code{  school_type}}
+#'  \item{\code{  school_code}}
+#' }
+#' \preformatted{
+#'    activity_date | cwp11_act | positive_set | total_set | total_hour_fished | school_code
+#'    --------------------------------------------------------------------------------------
+#'    2010-03-06    | 404004    | 0            | 0         |  7.0              | IND
+#'    2010-12-04    | 404005    | 0            | 0         | 24.0              | BL
+#'    2010-05-19    | 404005    | 0            | 0         |  8.0              | BO
 #' }
 #' Add these columns for an automatic title (optional):
 #' \itemize{

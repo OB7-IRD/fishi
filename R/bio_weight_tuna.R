@@ -14,6 +14,14 @@
 #'  \item{\code{  size_class}}
 #'  \item{\code{  estimated_individual}}
 #' }
+#' \preformatted{
+#'    activity_date | school_code | species_code | size_class | estimated_individual
+#'    -------------------------------------------------------------------------------
+#'    2018          | 1           | 6            | 45         | 1.97
+#'    2018          | 1           | 6            | 44         | 1.25
+#'    2018          | 1           | 6            | 43         | 28.7
+#' }
+#'
 #' Add these columns for an automatic title (optional):
 #' \itemize{
 #'  \item{\code{  country_code}}

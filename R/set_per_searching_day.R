@@ -15,6 +15,13 @@
 #'  \item{\code{  total_set}}
 #'  \item{\code{  total_hour_fished}}
 #' }
+#' \preformatted{
+#'    activity_date | school_code | set_duration | positive_set | total_set | total_hour_fished
+#'    -----------------------------------------------------------------------------------------
+#'    2010-03-06    | 3           | 0            | 0            | 0         |  1.00
+#'    2010-12-04    | 3           | 0            | 0            | 0         | 11.8
+#'    2010-05-19    | 3           | 0            | 0            | 0         |  2.05
+#' }
 #' Add these columns for an automatic title (optional):
 #' \itemize{
 #'  \item{\code{  country_code}}
