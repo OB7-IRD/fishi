@@ -2,6 +2,7 @@
 #' @title Annual number of fishing sets
 #' @description Fishing operations. Annual number of fishing sets on FOB-associated and free-swimming tuna schools.
 #' @param dataframe {\link[base]{data.frame}} expected. 'Csv' or 'output' of the function {\link[furdeb]{data_extraction}}, which must be done before using the fishing_activity() function.
+#' @param with_catch {\link[base]{character}} expected. 'with' or 'without' depending on whether we want the number of sets with or without catches. With by default.
 #' @param graph_type {\link[base]{character}} expected. 'plot', 'plotly' or 'table'. Plot by default.
 #' @param title TRUE or FALSE expected. False by default.
 #' @details
@@ -29,6 +30,7 @@
 #' @export
 fishing_activity <- function(dataframe,
                              graph_type = "plot",
+                             with_catch = "with",
                              title = FALSE) {
   # 0 - Global variables assignement ----
   activity_date <- NULL
@@ -43,6 +45,9 @@ fishing_activity <- function(dataframe,
   `%_log` <- NULL
   time_period <- NULL
   year <- NULL
+  l_null <- NULL
+  a_null <- NULL
+  f_null <- NULL
   # 1 - Arguments verification ----
   if (codama::r_type_checking(r_object = graph_type,
                               type = "character",
@@ -96,19 +101,36 @@ fishing_activity <- function(dataframe,
   # Merge db by Year
   table_sets <- merge(a1, a2, by = "year")
   table_sets <- merge(table_sets, a3, by = "year")
-  # Add column : % LOG
-  table_sets <- table_sets %>%
-    dplyr::mutate("%_log" = l_total / a_total * 100)
   # For ggplot graph
-  set <- as.matrix(table_sets[, c(1, 5, 8, 11)])
-  t_set <- as.data.frame(set)
-  t_set <- t_set %>%
-    dplyr::rename(`Free swimming schools` = l_total,
-                  `FOB-associated schools` = f_total)
-  t_set_pivot <- tidyr::pivot_longer(t_set,
-                                     cols = c(2:3),
-                                     names_to = "type",
-                                     values_to = "nb_sets")
+  if (with_catch == "with") {
+    table_sets <- table_sets %>%
+      dplyr::mutate("%_log" = l_total / a_total * 100)
+    set <- as.matrix(table_sets[, c(1, 5, 8, 11)])
+    t_set <- as.data.frame(set)
+    t_set <- t_set %>%
+      dplyr::rename(`Free swimming schools` = l_total,
+                    `FOB-associated schools` = f_total)
+    t_set_pivot <- tidyr::pivot_longer(t_set,
+                                       cols = c(2:3),
+                                       names_to = "type",
+                                       values_to = "nb_sets")
+    perc <- 35
+    name_set <- "Number of sets"
+  } else if (with_catch == "without"){
+    table_sets <- table_sets %>%
+      dplyr::mutate("%_log" = l_null / a_null * 100)
+    set <- as.matrix(table_sets[, c(1, 7, 10, 11)])
+    t_set <- as.data.frame(set)
+    t_set <- t_set %>%
+      dplyr::rename(`Free swimming schools` = l_null,
+                    `FOB-associated schools` = f_null)
+    t_set_pivot <- tidyr::pivot_longer(t_set,
+                                       cols = c(2:3),
+                                       names_to = "type",
+                                       values_to = "nb_sets")
+    perc <- 8.01
+    name_set <- "Number of sets without catches"
+  }
   # 3 - Legend design ----
   if (title == TRUE) {
     #Ocean
@@ -127,8 +149,8 @@ fishing_activity <- function(dataframe,
     time_period <- c(unique(min(fishing_activity_t1$year):max(fishing_activity_t1$year)))
   }
   # 4 - Graphic design ----
-    t_set$`%_log` <- round(t_set$`%_log`, 3)
-    ggplot_graph <- ggplot2::ggplot() +
+  t_set$`%_log` <- round(t_set$`%_log`, 3)
+  (ggplot_graph <- ggplot2::ggplot() +
       # Theme and background
       ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 45,
                                                          hjust = 1,
@@ -155,19 +177,19 @@ fishing_activity <- function(dataframe,
       ggplot2::scale_fill_manual(values = c("grey95", "grey26")) +
       ggplot2::geom_line(data = t_set,
                          ggplot2::aes(x = year,
-                                      y = `%_log` * 35),
+                                      y = `%_log` * perc),
                          size = 0.5,
                          linetype = "longdash",
                          color = "black") +
       ggplot2::geom_point(data = t_set,
                           ggplot2::aes(x = year,
-                                       y = `%_log` * 35)) +
+                                       y = `%_log` * perc)) +
       ggplot2::labs(fill = "",
                     x = "") +
-      ggplot2::scale_y_continuous(name = "Number of sets",
+      ggplot2::scale_y_continuous(name = name_set,
 
-                                  sec.axis = ggplot2::sec_axis(~ . / 35,
-                                                               name = "% FOB-associated sets"))
+                                  sec.axis = ggplot2::sec_axis(~ . / perc,
+                                                               name = "% FOB-associated sets")))
 
 if (graph_type == "plot") {
   return(ggplot_graph)
