@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Database and csv • fishi</title>
+<title>Sql and functions • fishi</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
 <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
 <link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png">
@@ -19,7 +19,7 @@
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
 <script src="../pkgdown.js"></script><!-- docsearch --><script src="../docsearch.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/docsearch.js/2.6.3/docsearch.min.css" integrity="sha256-QOSRU/ra9ActyXkIBbiIB144aDBdtvXBcNc3OTNuX/Q=" crossorigin="anonymous">
 <link href="../docsearch.css" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/jquery.mark.min.js" integrity="sha256-4HLtjeVgH0eIB3aZ9mLYF6E8oU5chNdjU6p6rrXpl9U=" crossorigin="anonymous"></script><meta property="og:title" content="Database and csv">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/jquery.mark.min.js" integrity="sha256-4HLtjeVgH0eIB3aZ9mLYF6E8oU5chNdjU6p6rrXpl9U=" crossorigin="anonymous"></script><meta property="og:title" content="Sql and functions">
 <meta property="og:description" content="fishi">
 <meta property="og:image" content="https://ob7-ird.github.io/fishi/logo.png">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
@@ -96,81 +96,99 @@
       </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
-      <h1 data-toc-skip>Database and csv</h1>
+      <h1 data-toc-skip>Sql and functions</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/OB7-IRD/fishi/blob/HEAD/vignettes/Db_and_csv.Rmd" class="external-link"><code>vignettes/Db_and_csv.Rmd</code></a></small>
-      <div class="hidden name"><code>Db_and_csv.Rmd</code></div>
+      <small class="dont-index">Source: <a href="https://github.com/OB7-IRD/fishi/blob/HEAD/vignettes/sql_and_function.Rmd" class="external-link"><code>vignettes/sql_and_function.Rmd</code></a></small>
+      <div class="hidden name"><code>sql_and_function.Rmd</code></div>
 
     </div>
 
     
     
-<div class="section level2">
-<h2 id="database-csv">Database / csv<a class="anchor" aria-label="anchor" href="#database-csv"></a>
-</h2>
-<p>The databases and csv used by fishi contain a large number of
-columns. To be able to use the functions, you need to provide a dataset
-with identical column names. Here’s what they correspond to :</p>
-<p><strong>activity_date</strong> : Date of activity (boat out of
-service, transit, catch+ and catch+ weight, etc.). It is entered in
-dd/mm/yyyy format. The first record should correspond to the departure
-date for a trip.</p>
-<p><strong>activity_id</strong> : Numeric identifier of the activity
-(from 1 to n). This is the only field that can be used to differentiate
-one activity from another for the same day of the week. Note that an
-increasing range of numbers does not necessarily correspond to the
-chronological range.</p>
-<p><strong>boat_code</strong>: The boat’s internal code (note that the
-same boat may have several different codes when changing flag,
-etc.).</p>
-<p><strong>catch</strong> : Weight of fish caught during the current
-activity (commercial or non-commercial species, stored in tanks or
-dumped at sea).</p>
-<p><strong>country_code</strong> : Code of the country</p>
-<p><strong>cwp11_act</strong> : code of the 1x1 square in which the
-activity is located</p>
-<p><strong>fleet</strong> : Country’s fleet.</p>
-<p><strong>flag</strong> : Country’s flag.</p>
-<p><strong>gear</strong> : Name for type of vessel used.</p>
-<p><strong>keel_code</strong> : Keel coding (unique throughout the
-ship’s life).</p>
-<p><strong>landing_date</strong> : Boat landing date (dd/mm/yyyy
-format).</p>
-<p><strong>ocean_code</strong>: Code of the ocean in which the
-geographical area is located</p>
-<p><strong>ocean_label</strong> : Name of the ocean in which the
-geographical area is located</p>
-<p><strong>port_code</strong> : Code of the port designation
-(ORSTOM)</p>
-<p><strong>port_label</strong> : Name of the port designation
-(ORSTOM)</p>
-<p><strong>positive_set</strong>: total number of positive sets during
-the activity.</p>
-<p><strong>set_duration</strong>: set duration calculated using several
-parameters: fishing method, tonnage and fishing year</p>
-<p><strong>school_code</strong> : School type code.</p>
-<p><strong>school_label</strong>: Abbreviated name of school type</p>
-<p><strong>species_code</strong> : Internal species code</p>
-<p><strong>total_hour_at_sea</strong>: Total hours at sea for the
-activity (from 0 to 24h). Note that if several activities take place on
-the same date, the first will take 24h and the others 0.</p>
-<p><strong>total_hour_fished</strong>: Total hours fished during the
-activity (= set +search +transit etc.). Approximately 12h in OA and 13h
-in OI. Note that if several activities take place on the same date, the
-first will take the total hours and the others 0.</p>
-<p><strong>total_set</strong>: total number of sets during the
-activity.</p>
-<p><strong>vessel_label</strong> : Name of the ship.</p>
-<p><strong>vessel_type_code</strong> : Code for type of vessel used</p>
+<p><strong>balbaya_fishing_activity_vesseltype</strong>: Generic
+extraction of vessels, sets, catches, and effort from Balbaya</p>
+<p>Associated functions :</p>
+<ul>
+<li><p><em>fishing capacity</em>: Annual changes in the number of
+vessel</p></li>
+<li><p><em>fishing effort</em>: Annual total number of fishing and
+searching days</p></li>
+<li><p><em>spatial occupancy</em>: Changes in the spatial extent of the
+fishery over time. Annual number of 1-degree squares explored by each
+vessel.</p></li>
+</ul>
+<p><strong>balbaya_fishing_activity_engin:</strong> Generic extraction
+of sets and catches from Balbaya</p>
+<p>Associated functions :</p>
+<ul>
+<li><p><em>fishing activity</em>: Fishing operations. Annual number of
+fishing sets on FOB-associated and free-swimming tuna schools.</p></li>
+<li><p><em>set per searching day</em>: Annual number of sets per
+searching day on FOB-associated and free-swimming schools.</p></li>
+<li><p><em>catch per searching day</em> (dataframe 2): Annual number of
+catch per positive set on FOB-associated and free-swimming
+schools.</p></li>
+<li><p><em>catch per unit effort</em> (dataframe 2): Annual catch rates
+(in t per searching day) on FOB- associated and free-swimming tuna
+schools (FSC).</p></li>
+</ul>
+<p><strong>balbaya_catch_effort:<br></strong>Associated functions :</p>
+<ul>
+<li><p><em>catch_per_searching_day</em> (dataframe 1): Annual number of
+catch per positive set on FOB-associated and free-swimming
+schools.</p></li>
+<li><p><em>catch_per_unit_effort</em> (dataframe 1): Annual catch rates
+(in t per searching day) on FOB- associated and free-swimming tuna
+schools (FSC).</p></li>
+<li><p><em>map_catch_distribution:</em> Spatial distribution of tuna
+catches.</p></li>
+<li><p><em>map_effort_distribution:</em> Spatial distribution of tuna
+effort.</p></li>
+</ul>
+<p><strong>balbaya_fishery_production:</strong></p>
+<p>Associated functions :</p>
+<ul>
+<li>
+<em>fishery production</em>: Total fishery production (catch by
+species).</li>
+</ul>
+<p><strong>sardara_bio_tuna:</strong></p>
+<p>Associated functions :</p>
+<ul>
+<li><p><em>bio_size_tuna</em>: Size distribution of major tuna catches
+(in percentage of the total number of fishes).</p></li>
+<li><p><em>bio_weight_tuna</em>: Weight distribution of major tuna
+catches (in percentage of the total number of fishes).</p></li>
+</ul>
+<p><strong>observe_biological_variable:</strong></p>
+<p>Associated functions :</p>
+<ul>
+<li>
+<em>species_biological_variable</em>: Gives the number of each
+biological variable sampled for a given year</li>
+</ul>
+<p><strong>observe_sample_summary_logbook /</strong>
+<strong>observe_sample_summary_observation:</strong></p>
+<p>Associated functions :</p>
+<ul>
+<li>
+<em>sample_summary</em>: gives the number of trips, vessels or wells
+sampled for a given year</li>
+</ul>
+<p><strong>observe_set_total:</strong></p>
+<p>Associated functions :</p>
+<ul>
+<li><p>set_total: Total number of set events, sampled or not, with or
+without tuna landings.</p></li>
+<li><p>psu_total: Total number of calibration events, sampled or not,
+with tuna landings (variables: exit, well and vessel).</p></li>
+</ul>
 </div>
-  </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
 
-        <nav id="toc" data-toggle="toc"><h2 data-toc-skip>Contents</h2>
-    </nav>
-</div>
+      </div>
 
 </div>
 
