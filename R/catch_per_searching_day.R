@@ -266,7 +266,7 @@ catch_per_searching_day <- function(dataframe1,
        ggplot2::labs(x = "",
                      y = "Catch (t) per positive set",
                      color = "") +
-       ggplot2::ylim(0, 35) +
+       ggplot2::ylim(0, max(dataframe$total)) +
        ggplot2::guides(shape = ggplot2::guide_legend(title = NULL)) +
        ggplot2::annotate("text", x = max(dataframe$year) - 1.5,
                          y = max(dataframe$total) - 1,

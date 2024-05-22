@@ -71,6 +71,12 @@ set_per_searching_day <- function(dataframe,
   # 2 - Data design ----
   dataframe <-  dataframe %>%
     dplyr::mutate(year = lubridate::year(x = activity_date))
+  ocean_code <- dataframe$ocean_code[1]
+  if (ocean_code == 1){
+    set_time <- as.integer(x = 12)
+  } else if (ocean_code == 2){
+    set_time <- as.integer(x = 13)
+  }
   # db t1 - Add columns : nb_sets_pos and nb_sets
   t1 <- dataframe %>%
     dplyr::group_by(year,
@@ -93,11 +99,11 @@ set_per_searching_day <- function(dataframe,
   # Create columns sets_per_day for ALL, FOB and FSC
   table_cpue_set_per_day <- table_cpue_set_per_day %>%
     dplyr::group_by(year) %>%
-    dplyr::reframe(sets_per_day_all = dplyr::case_when(school_code == 1 | school_code == 2 | school_code == 3 ~ nb_sets / (t_recherche / 12),
+    dplyr::reframe(sets_per_day_all = dplyr::case_when(school_code == 1 | school_code == 2 | school_code == 3 ~ nb_sets / (t_recherche / set_time),
                                                          TRUE ~ 0),
-                     sets_per_day_fad = dplyr::case_when(school_code == 1 ~ nb_sets / (t_recherche / 12),
+                     sets_per_day_fad = dplyr::case_when(school_code == 1 ~ nb_sets / (t_recherche / set_time),
                                                          TRUE ~ 0),
-                     sets_per_day_fsc = dplyr::case_when(school_code %in% c(2:3) ~ nb_sets / (t_recherche / 12)))
+                     sets_per_day_fsc = dplyr::case_when(school_code %in% c(2:3) ~ nb_sets / (t_recherche / set_time)))
   # Sum columns sets_per_day for ALL, FOB and FSC
   table_cpue_set_per_day <- table_cpue_set_per_day %>%
     dplyr::group_by(year) %>%
@@ -129,7 +135,7 @@ set_per_searching_day <- function(dataframe,
   if (fishing_type == "FOB") {
     table_cpue_set_per_day$sets_per_day_fad <- round(table_cpue_set_per_day$sets_per_day_fad, 3)
     (ggplot_table_cpue <- ggplot2::ggplot(data = table_cpue_set_per_day) +
-        ggplot2::geom_hline(yintercept = c(0.25, 0.5, 0.75, 1),
+        ggplot2::geom_hline(yintercept = c(0.25, 0.5, 0.75, 1, 1.25),
                             color = "grey",
                             linetype = "longdash",
                             alpha = 0.5) +
@@ -143,7 +149,7 @@ set_per_searching_day <- function(dataframe,
         ggplot2::labs(x = "",
                       y = "Number of sets per searching day") +
         ggplot2::ylim(0,
-                      1) +
+                      max(table_cpue_set_per_day$sets_per_day_fad)) +
         ggplot2::theme(panel.background = ggplot2::element_rect(fill = "white",
                                                                 color = "black"),
                        axis.text.x = ggplot2::element_text(angle = 45,
@@ -156,8 +162,9 @@ set_per_searching_day <- function(dataframe,
         ggplot2::theme(legend.position = c(0.84, 0.97),
                        legend.justification = c(0, 1)) +
         ggplot2::annotate("text", x = max(table_cpue_set_per_day$year),
-                          y = 0.95,
-                          label = "(FOB)", color = "black",
+                          y = 0.05,
+                          label = "(FOB)",
+                          color = "black",
                           hjust = 1,
                           vjust = 1,
                           size = 7))
@@ -191,7 +198,7 @@ set_per_searching_day <- function(dataframe,
         ggplot2::theme(legend.position = c(0.84, 0.97),
                        legend.justification = c(0, 1)) +
         ggplot2::annotate("text", x = max(table_cpue_set_per_day$year),
-                          y = 0.95,
+                          y = 0.05,
                           label = "(FSC)",
                           color = "black",
                           hjust = 1,

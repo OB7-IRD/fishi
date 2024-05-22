@@ -97,6 +97,12 @@ catch_per_unit_effort <- function(dataframe1,
     dplyr::mutate(year = lubridate::year(x = activity_date))
   dataframe2 <-  dataframe2 %>%
     dplyr::mutate(year = lubridate::year(x = activity_date))
+  ocean_code <- dataframe1$ocean_code[1]
+  if (ocean_code == 1){
+    set_time <- as.integer(x = 12)
+  } else if (ocean_code == 2){
+    set_time <- as.integer(x = 13)
+  }
   t0 <- dataframe2 %>%
     dplyr::group_by(year) %>%
     dplyr::summarise(t_peche = sum(total_hour_fished, na.rm = TRUE),
@@ -121,11 +127,11 @@ catch_per_unit_effort <- function(dataframe1,
   #final table
   table_cpue_fad <- table_cpue_fad %>%
     dplyr::reframe(year = year,
-                   yft = (yft / (t_recherche / 12)),
-                   skj = (skj / (t_recherche / 12)),
-                   bet = (bet / (t_recherche / 12)),
-                   ALB = (alb / (t_recherche / 12)),
-                   total = (total / (t_recherche / 12)))
+                   yft = (yft / (t_recherche / set_time)),
+                   skj = (skj / (t_recherche / set_time)),
+                   bet = (bet / (t_recherche / set_time)),
+                   ALB = (alb / (t_recherche / set_time)),
+                   total = (total / (t_recherche / set_time)))
   # 3.b - Data design for FSC----
   #Creation of t2 database from dataframe1
   t2 <- dataframe2 %>%
@@ -153,11 +159,11 @@ catch_per_unit_effort <- function(dataframe1,
   #final table
   table_cpue_fsc <- table_cpue_fsc %>%
     dplyr::reframe(year = year,
-                   yft = (yft / (t_recherche / 12)),
-                   skj = (skj / (t_recherche / 12)),
-                   bet = (bet / (t_recherche / 12)),
-                   ALB = (alb / (t_recherche / 12)),
-                   total = (total / (t_recherche / 12)))
+                   yft = (yft / (t_recherche / set_time)),
+                   skj = (skj / (t_recherche / set_time)),
+                   bet = (bet / (t_recherche / set_time)),
+                   ALB = (alb / (t_recherche / set_time)),
+                   total = (total / (t_recherche / set_time)))
   # 4 - Legend design ----
   if (title == TRUE) {
     #Ocean
@@ -198,7 +204,7 @@ catch_per_unit_effort <- function(dataframe1,
   # plot
   (ggplot_graph <- ggplot2::ggplot(data = dataframe) +
       # Theme and background
-      ggplot2::geom_hline(yintercept = c(20, 15, 10, 5),
+      ggplot2::geom_hline(yintercept = c(40, 30, 20, 15, 10, 5),
                           color = "grey",
                           linetype = "longdash",
                           alpha = 0.5) +
@@ -254,9 +260,10 @@ catch_per_unit_effort <- function(dataframe1,
                                              "Total" = 16)) +
       ggplot2::labs(x = "",
                     y = "Catch per unit effort (t/d)") +
-      ggplot2::ylim(0, 20) +
+      ggplot2::ylim(0, max(dataframe$total)) +
       ggplot2::guides(shape = ggplot2::guide_legend(title = NULL)) +
-      ggplot2::annotate("text", x = max(dataframe$year) - 1,
+      ggplot2::annotate("text",
+                        x = 1994,
                         y = max(dataframe$total) - 1,
                         label = label_ft,
                         hjust = 1.2,
