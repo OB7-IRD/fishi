@@ -7,14 +7,6 @@
 #' @param title TRUE or FALSE expected. False by default.
 #' @details
 #' The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:
-#' \itemize{
-#'  \item{\code{  activity_date}}
-#'  \item{\code{  cwp11_act}}
-#'  \item{\code{  positive_set}}
-#'  \item{\code{  total_set}}
-#'  \item{\code{  total_hour_fished}}
-#'  \item{\code{  school_code}}
-#' }
 #' \preformatted{
 #'    activity_date | cwp11_act | positive_set | total_set | total_hour_fished | school_code
 #'    --------------------------------------------------------------------------------------

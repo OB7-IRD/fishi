@@ -31,17 +31,7 @@ Annual catch rates (in t per searching day) on FOB- associated and free-swimming
 }
 \details{
 The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:
-\itemize{
- Dataframe 1:
- \item{\code{  activity_date}}
- \item{\code{  species_code}}
- \item{\code{  school_code}}
- \item{\code{  set_duration}}
- \item{\code{  positive_set}}
- \item{\code{  set_duration}}
- \item{\code{  total_catch_weight}}
- \item{\code{  total_hour_fished}}
-}
+Dataframe 1:
 \preformatted{
    activity_date | species_code | school_code | set_duration | positive_set | total_set | total_catch_weight | total_hour_fished
    -------------------------------------------------------------------------------------------------------------------------------
@@ -50,15 +40,7 @@ The input dataframe must contain all these columns for the function to work [\hr
    1999-07-09    | 1            | 1            | 3.54        | 1            | 1         | 24.4               | 12.1
 }
 
-\itemize{
  Dataframe 2:
- \item{\code{  activity_date}}
- \item{\code{  school_code}}
- \item{\code{  set_duration}}
- \item{\code{  positive_set}}
- \item{\code{  set_duration}}
- \item{\code{  total_hour_fished}}
-}
 \preformatted{
    activity_date | school_code | set_duration | positive_set | total_set | total_hour_fished
    -----------------------------------------------------------------------------------------

@@ -19,3 +19,19 @@ The function return ggplot R plot.
 \description{
 Represents the time spent by the fleet (in hours)
 }
+\details{
+The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:
+\preformatted{
+   activity_date | fishing_time | gear | country_label | hrsea
+   -------------------------------------------------------------------------------
+   1991-01-15    |  0           | 1    | FRA           | 24
+   1991-01-19    | 12.0         | 1    | FRA           | 24
+   1991-01-20    |  7.92        | 1    | FRA           | 15
+}
+
+Add these columns for an automatic title (optional):
+\itemize{
+ \item{\code{  country_code}}
+ \item{\code{  ocean_code}}
+}
+}

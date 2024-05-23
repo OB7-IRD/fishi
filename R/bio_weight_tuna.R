@@ -7,13 +7,6 @@
 #' @param title TRUE or FALSE expected. False by default.
 #' @details
 #' The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:
-#' \itemize{
-#'  \item{\code{  activity_date}}
-#'  \item{\code{  school_code}}
-#'  \item{\code{  species_code}}
-#'  \item{\code{  size_class}}
-#'  \item{\code{  estimated_individual}}
-#' }
 #' \preformatted{
 #'    activity_date | school_code | species_code | size_class | estimated_individual
 #'    -------------------------------------------------------------------------------
@@ -570,7 +563,7 @@ bio_weight_tuna <- function(dataframe,
                                       margin = 0.03))
     if (title == TRUE) {
       (plotly_weight <- plotly_weight %>%
-        plotly::layout(title = list(text = paste0("Weight distribution of the catch for the ",
+       plotly::layout(title = list(text = paste0("Weight distribution of the catch for the ",
                                                   country_legend,
                                                   " purse seine fleet in ",
                                                   report_year,

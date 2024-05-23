@@ -4,6 +4,21 @@
 #' @param dataframe {\link[base]{data.frame}} expected. 'Csv' or 'output' of the function {\link[furdeb]{data_extraction}}, which must be done before using the fishing_time() function.
 #' @param graph_type {\link[base]{character}} expected. 'plot', 'plotly' or 'table'. Plot by default.
 #' @param title TRUE or FALSE expected. False by default.
+#' @details
+#' The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:
+#' \preformatted{
+#'    activity_date | fishing_time | gear | country_label | hrsea
+#'    -------------------------------------------------------------------------------
+#'    1991-01-15    |  0           | 1    | FRA           | 24
+#'    1991-01-19    | 12.0         | 1    | FRA           | 24
+#'    1991-01-20    |  7.92        | 1    | FRA           | 15
+#' }
+#'
+#' Add these columns for an automatic title (optional):
+#' \itemize{
+#'  \item{\code{  country_code}}
+#'  \item{\code{  ocean_code}}
+#' }
 #' @return The function return ggplot R plot.
 #' @export
 fishing_time <- function(dataframe,

@@ -14,12 +14,19 @@
 #'  \item{\code{  ocean_label}}
 #'  \item{\code{  fleet}}
 #'  \item{\code{  vessel_label}}
-#'  \item{\code{  vessel_type}}
-#'  \item{\code{  landing_year}}
+#'  \item{\code{  vessel_type_code}}
+#'  \item{\code{  landing_date}}
 #'  \item{\code{  country_code}}
 #'  \item{\code{  vessel_well_number}}
 #'  \item{\code{  arrival}}
 #'  \item{\code{  port_arrival}}
+#' }
+#' \preformatted{
+#'    program                          | ocean_label | fleet | vessel_label | vessel_type_code | landing_date | country_code | vessel_well_number | arrival   | port_arrival
+#'    -----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+#'    AVDTH Atlantique 1999-2022 (IRD) | Atlantic    | FRA   | VIA AVENIR   | 6                | 2021-01-15   | 1            | 4T                 | 2021-01-1 | ABIDJAN
+#'    AVDTH Atlantique 1999-2022 (IRD) | Atlantic    | FRA   | VIA AVENIR   | 6                | 2021-01-15   | 1            | 4T                 | 2021-01-1 | ABIDJAN
+#'    AVDTH Atlantique 1999-2022 (IRD) | Atlantic    | FRA   | VIA AVENIR   | 6                | 2021-01-15   | 1            | 4T                 | 2021-01-1 | ABIDJAN
 #' }
 #' @return The function return a table.
 #' @export

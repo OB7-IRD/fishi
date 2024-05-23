@@ -6,13 +6,6 @@
 #' @param title TRUE or FALSE expected. False by default.
 #' @details
 #' The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:
-#' \itemize{
-#'  \item{\code{  activity_date}}
-#'  \item{\code{  cwp11_act}}
-#'  \item{\code{  ocean_code}}
-#'  \item{\code{  set_duration}}
-#'  \item{\code{  total_hour_fished}}
-#' }
 #' \preformatted{
 #'    activity_date | cwp11_act | ocean_code | set_duration | total_hour_fished
 #'    --------------------------------------------------------------------------

@@ -29,16 +29,6 @@ Generates a figure for catches (x 1000 t) of the three main tunas: BET, SKJ and 
 }
 \details{
 The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:
-\itemize{
- \item{\code{  activity_date}}
- \item{\code{  species_code}}
- \item{\code{  flag}}
- \item{\code{  fleet}}
- \item{\code{  gear}}
- \item{\code{  school_code}}
- \item{\code{  ocean_label}}
- \item{\code{  total_catch_weight}}
-}
 \preformatted{
    activity_date | species_code | flag   | fleet  | gear | school_code | ocean_label | total_catch_weight
    -----------------------------------------------------------------------------------------
