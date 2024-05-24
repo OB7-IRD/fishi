@@ -33,7 +33,7 @@ and the RShiny (https://forge.ird.fr/marbec/ob7/rshiny-fishi).
 
 ## Installation
 
-Working in progress for this section. Be patient.
+You can install the fishi package directly from GitHub using the devtools package:
 ```{r, eval = FALSE}
 devtools::install_github("https://github.com/OB7-IRD/fishi",
                          INSTALL_opts=c("--no-multiarch"))
@@ -54,16 +54,63 @@ devtools::install_github("https://github.com/OB7-IRD/fishi",
 
 Working in progress for this section. Be patient.
 
-## Usage
+## Example Usage
+Here is a basic example demonstrating some of the functionalities of the fishi package.
 
-```{r, message = FALSE}
-library(fishi)
+### Data Loading
+Load data from a CSV file:
+```{r}
+data <- read.csv("path_to_your_file.csv")
 ```
+
+Or load data from a SQL database with DBI:
+```{r}
+db_connection <- DBI::dbConnect(RMySQL::MySQL(), 
+                                dbname = "your_database_name", 
+                                host = "your_host", 
+                                user = "your_username", 
+                                password = "your_password")
+
+query <- "SELECT * FROM your_table"
+data <- DBI::dbGetQuery(db_connection, query)
+```
+
+Or load data from a SQL database with furdeb:
+```{r}
+db_connection <- DBI::dbConnect(RMySQL::MySQL(), 
+                                dbname = "your_database_name", 
+                                host = "your_host", 
+                                user = "your_username", 
+                                password = "your_password")
+
+# anchors informations
+ocean <- as.integer(x = 1)
+country <- as.integer(x = 1)
+report_year <- as.integer(2022)
+vessel_type = as.integer(x = c(4, 5, 6))
+
+activity_vessel_type <- furdeb::data_extraction(type = "database", 
+                                                file_path = system.file("sql",
+                                                                        "balbaya_fishing_activity_vesseltype.sql",
+                                                                        package = "fishi"),
+                                                database_connection = balbaya_con, 
+                                                anchor = list(time_period = time_period,
+                                                              country = country,
+                                                              vessel_type = vessel_type,
+                                                              ocean = ocean))
+```
+
+
+### Vizualisation
+
+```{r}
+library(fishi)
+fishing_capacity(dataframe = activity_vessel_type,
+                 graph_type = "plot")
+```
+
 
 ## Getting help
 
 If you encounter a clear bug, please file an issue with a minimal reproducible example on [GitHub issues page](https://github.com/OB7-IRD/fishi/issues). This link is also available if you have any questions and improvement propositions.
 
-## References
-
-Working in progress for this section.
