@@ -1,32 +1,29 @@
 #' @name catch_per_searching_day
 #' @title Annual number of catch per positive set
 #' @description Annual number of catch per positive set on FOB-associated and free-swimming schools.
-#' @param dataframe1 {\link[base]{data.frame}} expected. Csv or output of the function {\link[furdeb]{data_extraction}}, which must be done before using the catch_per_searching_day() function.
-#' @param dataframe2 {\link[base]{data.frame}} expected. Csv or output of the function {\link[furdeb]{data_extraction}}, which must be done before using the catch_per_searching_day() function.
-#' @param fishing_type {\link[base]{character}} expected. FOB and FSC.
-#' @param graph_type {\link[base]{character}} expected. plot, plotly or table. Plot by default.
-#' @param title TRUE or FALSE expected. False by default.
+#' @param dataframe1 {\link[base]{data.frame}} expected. 'Csv' or 'output' of the function {\link[furdeb]{data_extraction}}, which must be done before using the catch_per_searching_day() function.
+#' @param dataframe2 {\link[base]{data.frame}} expected. 'Csv' or 'output' of the function {\link[furdeb]{data_extraction}}, which must be done before using the catch_per_searching_day() function.
+#' @param fishing_type {\link[base]{character}} expected. 'FOB' and 'FSC'.
+#' @param graph_type {\link[base]{character}} expected. 'plot', 'plotly' or 'table'. Plot by default.
+#' @param title TRUE or FALSE expected. Title for plotly graph_type. False by default.
 #' @details
 #' The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:
-#' \itemize{
+#'
 #' Dataframe 1:
-#'  \item{\code{  activity_date}}
-#'  \item{\code{  species_code}}
-#'  \item{\code{  school_code}}
-#'  \item{\code{  set_duration}}
-#'  \item{\code{  positive_set}}
-#'  \item{\code{  total_set}}
-#'  \item{\code{  total_catch_weight}}
-#'  \item{\code{  total_hour_fished}}
+#' \preformatted{
+#'    activity_date | species_code | school_code | set_duration | positive_set | total_set | total_catch_weight | total_hour_fished
+#'    -------------------------------------------------------------------------------------------------------------------------------
+#'    1999-07-09    | 2            | 1            | 3.54        | 1            | 1         | 119.0              | 12.1
+#'    1999-07-09    | 1            | 1            | 3.54        | 1            | 1         | 20.6               | 12.1
+#'    1999-07-09    | 1            | 1            | 3.54        | 1            | 1         | 24.4               | 12.1
 #' }
-#' \itemize{
 #' Dataframe 2:
-#'  \item{\code{  activity_date}}
-#'  \item{\code{  school_code}}
-#'  \item{\code{  set_duration}}
-#'  \item{\code{  positive_set}}
-#'  \item{\code{  total_set}}
-#'  \item{\code{  total_hour_fished}}
+#' \preformatted{
+#'    activity_date | school_code | set_duration | positive_set | total_set | total_hour_fished
+#'    -----------------------------------------------------------------------------------------
+#'    2010-03-06    | 3           | 0            | 0            | 0         |  1.00
+#'    2010-12-04    | 3           | 0            | 0            | 0         | 11.8
+#'    2010-05-19    | 3           | 0            | 0            | 0         |  2.05
 #' }
 #' Add these columns for an automatic title (optional):
 #' \itemize{
@@ -192,75 +189,75 @@ catch_per_searching_day <- function(dataframe1,
     label_ft <- " (FSC) "
     dataframe <- table_cpue_fsc_set
   }
-    (ggplot_graph <- ggplot2::ggplot(data = dataframe) +
-       # Theme and background
-       ggplot2::geom_hline(yintercept = c(30, 20, 10, 0),
-                           color = "grey",
-                           linetype = "longdash",
-                           alpha = 0.5) +
-       ggplot2::scale_x_continuous(expand = c(0, 0),
-                                   breaks = dataframe$year) +
-       ggplot2::theme_bw() +
-       ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 45,
-                                                          hjust = 1,
-                                                          size = 13),
-                      axis.text.y = ggplot2::element_text(size = 13),
-                      axis.title.y = ggplot2::element_text(size = 14),
-                      legend.position = "top",
-                      legend.justification = "right",
-                      legend.text = ggplot2::element_text(size = 10),
-                      panel.background = ggplot2::element_rect(fill = "white",
-                                                               color = "black"),
-                      panel.grid.major = ggplot2::element_blank(),
-                      panel.grid.minor.x = ggplot2::element_blank(),
-                      panel.grid.major.y = ggplot2::element_line(size = 0.2,
-                                                                 color = "gray90")) +
-       # Lines and points
-       ggplot2::geom_line(ggplot2::aes(x = year,
-                                       y = yft),
-                          size = 0.15) +
-       ggplot2::geom_line(ggplot2::aes(x = year,
-                                       y = skj),
-                          size = 0.15) +
-       ggplot2::geom_line(ggplot2::aes(x = year,
-                                       y = bet),
-                          size = 0.15) +
-       ggplot2::geom_line(ggplot2::aes(x = year,
-                                       y = total),
-                          size = 0.15) +
-       ggplot2::geom_point(ggplot2::aes(x = year,
-                                        y = yft,
-                                        shape = "Yellowfin"),
-                           size = 2) +
-       ggplot2::geom_point(ggplot2::aes(x = year,
-                                        y = skj,
-                                        shape = "Skipjack"),
-                           size = 2) +
-       ggplot2::geom_point(ggplot2::aes(x = year,
-                                        y = bet,
-                                        shape = "Bigeye"),
-                           size = 2) +
-       ggplot2::geom_point(ggplot2::aes(x = year,
-                                        y = total,
-                                        shape = "Total"),
-                           size = 2) +
-       ggplot2::scale_shape_manual(values = c("Yellowfin" =  15,
-                                              "Skipjack" = 5,
-                                              "Bigeye" = 2,
-                                              "Total" = 16)) +
-       ggplot2::labs(x = "",
-                     y = "Catch (t) per positive set",
-                     color = "") +
-       ggplot2::ylim(0, 35) +
-       ggplot2::guides(shape = ggplot2::guide_legend(title = NULL)) +
-       ggplot2::annotate("text", x = max(dataframe$year) - 1.5,
-                         y = max(dataframe$total) - 1,
-                         label = label_ft,
-                         hjust = 1.2,
-                         vjust = 0.9,
-                         size = 5,
-                         color = "black") +
-        ggplot2::scale_x_continuous(breaks = unique(dataframe$year)))
+  (ggplot_graph <- ggplot2::ggplot(data = dataframe) +
+      # Theme and background
+      ggplot2::geom_hline(yintercept = c(30, 20, 10, 0),
+                          color = "grey",
+                          linetype = "longdash",
+                          alpha = 0.5) +
+      ggplot2::scale_x_continuous(expand = c(0, 0),
+                                  breaks = dataframe$year) +
+      ggplot2::theme_bw() +
+      ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 45,
+                                                         hjust = 1,
+                                                         size = 13),
+                     axis.text.y = ggplot2::element_text(size = 13),
+                     axis.title.y = ggplot2::element_text(size = 14),
+                     legend.position = "top",
+                     legend.justification = "right",
+                     legend.text = ggplot2::element_text(size = 10),
+                     panel.background = ggplot2::element_rect(fill = "white",
+                                                              color = "black"),
+                     panel.grid.major = ggplot2::element_blank(),
+                     panel.grid.minor.x = ggplot2::element_blank(),
+                     panel.grid.major.y = ggplot2::element_line(size = 0.2,
+                                                                color = "gray90")) +
+      # Lines and points
+      ggplot2::geom_line(ggplot2::aes(x = year,
+                                      y = yft),
+                         size = 0.15) +
+      ggplot2::geom_line(ggplot2::aes(x = year,
+                                      y = skj),
+                         size = 0.15) +
+      ggplot2::geom_line(ggplot2::aes(x = year,
+                                      y = bet),
+                         size = 0.15) +
+      ggplot2::geom_line(ggplot2::aes(x = year,
+                                      y = total),
+                         size = 0.15) +
+      ggplot2::geom_point(ggplot2::aes(x = year,
+                                       y = yft,
+                                       shape = "Yellowfin"),
+                          size = 2) +
+      ggplot2::geom_point(ggplot2::aes(x = year,
+                                       y = skj,
+                                       shape = "Skipjack"),
+                          size = 2) +
+      ggplot2::geom_point(ggplot2::aes(x = year,
+                                       y = bet,
+                                       shape = "Bigeye"),
+                          size = 2) +
+      ggplot2::geom_point(ggplot2::aes(x = year,
+                                       y = total,
+                                       shape = "Total"),
+                          size = 2) +
+      ggplot2::scale_shape_manual(values = c("Yellowfin" =  15,
+                                             "Skipjack" = 5,
+                                             "Bigeye" = 2,
+                                             "Total" = 16)) +
+      ggplot2::labs(x = "",
+                    y = "Catch (t) per positive set",
+                    color = "") +
+      ggplot2::ylim(0, max(dataframe$total)) +
+      ggplot2::guides(shape = ggplot2::guide_legend(title = NULL)) +
+      ggplot2::annotate("text", x = max(dataframe$year) - 1.5,
+                        y = max(dataframe$total) - 1,
+                        label = label_ft,
+                        hjust = 1.2,
+                        vjust = 0.9,
+                        size = 5,
+                        color = "black") +
+      ggplot2::scale_x_continuous(breaks = unique(dataframe$year)))
   if (graph_type == "plot") {
     return(ggplot_graph)
   } else if (graph_type == "plotly") {
@@ -290,9 +287,9 @@ catch_per_searching_day <- function(dataframe1,
       plotly::layout(legend = list(orientation = "v",
                                    x = 0.85,
                                    y = 0.97))
-    } else if (graph_type == "table") {
-      dataframe <- round(dataframe, 2)
-      dataframe <- dataframe %>%
+  } else if (graph_type == "table") {
+    dataframe <- round(dataframe, 2)
+    dataframe <- dataframe %>%
       dplyr::summarise(Year = year,
                        YFT = yft,
                        SKJ = skj,

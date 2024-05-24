@@ -1,22 +1,18 @@
 #' @name map_catch_distribution
 #' @title Spatial distribution of tuna catches
 #' @description Spatial distribution of tuna catches.
-#' @param dataframe {\link[base]{data.frame}} expected. Csv or output of the function {\link[furdeb]{data_extraction}}, which must be done before using the map_catch_distribution() function.
-#' @param fishing_type {\link[base]{character}} expected. FOB, FSC or ALL. ALL by default.
-#' @param graph_type {\link[base]{character}} expected. plot or plotly. Plot by default.
-#' @param title TRUE or FALSE expected. False by default.
+#' @param dataframe {\link[base]{data.frame}} expected. 'Csv' or 'output' of the function {\link[furdeb]{data_extraction}}, which must be done before using the map_catch_distribution() function.
+#' @param fishing_type {\link[base]{character}} expected. 'FOB', 'FSC' or 'ALL'. ALL by default.
+#' @param graph_type {\link[base]{character}} expected. 'plot' or 'plotly'. Plot by default.
+#' @param title TRUE or FALSE expected. Title for plotly graph_type. False by default.
 #' @details
 #' The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:
-#' \itemize{
-#'  \item{\code{  activity_date}}
-#'  \item{\code{  vessel_code}}
-#'  \item{\code{  species_code}}
-#'  \item{\code{  ocean_code}}
-#'  \item{\code{  school_code}}
-#'  \item{\code{  cwp11_act}}
-#'  \item{\code{  activity_id}}
-#'  \item{\code{  positive_set}}
-#'  \item{\code{  total_catch_weight}}
+#' \preformatted{
+#'    activity_date | vessel_code | species_code | ocean_code | school_code | cwp11_act | activity_id | positive_set | total_catch_weight
+#'    -----------------------------------------------------------------------------------------------------------------------------------
+#'    2022-01-02    | 703         | 3            | 1          | 2           | 301000    | 1           | 1            |  2.60
+#'    2022-01-02    | 703         | 1            | 1          | 2           | 301000    | 1           | 1            | 17.8
+#'    2022-01-02    | 703         | 3            | 1          | 2           | 301000    | 2           | 1            |  1.11
 #' }
 #' Add these columns for an automatic title (optional):
 #' \itemize{
@@ -158,15 +154,15 @@ map_catch_distribution <- function(dataframe,
   long <- quad2pos(as.numeric(datafile$cwp11_act + 5 * 1e6))$x
   if (title == TRUE) {
     #Ocean
-    ocean_legend <- code_manipulation(data         = dataframe$ocean_id,
+    ocean_legend <- code_manipulation(data         = dataframe$ocean_code,
                                       referential  = "ocean",
                                       manipulation = "legend")
     #vessel
-    vessel_type_legend <- code_manipulation(data         = dataframe$vessel_type_id,
+    vessel_type_legend <- code_manipulation(data         = dataframe$vessel_type_code,
                                             referential  = "vessel_simple_type",
                                             manipulation = "legend")
     #country
-    country_legend <- code_manipulation(data         = dataframe$country_id,
+    country_legend <- code_manipulation(data         = dataframe$country_code,
                                         referential  = "country",
                                         manipulation = "legend")
   }
@@ -506,6 +502,6 @@ map_catch_distribution <- function(dataframe,
                        margin = list(t = 120))
     }
     # Plot the plotly
-    plotly_map
+    return(plotly_map)
   }
 }

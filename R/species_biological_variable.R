@@ -1,7 +1,7 @@
 #' @name species_biological_variable
 #' @title Sampled biological variables
 #' @description Give the number of each biological variable sampled for a given year.
-#' @param dataframe {\link[base]{data.frame}} expected. Csv or output of the function {\link[furdeb]{data_extraction}}, which must be done before using the fishing_activity() function.
+#' @param dataframe {\link[base]{data.frame}} expected. Csv or output of the function {\link[furdeb]{data_extraction}}, which must be done before using the species_biological_variable() function.
 #' @param data_type {\link[base]{character}} expected. 'tunabio' or 'observe'.
 #' @param graph_type {\link[base]{character}} expected. 'ggplot' or 'table'. table by default.
 #' @param reported_year {\link[base]{integer}} expected. Write the wanted year of the report
@@ -11,14 +11,14 @@
 #' @param selected_species {\link[base]{character}} expected. Name the species you want to select. Can be more than one. If NULL give all the species for the given year.
 #' @details
 #' The input dataframe frome sql must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:
-#' \itemize{
-#'  \item{\code{  fish_sampling_date}}
-#'  \item{\code{  weight}}
-#'  \item{\code{  length}}
-#'  \item{\code{  sex}}
-#'  \item{\code{  species_code_fao}}
-#'  \item{\code{  count}}
+#' \preformatted{
+#'    fish_sampling_date | weight  | length | sex | species_code_fao | count
+#'    -------------------------------------------------------------------------------
+#'    2022               | 35.2    | 200    | 4   | SAI              | 1
+#'    2022               |  9.93   |  44    | 2   | LKV              | 1
+#'    2022               |  0.058  |  24    | 4   | REO              | 1
 #' }
+#'
 #' @return The function return ggplot or table R plot.
 #' @export
 species_biological_variable <- function(dataframe,

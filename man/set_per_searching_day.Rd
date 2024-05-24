@@ -12,13 +12,13 @@ set_per_searching_day(
 )
 }
 \arguments{
-\item{dataframe}{{\link[base]{data.frame}} expected. Csv or output of the function {\link[furdeb]{data_extraction}}, which must be done before using the set_per_searching_day() function.}
+\item{dataframe}{{\link[base]{data.frame}} expected. 'Csv' or 'output' of the function {\link[furdeb]{data_extraction}}, which must be done before using the set_per_searching_day() function.}
 
-\item{fishing_type}{{\link[base]{character}} expected. FOB and FSC.}
+\item{fishing_type}{{\link[base]{character}} expected. 'FOB' and 'FSC'.}
 
-\item{graph_type}{{\link[base]{character}} expected. plot, plotly or table. Plot by default.}
+\item{graph_type}{{\link[base]{character}} expected. 'plot', 'plotly' or 'table.' Plot by default.}
 
-\item{title}{TRUE or FALSE expected. False by default.}
+\item{title}{TRUE or FALSE expected. Title for plotly graph_type. False by default.}
 }
 \value{
 The function return ggplot R plot.
@@ -28,13 +28,12 @@ Annual number of sets per searching day on FOB-associated and free-swimming scho
 }
 \details{
 The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:
-\itemize{
- \item{\code{  activity_date}}
- \item{\code{  school_code}}
- \item{\code{  set_duration}}
- \item{\code{  positive_set}}
- \item{\code{  total_set}}
- \item{\code{  total_hour_fished}}
+\preformatted{
+   activity_date | school_code | set_duration | positive_set | total_set | total_hour_fished
+   -----------------------------------------------------------------------------------------
+   2010-03-06    | 3           | 0            | 0            | 0         |  1.00
+   2010-12-04    | 3           | 0            | 0            | 0         | 11.8
+   2010-05-19    | 3           | 0            | 0            | 0         |  2.05
 }
 Add these columns for an automatic title (optional):
 \itemize{

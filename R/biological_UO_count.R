@@ -2,7 +2,7 @@
 #' @title Number of biological UO
 #' @description Count the UO for biological sampling.
 #' @param path_file {\link[base]{character}} expected. File path to the Tunabio file.
-#' @param graph_type {\link[base]{character}} expected. "number" or "table." Number give the total number of each biological UO and table give the detail per month. Number by default.
+#' @param graph_type {\link[base]{character}} expected. 'number' or 'table.' Number give the total number of each biological UO and table give the detail per month. Number by default.
 #' @param start_date {\link[base]{date}} expected. Write the start date of the contract
 #' @param end_date {\link[base]{date}} expected. Write the end date of the contract
 #' @return The function return table.

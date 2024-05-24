@@ -1,19 +1,20 @@
 #' @name bio_weight_tuna
 #' @title Weight distribution of major tuna catches
 #' @description Weight distribution of major tuna catches (in percentage of the total number of fishes).
-#' @param dataframe {\link[base]{data.frame}} expected. Csv or output of the function {\link[furdeb]{data_extraction}}, which must be done before using the bio_weight_tuna() function.
+#' @param dataframe {\link[base]{data.frame}} expected. 'Csv' or 'output' of the function {\link[furdeb]{data_extraction}}, which must be done before using the bio_weight_tuna() function.
 #' @param report_year {\link[base]{integer}} expected. Year of the statistical report.
-#' @param graph_type {\link[base]{character}} expected. plot or ggplot. Plot by default.
-#' @param title TRUE or FALSE expected. False by default.
+#' @param graph_type {\link[base]{character}} expected. 'plot' or 'ggplot.' Plot by default.
+#' @param title TRUE or FALSE expected. Title for plotly graph_type. False by default.
 #' @details
 #' The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:
-#' \itemize{
-#'  \item{\code{  activity_date}}
-#'  \item{\code{  school_code}}
-#'  \item{\code{  species_code}}
-#'  \item{\code{  size_class}}
-#'  \item{\code{  estimated_individual}}
+#' \preformatted{
+#'    activity_date | school_code | species_code | size_class | estimated_individual
+#'    -------------------------------------------------------------------------------
+#'    2018          | 1           | 6            | 45         | 1.97
+#'    2018          | 1           | 6            | 44         | 1.25
+#'    2018          | 1           | 6            | 43         | 28.7
 #' }
+#'
 #' Add these columns for an automatic title (optional):
 #' \itemize{
 #'  \item{\code{  country_code}}
@@ -562,7 +563,7 @@ bio_weight_tuna <- function(dataframe,
                                       margin = 0.03))
     if (title == TRUE) {
       (plotly_weight <- plotly_weight %>%
-        plotly::layout(title = list(text = paste0("Weight distribution of the catch for the ",
+       plotly::layout(title = list(text = paste0("Weight distribution of the catch for the ",
                                                   country_legend,
                                                   " purse seine fleet in ",
                                                   report_year,

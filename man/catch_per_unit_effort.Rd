@@ -13,15 +13,15 @@ catch_per_unit_effort(
 )
 }
 \arguments{
-\item{dataframe1}{{\link[base]{data.frame}} expected. Csv or output of the function {\link[furdeb]{data_extraction}}, which must be done before using the catch_per_searching_day() function.}
+\item{dataframe1}{{\link[base]{data.frame}} expected. 'Csv' or 'output' of the function {\link[furdeb]{data_extraction}}, which must be done before using the catch_per_searching_day() function.}
 
-\item{dataframe2}{{\link[base]{data.frame}} expected. Csv or output of the function {\link[furdeb]{data_extraction}}, which must be done before using the catch_per_searching_day() function.}
+\item{dataframe2}{{\link[base]{data.frame}} expected. 'Csv' or 'output' of the function {\link[furdeb]{data_extraction}}, which must be done before using the catch_per_searching_day() function.}
 
-\item{fishing_type}{{\link[base]{character}} expected. FOB or FSC.}
+\item{fishing_type}{{\link[base]{character}} expected. 'FOB' or 'FSC'.}
 
-\item{graph_type}{{\link[base]{character}} expected. plot, plotly or table. Plot by default.}
+\item{graph_type}{{\link[base]{character}} expected. 'plot', 'plotly' or 'table.' Plot by default.}
 
-\item{title}{TRUE or FALSE expected. False by default.}
+\item{title}{TRUE or FALSE expected. Title for plotly graph_type. False by default.}
 }
 \value{
 The function return ggplot R plot.
@@ -31,25 +31,22 @@ Annual catch rates (in t per searching day) on FOB- associated and free-swimming
 }
 \details{
 The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:
-\itemize{
- Dataframe 1:
- \item{\code{  activity_date}}
- \item{\code{  species_code}}
- \item{\code{  school_code}}
- \item{\code{  set_duration}}
- \item{\code{  positive_set}}
- \item{\code{  set_duration}}
- \item{\code{  total_catch_weight}}
- \item{\code{  total_hour_fished}}
+Dataframe 1:
+\preformatted{
+   activity_date | species_code | school_code | set_duration | positive_set | total_set | total_catch_weight | total_hour_fished
+   -------------------------------------------------------------------------------------------------------------------------------
+   1999-07-09    | 2            | 1            | 3.54        | 1            | 1         | 119.0              | 12.1
+   1999-07-09    | 1            | 1            | 3.54        | 1            | 1         | 20.6               | 12.1
+   1999-07-09    | 1            | 1            | 3.54        | 1            | 1         | 24.4               | 12.1
 }
-\itemize{
+
  Dataframe 2:
- \item{\code{  activity_date}}
- \item{\code{  school_code}}
- \item{\code{  set_duration}}
- \item{\code{  positive_set}}
- \item{\code{  set_duration}}
- \item{\code{  total_hour_fished}}
+\preformatted{
+   activity_date | school_code | set_duration | positive_set | total_set | total_hour_fished
+   -----------------------------------------------------------------------------------------
+   2010-03-06    | 3           | 0            | 0            | 0         |  1.00
+   2010-12-04    | 3           | 0            | 0            | 0         | 11.8
+   2010-05-19    | 3           | 0            | 0            | 0         |  2.05
 }
 Add these columns for an automatic title (optional):
 \itemize{

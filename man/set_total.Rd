@@ -14,9 +14,9 @@ set_total(
 )
 }
 \arguments{
-\item{dataframe}{{\link[base]{data.frame}} expected. Csv or output of the function {\link[furdeb]{data_extraction}}, which must be done before using the fishing_activity() function.}
+\item{dataframe}{{\link[base]{data.frame}} expected. Csv or output of the function {\link[furdeb]{data_extraction}}, which must be done before using the set_total() function.}
 
-\item{graph_type}{{\link[base]{character}} expected. "number" or "table." Number by default.}
+\item{graph_type}{{\link[base]{character}} expected. 'number' or 'table'. Number by default.}
 
 \item{reported_year}{{\link[base]{integer}} expected. Write the wanted year of the report.}
 
@@ -34,17 +34,11 @@ Total sets events, sampled or not, with or without tuna landings.
 }
 \details{
 The input dataframe frome sql must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:
-\itemize{
- \item{\code{  program}}
- \item{\code{  ocean_label}}
- \item{\code{  fleet}}
- \item{\code{  vessel_type}}
- \item{\code{  vessel_label}}
- \item{\code{  departure}}
- \item{\code{  arrival}}
- \item{\code{  landing_date}}
- \item{\code{  activity_date}}
- \item{\code{  port_departure}}
- \item{\code{  port_arrival}}
+\preformatted{
+   program                          | ocean_label | fleet | vessel_label | vessel_type_code | departure  | port_departure | landing_date | country_code | vessel_well_number | arrival   | port_arrival
+   -----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+   AVDTH Atlantique 1999-2022 (IRD) | Atlantic    | FRA   | VIA AVENIR   | 6                | 2020-12-19 |     ABIDJAN    | 2021-01-15   | 1            | 4T                 | 2021-01-1 | ABIDJAN
+   AVDTH Atlantique 1999-2022 (IRD) | Atlantic    | FRA   | VIA AVENIR   | 6                | 2020-12-19 |     ABIDJAN    | 2021-01-15   | 1            | 4T                 | 2021-01-1 | ABIDJAN
+   AVDTH Atlantique 1999-2022 (IRD) | Atlantic    | FRA   | VIA AVENIR   | 6                | 2020-12-19 |     ABIDJAN    | 2021-01-15   | 1            | 4T                 | 2021-01-1 | ABIDJAN
 }
 }

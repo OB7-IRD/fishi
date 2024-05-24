@@ -16,7 +16,7 @@ species_biological_variable(
 )
 }
 \arguments{
-\item{dataframe}{{\link[base]{data.frame}} expected. Csv or output of the function {\link[furdeb]{data_extraction}}, which must be done before using the fishing_activity() function.}
+\item{dataframe}{{\link[base]{data.frame}} expected. Csv or output of the function {\link[furdeb]{data_extraction}}, which must be done before using the species_biological_variable() function.}
 
 \item{data_type}{{\link[base]{character}} expected. 'tunabio' or 'observe'.}
 
@@ -40,12 +40,11 @@ Give the number of each biological variable sampled for a given year.
 }
 \details{
 The input dataframe frome sql must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:
-\itemize{
- \item{\code{  fish_sampling_date}}
- \item{\code{  weight}}
- \item{\code{  length}}
- \item{\code{  sex}}
- \item{\code{  species_code_fao}}
- \item{\code{  count}}
+\preformatted{
+   fish_sampling_date | weight  | length | sex | species_code_fao | count
+   -------------------------------------------------------------------------------
+   2022               | 35.2    | 200    | 4   | SAI              | 1
+   2022               |  9.93   |  44    | 2   | LKV              | 1
+   2022               |  0.058  |  24    | 4   | REO              | 1
 }
 }

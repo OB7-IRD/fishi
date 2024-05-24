@@ -1,9 +1,9 @@
 #' @name sample_summary
 #' @title Sample summary
 #' @description Give the number of trip, vessel or well sampled for a given year. Need to define your goal in the parameter.
-#' @param dataframe {\link[base]{data.frame}} expected. Csv or output of the function {\link[furdeb]{data_extraction}}, which must be done before using the fishing_activity() function.
+#' @param dataframe {\link[base]{data.frame}} expected. Csv or output of the function {\link[furdeb]{data_extraction}}, which must be done before using the sample_summary() function.
 #' @param data_type {\link[base]{character}} expected. 'tunabio' or 'observe'.
-#' @param graph_type {\link[base]{character}} expected. "number" or "table." Number by default.
+#' @param graph_type {\link[base]{character}} expected. 'number' or 'table'. Number by default.
 #' @param reported_year {\link[base]{integer}} expected. Write the wanted year of the report.
 #' @param start_date {\link[base]{character}} expected. if reported_year is not given. Write the start date of the time range of the report.
 #' @param end_date {\link[base]{character}} expected. if reported_year is not given. Write the end date of the time range of the report
@@ -13,14 +13,12 @@
 #' @param selected_variable {\link[base]{character}} expected. Write the variable of the PSU. Can be "trip", "vessel" or "well". "trip" by default.
 #' @details
 #' The input dataframe frome sql must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:
-#' \itemize{
-#'  \item{\code{  sampling_year}}
-#'  \item{\code{  fish_sampling_date}}
-#'  \item{\code{  landing_date}}
-#'  \item{\code{  vessel_label}}
-#'  \item{\code{  boat_code}}
-#'  \item{\code{  fleet}}
-#'  \item{\code{  vessel_well_number}}
+#' \preformatted{
+#'    ocean_label | fleet | vessel_type_code | vessel_label | landing_year | departure  | port_departure | arrival     | port_arrival | total_landing
+#'    ------------------------------------------------------------------------------------------------------------------------------------------
+#'    Atlantic    | FRA   | 6                | VIA AVENIR   | 2022         | 2022-01-13 | ABIDJAN        | 2022-02-03  | ABIDJAN      |
+#'    Atlantic    | FRA   | 6                | VIA AVENIR   | 2022         | 2022-01-13 | ABIDJAN        | 2022-02-03  | ABIDJAN      |
+#'    Atlantic    | FRA   | 6                | VIA AVENIR   | 2022         | 2022-01-16 | ABIDJAN        | 2022-10-05  | ABIDJAN      |
 #' }
 #' add these columns to select the country and ocean (optional):
 #' \itemize{
@@ -395,7 +393,7 @@ sample_summary <- function(dataframe,
       }
     }
   } else if (data_type == "observe") {
-    # OBSERVE ----
+# OBSERVE ----
     # If is null
     # selected ocean
     if (is.null(selected_ocean)) {

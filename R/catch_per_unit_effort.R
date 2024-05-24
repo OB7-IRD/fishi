@@ -1,32 +1,29 @@
 #' @name catch_per_unit_effort
 #' @title  Annual catch rates (in t per searching day)
 #' @description Annual catch rates (in t per searching day) on FOB- associated and free-swimming tuna schools (FSC).
-#' @param dataframe1 {\link[base]{data.frame}} expected. Csv or output of the function {\link[furdeb]{data_extraction}}, which must be done before using the catch_per_searching_day() function.
-#' @param dataframe2 {\link[base]{data.frame}} expected. Csv or output of the function {\link[furdeb]{data_extraction}}, which must be done before using the catch_per_searching_day() function.
-#' @param fishing_type {\link[base]{character}} expected. FOB or FSC.
-#' @param graph_type {\link[base]{character}} expected. plot, plotly or table. Plot by default.
-#' @param title TRUE or FALSE expected. False by default.
+#' @param dataframe1 {\link[base]{data.frame}} expected. 'Csv' or 'output' of the function {\link[furdeb]{data_extraction}}, which must be done before using the catch_per_searching_day() function.
+#' @param dataframe2 {\link[base]{data.frame}} expected. 'Csv' or 'output' of the function {\link[furdeb]{data_extraction}}, which must be done before using the catch_per_searching_day() function.
+#' @param fishing_type {\link[base]{character}} expected. 'FOB' or 'FSC'.
+#' @param graph_type {\link[base]{character}} expected. 'plot', 'plotly' or 'table.' Plot by default.
+#' @param title TRUE or FALSE expected. Title for plotly graph_type. False by default.
 #' @details
 #' The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:
-#' \itemize{
-#'  Dataframe 1:
-#'  \item{\code{  activity_date}}
-#'  \item{\code{  species_code}}
-#'  \item{\code{  school_code}}
-#'  \item{\code{  set_duration}}
-#'  \item{\code{  positive_set}}
-#'  \item{\code{  set_duration}}
-#'  \item{\code{  total_catch_weight}}
-#'  \item{\code{  total_hour_fished}}
+#' Dataframe 1:
+#' \preformatted{
+#'    activity_date | species_code | school_code | set_duration | positive_set | total_set | total_catch_weight | total_hour_fished
+#'    -------------------------------------------------------------------------------------------------------------------------------
+#'    1999-07-09    | 2            | 1            | 3.54        | 1            | 1         | 119.0              | 12.1
+#'    1999-07-09    | 1            | 1            | 3.54        | 1            | 1         | 20.6               | 12.1
+#'    1999-07-09    | 1            | 1            | 3.54        | 1            | 1         | 24.4               | 12.1
 #' }
-#' \itemize{
+#'
 #'  Dataframe 2:
-#'  \item{\code{  activity_date}}
-#'  \item{\code{  school_code}}
-#'  \item{\code{  set_duration}}
-#'  \item{\code{  positive_set}}
-#'  \item{\code{  set_duration}}
-#'  \item{\code{  total_hour_fished}}
+#' \preformatted{
+#'    activity_date | school_code | set_duration | positive_set | total_set | total_hour_fished
+#'    -----------------------------------------------------------------------------------------
+#'    2010-03-06    | 3           | 0            | 0            | 0         |  1.00
+#'    2010-12-04    | 3           | 0            | 0            | 0         | 11.8
+#'    2010-05-19    | 3           | 0            | 0            | 0         |  2.05
 #' }
 #' Add these columns for an automatic title (optional):
 #' \itemize{
@@ -82,6 +79,12 @@ catch_per_unit_effort <- function(dataframe1,
     dplyr::mutate(year = lubridate::year(x = activity_date))
   dataframe2 <-  dataframe2 %>%
     dplyr::mutate(year = lubridate::year(x = activity_date))
+  ocean_code <- dataframe1$ocean_code[1]
+  if (ocean_code == 1) {
+    set_time <- as.integer(x = 12)
+  } else if (ocean_code == 2) {
+    set_time <- as.integer(x = 13)
+  }
   t0 <- dataframe2 %>%
     dplyr::group_by(year) %>%
     dplyr::summarise(t_peche = sum(total_hour_fished, na.rm = TRUE),
@@ -106,11 +109,11 @@ catch_per_unit_effort <- function(dataframe1,
   #final table
   table_cpue_fad <- table_cpue_fad %>%
     dplyr::reframe(year = year,
-                   yft = (yft / (t_recherche / 12)),
-                   skj = (skj / (t_recherche / 12)),
-                   bet = (bet / (t_recherche / 12)),
-                   ALB = (alb / (t_recherche / 12)),
-                   total = (total / (t_recherche / 12)))
+                   yft = (yft / (t_recherche / set_time)),
+                   skj = (skj / (t_recherche / set_time)),
+                   bet = (bet / (t_recherche / set_time)),
+                   ALB = (alb / (t_recherche / set_time)),
+                   total = (total / (t_recherche / set_time)))
   # 3.b - Data design for FSC----
   #Creation of t2 database from dataframe1
   t2 <- dataframe2 %>%
@@ -138,11 +141,11 @@ catch_per_unit_effort <- function(dataframe1,
   #final table
   table_cpue_fsc <- table_cpue_fsc %>%
     dplyr::reframe(year = year,
-                   yft = (yft / (t_recherche / 12)),
-                   skj = (skj / (t_recherche / 12)),
-                   bet = (bet / (t_recherche / 12)),
-                   ALB = (alb / (t_recherche / 12)),
-                   total = (total / (t_recherche / 12)))
+                   yft = (yft / (t_recherche / set_time)),
+                   skj = (skj / (t_recherche / set_time)),
+                   bet = (bet / (t_recherche / set_time)),
+                   ALB = (alb / (t_recherche / set_time)),
+                   total = (total / (t_recherche / set_time)))
   # 4 - Legend design ----
   if (title == TRUE) {
     #Ocean
@@ -183,7 +186,7 @@ catch_per_unit_effort <- function(dataframe1,
   # plot
   (ggplot_graph <- ggplot2::ggplot(data = dataframe) +
       # Theme and background
-      ggplot2::geom_hline(yintercept = c(20, 15, 10, 5),
+      ggplot2::geom_hline(yintercept = c(40, 30, 20, 15, 10, 5),
                           color = "grey",
                           linetype = "longdash",
                           alpha = 0.5) +
@@ -239,9 +242,10 @@ catch_per_unit_effort <- function(dataframe1,
                                              "Total" = 16)) +
       ggplot2::labs(x = "",
                     y = "Catch per unit effort (t/d)") +
-      ggplot2::ylim(0, 20) +
+      ggplot2::ylim(0, max(dataframe$total)) +
       ggplot2::guides(shape = ggplot2::guide_legend(title = NULL)) +
-      ggplot2::annotate("text", x = max(dataframe$year) - 1,
+      ggplot2::annotate("text",
+                        x = 1994,
                         y = max(dataframe$total) - 1,
                         label = label_ft,
                         hjust = 1.2,

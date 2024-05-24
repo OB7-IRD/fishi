@@ -1,12 +1,12 @@
 #' @name psu_total
 #' @title PSU Total
 #' @description Give the number of total psu for a given year.
-#' @param dataframe {\link[base]{data.frame}} expected. Csv or output of the function {\link[furdeb]{data_extraction}}, which must be done before using the fishing_activity() function.
+#' @param dataframe {\link[base]{data.frame}} expected. 'Csv' or 'output' of the function {\link[furdeb]{data_extraction}}, which must be done before using the psu_total() function.
 #' @param reported_year {\link[base]{integer}} expected. Write the wanted year of the report.
 #' @param selected_country {\link[base]{integer}} expected. Country code to select the list of boat to count. If NULL give all the vessel for the given year.
 #' @param selected_ocean {\link[base]{integer}} expected. Ocean code to select the list of boat to count. If NULL give all the vessel for the given year, works only for 'data_type' == 'observe'
 #' @param selected_harbour {\link[base]{integer}} expected. Harbour code to select the list of boat to count. If NULL give all the vessel for the given year, works only for 'data_type' == 'observe'
-#' @param selected_variable {\link[base]{character}} expected. Write the variable of the PSU. Can be "trip", "vessel" or "well. "trip" by default.
+#' @param selected_variable {\link[base]{character}} expected. Write the variable of the PSU. Can be 'trip', 'vessel' or 'well'. 'trip' by default.
 #' @details
 #' The input dataframe frome sql must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:
 #' \itemize{
@@ -14,12 +14,19 @@
 #'  \item{\code{  ocean_label}}
 #'  \item{\code{  fleet}}
 #'  \item{\code{  vessel_label}}
-#'  \item{\code{  vessel_type}}
-#'  \item{\code{  landing_year}}
+#'  \item{\code{  vessel_type_code}}
+#'  \item{\code{  landing_date}}
 #'  \item{\code{  country_code}}
 #'  \item{\code{  vessel_well_number}}
 #'  \item{\code{  arrival}}
 #'  \item{\code{  port_arrival}}
+#' }
+#' \preformatted{
+#'    program                          | ocean_label | fleet | vessel_label | vessel_type_code | landing_date | country_code | vessel_well_number | arrival   | port_arrival
+#'    -----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+#'    AVDTH Atlantique 1999-2022 (IRD) | Atlantic    | FRA   | VIA AVENIR   | 6                | 2021-01-15   | 1            | 4T                 | 2021-01-1 | ABIDJAN
+#'    AVDTH Atlantique 1999-2022 (IRD) | Atlantic    | FRA   | VIA AVENIR   | 6                | 2021-01-15   | 1            | 4T                 | 2021-01-1 | ABIDJAN
+#'    AVDTH Atlantique 1999-2022 (IRD) | Atlantic    | FRA   | VIA AVENIR   | 6                | 2021-01-15   | 1            | 4T                 | 2021-01-1 | ABIDJAN
 #' }
 #' @return The function return a table.
 #' @export

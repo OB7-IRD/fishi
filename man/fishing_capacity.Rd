@@ -7,11 +7,11 @@
 fishing_capacity(dataframe, graph_type = "plot", title = FALSE)
 }
 \arguments{
-\item{dataframe}{{\link[base]{data.frame}} expected. Csv or output of the function {\link[furdeb]{data_extraction}}, which must be done before using the fishing_capacity() function.}
+\item{dataframe}{{\link[base]{data.frame}} expected. 'Csv' or 'output' of the function {\link[furdeb]{data_extraction}}, which must be done before using the fishing_capacity() function.}
 
-\item{graph_type}{{\link[base]{character}} expected. plot, plotly or table. Plot by default.}
+\item{graph_type}{{\link[base]{character}} expected. 'plot', 'plotly' or 'table'. Plot by default.}
 
-\item{title}{TRUE or FALSE expected. False by default.}
+\item{title}{TRUE or FALSE expected. Title for plotly graph_type. False by default.}
 }
 \value{
 The function return ggplot R plot.
@@ -21,10 +21,12 @@ Fishing capacity. Annual changes in the number of purse seiners by tonnage categ
 }
 \details{
 The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:
-\itemize{
- \item{\code{  activity_date}}
- \item{\code{  catch}}
- \item{\code{  keel_code}}
+\preformatted{
+   activity_date | catch | keel_code
+   ----------------------------------
+   2010-03-06    | 1742  | 466
+   2010-12-04    | 1800  | 426
+   2010-05-19    | 1500  | 165
 }
 Add these columns for an automatic title (optional):
 \itemize{

@@ -18,11 +18,11 @@ sample_summary(
 )
 }
 \arguments{
-\item{dataframe}{{\link[base]{data.frame}} expected. Csv or output of the function {\link[furdeb]{data_extraction}}, which must be done before using the fishing_activity() function.}
+\item{dataframe}{{\link[base]{data.frame}} expected. Csv or output of the function {\link[furdeb]{data_extraction}}, which must be done before using the sample_summary() function.}
 
 \item{data_type}{{\link[base]{character}} expected. 'tunabio' or 'observe'.}
 
-\item{graph_type}{{\link[base]{character}} expected. "number" or "table." Number by default.}
+\item{graph_type}{{\link[base]{character}} expected. 'number' or 'table'. Number by default.}
 
 \item{reported_year}{{\link[base]{integer}} expected. Write the wanted year of the report.}
 
@@ -46,14 +46,12 @@ Give the number of trip, vessel or well sampled for a given year. Need to define
 }
 \details{
 The input dataframe frome sql must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:
-\itemize{
- \item{\code{  sampling_year}}
- \item{\code{  fish_sampling_date}}
- \item{\code{  landing_date}}
- \item{\code{  vessel_label}}
- \item{\code{  boat_code}}
- \item{\code{  fleet}}
- \item{\code{  vessel_well_number}}
+\preformatted{
+   ocean_label | fleet | vessel_type_code | vessel_label | landing_year | departure  | port_departure | arrival     | port_arrival | total_landing
+   ------------------------------------------------------------------------------------------------------------------------------------------
+   Atlantic    | FRA   | 6                | VIA AVENIR   | 2022         | 2022-01-13 | ABIDJAN        | 2022-02-03  | ABIDJAN      |
+   Atlantic    | FRA   | 6                | VIA AVENIR   | 2022         | 2022-01-13 | ABIDJAN        | 2022-02-03  | ABIDJAN      |
+   Atlantic    | FRA   | 6                | VIA AVENIR   | 2022         | 2022-01-16 | ABIDJAN        | 2022-10-05  | ABIDJAN      |
 }
 add these columns to select the country and ocean (optional):
 \itemize{

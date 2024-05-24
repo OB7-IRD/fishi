@@ -1,17 +1,17 @@
 #' @name map_effort_distribution
 #' @title Spatial distribution of tuna effort
 #' @description Spatial distribution of tuna effort.
-#' @param dataframe {\link[base]{data.frame}} expected. Csv or output of the function {\link[furdeb]{data_extraction}}, which must be done before using the map_effort_distribution() function.
-#' @param graph_type {\link[base]{character}} expected. plot or plotly. Plot by default.
-#' @param title TRUE or FALSE expected. False by default.
+#' @param dataframe {\link[base]{data.frame}} expected. 'Csv' or 'output' of the function {\link[furdeb]{data_extraction}}, which must be done before using the map_effort_distribution() function.
+#' @param graph_type {\link[base]{character}} expected. 'plot' or 'plotly.' Plot by default.
+#' @param title TRUE or FALSE expected. Title for plotly graph_type. False by default.
 #' @details
 #' The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:
-#' \itemize{
-#'  \item{\code{  activity_date}}
-#'  \item{\code{  cwp11_act}}
-#'  \item{\code{  ocean_code}}
-#'  \item{\code{  set_duration}}
-#'  \item{\code{  total_hour_fished}}
+#' \preformatted{
+#'    activity_date | cwp11_act | ocean_code | set_duration | total_hour_fished
+#'    --------------------------------------------------------------------------
+#'    2022-01-02    | 301000    | 1          | 2.61         |  6.17
+#'    2022-01-02    | 301000    | 1          | 2.61         |  6.17
+#'    2022-01-02    | 301000    | 1          | 2.42         |  5.98
 #' }
 #' Add these columns for an automatic title (optional):
 #' \itemize{

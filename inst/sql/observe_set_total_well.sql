@@ -31,9 +31,10 @@ FROM ps_common.trip AS t
 	INNER join ps_logbook.sample s ON (s.trip = t.topiaid)
 	
 WHERE
-	lp.label2 in ('AVDTH Atlantique (IRD)', 
-					  'AVDTH Indien (IRD)', 
-					  'Saisies en cours Abidjan (IRD)')
+	lp.label2 in ('AVDTH Atlantique 1999-2022 (IRD)', 
+				  'AVDTH Atlantique 2023+ (IRD)', 
+				  'AVDTH Indien 1999-2022 (IRD)',
+				  'AVDTH 2023+ (IRD)')
 	and EXTRACT(year FROM r.date) IN (?time_period)
 	AND EXTRACT(year FROM t.enddate) IN (?landing_year)
 	AND ct.code::numeric  IN (?country)

@@ -12,13 +12,13 @@ fishery_production(
 )
 }
 \arguments{
-\item{dataframe}{{\link[base]{data.frame}} expected. Csv or output of the function {\link[furdeb]{data_extraction}}, which must be done before using the fishery_production() function.}
+\item{dataframe}{{\link[base]{data.frame}} expected. 'Csv' or 'output' of the function {\link[furdeb]{data_extraction}}, which must be done before using the fishery_production() function.}
 
-\item{fishing_type}{{\link[base]{character}} expected. FSC, FOB or ALL. ALL by default.}
+\item{fishing_type}{{\link[base]{character}} expected. 'FSC', 'FOB' or 'ALL'. ALL by default.}
 
-\item{graph_type}{{\link[base]{character}} expected. plot, plotly, table or percentage. Plot by default.}
+\item{graph_type}{{\link[base]{character}} expected. 'plot', 'plotly', 'table' or 'percentage'. Plot by default.}
 
-\item{title}{TRUE or FALSE expected. False by default.}
+\item{title}{TRUE or FALSE expected. Title for plotly graph_type. False by default.}
 }
 \value{
 The function return ggplot R plot.
@@ -29,15 +29,12 @@ Generates a figure for catches (x 1000 t) of the three main tunas: BET, SKJ and 
 }
 \details{
 The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:
-\itemize{
- \item{\code{  activity_date}}
- \item{\code{  species_code}}
- \item{\code{  flag}}
- \item{\code{  fleet}}
- \item{\code{  gear}}
- \item{\code{  school_code}}
- \item{\code{  ocean_label}}
- \item{\code{  total_catch_weight}}
+\preformatted{
+   activity_date | species_code | flag   | fleet  | gear | school_code | ocean_label | total_catch_weight
+   -----------------------------------------------------------------------------------------
+   1999-07-09    | 2            | France | France | PS   | BO          | 1           |  119.
+   1999-07-09    | 1            | France | France | PS   | BO          | 1           |   20.6
+   1999-07-09    | 1            | France | France | PS   | BL          | 1           |   24.4
 }
 Add these columns for an automatic title (optional):
 \itemize{

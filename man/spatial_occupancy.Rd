@@ -12,13 +12,13 @@ spatial_occupancy(
 )
 }
 \arguments{
-\item{dataframe}{{\link[base]{data.frame}} expected. Csv or output of the function {\link[furdeb]{data_extraction}}, which must be done before using the spatial_occupancy function.}
+\item{dataframe}{{\link[base]{data.frame}} expected. 'Csv' or 'output' of the function {\link[furdeb]{data_extraction}}, which must be done before using the spatial_occupancy() function.}
 
-\item{graph_type}{{\link[base]{character}} expected. plot, plotly or table. Plot by default.}
+\item{graph_type}{{\link[base]{character}} expected. 'plot', 'plotly' or 'table'. Plot by default.}
 
 \item{fishing_type}{{\link[base]{character}} expected. ALL, FOB and FSC.}
 
-\item{title}{TRUE or FALSE expected. False by default.}
+\item{title}{TRUE or FALSE expected. Title for plotly graph_type. False by default.}
 }
 \value{
 The function return ggplot R plot.
@@ -28,13 +28,12 @@ Changes in the spatial extent of the fishery over time. Annual number of 1-degre
 }
 \details{
 The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:
-\itemize{
- \item{\code{  activity_date}}
- \item{\code{  cwp11_act}}
- \item{\code{  positive_set}}
- \item{\code{  total_set}}
- \item{\code{  total_hour_fished}}
- \item{\code{  school_type}}
+\preformatted{
+   activity_date | cwp11_act | positive_set | total_set | total_hour_fished | school_code
+   --------------------------------------------------------------------------------------
+   2010-03-06    | 404004    | 0            | 0         |  7.0              | IND
+   2010-12-04    | 404005    | 0            | 0         | 24.0              | BL
+   2010-05-19    | 404005    | 0            | 0         |  8.0              | BO
 }
 Add these columns for an automatic title (optional):
 \itemize{
