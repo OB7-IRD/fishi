@@ -3,7 +3,7 @@
 #' @description Represents the time spent by the fleet (in hours)
 #' @param dataframe {\link[base]{data.frame}} expected. 'Csv' or 'output' of the function {\link[furdeb]{data_extraction}}, which must be done before using the fishing_time() function.
 #' @param graph_type {\link[base]{character}} expected. 'plot', 'plotly' or 'table'. Plot by default.
-#' @param title TRUE or FALSE expected. False by default.
+#' @param title TRUE or FALSE expected. Title for plotly graph_type. False by default.
 #' @details
 #' The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:
 #' \preformatted{
@@ -32,6 +32,7 @@ fishing_time <- function(dataframe,
   gear <- NULL
   vessel_code <- NULL
   hrsea <- NULL
+  report_year <- NULL
   # 1 - Arguments verification ----
   if (codama::r_type_checking(r_object = graph_type,
                               type = "character",
@@ -128,10 +129,24 @@ fishing_time <- function(dataframe,
   } else if (graph_type == "plotly") {
     plotly_graph <- plotly::ggplotly(ggplot_table_time)
     # Plot the plotly
-    plotly_graph %>%
+    plotly_graph <- plotly_graph %>%
       plotly::layout(legend = list(orientation = "v",
                                    x = 0.85,
                                    y = 0.95))
+    if (title == TRUE) {
+      (plotly_graph <- plotly_graph %>%
+         plotly::layout(title = list(text = paste0("Time spent by the ",
+                                                   country_legend,
+                                                   " purse seine fleet in ",
+                                                   report_year,
+                                                   " in the ",
+                                                   ocean_legend,
+                                                   " ocean."),
+                                     font = list(size = 15)),
+                        margin = list(t = 120)))
+
+    }
+    return(plotly_graph)
   } else if (graph_type == "table") {
     table_effort <- fishing_time_by_year[, c(-2:-3)]
     # rename columns

@@ -18,7 +18,7 @@ fishery_production(
 
 \item{graph_type}{{\link[base]{character}} expected. 'plot', 'plotly', 'table' or 'percentage'. Plot by default.}
 
-\item{title}{TRUE or FALSE expected. False by default.}
+\item{title}{TRUE or FALSE expected. Title for plotly graph_type. False by default.}
 }
 \value{
 The function return ggplot R plot.

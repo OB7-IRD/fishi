@@ -18,7 +18,7 @@ map_catch_distribution(
 
 \item{graph_type}{{\link[base]{character}} expected. 'plot' or 'plotly'. Plot by default.}
 
-\item{title}{TRUE or FALSE expected. False by default.}
+\item{title}{TRUE or FALSE expected. Title for plotly graph_type. False by default.}
 }
 \value{
 The function return ggplot R plot.

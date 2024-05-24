@@ -18,7 +18,7 @@ spatial_occupancy(
 
 \item{fishing_type}{{\link[base]{character}} expected. ALL, FOB and FSC.}
 
-\item{title}{TRUE or FALSE expected. False by default.}
+\item{title}{TRUE or FALSE expected. Title for plotly graph_type. False by default.}
 }
 \value{
 The function return ggplot R plot.

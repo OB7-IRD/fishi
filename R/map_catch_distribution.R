@@ -4,7 +4,7 @@
 #' @param dataframe {\link[base]{data.frame}} expected. 'Csv' or 'output' of the function {\link[furdeb]{data_extraction}}, which must be done before using the map_catch_distribution() function.
 #' @param fishing_type {\link[base]{character}} expected. 'FOB', 'FSC' or 'ALL'. ALL by default.
 #' @param graph_type {\link[base]{character}} expected. 'plot' or 'plotly'. Plot by default.
-#' @param title TRUE or FALSE expected. False by default.
+#' @param title TRUE or FALSE expected. Title for plotly graph_type. False by default.
 #' @details
 #' The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:
 #' \preformatted{
@@ -154,15 +154,15 @@ map_catch_distribution <- function(dataframe,
   long <- quad2pos(as.numeric(datafile$cwp11_act + 5 * 1e6))$x
   if (title == TRUE) {
     #Ocean
-    ocean_legend <- code_manipulation(data         = dataframe$ocean_id,
+    ocean_legend <- code_manipulation(data         = dataframe$ocean_code,
                                       referential  = "ocean",
                                       manipulation = "legend")
     #vessel
-    vessel_type_legend <- code_manipulation(data         = dataframe$vessel_type_id,
+    vessel_type_legend <- code_manipulation(data         = dataframe$vessel_type_code,
                                             referential  = "vessel_simple_type",
                                             manipulation = "legend")
     #country
-    country_legend <- code_manipulation(data         = dataframe$country_id,
+    country_legend <- code_manipulation(data         = dataframe$country_code,
                                         referential  = "country",
                                         manipulation = "legend")
   }
@@ -502,6 +502,6 @@ map_catch_distribution <- function(dataframe,
                        margin = list(t = 120))
     }
     # Plot the plotly
-    plotly_map
+    return(plotly_map)
   }
 }

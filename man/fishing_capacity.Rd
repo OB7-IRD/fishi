@@ -11,7 +11,7 @@ fishing_capacity(dataframe, graph_type = "plot", title = FALSE)
 
 \item{graph_type}{{\link[base]{character}} expected. 'plot', 'plotly' or 'table'. Plot by default.}
 
-\item{title}{TRUE or FALSE expected. False by default.}
+\item{title}{TRUE or FALSE expected. Title for plotly graph_type. False by default.}
 }
 \value{
 The function return ggplot R plot.

@@ -18,7 +18,7 @@ fishing_activity(
 
 \item{with_catch}{{\link[base]{character}} expected. 'with' or 'without' depending on whether we want the number of sets with or without catches. With by default.}
 
-\item{title}{TRUE or FALSE expected. False by default.}
+\item{title}{TRUE or FALSE expected. Title for plotly graph_type. False by default.}
 }
 \value{
 The function return ggplot R plot.
