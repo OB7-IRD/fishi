@@ -101,47 +101,83 @@
 </h1></div>
 <!-- badges: start -->
 
-<p><a href="https://github.com/OB7-IRD/fishi/actions" class="external-link"><img src="https://github.com/OB7-IRD/fishi/workflows/R-CMD-check/badge.svg" alt="R-CMD-check"></a> <!-- badges: end --></p>
 <p><strong><em>FISHeries Indicators: exploratory and descriptive processes of data associated to fisheries</em></strong></p>
 <div class="section level2">
 <h2 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
 </h2>
-<p>Working in progress for this section. Be patient.</p>
+<p>The fishi package is designed to facilitate fisheries and marine science research by providing a set of functions. It aims to simplify common tasks in fisheries research and to improve the efficiency and effectiveness of data analysis and interpretation in this field. It can be used with csv/excel datasets and sql queries.</p>
+<p>This version contains a large number of indicators for running the statistical report (<a href="https://forge.ird.fr/marbec/ob7/statistical-report" class="external-link uri">https://forge.ird.fr/marbec/ob7/statistical-report</a>) and the RShiny (<a href="https://forge.ird.fr/marbec/ob7/rshiny-fishi" class="external-link uri">https://forge.ird.fr/marbec/ob7/rshiny-fishi</a>).</p>
 </div>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
-<p>Working in progress for this section. Be patient.</p>
+<p>You can install the fishi package directly from GitHub using the devtools package:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"https://github.com/OB7-IRD/fishi"</span>, INSTALL_opts<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"--no-multiarch"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"https://github.com/OB7-IRD/fishi"</span>,</span>
+<span>                         INSTALL_opts<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"--no-multiarch"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <div class="section level3">
 <h3 id="development-version">Development version<a class="anchor" aria-label="anchor" href="#development-version"></a>
 </h3>
 <p>To get a bug fix or to use a feature from the development version, you can install the development version of furdeb from GitHub.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"https://github.com/OB7-IRD/fishi"</span>, ref <span class="op">=</span> <span class="st">"development"</span>, INSTALL_opts<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"--no-multiarch"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"https://github.com/OB7-IRD/fishi"</span>,</span>
+<span>                         ref <span class="op">=</span> <span class="st">"development"</span>,</span>
+<span>                         INSTALL_opts<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"--no-multiarch"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level2">
-<h2 id="cheatsheet">Cheatsheet<a class="anchor" aria-label="anchor" href="#cheatsheet"></a>
+<h2 id="example-usage">Example Usage<a class="anchor" aria-label="anchor" href="#example-usage"></a>
 </h2>
-<p>Working in progress for this section. Be patient.</p>
+<p>Here is a basic example demonstrating some of the functionalities of the fishi package.</p>
+<div class="section level3">
+<h3 id="data-loading">Data Loading<a class="anchor" aria-label="anchor" href="#data-loading"></a>
+</h3>
+<p>Load data from a CSV file:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode yml"><code class="sourceCode yaml"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="at">data &lt;- read.csv("path_to_your_file.csv")</span></span></code></pre></div>
+<p>Or load data from a SQL database with DBI:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode yml"><code class="sourceCode yaml"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="at">db_connection &lt;- DBI::dbConnect(RMySQL::MySQL(), </span></span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a><span class="at">                                dbname = "your_database_name", </span></span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a><span class="at">                                host = "your_host", </span></span>
+<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a><span class="at">                                user = "your_username", </span></span>
+<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a><span class="at">                                password = "your_password")</span></span>
+<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a></span>
+<span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a><span class="at">query &lt;- "SELECT * FROM your_table"</span></span>
+<span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a><span class="at">data &lt;- DBI::dbGetQuery(db_connection, query)</span></span></code></pre></div>
+<p>Or load data from a SQL database with furdeb:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode yml"><code class="sourceCode yaml"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="at">db_connection &lt;- DBI::dbConnect(RMySQL::MySQL(), </span></span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a><span class="at">                                dbname = "your_database_name", </span></span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a><span class="at">                                host = "your_host", </span></span>
+<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a><span class="at">                                user = "your_username", </span></span>
+<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a><span class="at">                                password = "your_password")</span></span>
+<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a></span>
+<span id="cb5-7"><a href="#cb5-7" tabindex="-1"></a><span class="co"># anchors informations</span></span>
+<span id="cb5-8"><a href="#cb5-8" tabindex="-1"></a><span class="at">ocean &lt;- as.integer(x = 1)</span></span>
+<span id="cb5-9"><a href="#cb5-9" tabindex="-1"></a><span class="at">country &lt;- as.integer(x = 1)</span></span>
+<span id="cb5-10"><a href="#cb5-10" tabindex="-1"></a><span class="at">report_year &lt;- as.integer(2022)</span></span>
+<span id="cb5-11"><a href="#cb5-11" tabindex="-1"></a><span class="at">vessel_type = as.integer(x = c(4, 5, 6))</span></span>
+<span id="cb5-12"><a href="#cb5-12" tabindex="-1"></a></span>
+<span id="cb5-13"><a href="#cb5-13" tabindex="-1"></a><span class="at">activity_vessel_type &lt;- furdeb::data_extraction(type = "database", </span></span>
+<span id="cb5-14"><a href="#cb5-14" tabindex="-1"></a><span class="at">                                                file_path = system.file("sql",</span></span>
+<span id="cb5-15"><a href="#cb5-15" tabindex="-1"></a><span class="at">                                                                        </span><span class="st">"balbaya_fishing_activity_vesseltype.sql"</span><span class="at">,</span></span>
+<span id="cb5-16"><a href="#cb5-16" tabindex="-1"></a><span class="at">                                                                        package = "fishi"),</span></span>
+<span id="cb5-17"><a href="#cb5-17" tabindex="-1"></a><span class="at">                                                database_connection = balbaya_con, </span></span>
+<span id="cb5-18"><a href="#cb5-18" tabindex="-1"></a><span class="at">                                                anchor = list(time_period = time_period,</span></span>
+<span id="cb5-19"><a href="#cb5-19" tabindex="-1"></a><span class="at">                                                              country = country,</span></span>
+<span id="cb5-20"><a href="#cb5-20" tabindex="-1"></a><span class="at">                                                              vessel_type = vessel_type,</span></span>
+<span id="cb5-21"><a href="#cb5-21" tabindex="-1"></a><span class="at">                                                              ocean = ocean))</span></span></code></pre></div>
 </div>
-<div class="section level2">
-<h2 id="usage">Usage<a class="anchor" aria-label="anchor" href="#usage"></a>
-</h2>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/OB7-IRD/fishi" class="external-link">fishi</a></span><span class="op">)</span></span></code></pre></div>
+<div class="section level3">
+<h3 id="vizualisation">Vizualisation<a class="anchor" aria-label="anchor" href="#vizualisation"></a>
+</h3>
+<div class="sourceCode" id="cb6"><pre class="sourceCode yml"><code class="sourceCode yaml"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="at">library(fishi)</span></span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a><span class="at">fishing_capacity(dataframe = activity_vessel_type,</span></span>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a><span class="at">                 graph_type = "plot")</span></span></code></pre></div>
+</div>
 </div>
 <div class="section level2">
 <h2 id="getting-help">Getting help<a class="anchor" aria-label="anchor" href="#getting-help"></a>
 </h2>
 <p>If you encounter a clear bug, please file an issue with a minimal reproducible example on <a href="https://github.com/OB7-IRD/fishi/issues" class="external-link">GitHub issues page</a>. This link is also available if you have any questions and improvement propositions.</p>
-</div>
-<div class="section level2">
-<h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
-</h2>
-<p>Working in progress for this section.</p>
 </div>
 </div>
   </div>
