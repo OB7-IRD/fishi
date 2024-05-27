@@ -12,12 +12,11 @@ select
 	,ct.iso3code as flag
 	,s.code as species_code
 	,c.weight::numeric as total_catch_weight 
-	-- ,CASE
-	-- WHEN st.code::numeric IN (0) THEN 'IND'
-	-- WHEN st.code::numeric IN (1) THEN 'BO'
-	-- WHEN st.code::numeric IN (2) THEN 'BL'
-	-- END AS l4c_tban
-	,st.code::numeric as school_code
+	,CASE
+	 WHEN st.code::numeric IN (0) THEN 'IND'
+	 WHEN st.code::numeric IN (1) THEN 'BO'
+	 WHEN st.code::numeric IN (2) THEN 'BL'
+	 END AS school_code
 	,o.code::numeric as ocean_code
 	,vt.code::numeric as vessel_type_code
 	,ct.code::numeric as country_code
