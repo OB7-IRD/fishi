@@ -50,21 +50,17 @@ devtools::install_github("https://github.com/OB7-IRD/fishi",
                          INSTALL_opts=c("--no-multiarch"))
 ```
 
-## Cheatsheet
-
-Working in progress for this section. Be patient.
-
 ## Example Usage
 Here is a basic example demonstrating some of the functionalities of the fishi package.
 
 ### Data Loading
 Load data from a CSV file:
-```{r}
+```{yml}
 data <- read.csv("path_to_your_file.csv")
 ```
 
 Or load data from a SQL database with DBI:
-```{r}
+```{yml}
 db_connection <- DBI::dbConnect(RMySQL::MySQL(), 
                                 dbname = "your_database_name", 
                                 host = "your_host", 
@@ -76,7 +72,7 @@ data <- DBI::dbGetQuery(db_connection, query)
 ```
 
 Or load data from a SQL database with furdeb:
-```{r}
+```{yml}
 db_connection <- DBI::dbConnect(RMySQL::MySQL(), 
                                 dbname = "your_database_name", 
                                 host = "your_host", 
@@ -103,7 +99,7 @@ activity_vessel_type <- furdeb::data_extraction(type = "database",
 
 ### Vizualisation
 
-```{r}
+```{yml}
 library(fishi)
 fishing_capacity(dataframe = activity_vessel_type,
                  graph_type = "plot")
