@@ -70,11 +70,20 @@ fishing_capacity <- function(dataframe,
   fishing_capacity_t2 <- fishing_capacity_t1 %>%
     dplyr::group_by(year,
                     keel_code,
-                    tons,
-                    tons_month) %>%
+                    tons) %>%
     dplyr::reframe("cc" = sum(tons_month,
                               na.rm = TRUE),
                    "keel_code_nb_months" = dplyr::n_distinct(month,
+                                                             na.rm = TRUE))
+
+  fishing_capacity_t2 <- fishing_capacity_t2 %>%
+    dplyr::group_by(year,
+                    keel_code) %>%
+    dplyr::reframe("tons" = sum(tons,
+                              na.rm = TRUE),
+                   "cc" = sum(cc,
+                              na.rm = TRUE),
+                   "keel_code_nb_months" = dplyr::n_distinct(keel_code_nb_months,
                                                              na.rm = TRUE))
   # Number of ships per category
   fishing_capacity_t3 <- fishing_capacity_t2 %>%
