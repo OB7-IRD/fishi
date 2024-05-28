@@ -245,5 +245,6 @@ spatial_occupancy <- function(dataframe,
                                    y = 0.07))
   } else if (graph_type == "table") {
     as.data.frame(table_occ)
+    return(table_occ)
   }
 }
