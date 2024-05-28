@@ -43,6 +43,8 @@ map_catch_distribution <- function(dataframe,
   LAT <- NULL
   TOTAL <- NULL
   CWP11_ACT <- NULL
+  lat <- NULL
+  long <- NULL
   # 1 - Arguments verification ----
   if (codama::r_type_checking(r_object = fishing_type,
                               type = "character",
@@ -150,8 +152,6 @@ map_catch_distribution <- function(dataframe,
                    sizelat = latsiz[siz],
                    sizelon = lonsiz[siz]))
   }
-  lat <- quad2pos(as.numeric(datafile$cwp11_act + 5 * 1e6))$y
-  long <- quad2pos(as.numeric(datafile$cwp11_act + 5 * 1e6))$x
   if (title == TRUE) {
     #Ocean
     ocean_legend <- code_manipulation(data         = dataframe$ocean_code,
@@ -168,204 +168,6 @@ map_catch_distribution <- function(dataframe,
   }
   # 4 - Graphic design ----
   if (graph_type == "plot") {
-    load(file = system.file("wrld_simpl.RData",
-                            package = "fishi"))
-
-    if (ocean == 1) {
-      maps::map(wrld_simpl,
-                main = "",
-                resolution = 0.1,
-                add = FALSE,
-                col = "lightgrey",
-                fill = TRUE,
-                xlim = c(-40,
-                         15),
-                ylim = c(-25,
-                         25),
-                xaxs = "i",
-                mar = c(4,
-                        4.1,
-                        3,
-                        2),
-                border = 0)
-      graphics::axis(1,
-                     at = seq(-40,
-                              15,
-                              5),
-                     labels = c("40W",
-                                "35W",
-                                "30W",
-                                "25W",
-                                "20W",
-                                "15W",
-                                "10W",
-                                "5W",
-                                "0",
-                                "5E",
-                                "10E",
-                                "15E"),
-                     tick = TRUE)
-      graphics::axis(2,
-                     at = seq(-25,
-                              25,
-                              5),
-                     labels = c("25S",
-                                "20S",
-                                "15S",
-                                "10S",
-                                "5S",
-                                "0",
-                                "5N",
-                                "10N",
-                                "15N",
-                                "20N",
-                                "25N"),
-                     las = 1,
-                     tick = TRUE)
-      graphics::axis(3,
-                     labels = FALSE,
-                     at = seq(-40,
-                              15,
-                              5))
-      graphics::axis(4,
-                     labels = FALSE,
-                     at = seq(-25,
-                              25,
-                              5))
-      graphics::abline(v = seq(-30,
-                               30,
-                               10),
-                       col = "darkgrey",
-                       lty = 3)
-      graphics::abline(h = seq(-30,
-                               30,
-                               10),
-                       col = "darkgrey",
-                       lty = 3)
-      angles <- plotrix::floating.pie(-20,
-                                      -12.5,
-                                      c(1,
-                                        1,
-                                        1),
-                                      radius = 1,
-                                      edge = 25,
-                                      col = c("yellow",
-                                              "red",
-                                              "blue"))
-      plotrix::pie.labels(-20,
-                          -12.5,
-                          angles,
-                          c("YFT",
-                            "SKJ",
-                            "BET"),
-                          cex = 0.7,
-                          border = 0,
-                          bg = 0,
-                          radius = c(2.4,
-                                     2.4,
-                                     2.4))
-      graphics::text(-17,
-                     -12.5,
-                     paste(2000, " t", sep = ""),
-                     cex = .9)
-    } else if (ocean == 2) {
-      maps::map(wrld_simpl,
-                main = "",
-                resolution = 0.1,
-                add = FALSE,
-                col = "lightgrey",
-                fill = TRUE,
-                xlim = c(30,
-                         90),
-                ylim = c(-30,
-                         20),
-                xaxs = "i",
-                mar = c(4,
-                        4.1,
-                        3,
-                        2),
-                border = 0)
-      graphics::axis(1,
-                     at = seq(30,
-                              120,
-                              20),
-                     labels = paste(seq(30, 120, 20),
-                                    "E",
-                                    sep = ""),
-                     tick = TRUE)
-      graphics::axis(2,
-                     at = seq(-40, 40, 10),
-                     labels = c(NA, "30S", "20S", "1S", "0", "10N", "20N", "30N", NA),
-                     las = 1,
-                     tick = TRUE)
-      graphics::axis(3,
-                     at = seq(30, 120, 20),
-                     labels = FALSE)
-      graphics::axis(4,
-                     labels = FALSE,
-                     at = seq(-40, 40, 10))
-      graphics::abline(v = seq(30, 100, 10),
-                       col = "darkgrey",
-                       lty = 3)
-      graphics::abline(h = seq(-30, 30, 10),
-                       col = "darkgrey",
-                       lty = 3)
-      angles <- plotrix::floating.pie(80,
-                                      -12.5,
-                                      c(1,
-                                        1,
-                                        1),
-                                      radius = 1,
-                                      edge = 25,
-                                      col = c("yellow",
-                                              "red",
-                                              "blue"))
-      plotrix::pie.labels(80,
-                          -12.5,
-                          angles,
-                          c("YFT",
-                            "SKJ",
-                            "BET"),
-                          cex = 0.7,
-                          border = 0,
-                          bg = 0,
-                          radius = c(2.4,
-                                     2.4,
-                                     2.4))
-      graphics::text(85,
-                     -12.5,
-                     paste(2000, " t", sep = ""),
-                     cex = .9)
-
-    }
-    if (title == TRUE) {
-      title(main = paste0("Spatial distribution of tuna catches of the ",
-                          country_legend, " ",
-                          vessel_type_legend, " fishing fleet made on ",
-                          fishing_type, "\n",
-                          " fishing mode in ",
-                          ifelse(test = length(x = time_period) != 1,
-                                 yes  = paste0(min(time_period), "-", max(time_period)),
-                                 no   = time_period),
-                          ", in the ",
-                          ocean_legend,
-                          " ocean."),
-            cex.main = 0.9)
-    }
-    ### Add the pie plots
-    for (i in c(1:nrow(datafile))) {
-      plotrix::floating.pie(long[i],
-                            lat[i],
-                            c(datafile$yft[i],
-                              datafile$skj[i],
-                              datafile$bet[i]),
-                            radius = (sqrt(datafile$total) / sqrt(2000))[i],
-                            edges = 25,
-                            col = c("khaki1",
-                                    "firebrick2",
-                                    "cornflowerblue"))
-    }
-  } else if (graph_type == "ggplot") {
     if (ocean == 1) {
       ocean_xlim <- c(-40, 15)
       ocean_ylim <- c(-25, 25)
@@ -377,6 +179,7 @@ map_catch_distribution <- function(dataframe,
       ocean_xintercept <- c(40, 50, 60, 70, 80)
       ocean_yintercept <- c(10, 0, -10, -20)
     }
+    datafile$cwp11_act <- as.integer(datafile$cwp11_act)
     datafile$lat <- quad2pos(as.numeric(datafile$cwp11_act + 5 * 1e6))$y
     datafile$long <- quad2pos(as.numeric(datafile$cwp11_act + 5 * 1e6))$x
     world_boundaries <- rnaturalearth::ne_countries(returnclass = "sf",
