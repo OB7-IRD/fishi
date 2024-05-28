@@ -60,15 +60,16 @@ fishing_activity <- function(dataframe,
   # 2 - Data design ----
   fishing_activity_t1 <- dataframe %>%
     dplyr::mutate(year = lubridate::year(x = activity_date))
+  fishing_activity_t1$positive_set <- as.integer(fishing_activity_t1$positive_set)
   # db a1 - Add : Number of total, positive, and null sets by ALL
   a1 <- fishing_activity_t1 %>%
     dplyr::group_by(year) %>%
     dplyr::summarise(a_total = sum(total_set,
                                    na.rm = TRUE),
-                     a_positive = sum(positive_set,
-                                      na.rm = TRUE),
-                     a_null = sum(total_set - positive_set,
-                                  na.rm = TRUE),
+                      a_positive = sum(positive_set,
+                                       na.rm = TRUE),
+                      a_null = sum(total_set - positive_set,
+                                   na.rm = TRUE),
                      .groups = "drop")
   # db a2 - Add : Number of total, positive, and null sets by FOB
   a2 <- fishing_activity_t1 %>%
