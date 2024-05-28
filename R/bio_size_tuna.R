@@ -572,30 +572,31 @@ bio_size_tuna <- function(dataframe,
                        size = 3))
   if (graph_type == "plot") {
     # legend
-    (yft_fob_leg <- ggplot2::ggplot(data = table_size_yft_n) +
-       ggplot2::geom_line(ggplot2::aes(x = size_class,
-                                       y = log_avg_5_years,
-                                       color = years),
-                          linetype = "dashed") +
-       ggplot2::geom_line(ggplot2::aes(x = size_class,
-                                       y = log_current_year,
-                                       color = year)) +
-       ggplot2::scale_color_manual(values = c("black",
-                                              "red")) +
-       ggplot2::labs(x = " ",
-                     y = " ") +
-       ggplot2::ylim(0, max(table_size_yft_n$log_current_year,
-                            table_size_yft_n$log_avg_5_years) * 1.1) +
-       ggplot2::xlim(20, 200) +
-       ggplot2::theme_bw() +
-       ggplot2::theme(legend.position = "bottom",
-                      legend.title = ggplot2::element_blank()))
-    common_legend <- cowplot::get_legend(yft_fob_leg)
+    colors <- c(stats::setNames(rep("black",
+                             length(years)),
+                         years),
+                stats::setNames("red", year))
+    yft_fob_leg <- ggplot2::ggplot(data = table_size_yft_n) +
+      ggplot2::geom_line(ggplot2::aes(x = size_class,
+                    y = log_avg_5_years,
+                    color = years),
+                linetype = "dashed") +
+      ggplot2::geom_line(ggplot2::aes(x = size_class,
+                    y = log_current_year,
+                    color = year)) +
+      ggplot2::scale_color_manual(values = colors) +
+      ggplot2::labs(x = " ", y = " ") +
+      ggplot2::ylim(0, max(table_size_yft_n$log_current_year,
+                  table_size_yft_n$log_avg_5_years) * 1.1) +
+      ggplot2::xlim(20, 200) +
+      ggplot2::theme_bw() +
+      ggplot2::theme(legend.position = "bottom", legend.title = ggplot2::element_blank())
+    legend <- ggpubr::get_legend(yft_fob_leg)
     # grid extra
     (ggplot_final <- gridExtra::grid.arrange(yft_fob, bet_fob, skj_fob,
                                              yft_free, bet_free, skj_free,
                                              yft_all, bet_all, skj_all,
-                                             bottom = common_legend))
+                                             bottom = legend))
     return(grid::grid.draw(ggplot_final))
   } else if (graph_type == "plotly") {
     yft_fob <- plotly::ggplotly(yft_fob) %>%
