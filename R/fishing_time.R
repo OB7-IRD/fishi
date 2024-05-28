@@ -7,11 +7,11 @@
 #' @details
 #' The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:
 #' \preformatted{
-#'    activity_date | fishing_time | gear | country_label | hrsea
+#'    activity_date | fishing_time | gear | country_label | hrsea | vessel_code
 #'    -------------------------------------------------------------------------------
-#'    1991-01-15    |  0           | 1    | FRA           | 24
-#'    1991-01-19    | 12.0         | 1    | FRA           | 24
-#'    1991-01-20    |  7.92        | 1    | FRA           | 15
+#'    1991-01-15    |  0           | 1    | FRA           | 24    | 768
+#'    1991-01-19    | 12.0         | 1    | FRA           | 24    | 324
+#'    1991-01-20    |  7.92        | 1    | FRA           | 15    | 324
 #' }
 #'
 #' Add these columns for an automatic title (optional):
