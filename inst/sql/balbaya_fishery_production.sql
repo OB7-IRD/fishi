@@ -1,3 +1,12 @@
+-------------------------------------------------------------------------------------------
+-- CATCHES - SCHOOL TYPES - BALBAYA
+-------------------------------------------------------------------------------------------
+-- Generic extraction of the catches by school type from Balbaya
+-------------------------------------------------------------------------------------------
+-- Clara Lerebourg <clara.lerebourg@ird.fr>
+-------------------------------------------------------------------------------------------
+-- 2023 -- v1.0 -- CL -- initial version
+-------------------------------------------------------------------------------------------
 SELECT
 	a.d_act::date AS activity_date
 	,o.l_ocea AS ocean_label
@@ -10,6 +19,7 @@ SELECT
 	,a.c_ocea::numeric AS ocean_code
 	,b.c_pav_b::numeric AS country_code
 	,a.c_engin::numeric AS vessel_type_code
+	
 FROM
 	public.activite a
 	JOIN public.bateau b ON (a.c_bat = b.c_bat)
@@ -21,6 +31,7 @@ FROM
 	JOIN public.engin e ON (a.c_engin = e.c_engin)
 	JOIN public.espece e2 ON (c.c_esp = e2.c_esp)
 	JOIN public.type_banc tb ON(a.c_tban = tb.c_tban)
+	
 WHERE
 	EXTRACT(year FROM a.d_act) IN (?time_period)
 	AND o.c_ocea IN (?ocean)

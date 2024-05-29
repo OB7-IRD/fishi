@@ -1,13 +1,12 @@
 -------------------------------------------------------------------------------
 -- ACTIVITIES - VESSELS - BALBAYA
 -------------------------------------------------------------------------------
- -- Generic extraction of vessels, sets, catches, and effort from Balbaya
+-- Generic extraction of vessels, sets, catches, and effort from Balbaya
 -------------------------------------------------------------------------------
 -- Clara Lerebourg <clara.lerebourg@ird.fr>
 -------------------------------------------------------------------------------
 -- 2024-01-17 -- v1.0 -- CL -- initial version
 -------------------------------------------------------------------------------
-
 SELECT
 	p.l_pav_b AS fleet
 	,p.l_pav_b AS flag

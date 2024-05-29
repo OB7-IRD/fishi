@@ -1,13 +1,13 @@
 -------------------------------------------------------------------------------
 -- ACTIVITIES - ENGINS - BALBAYA
 -------------------------------------------------------------------------------
- -- Generic extraction of sets and catches from Balbaya
+-- Generic extraction of sets and catches from Balbaya
 -------------------------------------------------------------------------------
 -- Clara Lerebourg <clara.lereboourg@ird.fr>
 -------------------------------------------------------------------------------
 -- 2024-01-17 -- v1.0 -- CL -- initial version
 -------------------------------------------------------------------------------
-select
+SELECT
 	activite.d_act AS activity_date
 	,activite.v_nb_calees AS total_set
 	,activite.v_nb_calee_pos AS positive_set
@@ -17,9 +17,11 @@ select
 	,activite.c_ocea::numeric AS ocean_code
 	,bateau.c_pav_b::numeric AS country_code
 	,activite.c_engin::numeric AS vessel_type_code
+	
 FROM 
 	public.activite
 	JOIN public.bateau on (activite.c_bat = bateau.c_bat)
+	
 WHERE
 	EXTRACT(year FROM activite.d_act) IN (?time_period)
 	AND bateau.c_pav_b  IN (?country)
