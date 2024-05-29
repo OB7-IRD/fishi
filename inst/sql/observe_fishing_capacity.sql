@@ -1,7 +1,7 @@
 select
 	r.date as activity_date
 	,v.keelcode::numeric as keel_code
-	,c.weight::numeric as catch 
+	,v.capacity::numeric as catch 
 	,o.code::numeric as ocean_code
 	,ct.code::numeric as country_code
 	,vt.code::numeric as vessel_type_code
