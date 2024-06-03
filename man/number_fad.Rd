@@ -4,12 +4,14 @@
 \alias{number_fad}
 \title{Number fads}
 \usage{
-number_fad(dataframe, time_period = as.integer(2013:2022))
+number_fad(dataframe, time_period = as.integer(2013:2022), table = "by_year")
 }
 \arguments{
 \item{dataframe}{{\link[base]{data.frame}} expected. 'Csv' or 'output' of the function {\link[furdeb]{data_extraction}}, which must be done before using the fishery_production() function.}
 
 \item{time_period}{{\link[base]{integer}} expected. as.integer(2013:2022) by default.}
+
+\item{table}{{\link[base]{character}} expected. 'by_year' or 'by_vessel'. 'by_year' by default.}
 }
 \value{
 The function return a table.

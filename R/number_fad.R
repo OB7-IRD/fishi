@@ -3,6 +3,7 @@
 #' @description Number fads by year
 #' @param dataframe {\link[base]{data.frame}} expected. 'Csv' or 'output' of the function {\link[furdeb]{data_extraction}}, which must be done before using the fishery_production() function.
 #' @param time_period {\link[base]{integer}} expected. as.integer(2013:2022) by default.
+#' @param table {\link[base]{character}} expected. 'by_year' or 'by_vessel'. 'by_year' by default.
 #' @details
 #' The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:
 #' \preformatted{
@@ -15,7 +16,8 @@
 #' @return The function return a table.
 #' @export
 number_fad <- function(dataframe,
-                       time_period = as.integer(2013:2022)) {
+                       time_period = as.integer(2013:2022),
+                       table = "by_year") {
   # 0 - Global variables assignement ----
   object_code_activity <- NULL
   fishing_year <- NULL
