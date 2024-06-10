@@ -10,9 +10,9 @@
 #' \preformatted{
 #'    activity_date | school_code | set_duration | positive_set | total_set | total_hour_fished
 #'    -----------------------------------------------------------------------------------------
-#'    2010-03-06    | 3           | 0            | 0            | 0         |  1.00
-#'    2010-12-04    | 3           | 0            | 0            | 0         | 11.8
-#'    2010-05-19    | 3           | 0            | 0            | 0         |  2.05
+#'    2010-03-06    | FOB         | 0            | 0            | 0         |  1.00
+#'    2010-12-04    | FOB         | 0            | 0            | 0         | 11.8
+#'    2010-05-19    | FOB         | 0            | 0            | 0         |  2.05
 #' }
 #' Add these columns for an automatic title (optional):
 #' \itemize{
@@ -91,11 +91,11 @@ set_per_searching_day <- function(dataframe,
   # Create columns sets_per_day for ALL, FOB and FSC
   table_cpue_set_per_day <- table_cpue_set_per_day %>%
     dplyr::group_by(year) %>%
-    dplyr::reframe(sets_per_day_all = dplyr::case_when(school_code == 1 | school_code == 2 | school_code == 3 ~ nb_sets / (t_recherche / set_time),
+    dplyr::reframe(sets_per_day_all = dplyr::case_when(school_code %in% "FOB"| school_code %in% "FSC"| school_code %in% "UND" ~ nb_sets / (t_recherche / set_time),
                                                          TRUE ~ 0),
-                     sets_per_day_fad = dplyr::case_when(school_code == 1 ~ nb_sets / (t_recherche / set_time),
+                     sets_per_day_fad = dplyr::case_when(school_code %in% "FOB" ~ nb_sets / (t_recherche / set_time),
                                                          TRUE ~ 0),
-                     sets_per_day_fsc = dplyr::case_when(school_code %in% c(2:3) ~ nb_sets / (t_recherche / set_time)))
+                     sets_per_day_fsc = dplyr::case_when(school_code %in% c("FSC", "UND") ~ nb_sets / (t_recherche / set_time)))
   # Sum columns sets_per_day for ALL, FOB and FSC
   table_cpue_set_per_day <- table_cpue_set_per_day %>%
     dplyr::group_by(year) %>%

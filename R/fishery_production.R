@@ -11,9 +11,9 @@
 #' \preformatted{
 #'    activity_date | species_code | flag   | fleet  | gear | school_code | ocean_label | total_catch_weight
 #'    -----------------------------------------------------------------------------------------
-#'    1999-07-09    | 2            | France | France | PS   | BO          | 1           |  119.
-#'    1999-07-09    | 1            | France | France | PS   | BO          | 1           |   20.6
-#'    1999-07-09    | 1            | France | France | PS   | BL          | 1           |   24.4
+#'    1999-07-09    | 2            | France | France | PS   | FOB         | 1           |  119.
+#'    1999-07-09    | 1            | France | France | PS   | FOB         | 1           |   20.6
+#'    1999-07-09    | 1            | France | France | PS   | FOB         | 1           |   24.4
 #' }
 #' Add these columns for an automatic title (optional):
 #' \itemize{
@@ -75,9 +75,9 @@ fishery_production <- function(dataframe,
   # Add columns year, school type and species
   fishery_production_t1 <- dataframe %>%
     dplyr::mutate(year = lubridate::year(x = activity_date),
-                  school_type = dplyr::case_when(school_code == "IND" ~ "free",
-                                                 school_code == "BL"  ~ "free",
-                                                 school_code == "BO"  ~ "log",
+                  school_type = dplyr::case_when(school_code == "UND" ~ "free",
+                                                 school_code == "FSC"  ~ "free",
+                                                 school_code == "FOB"  ~ "log",
                                                  TRUE ~ "und"),
                   YFT = dplyr::case_when(species_code == 1 ~ total_catch_weight,
                                          TRUE ~ 0),

@@ -6,11 +6,17 @@
 -- Clara Lerebourg <clara.lerebourg@ird.fr>
 -------------------------------------------------------------------------------------------
 -- 2023 -- v1.0 -- CL -- initial version
+-- 2024-06-10 -- v1.1 -- CL -- Update school code (adapt to observe)
 -------------------------------------------------------------------------------------------
 SELECT
 	cl_taille.v_classe_t AS size_class
 	,mensur.v_mensur AS estimated_individual
-	,mensur.c_banc AS school_code
+	,CASE
+		WHEN mensur.c_banc IN (1) THEN 'FOB'
+	 	WHEN mensur.c_banc IN (2) THEN 'FSC'
+	 	WHEN mensur.c_banc IN (3) THEN 'FSC'
+	 	WHEN mensur.c_banc IN (9) THEN 'FSC'
+	 END AS school_code
 	,mensur.c_esp AS species_code
 	,temps.an AS activity_date
 	,mensur.c_ocean AS ocean_code

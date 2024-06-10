@@ -10,9 +10,9 @@
 #' \preformatted{
 #'    activity_date | school_code | positive_set | total_set
 #'    ------------------------------------------------------
-#'    2010-03-06    | 3           | 0            | 0
-#'    2010-12-04    | 3           | 0            | 0
-#'    2010-05-19    | 3           | 0            | 0
+#'    2010-03-06    | FOB         | 0            | 0
+#'    2010-12-04    | FOB         | 0            | 0
+#'    2010-05-19    | FOB         | 0            | 0
 #' }
 #' Add these columns for an automatic title (optional):
 #' \itemize{
@@ -73,7 +73,7 @@ fishing_activity <- function(dataframe,
                      .groups = "drop")
   # db a2 - Add : Number of total, positive, and null sets by FOB
   a2 <- fishing_activity_t1 %>%
-    dplyr::filter(school_code == 1) %>%
+    dplyr::filter(school_code %in% "FOB") %>%
     dplyr::group_by(year) %>%
     dplyr::summarise(l_total = sum(total_set,
                                    na.rm = TRUE),
@@ -84,7 +84,7 @@ fishing_activity <- function(dataframe,
                      .groups = "drop")
   # db a3 - Add : Number of total, positive, and null sets by FSC
   a3 <- fishing_activity_t1 %>%
-    dplyr::filter(school_code == 2 | school_code == 3) %>%
+    dplyr::filter(school_code %in% "FSC" | school_code %in% "UND") %>%
     dplyr::group_by(year) %>%
     dplyr::summarise(f_total = sum(total_set,
                                    na.rm = TRUE),

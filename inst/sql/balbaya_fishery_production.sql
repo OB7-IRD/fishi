@@ -6,6 +6,7 @@
 -- Clara Lerebourg <clara.lerebourg@ird.fr>
 -------------------------------------------------------------------------------------------
 -- 2023 -- v1.0 -- CL -- initial version
+-- 2024-06-10 -- v1.1 -- CL -- Update school code (adapt to observe)
 -------------------------------------------------------------------------------------------
 SELECT
 	a.d_act::date AS activity_date
@@ -15,7 +16,11 @@ SELECT
 	,p.l_pav_b AS flag
 	,e2.c_esp AS species_code
 	,c.v_poids_capt AS total_catch_weight
-	,tb.l4c_tban AS school_code
+	,CASE
+		WHEN a.c_tban::numeric IN (1) THEN 'FOB'
+	 	WHEN a.c_tban::numeric IN (2) THEN 'FSC'
+		WHEN a.c_tban::numeric IN (3) THEN 'UND'
+	 END AS school_code
 	,a.c_ocea::numeric AS ocean_code
 	,b.c_pav_b::numeric AS country_code
 	,a.c_engin::numeric AS vessel_type_code

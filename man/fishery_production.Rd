@@ -32,9 +32,9 @@ The input dataframe must contain all these columns for the function to work [\hr
 \preformatted{
    activity_date | species_code | flag   | fleet  | gear | school_code | ocean_label | total_catch_weight
    -----------------------------------------------------------------------------------------
-   1999-07-09    | 2            | France | France | PS   | BO          | 1           |  119.
-   1999-07-09    | 1            | France | France | PS   | BO          | 1           |   20.6
-   1999-07-09    | 1            | France | France | PS   | BL          | 1           |   24.4
+   1999-07-09    | 2            | France | France | PS   | FOB         | 1           |  119.
+   1999-07-09    | 1            | France | France | PS   | FOB         | 1           |   20.6
+   1999-07-09    | 1            | France | France | PS   | FOB         | 1           |   24.4
 }
 Add these columns for an automatic title (optional):
 \itemize{

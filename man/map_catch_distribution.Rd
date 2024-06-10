@@ -31,9 +31,9 @@ The input dataframe must contain all these columns for the function to work [\hr
 \preformatted{
    activity_date | vessel_code | species_code | ocean_code | school_code | cwp11_act | activity_id | positive_set | total_catch_weight
    -----------------------------------------------------------------------------------------------------------------------------------
-   2022-01-02    | 703         | 3            | 1          | 2           | 301000    | 1           | 1            |  2.60
-   2022-01-02    | 703         | 1            | 1          | 2           | 301000    | 1           | 1            | 17.8
-   2022-01-02    | 703         | 3            | 1          | 2           | 301000    | 2           | 1            |  1.11
+   2022-01-02    | 703         | 3            | 1          | FSC         | 301000    | 1           | 1            |  2.60
+   2022-01-02    | 703         | 1            | 1          | FSC         | 301000    | 1           | 1            | 17.8
+   2022-01-02    | 703         | 3            | 1          | FSC         | 301000    | 2           | 1            |  1.11
 }
 Add these columns for an automatic title (optional):
 \itemize{

@@ -10,9 +10,9 @@
 #' \preformatted{
 #'    activity_date | vessel_code | species_code | ocean_code | school_code | cwp11_act | activity_id | positive_set | total_catch_weight
 #'    -----------------------------------------------------------------------------------------------------------------------------------
-#'    2022-01-02    | 703         | 3            | 1          | 2           | 301000    | 1           | 1            |  2.60
-#'    2022-01-02    | 703         | 1            | 1          | 2           | 301000    | 1           | 1            | 17.8
-#'    2022-01-02    | 703         | 3            | 1          | 2           | 301000    | 2           | 1            |  1.11
+#'    2022-01-02    | 703         | 3            | 1          | FSC         | 301000    | 1           | 1            |  2.60
+#'    2022-01-02    | 703         | 1            | 1          | FSC         | 301000    | 1           | 1            | 17.8
+#'    2022-01-02    | 703         | 3            | 1          | FSC         | 301000    | 2           | 1            |  1.11
 #' }
 #' Add these columns for an automatic title (optional):
 #' \itemize{
@@ -100,7 +100,7 @@ map_catch_distribution <- function(dataframe,
   } else if (fishing_type == "FSC") {
     datafile <- t1  %>%
       dplyr::filter(positive_set > 0,
-                    school_code %in% c(2:3)) %>%
+                    school_code %in% c("FSC", "UND")) %>%
       dplyr::group_by(cwp11_act) %>%
       dplyr::summarise(yft = sum(dplyr::case_when(species_code == 1 ~ poids,
                                                   TRUE ~ 0.00000001), na.rm = TRUE),
@@ -113,7 +113,7 @@ map_catch_distribution <- function(dataframe,
   } else if (fishing_type == "FOB") {
     datafile <- t1  %>%
       dplyr::filter(positive_set > 0,
-                    school_code == 1) %>%
+                    school_code %in% "FOB") %>%
       dplyr::group_by(cwp11_act) %>%
       dplyr::summarise(yft = sum(dplyr::case_when(species_code == 1 ~ poids,
                                                   TRUE ~ 0.00000001), na.rm = TRUE),

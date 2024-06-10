@@ -1,3 +1,12 @@
+-------------------------------------------------------------------------------
+-- ACTIVITIES - VESSELS - OBSERVE
+-------------------------------------------------------------------------------
+-- Generic extraction for spatial_occupancy function from fishi
+-------------------------------------------------------------------------------
+-- Clara Lerebourg <clara.lerebourg@ird.fr>
+-------------------------------------------------------------------------------
+-- 2024-06 -- v1.0 -- CL -- initial version
+-------------------------------------------------------------------------------
 WITH catch_data AS (
     SELECT
         r.date AS activity_date
@@ -9,11 +18,7 @@ WITH catch_data AS (
 			ELSE 9
 			END || lpad(floor(abs(a.latitude)::double precision)::text, 2, '0'::text)) || lpad(floor(abs(a.longitude)::double precision)::text, 3, '0'::text) 
 		AS cwp11_act
-        ,CASE
-			WHEN st.code::numeric IN (0) THEN 'IND'
-	 		WHEN st.code::numeric IN (1) THEN 'BO'
-			WHEN st.code::numeric IN (2) THEN 'BL'
-	 		END AS school_code
+		,st.homeid as school_code
         ,a.setcount AS total_set
         ,r.fishingtime as total_hour_fished
         ,CASE

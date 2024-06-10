@@ -21,11 +21,7 @@ SELECT
 	,ct.iso3code AS flag
 	,s.code AS species_code
 	,c.weight::numeric AS total_catch_weight 
-	,CASE
-		WHEN st.code::numeric IN (0) THEN 'IND'
-		WHEN st.code::numeric IN (1) THEN 'BO'
-	 	WHEN st.code::numeric IN (2) THEN 'BL'
-	 	END AS school_code
+	,st.homeid as school_code
 	,o.code::numeric AS ocean_code
 	,vt.code::numeric AS vessel_type_code
 	,ct.code::numeric AS country_code

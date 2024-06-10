@@ -13,17 +13,17 @@
 #' \preformatted{
 #'    activity_date | species_code | school_code | set_duration | positive_set | total_set | total_catch_weight | total_hour_fished
 #'    -------------------------------------------------------------------------------------------------------------------------------
-#'    1999-07-09    | 2            | 1            | 3.54        | 1            | 1         | 119.0              | 12.1
-#'    1999-07-09    | 1            | 1            | 3.54        | 1            | 1         | 20.6               | 12.1
-#'    1999-07-09    | 1            | 1            | 3.54        | 1            | 1         | 24.4               | 12.1
+#'    1999-07-09    | 2            | FOB         | 3.54        | 1            | 1         | 119.0              | 12.1
+#'    1999-07-09    | 1            | FOB         | 3.54        | 1            | 1         | 20.6               | 12.1
+#'    1999-07-09    | 1            | FOB         | 3.54        | 1            | 1         | 24.4               | 12.1
 #' }
 #' Dataframe 2:
 #' \preformatted{
 #'    activity_date | school_code | set_duration | positive_set | total_set | total_hour_fished
 #'    -----------------------------------------------------------------------------------------
-#'    2010-03-06    | 3           | 0            | 0            | 0         |  1.00
-#'    2010-12-04    | 3           | 0            | 0            | 0         | 11.8
-#'    2010-05-19    | 3           | 0            | 0            | 0         |  2.05
+#'    2010-03-06    | FOB         | 0            | 0            | 0         |  1.00
+#'    2010-12-04    | FOB         | 0            | 0            | 0         | 11.8
+#'    2010-05-19    | FOB         | 0            | 0            | 0         |  2.05
 #' }
 #' Add these columns for an automatic title (optional):
 #' \itemize{
@@ -82,7 +82,7 @@ catch_per_searching_day <- function(dataframe1,
   dataframe2 <-  dataframe2 %>%
     dplyr::mutate(year = lubridate::year(x = activity_date))
   t0 <- dataframe2 %>%
-    dplyr::filter(school_code == 1) %>%
+    dplyr::filter(school_code %in% "FOB") %>%
     dplyr::group_by(year) %>%
     dplyr::summarise(nb_sets_pos = sum(positive_set,
                                        na.rm = TRUE),
@@ -94,15 +94,15 @@ catch_per_searching_day <- function(dataframe1,
   # Add columns species from fob school (school_code 1)
   t1 <- dataframe1 %>%
     dplyr::group_by(year) %>%
-    dplyr::summarise(yft = sum(dplyr::case_when(school_code == 1 & species_code == 1 ~ total_catch_weight,
+    dplyr::summarise(yft = sum(dplyr::case_when(school_code %in% "FOB" & species_code == 1 ~ total_catch_weight,
                                                 TRUE ~ 0), na.rm = TRUE),
-                     skj = sum(dplyr::case_when(school_code == 1 & species_code == 2 ~ total_catch_weight,
+                     skj = sum(dplyr::case_when(school_code %in% "FOB" & species_code == 2 ~ total_catch_weight,
                                                 TRUE ~ 0), na.rm = TRUE),
-                     bet = sum(dplyr::case_when(school_code == 1 & species_code == 3 ~ total_catch_weight,
+                     bet = sum(dplyr::case_when(school_code %in% "FOB" & species_code == 3 ~ total_catch_weight,
                                                 TRUE ~ 0), na.rm = TRUE),
-                     alb = sum(dplyr::case_when(school_code == 1 & species_code == 4 ~ total_catch_weight,
+                     alb = sum(dplyr::case_when(school_code %in% "FOB" & species_code == 4 ~ total_catch_weight,
                                                 TRUE ~ 0), na.rm = TRUE),
-                     total = sum(dplyr::case_when(school_code == 1 ~ total_catch_weight,
+                     total = sum(dplyr::case_when(school_code %in% "FOB" ~ total_catch_weight,
                                                   TRUE ~ 0), na.rm = TRUE),
                      .groups = "drop")
   #merge t0 and t1
@@ -119,7 +119,7 @@ catch_per_searching_day <- function(dataframe1,
   #Creation of t2 database from dataframe2
   # Add columns nb_sets_pos and nb_sets
   t2 <- dataframe2 %>%
-    dplyr::filter(school_code == 2 | school_code == 3) %>%
+    dplyr::filter(school_code %in% "FSC" | school_code %in% "UND") %>%
     dplyr::group_by(year) %>%
     dplyr::summarise(nb_sets_pos = sum(positive_set,
                                        na.rm = TRUE),
@@ -130,15 +130,15 @@ catch_per_searching_day <- function(dataframe1,
   # Add columns species from fsc school (school_code 2 et 3)
   t3 <- dataframe1 %>%
     dplyr::group_by(year) %>%
-    dplyr::summarise(yft = sum(dplyr::case_when(school_code %in% c(2, 3) & species_code == 1 ~ total_catch_weight,
+    dplyr::summarise(yft = sum(dplyr::case_when(school_code %in% c("FSC", "UND") & species_code == 1 ~ total_catch_weight,
                                                 TRUE ~ 0), na.rm = TRUE),
-                     skj = sum(dplyr::case_when(school_code %in% c(2, 3) & species_code == 2 ~ total_catch_weight,
+                     skj = sum(dplyr::case_when(school_code %in% c("FSC", "UND") & species_code == 2 ~ total_catch_weight,
                                                 TRUE ~ 0), na.rm = TRUE),
-                     bet = sum(dplyr::case_when(school_code %in% c(2, 3) & species_code == 3 ~ total_catch_weight,
+                     bet = sum(dplyr::case_when(school_code %in% c("FSC", "UND") & species_code == 3 ~ total_catch_weight,
                                                 TRUE ~ 0), na.rm = TRUE),
-                     alb = sum(dplyr::case_when(school_code %in% c(2, 3) & species_code == 4 ~ total_catch_weight,
+                     alb = sum(dplyr::case_when(school_code %in% c("FSC", "UND") & species_code == 4 ~ total_catch_weight,
                                                 TRUE ~ 0), na.rm = TRUE),
-                     total = sum(dplyr::case_when(school_code %in% c(2, 3) ~ total_catch_weight,
+                     total = sum(dplyr::case_when(school_code %in% c("FSC", "UND") ~ total_catch_weight,
                                                   TRUE ~ 0), na.rm = TRUE),
                      .groups = "drop")
   #merge t2 and t3

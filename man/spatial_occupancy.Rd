@@ -31,9 +31,9 @@ The input dataframe must contain all these columns for the function to work [\hr
 \preformatted{
    activity_date | cwp11_act | positive_set | total_set | total_hour_fished | school_code
    --------------------------------------------------------------------------------------
-   2010-03-06    | 404004    | 0            | 0         |  7.0              | IND
-   2010-12-04    | 404005    | 0            | 0         | 24.0              | BL
-   2010-05-19    | 404005    | 0            | 0         |  8.0              | BO
+   2010-03-06    | 404004    | 0            | 0         |  7.0              | UND
+   2010-12-04    | 404005    | 0            | 0         | 24.0              | FSC
+   2010-05-19    | 404005    | 0            | 0         |  8.0              | FOB
 }
 Add these columns for an automatic title (optional):
 \itemize{

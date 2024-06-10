@@ -9,17 +9,17 @@
 -------------------------------------------------------------------------------------------
 WITH catch_data AS (
     SELECT
-        r.date AS activity_date,
-        st.code::numeric AS school_code,
-        a.setcount AS total_set,
-        CASE
+        r.date AS activity_date
+        ,st.homeid as school_code
+        ,a.setcount AS total_set
+        ,CASE
             WHEN sst.code::numeric IN (0) THEN '0'
             WHEN sst.code::numeric IN (1) THEN '1'
             ELSE '0'
-        END AS positive_set_info,
-        o.code::numeric AS ocean_code,
-        vt.code::numeric AS vessel_type_code,
-        ct.code::numeric AS country_code
+        END AS positive_set_info
+        ,o.code::numeric AS ocean_code
+        ,vt.code::numeric AS vessel_type_code
+        ,ct.code::numeric AS country_code
     FROM
         ps_logbook.activity a
     LEFT JOIN ps_logbook.setsuccessstatus sst ON a.setsuccessstatus = sst.topiaid

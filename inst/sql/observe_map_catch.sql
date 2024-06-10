@@ -1,9 +1,18 @@
+-------------------------------------------------------------------------------
+-- ACTIVITIES - VESSELS - OBSERVE
+-------------------------------------------------------------------------------
+-- Generic extraction for map_catch_distribution function from fishi
+-------------------------------------------------------------------------------
+-- Clara Lerebourg <clara.lerebourg@ird.fr>
+-------------------------------------------------------------------------------
+-- 2024-06 -- v1.0 -- CL -- initial version
+-------------------------------------------------------------------------------
 WITH catch_data AS (
     SELECT
        	r.date as activity_date
 		,v.code as vessel_code
 		,s.code as species_code
-		,st.code::numeric  AS school_code
+		,st.homeid as school_code
 		,(CASE
 				WHEN a.latitude >= 0::double precision AND a.longitude >= 0::double precision THEN 1
 				WHEN a.latitude < 0::double precision AND a.longitude >= 0::double precision THEN 2

@@ -6,6 +6,7 @@
 -- Clara Lerebourg <clara.lerebourg@ird.fr>
 -------------------------------------------------------------------------------
 -- 2024-01-17 -- v1.0 -- CL -- initial version
+-- 2024-06-10 -- v1.1 -- CL -- Update school code (adapt to observe)
 -------------------------------------------------------------------------------
 SELECT
 	p.l_pav_b AS fleet
@@ -21,7 +22,11 @@ SELECT
 	,a.v_nb_calee_pos AS positive_set
 	,a.v_dur_cal AS set_duration
 	,b.c_quille AS keel_code
-	,tb.l4c_tban AS school_code
+	,CASE
+		WHEN tb.c_tban::numeric IN (1) THEN 'FOB'
+	 	WHEN tb.c_tban::numeric IN (2) THEN 'FSC'
+		WHEN tb.c_tban::numeric IN (3) THEN 'UND'
+	 END AS school_code
 	,a.cwp11_act
 	,b.v_ct_m3::numeric AS catch
 	,o.c_ocea::numeric AS ocean_code
