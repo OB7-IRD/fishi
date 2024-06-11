@@ -34,7 +34,6 @@ map_catch_distribution <- function(dataframe,
   school_code <- NULL
   cwp11_act <- NULL
   total_catch_weight <- NULL
-  wrld_simpl <- NULL
   total <- NULL
   bet <- NULL
   yft <- NULL

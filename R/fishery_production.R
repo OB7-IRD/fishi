@@ -169,11 +169,11 @@ fishery_production <- function(dataframe,
   # 4 - Graphic design ----
   if (graph_type == "plot") {
     table_long <- tidyr::pivot_longer(table_catch_all,
-                               cols = c("YFT",
-                                        "SKJ",
-                                        "BET"),
-                               names_to = "Species",
-                               values_to = "Catch")
+                                      cols = c("YFT",
+                                               "SKJ",
+                                               "BET"),
+                                      names_to = "Species",
+                                      values_to = "Catch")
     (fishery_ggplot <- ggplot2::ggplot(table_long,
                                        ggplot2::aes(x = year,
                                                     y = Catch / 1000,

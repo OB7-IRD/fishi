@@ -160,7 +160,7 @@ map_effort_distribution <- function(dataframe,
   if (graph_type == "plot") {
     return(map)
   } else if (graph_type == "plotly") {
-        # Plotly
+    # Plotly
     plotly_map <- plotly::ggplotly(map)
     # Add a title
     if (title == TRUE) {

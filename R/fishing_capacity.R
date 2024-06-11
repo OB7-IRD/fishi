@@ -80,7 +80,7 @@ fishing_capacity <- function(dataframe,
     dplyr::group_by(year,
                     keel_code) %>%
     dplyr::reframe("tons" = sum(tons,
-                              na.rm = TRUE),
+                                na.rm = TRUE),
                    "cc" = sum(cc,
                               na.rm = TRUE),
                    "keel_code_nb_months" = dplyr::n_distinct(keel_code_nb_months,
@@ -189,31 +189,31 @@ fishing_capacity <- function(dataframe,
                                 sec.axis = ggplot2::sec_axis(~ . / 2,
                                                              name = "Carrying capacity (x1000m^3)"))
   if (graph_type == "plot") {
-   return(ggplot_graph)
+    return(ggplot_graph)
   } else if (graph_type == "plotly") {
     plotly_graph <- plotly::ggplotly(ggplot_graph)
-      # Add a title
-      if (title == TRUE) {
-        plotly_graph <- plotly_graph %>%
-          plotly::layout(title = list(text = paste0("Fishing capacity of the ",
-                                                    country_legend, " ",
-                                                    vessel_type_legend,
-                                                    " fleet in the ",
-                                                    ocean_legend,
-                                                    " ocean. Annual changes in the", "\n",
-                                                    "number of purse seiners by tonnage categories during ",
-                                                    min(time_period),
-                                                    "-",
-                                                    max(time_period),
-                                                    "."),
-                                      font = list(size = 17)),
-                         margin = list(t = 120))
-      }
-      # Plot the plotly
-      plotly_graph %>%
-        plotly::layout(legend = list(orientation = "v",
-                                     x = 0.80,
-                                     y = 0.98))
+    # Add a title
+    if (title == TRUE) {
+      plotly_graph <- plotly_graph %>%
+        plotly::layout(title = list(text = paste0("Fishing capacity of the ",
+                                                  country_legend, " ",
+                                                  vessel_type_legend,
+                                                  " fleet in the ",
+                                                  ocean_legend,
+                                                  " ocean. Annual changes in the", "\n",
+                                                  "number of purse seiners by tonnage categories during ",
+                                                  min(time_period),
+                                                  "-",
+                                                  max(time_period),
+                                                  "."),
+                                    font = list(size = 17)),
+                       margin = list(t = 120))
+    }
+    # Plot the plotly
+    plotly_graph %>%
+      plotly::layout(legend = list(orientation = "v",
+                                   x = 0.80,
+                                   y = 0.98))
   } else if (graph_type == "table") {
     fishing_capacity_data <- fishing_capacity_data[, -11]
     as.data.frame(fishing_capacity_data)

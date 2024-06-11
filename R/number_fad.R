@@ -33,7 +33,7 @@ number_fad <- function(dataframe,
   # 2 - Data design ----
   # object
   no_object <- dataframe %>%
-    dplyr::filter(vessel_type == 'PS',
+    dplyr::filter(vessel_type == "PS",
                   object_code_activity == 1,
                   fishing_year %in% c(time_period)) %>%
     dplyr::group_by(fishing_year) %>%
@@ -41,7 +41,7 @@ number_fad <- function(dataframe,
 
   # buoy
   no_buoy <- dataframe %>%
-    dplyr::filter(vessel_type == 'PS',
+    dplyr::filter(vessel_type == "PS",
                   buoy_code_activity == 3,
                   fishing_year %in% c(time_period)) %>%
     dplyr::group_by(fishing_year) %>%
@@ -49,8 +49,8 @@ number_fad <- function(dataframe,
 
   # new buoy
   nb <- dataframe %>%
-    dplyr::filter(vessel_type == 'PS',
-                  buoy_code_activity == '3') %>%
+    dplyr::filter(vessel_type == "PS",
+                  buoy_code_activity == "3") %>%
     dplyr::group_by(buoy_id) %>%
     dplyr::summarise(fishing_year = min(fishing_year))
 
@@ -62,8 +62,8 @@ number_fad <- function(dataframe,
 
   # no ps
   no_ps <- dataframe %>%
-    dplyr::filter(vessel_type == 'PS',
-                  buoy_code_activity == '3',
+    dplyr::filter(vessel_type == "PS",
+                  buoy_code_activity == "3",
                   fishing_year %in% c(time_period)) %>%
     dplyr::group_by(fishing_year) %>%
     dplyr::summarise(No_ps = dplyr::n_distinct(vessel_name),
@@ -71,8 +71,8 @@ number_fad <- function(dataframe,
 
   # no supply
   no_supply <- dataframe %>%
-    dplyr::filter(vessel_type == 'SV',
-                  buoy_code_activity == '3',
+    dplyr::filter(vessel_type == "SV",
+                  buoy_code_activity == "3",
                   fishing_year %in% c(time_period)) %>%
     dplyr::group_by(fishing_year) %>%
     dplyr::summarise(No_supply = dplyr::n_distinct(vessel_name),

@@ -514,12 +514,12 @@ bio_weight_tuna <- function(dataframe,
                 stats::setNames("red", year))
     yft_fob_leg <- ggplot2::ggplot(data = table_weight_yft_w) +
       ggplot2::geom_line(ggplot2::aes(x = size_class,
-                    y = log_avg_5_years,
-                    color = years),
-                linetype = "dashed") +
+                                      y = log_avg_5_years,
+                                      color = years),
+                         linetype = "dashed") +
       ggplot2::geom_line(ggplot2::aes(x = size_class,
-                    y = log_current_year,
-                    color = year)) +
+                                      y = log_current_year,
+                                      color = year)) +
       ggplot2::scale_color_manual(values = colors) +
       ggplot2::labs(x = " ", y = " ") +
       ggplot2::ylim(0, max(table_weight_yft_w$log_current_year,

@@ -66,10 +66,10 @@ fishing_activity <- function(dataframe,
     dplyr::group_by(year) %>%
     dplyr::summarise(a_total = sum(total_set,
                                    na.rm = TRUE),
-                      a_positive = sum(positive_set,
-                                       na.rm = TRUE),
-                      a_null = sum(total_set - positive_set,
-                                   na.rm = TRUE),
+                     a_positive = sum(positive_set,
+                                      na.rm = TRUE),
+                     a_null = sum(total_set - positive_set,
+                                  na.rm = TRUE),
                      .groups = "drop")
   # db a2 - Add : Number of total, positive, and null sets by FOB
   a2 <- fishing_activity_t1 %>%
@@ -111,7 +111,7 @@ fishing_activity <- function(dataframe,
                                        values_to = "nb_sets")
     perc <- 35
     name_set <- "Number of sets"
-  } else if (with_catch == "without"){
+  } else if (with_catch == "without") {
     table_sets <- table_sets %>%
       dplyr::mutate("%_log" = l_null / a_null * 100)
     set <- as.matrix(table_sets[, c(1, 7, 10, 11)])
@@ -186,33 +186,33 @@ fishing_activity <- function(dataframe,
                                   sec.axis = ggplot2::sec_axis(~ . / perc,
                                                                name = "% FOB-associated sets")))
 
-if (graph_type == "plot") {
-  return(ggplot_graph)
+  if (graph_type == "plot") {
+    return(ggplot_graph)
   } else if (graph_type == "plotly") {
-      plotly_graph <- plotly::ggplotly(ggplot_graph)
-      # Add a title
-      if (title == TRUE) {
-        plotly_graph <- plotly_graph %>%
-          plotly::layout(title = list(text = paste0("Fishing operations. Annual number of fishing sets in the ",
-                                                    country_legend, " ",
-                                                    vessel_type_legend,
-                                                    " fishery \n",
-                                                    "on FOB-associated and free-swimming tuna schools during ",
-                                                    min(time_period),
-                                                    "-",
-                                                    max(time_period),
-                                                    " in the ",
-                                                    ocean_legend,
-                                                    " ocean."),
-                                      font = list(size = 15)),
-                         margin = list(t = 120))
+    plotly_graph <- plotly::ggplotly(ggplot_graph)
+    # Add a title
+    if (title == TRUE) {
+      plotly_graph <- plotly_graph %>%
+        plotly::layout(title = list(text = paste0("Fishing operations. Annual number of fishing sets in the ",
+                                                  country_legend, " ",
+                                                  vessel_type_legend,
+                                                  " fishery \n",
+                                                  "on FOB-associated and free-swimming tuna schools during ",
+                                                  min(time_period),
+                                                  "-",
+                                                  max(time_period),
+                                                  " in the ",
+                                                  ocean_legend,
+                                                  " ocean."),
+                                    font = list(size = 15)),
+                       margin = list(t = 120))
 
-      }
-      # Plot the plotly
-      plotly_graph %>%
-        plotly::layout(legend = list(orientation = "v",
-                                     x = 0.7,
-                                     y = 0.95))
+    }
+    # Plot the plotly
+    plotly_graph %>%
+      plotly::layout(legend = list(orientation = "v",
+                                   x = 0.7,
+                                   y = 0.95))
   } else if (graph_type == "table") {
     table_sets <- table_sets %>%
       dplyr::rename("% on FOB" = "%_log")

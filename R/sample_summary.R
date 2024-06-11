@@ -393,7 +393,7 @@ sample_summary <- function(dataframe,
       }
     }
   } else if (data_type == "observe") {
-# OBSERVE ----
+    # OBSERVE ----
     # If is null
     # selected ocean
     if (is.null(selected_ocean)) {

@@ -64,9 +64,9 @@ set_per_searching_day <- function(dataframe,
   dataframe <-  dataframe %>%
     dplyr::mutate(year = lubridate::year(x = activity_date))
   ocean_code <- dataframe$ocean_code[1]
-  if (ocean_code == 1){
+  if (ocean_code == 1) {
     set_time <- as.integer(x = 12)
-  } else if (ocean_code == 2){
+  } else if (ocean_code == 2) {
     set_time <- as.integer(x = 13)
   }
   # db t1 - Add columns : nb_sets_pos and nb_sets
@@ -91,11 +91,11 @@ set_per_searching_day <- function(dataframe,
   # Create columns sets_per_day for ALL, FOB and FSC
   table_cpue_set_per_day <- table_cpue_set_per_day %>%
     dplyr::group_by(year) %>%
-    dplyr::reframe(sets_per_day_all = dplyr::case_when(school_code %in% "FOB"| school_code %in% "FSC"| school_code %in% "UND" ~ nb_sets / (t_recherche / set_time),
-                                                         TRUE ~ 0),
-                     sets_per_day_fad = dplyr::case_when(school_code %in% "FOB" ~ nb_sets / (t_recherche / set_time),
-                                                         TRUE ~ 0),
-                     sets_per_day_fsc = dplyr::case_when(school_code %in% c("FSC", "UND") ~ nb_sets / (t_recherche / set_time)))
+    dplyr::reframe(sets_per_day_all = dplyr::case_when(school_code %in% "FOB" | school_code %in% "FSC" | school_code %in% "UND" ~ nb_sets / (t_recherche / set_time),
+                                                       TRUE ~ 0),
+                   sets_per_day_fad = dplyr::case_when(school_code %in% "FOB" ~ nb_sets / (t_recherche / set_time),
+                                                       TRUE ~ 0),
+                   sets_per_day_fsc = dplyr::case_when(school_code %in% c("FSC", "UND") ~ nb_sets / (t_recherche / set_time)))
   # Sum columns sets_per_day for ALL, FOB and FSC
   table_cpue_set_per_day <- table_cpue_set_per_day %>%
     dplyr::group_by(year) %>%

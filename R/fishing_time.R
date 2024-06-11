@@ -30,7 +30,6 @@ fishing_time <- function(dataframe,
   year <- NULL
   country_label <- NULL
   gear <- NULL
-  vessel_code <- NULL
   hrsea <- NULL
   report_year <- NULL
   # 1 - Arguments verification ----
@@ -52,17 +51,6 @@ fishing_time <- function(dataframe,
   #Adding columns years
   fishing_time_t1 <- dataframe %>%
     dplyr::mutate(year = lubridate::year(x = activity_date))
-  # By vessel
-  fishing_time_by_vessel <- fishing_time_t1 %>%
-    dplyr::group_by(year,
-                    country_label,
-                    gear,
-                    vessel_code) %>%
-    dplyr::summarise("fishing_time" = sum(fishing_time,
-                                          na.rm = TRUE),
-                     "hrsea" = sum(hrsea,
-                                   na.rm = TRUE),
-                     .groups = "drop")
   # By year
   fishing_time_by_year <- fishing_time_t1 %>%
     dplyr::group_by(year,
@@ -83,12 +71,6 @@ fishing_time <- function(dataframe,
     country_legend <- code_manipulation(data         = dataframe$country_code,
                                         referential  = "country",
                                         manipulation = "legend")
-    #vessel
-    vessel_type_legend <- code_manipulation(data         = dataframe$vessel_type_code,
-                                            referential  = "vessel_simple_type",
-                                            manipulation = "legend")
-    # time_period
-    time_period <- c(unique(min(fishing_time_t1$year):max(fishing_time_t1$year)))
   }
   # 4 - Graphic design ----
   (ggplot_table_time <- ggplot2::ggplot(data = fishing_time_by_year) +
