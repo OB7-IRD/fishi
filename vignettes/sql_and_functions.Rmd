@@ -1,0 +1,111 @@
+---
+title: "sql_and_functions"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{sql_and_functions}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(fishi)
+```
+
+The fishi package contains a large number of sql functions. This thumbnail allows you to review them in order to understand what they are used for and which functions they are associated with.
+
+# Balbaya
+
+## Catch effort
+
+This query is extracting information related to the spatial distribution and effort. Works for the functions **catch_per_searching_day**, **catch_per_unit_effort**, **map_catch_distribution** and **map_effort_distribution**.
+
+## Fishery production
+
+This query is extracting information related to the catches by school type, for the **fishery_production** function.
+
+## Fishing activity engin
+
+This query is extracting information related to the sets and catches. Works for the functions : **fishing_activity**, **set_per_searching_day**, **catch_per_searching_day** and **catch_per_unit_effort**.
+
+## Fishing activity vessel type
+
+This query is extracting information related to the vessels, sets, catches, and effort. Works for the functions : **fishing_capacity**, **fishing_effort** and **spatial_occupancy**.
+
+## Fishing time
+
+This query is extracting information related to the time at sea and fishing time. Works for the function **fishing_time**.
+
+## Vessel number
+
+This query is extracting information related to ocean activities, including the ocean's ID and name, the date of the activity, vessel details (ID, type, and name), and the country associated with the activity.
+
+# 
+
+# Sardara
+
+## Bio_tuna
+
+The bio_tuna SQL script is used to extract information on the size and weight of tuna catches from the sardara database. It works for the functions **bio_size_tuna** and **bio_weight_tuna**.
+
+# 
+
+# Observe
+
+## Biological variable
+
+This query is extracting information related to each biological variable sampled, for the **species_biological_variable** function.
+
+## Fishery production
+
+This query is extracting information related to the catches by school type, for the **fishery_production** function.
+
+## Fishing activity
+
+This query is extracting information related to the fishing operations, for the **fishing_activity** function.
+
+## Fishing capacity
+
+This query is extracting information related to the fishing capacity of the fleet, for the **fishing_capacity** function.
+
+## Fishing time
+
+This query is extracting information related to the time at sea and fishing time, for the **fishing_time** function.
+
+## Map catch
+
+This query is extracting information related to the spatial distribution, catch and effort. It works for the functions **map_catch_distribution** and **map_effort_distribution**.
+
+## Number fads years
+
+This query is extracting information related to the number of fads by year, for the **number_fad** function.
+
+## Sample summary logbook
+
+This query is extracting information related to the trip, vessel and well sampled (logbook), for the **sample_summary** function.
+
+## Sample summary observation
+
+This query is extracting information related to the trip, vessel and well sampled (observation), for the **sample_summary** function.
+
+## Set total and set total well
+
+This query is extracting information related to the sets event (by wells), for the **set_total** and **psu_toal** function.
+
+## Spatial occupancy
+
+This query is extracting information related to the sets and distribution, for the **set_total** and **psu_toal** function.
+
+## Species
+
+This query is extracting information related to the species like the FAO code, the scientific names and the species group.
+
+## Vessel number
+
+This query is extracting information related to ocean activities, including the ocean's ID and name, the date of the activity, vessel details (ID, type, and name), and the country associated with the activity.
