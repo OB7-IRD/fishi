@@ -1,0 +1,107 @@
+---
+title: "Sql and functions"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{sql_and_function}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+editor_options: 
+  markdown: 
+    wrap: 72
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+require(fishi)
+require(codama)
+require(kableExtra)
+```
+
+**balbaya_fishing_activity_vesseltype**: Generic extraction of vessels,
+sets, catches, and effort from Balbaya
+
+Associated functions :
+
+-   *fishing capacity*: Annual changes in the number of vessel
+
+-   *fishing effort*: Annual total number of fishing and searching days
+
+-   *spatial occupancy*: Changes in the spatial extent of the fishery
+    over time. Annual number of 1-degree squares explored by each
+    vessel.
+
+**balbaya_fishing_activity_engin:** Generic extraction of sets and
+catches from Balbaya
+
+Associated functions :
+
+-   *fishing activity*: Fishing operations. Annual number of fishing
+    sets on FOB-associated and free-swimming tuna schools.
+
+-   *set per searching day*: Annual number of sets per searching day on
+    FOB-associated and free-swimming schools.
+
+-   *catch per searching day* (dataframe 2): Annual number of catch per
+    positive set on FOB-associated and free-swimming schools.
+
+-   *catch per unit effort* (dataframe 2): Annual catch rates (in t per
+    searching day) on FOB- associated and free-swimming tuna schools
+    (FSC).
+
+**balbaya_catch_effort:\
+**Associated functions :
+
+-   *catch_per_searching_day* (dataframe 1): Annual number of catch per
+    positive set on FOB-associated and free-swimming schools.
+
+-   *catch_per_unit_effort* (dataframe 1): Annual catch rates (in t per
+    searching day) on FOB- associated and free-swimming tuna schools
+    (FSC).
+
+-   *map_catch_distribution:* Spatial distribution of tuna catches.
+
+-   *map_effort_distribution:* Spatial distribution of tuna effort.
+
+**balbaya_fishery_production:**
+
+Associated functions :
+
+-   *fishery production*: Total fishery production (catch by species).
+
+**sardara_bio_tuna:**
+
+Associated functions :
+
+-   *bio_size_tuna*: Size distribution of major tuna catches (in
+    percentage of the total number of fishes).
+
+-   *bio_weight_tuna*: Weight distribution of major tuna catches (in
+    percentage of the total number of fishes).
+
+**observe_biological_variable:**
+
+Associated functions :
+
+-   *species_biological_variable*: Gives the number of each biological
+    variable sampled for a given year
+
+**observe_sample_summary_logbook /**
+**observe_sample_summary_observation:**
+
+Associated functions :
+
+-   *sample_summary*: gives the number of trips, vessels or wells
+    sampled for a given year
+
+**observe_set_total:**
+
+Associated functions :
+
+-   set_total: Total number of set events, sampled or not, with or
+    without tuna landings.
+
+-   psu_total: Total number of calibration events, sampled or not, with
+    tuna landings (variables: exit, well and vessel).

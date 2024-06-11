@@ -2,15 +2,11 @@
 #' @title Number of biological UO
 #' @description Count the UO for biological sampling.
 #' @param path_file {\link[base]{character}} expected. File path to the Tunabio file.
-#' @param graph_type {\link[base]{character}} expected. "number" or "table." Number give the total number of each biological UO and table give the detail per month. Number by default.
+#' @param graph_type {\link[base]{character}} expected. 'number' or 'table.' Number give the total number of each biological UO and table give the detail per month. Number by default.
 #' @param start_date {\link[base]{date}} expected. Write the start date of the contract
 #' @param end_date {\link[base]{date}} expected. Write the end date of the contract
 #' @return The function return table.
 #' @export
-#' @importFrom readxl read_excel
-#' @importFrom dplyr mutate filter group_by summarize n
-#' @importFrom lubridate date
-
 biological_UO_count <- function(path_file,
                                 graph_type = "number",
                                 start_date = NULL,

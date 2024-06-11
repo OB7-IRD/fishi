@@ -14,9 +14,6 @@
 #'  \item{specie: }{code, name and color of species}
 #' }
 #' @export
-#' @importFrom dplyr tibble arrange inner_join last
-#' @importFrom utils read.table
-#' @importFrom codama r_type_checking
 code_manipulation <- function(data,
                               referential,
                               manipulation) {
@@ -30,32 +27,32 @@ code_manipulation <- function(data,
                               type = "character",
                               length = 1L,
                               allowed_value = c("country",
-                                                 "ocean",
-                                                 "vessel_simple_type",
-                                                 "specie"),
+                                                "ocean",
+                                                "vessel_simple_type",
+                                                "specie"),
                               output = "logical") != TRUE) {
     return(codama::r_type_checking(r_object = referential,
                                    type = "character",
                                    length = 1L,
                                    allowed_value = c("country",
-                                                      "ocean",
-                                                      "vessel_simple_type",
-                                                      "specie"),
+                                                     "ocean",
+                                                     "vessel_simple_type",
+                                                     "specie"),
                                    output = "message"))
   }
   if (codama::r_type_checking(r_object = manipulation,
                               type = "character",
                               length = 1L,
                               allowed_value = c("legend",
-                                                 "modality",
-                                                 "color"),
+                                                "modality",
+                                                "color"),
                               output = "logical") != TRUE) {
     return(codama::r_type_checking(r_object = referential,
                                    type = "manipulation",
                                    length = 1L,
                                    allowed_value = c("legend",
-                                                      "modality",
-                                                      "color"),
+                                                     "modality",
+                                                     "color"),
                                    output = "message"))
   }
   # 3 - process ----

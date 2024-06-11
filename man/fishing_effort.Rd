@@ -7,11 +7,11 @@
 fishing_effort(dataframe, graph_type = "plot", title = FALSE)
 }
 \arguments{
-\item{dataframe}{{\link[base]{data.frame}} expected. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the fishing_effort() function.}
+\item{dataframe}{{\link[base]{data.frame}} expected. 'Csv' or 'output' of the function {\link[furdeb]{data_extraction}}, which must be done before using the fishing_effort() function.}
 
-\item{graph_type}{{\link[base]{character}} expected. plot, plotly or table. Plot by default.}
+\item{graph_type}{{\link[base]{character}} expected. 'plot', 'plotly' or 'table'. Plot by default.}
 
-\item{title}{TRUE or FALSE expected. False by default.}
+\item{title}{TRUE or FALSE expected. Title for plotly graph_type. False by default.}
 }
 \value{
 The function return ggplot R plot.
@@ -21,22 +21,15 @@ Changes in nominal effort over time. Annual total number of fishing and searchin
 }
 \details{
 The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:
-\itemize{
- \item{\code{  activity_date}}
- \item{\code{  c_bat}}
- \item{\code{  flag}}
- \item{\code{  fleet}}
- \item{\code{  l_bat}}
- \item{\code{  landing_date}}
- \item{\code{  ocean_id}}
- \item{\code{  port}}
- \item{\code{  v_dur_cal}}
- \item{\code{  vessel_type_id}}
- \item{\code{  v_tmer}}
- \item{\code{  v_tpec}}
+\preformatted{
+   activity_date | vessel_code | flag   | fleet  | vessel_label  | landing_date | ocean_code | harbour_label | set_duration | vessel_type_code | total_hour_at_sea | total_hour_fished
+   --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+   2010-03-06    | 679         | France | France | MEN GOE       | 2010-03-06   | 1          | ABIDJAN       | 0.0          | 1                |  7.0              |  1.005
+   2010-12-04    | 492         | France | France | GUERIDEN      | 2010-12-05   | 1          | TEMA          | 0.0          | 1                | 24.0              | 11.838
+   2010-05-19    | 401         | France | France | VIA HARMATTAN | 2010-05-19   | 1          | ABIDJAN       | 0.0          | 1                |  8.0              |  2.048
 }
 Add these columns for an automatic title (optional):
 \itemize{
- \item{\code{  country_id}}
+ \item{\code{  country_code}}
 }
 }

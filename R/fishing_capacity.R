@@ -1,62 +1,47 @@
 #' @name fishing_capacity
-#' @title Annual changes in the number of vessels
+#' @title Annual changes in the number of vessel
 #' @description Fishing capacity. Annual changes in the number of purse seiners by tonnage categories (barplots) and total carrying capacity (dashed line with circles).
-#' @param dataframe {\link[base]{data.frame}} expected. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the fishing_capacity() function.
-#' @param graph_type {\link[base]{character}} expected. plot, plotly or table. Plot by default.
-#' @param figure {\link[base]{character}} expected. For plotly figure: vessel (for number of vessels graph) or capacity (for carrying capacity graph). vessel by default.
-#' @param title TRUE or FALSE expected. False by default.
+#' @param dataframe {\link[base]{data.frame}} expected. 'Csv' or 'output' of the function {\link[furdeb]{data_extraction}}, which must be done before using the fishing_capacity() function.
+#' @param graph_type {\link[base]{character}} expected. 'plot', 'plotly' or 'table'. Plot by default.
+#' @param title TRUE or FALSE expected. Title for plotly graph_type. False by default.
 #' @details
 #' The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:
-#' \itemize{
-#'  \item{\code{  activity_date}}
-#'  \item{\code{  catch}}
-#'  \item{\code{  c_quille}}
+#' \preformatted{
+#'    activity_date | catch | keel_code
+#'    ----------------------------------
+#'    2010-03-06    | 1742  | 466
+#'    2010-12-04    | 1800  | 426
+#'    2010-05-19    | 1500  | 165
 #' }
 #' Add these columns for an automatic title (optional):
 #' \itemize{
-#'  \item{\code{  country_id}}
-#'  \item{\code{  ocean_id}}
-#'  \item{\code{  vessel_type_id}}
+#'  \item{\code{  country_code}}
+#'  \item{\code{  ocean_code}}
+#'  \item{\code{  vessel_type_code}}
 #' }
 #' @return The function return ggplot R plot.
 #' @export
-#' @importFrom dplyr mutate tibble group_by summarise n_distinct
-#' @importFrom lubridate year
-#' @importFrom RColorBrewer brewer.pal
-#' @importFrom graphics par plot axis lines abline legend text mtext
-#' @importFrom ggplot2 ggplot aes geom_line geom_point scale_y_continuous sec_axis labs theme_bw
-#' @importFrom plotly ggplotly
-#' @importFrom tidyr pivot_longer
-#' @importFrom forcats fct_relevel
-#' @importFrom codama r_type_checking
 fishing_capacity <- function(dataframe,
                              graph_type = "plot",
-                             figure = "vessel",
                              title = FALSE) {
   # 0 - Global variables assignement ----
-  c_quille <- NULL
+  keel_code <- NULL
   catch <- NULL
   tons <- NULL
   tons_month <- NULL
   cc <- NULL
   activity_date <- NULL
-  c_quille_nb_months <- NULL
-  nb_vessels <- NULL
+  keel_code_nb_months <- NULL
   CC <- NULL
   time_period <- NULL
   month <- NULL
+  year <- NULL
+  number_vessel <- NULL
   # 1 - Arguments verification ----
   if (codama::r_type_checking(r_object = graph_type,
                               type = "character",
                               output = "logical") != TRUE) {
     return(codama::r_type_checking(r_object = graph_type,
-                                   type = "character",
-                                   output = "message"))
-  }
-  if (codama::r_type_checking(r_object = figure,
-                              type = "character",
-                              output = "logical") != TRUE) {
-    return(codama::r_type_checking(r_object = figure,
                                    type = "character",
                                    output = "message"))
   }
@@ -70,7 +55,7 @@ fishing_capacity <- function(dataframe,
   # 2 - Data design ----
   #  Add columns catches in tonnes and catches in tonnes per month
   fishing_capacity_t1 <- dataframe %>%
-    dplyr::group_by(c_quille) %>%
+    dplyr::group_by(keel_code) %>%
     dplyr::reframe(year = lubridate::year(x = activity_date),
                    month = lubridate::month(x = activity_date),
                    tons_month = (catch * 0.7) / 12,
@@ -78,19 +63,28 @@ fishing_capacity <- function(dataframe,
   # Remove duplicates
   fishing_capacity_t1 <- unique(fishing_capacity_t1[, c("year",
                                                         "month",
-                                                        "c_quille",
+                                                        "keel_code",
                                                         "tons",
                                                         "tons_month")])
-  # Add columns cc and c_quille_nb_month
+  # Add columns cc and keel_code_nb_month
   fishing_capacity_t2 <- fishing_capacity_t1 %>%
     dplyr::group_by(year,
-                    c_quille,
-                    tons,
-                    tons_month) %>%
+                    keel_code,
+                    tons) %>%
     dplyr::reframe("cc" = sum(tons_month,
                               na.rm = TRUE),
-                   "c_quille_nb_months" = dplyr::n_distinct(month,
-                                                            na.rm = TRUE))
+                   "keel_code_nb_months" = dplyr::n_distinct(month,
+                                                             na.rm = TRUE))
+
+  fishing_capacity_t2 <- fishing_capacity_t2 %>%
+    dplyr::group_by(year,
+                    keel_code) %>%
+    dplyr::reframe("tons" = sum(tons,
+                                na.rm = TRUE),
+                   "cc" = sum(cc,
+                              na.rm = TRUE),
+                   "keel_code_nb_months" = dplyr::n_distinct(keel_code_nb_months,
+                                                             na.rm = TRUE))
   # Number of ships per category
   fishing_capacity_t3 <- fishing_capacity_t2 %>%
     dplyr::group_by(year) %>%
@@ -106,10 +100,10 @@ fishing_capacity <- function(dataframe,
                                      na.rm = TRUE),
                    "> 2000" = sum(tons > 2000,
                                   na.rm = TRUE),
-                   "Nb_vessels" = dplyr::n_distinct(c_quille, na.rm = TRUE),
-                   "Nb_vessels_weighted" = round(sum(c_quille_nb_months / 12,
-                                                     na.rm = TRUE),
-                                                 2),
+                   "Nb_vessel" = dplyr::n_distinct(keel_code, na.rm = TRUE),
+                   "Nb_vessel_weighted" = round(sum(keel_code_nb_months / 12,
+                                                    na.rm = TRUE),
+                                                2),
                    "CC" = round(sum(cc,
                                     na.rm = TRUE)))
   fishing_capacity_data <- fishing_capacity_t3 %>%
@@ -118,204 +112,108 @@ fishing_capacity <- function(dataframe,
   data_pivot <- tidyr::pivot_longer(fishing_capacity_data,
                                     cols = c(2:7),
                                     names_to = "tons",
-                                    values_to = "nb_vessels")
+                                    values_to = "number_vessel")
   data_pivot <- data_pivot %>%
     dplyr::mutate(tons = forcats::fct_relevel(tons,
+                                              "> 2000",
                                               "1200-2000",
                                               "800-1200",
                                               "600-800",
                                               "400-600",
                                               "50-400"))
   # 3 - Legend design ----
-  if (title == TRUE ) {
+  if (title == TRUE) {
     #Ocean
-    ocean_legend <- code_manipulation(data         = dataframe$ocean_id,
+    ocean_legend <- code_manipulation(data         = dataframe$ocean_code,
                                       referential  = "ocean",
                                       manipulation = "legend")
     #country
-    country_legend <- code_manipulation(data         = dataframe$country_id,
+    country_legend <- code_manipulation(data         = dataframe$country_code,
                                         referential  = "country",
                                         manipulation = "legend")
     #vessel
-    vessel_type_legend <- code_manipulation(data         = dataframe$vessel_type_id,
+    vessel_type_legend <- code_manipulation(data         = dataframe$vessel_type_code,
                                             referential  = "vessel_simple_type",
                                             manipulation = "legend")
     # time_period
     time_period <- c(unique(min(fishing_capacity_t1$year):max(fishing_capacity_t1$year)))
   }
   # 4 - Graphic design ----
-  par(mar = c(5.1, 4.1, 4.1, 4.1))
+  data_pivot$fishing_capacity <- round(data_pivot$fishing_capacity, 3)
+  ggplot_graph <- ggplot2::ggplot(data = data_pivot) +
+    # Theme and background
+    ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 45,
+                                                       hjust = 1,
+                                                       size = 13),
+                   axis.text.y = ggplot2::element_text(size = 13),
+                   axis.title.y = ggplot2::element_text(size = 14),
+                   legend.position = "top",
+                   legend.justification = "right",
+                   legend.text = ggplot2::element_text(size = 10),
+                   panel.background = ggplot2::element_rect(fill = "white",
+                                                            color = "black"),
+                   panel.grid.major = ggplot2::element_blank(),
+                   panel.grid.minor.x = ggplot2::element_blank(),
+                   panel.grid.major.y = ggplot2::element_line(size = 0.2,
+                                                              color = "gray90")) +
+    ggplot2::scale_x_continuous(breaks = data_pivot$year) +
+    # Bars and lines
+    ggplot2::geom_bar(mapping = ggplot2::aes(x = year,
+                                             y = number_vessel,
+                                             fill = tons),
+                      stat = "identity",
+                      color = "black") +
+    ggplot2::scale_fill_manual(values = c("black",
+                                          "grey26",
+                                          "grey54",
+                                          "grey70",
+                                          "grey90",
+                                          "grey100"),
+                               labels = c("> 2000 t",
+                                          "1200-2000 t",
+                                          "800-1200 t",
+                                          "600-800 t",
+                                          "400-600 t",
+                                          "50-400 t")) +
+    ggplot2::labs(fill = "",
+                  x = "") +
+    ggplot2::geom_line(ggplot2::aes(x = year,
+                                    y = fishing_capacity * 2),
+                       size = 0.15,
+                       linetype = "longdash",
+                       color = "black") +
+    ggplot2::geom_point(ggplot2::aes(x = year,
+                                     y = fishing_capacity * 2),
+                        color = "black") +
+    ggplot2::scale_y_continuous(name = "Number of vessel",
+                                sec.axis = ggplot2::sec_axis(~ . / 2,
+                                                             name = "Carrying capacity (x1000m^3)"))
   if (graph_type == "plot") {
-    if (title == TRUE) {
-      barvessels <- graphics::barplot(t(fishing_capacity_data[, 2:7]),
-                                      xlab = "",
-                                      ylab = "Number of vessels",
-                                      main = paste0("Fishing capacity of the ",
-                                                    country_legend, " ",
-                                                    vessel_type_legend,
-                                                    " fleet in the ",
-                                                    ocean_legend,
-                                                    " ocean.",
-                                                    "\nAnnual changes in the number of purse seiners by tonnage categories (barplots) and total ",
-                                                    "\ncarrying capacity (dashed line with circles) during ",
-                                                    min(time_period),
-                                                    "-",
-                                                    max(time_period),
-                                                    "."),
-                                      cex.axis = 1.4,
-                                      cex.lab = 1.4,
-                                      cex.main = 1,
-                                      ylim = c(0,
-                                               max(fishing_capacity_data$Nb_vessels * 1.1)),
-                                      las = 1,
-                                      xaxt = "n",
-                                      col = RColorBrewer::brewer.pal(6,
-                                                                     "Greys"))
-    } else {
-      barvessels <- graphics::barplot(t(fishing_capacity_data[, 2:7]),
-                                      xlab = "",
-                                      ylab = "Number of vessels",
-                                      main = "",
-                                      cex.axis = 1.4,
-                                      cex.lab = 1.4,
-                                      ylim = c(0,
-                                               max(fishing_capacity_data$Nb_vessels * 1.1)),
-                                      las = 1,
-                                      xaxt = "n",
-                                      col = RColorBrewer::brewer.pal(6,
-                                                                     "Greys"))
-    }
-    graphics::axis(1,
-                   at = barvessels,
-                   tick = TRUE,
-                   labels = FALSE)
-    graphics::text(x = barvessels,
-                   y = par("usr")[3] - 0.6,
-                   labels = fishing_capacity_data$year,
-                   srt = 45,
-                   adj = 1,
-                   xpd = TRUE,
-                   cex = 1.2)
-    graphics::legend("topright",
-                     legend = c("50-400 t",
-                                "400-600 t",
-                                "600-800 t",
-                                "800-1200 t",
-                                "1200-2000 t",
-                                "> 2000 t"),
-                     ncol = 2,
-                     bty = "n",
-                     fill = RColorBrewer::brewer.pal(6, "Greys"),
-                     cex = 1.3)
-    graphics::par(new = TRUE)
-    graphics::plot(barvessels,
-                   fishing_capacity_data$CC / 1000,
-                   type = "b",
-                   col = "black",
-                   lwd = 2,
-                   lty = 2,
-                   xaxt = "n",
-                   yaxt = "n",
-                   pch = 16,
-                   xlab = "",
-                   ylab = "",
-                   ylim = c(0, max(fishing_capacity_data$CC / 1000) * 1.1),
-                   yaxs = "i")
-    graphics::axis(4,
-                   at = seq(0, 20, 5),
-                   tick = TRUE,
-                   labels = TRUE,
-                   las = 1,
-                   cex.axis = 1.4,
-                   cex.lab = 1.4,
-                   yaxs = "i")
-    graphics::mtext(expression(paste("Carrying capacity (x1000 ", m^3, ")",
-                                     sep = "")),
-                    side = 4,
-                    line = 2.6,
-                    cex = 1.3)
+    return(ggplot_graph)
   } else if (graph_type == "plotly") {
-    if (figure == "vessel") {
-      ggplot_table_vessel <- ggplot2::ggplot(data = data_pivot) +
-        ggplot2::geom_bar(mapping = ggplot2::aes(x = year,
-                                                 y = nb_vessels,
-                                                 fill = tons),
-                          stat = "identity",
-                          color = "black") +
-        ggplot2::scale_fill_manual(values = c("black",
-                                              "grey26",
-                                              "grey54",
-                                              "grey70",
-                                              "grey90",
-                                              "grey100"),
-                                   labels = c("> 2000 t",
-                                              "1200-2000 t",
-                                              "800-1200 t",
-                                              "600-800 t",
-                                              "400-600 t",
-                                              "50-400 t")) +
-        ggplot2::scale_y_continuous(name = "Number of vessels") +
-        ggplot2::theme_bw() +
-        ggplot2::labs(fill = "") +
-        ggplot2::theme(legend.position = c(0.85,
-                                           0.9))
-      # Plotly
-      plotly_graph <- plotly::ggplotly(ggplot_table_vessel)
-      # Add a title
-      if (title == TRUE) {
-        plotly_graph <- plotly_graph %>%
-          plotly::layout(title = list(text = paste0("Fishing capacity of the ",
-                                                    country_legend, " ",
-                                                    vessel_type_legend,
-                                                    " fleet in the ",
-                                                    ocean_legend,
-                                                    " ocean. Annual changes in the", "\n",
-                                                    "number of purse seiners by tonnage categories during ",
-                                                    min(time_period),
-                                                    "-",
-                                                    max(time_period),
-                                                    "."),
-                                      font = list(size = 17)),
-                         margin = list(t = 120))
-      }
-      # Plot the plotly
-      plotly_graph %>%
-        plotly::layout(legend = list(orientation = "v",
-                                     x = 0.80,
-                                     y = 0.98))
-    } else if (figure == "capacity") {
-      data_pivot$fishing_capacity <- round(data_pivot$fishing_capacity, 3)
-      ggplot_table_capacity <- ggplot2::ggplot(data = data_pivot) +
-        ggplot2::geom_line(ggplot2::aes(x = year,
-                                        y = fishing_capacity)) +
-        ggplot2::geom_point(data = data_pivot,
-                            ggplot2::aes(x = year,
-                                         y = fishing_capacity)) +
-        ggplot2::scale_y_continuous(name = "Carrying capacity (x1000m^3)") +
-        ggplot2::theme_bw() +
-        ggplot2::labs(fill = "")
-      # Plotly
-      plotly_graph <- plotly::ggplotly(ggplot_table_capacity)
-      # Add a title
-      if (title == TRUE) {
-        plotly_graph <- plotly_graph %>%
-          plotly::layout(title = list(text = paste0("Fishing capacity of the ",
-                                                    country_legend, " ",
-                                                    vessel_type_legend,
-                                                    " fleet in the ",
-                                                    ocean_legend,
-                                                    " ocean. Annual changes in the", "\n",
-                                                    "number of purse seiners by total carrying capacity during ",
-                                                    min(time_period),
-                                                    "-",
-                                                    max(time_period),
-                                                    "."),
-                                      font = list(size = 17)),
-                         margin = list(t = 120))
-      }
-      # Plot the plotly
-      plotly_graph
+    plotly_graph <- plotly::ggplotly(ggplot_graph)
+    # Add a title
+    if (title == TRUE) {
+      plotly_graph <- plotly_graph %>%
+        plotly::layout(title = list(text = paste0("Fishing capacity of the ",
+                                                  country_legend, " ",
+                                                  vessel_type_legend,
+                                                  " fleet in the ",
+                                                  ocean_legend,
+                                                  " ocean. Annual changes in the", "\n",
+                                                  "number of purse seiners by tonnage categories during ",
+                                                  min(time_period),
+                                                  "-",
+                                                  max(time_period),
+                                                  "."),
+                                    font = list(size = 17)),
+                       margin = list(t = 120))
     }
+    # Plot the plotly
+    plotly_graph %>%
+      plotly::layout(legend = list(orientation = "v",
+                                   x = 0.80,
+                                   y = 0.98))
   } else if (graph_type == "table") {
     fishing_capacity_data <- fishing_capacity_data[, -11]
     as.data.frame(fishing_capacity_data)

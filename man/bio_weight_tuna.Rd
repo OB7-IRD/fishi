@@ -7,13 +7,13 @@
 bio_weight_tuna(dataframe, report_year, graph_type = "plot", title = FALSE)
 }
 \arguments{
-\item{dataframe}{{\link[base]{data.frame}} expected. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the bio_weight_tuna() function.}
+\item{dataframe}{{\link[base]{data.frame}} expected. 'Csv' or 'output' of the function {\link[furdeb]{data_extraction}}, which must be done before using the bio_weight_tuna() function.}
 
 \item{report_year}{{\link[base]{integer}} expected. Year of the statistical report.}
 
-\item{graph_type}{{\link[base]{character}} expected. plot or ggplot. Plot by default.}
+\item{graph_type}{{\link[base]{character}} expected. 'plot' or 'ggplot.' Plot by default.}
 
-\item{title}{TRUE or FALSE expected. False by default.}
+\item{title}{TRUE or FALSE expected. Title for plotly graph_type. False by default.}
 }
 \value{
 The function return ggplot R plot.
@@ -23,16 +23,17 @@ Weight distribution of major tuna catches (in percentage of the total number of 
 }
 \details{
 The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:
-\itemize{
- \item{\code{  activity_date}}
- \item{\code{  c_banc}}
- \item{\code{  c_esp}}
- \item{\code{  size_class}}
- \item{\code{  v_mensur}}
+\preformatted{
+   activity_date | school_code | species_code | size_class | estimated_individual
+   -------------------------------------------------------------------------------
+   2018          | FOB         | 6            | 45         | 1.97
+   2018          | FSC         | 6            | 44         | 1.25
+   2018          | FOB         | 6            | 43         | 28.7
 }
+
 Add these columns for an automatic title (optional):
 \itemize{
- \item{\code{  country_id}}
- \item{\code{  ocean_id}}
+ \item{\code{  country_code}}
+ \item{\code{  ocean_code}}
 }
 }

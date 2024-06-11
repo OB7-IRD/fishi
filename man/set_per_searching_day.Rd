@@ -12,13 +12,13 @@ set_per_searching_day(
 )
 }
 \arguments{
-\item{dataframe}{{\link[base]{data.frame}} expected. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the set_per_searching_day() function.}
+\item{dataframe}{{\link[base]{data.frame}} expected. 'Csv' or 'output' of the function {\link[furdeb]{data_extraction}}, which must be done before using the set_per_searching_day() function.}
 
-\item{fishing_type}{{\link[base]{character}} expected. FOB and FSC.}
+\item{fishing_type}{{\link[base]{character}} expected. 'FOB' and 'FSC'.}
 
-\item{graph_type}{{\link[base]{character}} expected. plot, plotly or table. Plot by default.}
+\item{graph_type}{{\link[base]{character}} expected. 'plot', 'plotly' or 'table.' Plot by default.}
 
-\item{title}{TRUE or FALSE expected. False by default.}
+\item{title}{TRUE or FALSE expected. Title for plotly graph_type. False by default.}
 }
 \value{
 The function return ggplot R plot.
@@ -28,18 +28,17 @@ Annual number of sets per searching day on FOB-associated and free-swimming scho
 }
 \details{
 The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:
-\itemize{
- \item{\code{  activity_date}}
- \item{\code{  c_tban}}
- \item{\code{  v_dur_cal}}
- \item{\code{  v_nb_calee_pos}}
- \item{\code{  v_nb_calees}}
- \item{\code{  v_tpec}}
+\preformatted{
+   activity_date | school_code | set_duration | positive_set | total_set | total_hour_fished
+   -----------------------------------------------------------------------------------------
+   2010-03-06    | FOB         | 0            | 0            | 0         |  1.00
+   2010-12-04    | FOB         | 0            | 0            | 0         | 11.8
+   2010-05-19    | FOB         | 0            | 0            | 0         |  2.05
 }
 Add these columns for an automatic title (optional):
 \itemize{
- \item{\code{  country_id}}
- \item{\code{  ocean_id}}
- \item{\code{  vessel_type_id}}
+ \item{\code{  country_code}}
+ \item{\code{  ocean_code}}
+ \item{\code{  vessel_type_code}}
 }
 }

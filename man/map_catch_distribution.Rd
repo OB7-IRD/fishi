@@ -12,13 +12,13 @@ map_catch_distribution(
 )
 }
 \arguments{
-\item{dataframe}{{\link[base]{data.frame}} expected. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the map_catch_distribution() function.}
+\item{dataframe}{{\link[base]{data.frame}} expected. 'Csv' or 'output' of the function {\link[furdeb]{data_extraction}}, which must be done before using the map_catch_distribution() function.}
 
-\item{fishing_type}{{\link[base]{character}} expected. FOB, FSC or ALL. ALL by default.}
+\item{fishing_type}{{\link[base]{character}} expected. 'FOB', 'FSC' or 'ALL'. ALL by default.}
 
-\item{graph_type}{{\link[base]{character}} expected. plot or plotly. Plot by default.}
+\item{graph_type}{{\link[base]{character}} expected. 'plot' or 'plotly'. Plot by default.}
 
-\item{title}{TRUE or FALSE expected. False by default.}
+\item{title}{TRUE or FALSE expected. Title for plotly graph_type. False by default.}
 }
 \value{
 The function return ggplot R plot.
@@ -28,21 +28,16 @@ Spatial distribution of tuna catches.
 }
 \details{
 The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:
-\itemize{
- \item{\code{  activity_date}}
- \item{\code{  c_bat}}
- \item{\code{  c_esp}}
- \item{\code{  c_ocea}}
- \item{\code{  c_tban}}
- \item{\code{  cwp11_act}}
- \item{\code{  n_act}}
- \item{\code{  v_nb_calee_pos}}
- \item{\code{  v_poids_capt}}
+\preformatted{
+   activity_date | vessel_code | species_code | ocean_code | school_code | cwp11_act | activity_id | positive_set | total_catch_weight
+   -----------------------------------------------------------------------------------------------------------------------------------
+   2022-01-02    | 703         | 3            | 1          | FSC         | 301000    | 1           | 1            |  2.60
+   2022-01-02    | 703         | 1            | 1          | FSC         | 301000    | 1           | 1            | 17.8
+   2022-01-02    | 703         | 3            | 1          | FSC         | 301000    | 2           | 1            |  1.11
 }
 Add these columns for an automatic title (optional):
 \itemize{
- \item{\code{  country_id}}
- \item{\code{  ocean_id}}
- \item{\code{  vessel_type_id}}
+ \item{\code{  country_code}}
+ \item{\code{  vessel_type_code}}
 }
 }
