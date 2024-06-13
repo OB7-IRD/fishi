@@ -1,70 +1,52 @@
 #' @name control_trip_map
 #' @title Trip data consistency control
 #' @description Check the consistency between LB and OBS data (Positions, number of sets and deployments)
-#' @param dataframe_observe {\link[base]{data.frame}} expected. Dataframe from the Observe database. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the data_availability() function.
-#' @param dataframe_logbook {\link[base]{data.frame}} expected. Dataframe from the logbook database. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the data_availability() function.
-#' @param dataframe_vms {\link[base]{data.frame}} expected. Dataframe from the Vms database. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the data_availability() function.
+#' @param dataframe_observe {\link[base]{data.frame}} expected. Dataframe from the Observe database. Csv or output of the function {\link[furdeb]{data_extraction}}, which must be done before using the data_availability() function.
+#' @param dataframe_logbook {\link[base]{data.frame}} expected. Dataframe from the logbook database. Csv or output of the function {\link[furdeb]{data_extraction}}, which must be done before using the data_availability() function.
+#' @param dataframe_vms {\link[base]{data.frame}} expected. Dataframe from the Vms database. Csv or output of the function {\link[furdeb]{data_extraction}}, which must be done before using the data_availability() function.
 #' @param graph_type {\link[base]{character}} expected. plot or ggplot Plot by default.
 #' @param trip_i {\link[base]{character}} expected. Date + # + vessel name.
 #' @param control_dist_vms TRUE or FALSE. FALSE by default.
-#' @param path_to_shp {\link[base]{character}} expected. Put a link, if you want to add a shapefile.
 #' @param path_to_png {\link[base]{character}} expected. Add a link to the path to save the figure as a png.
 #' @details
 #' The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:
-#' \itemize{
 #' Dataframe observe:
-#'  \item{\code{  program}}
-#'  \item{\code{  vessel}}
-#'  \item{\code{  observer_name}}
-#'  \item{\code{  trip_end_date}}
-#'  \item{\code{  observation_date}}
-#'  \item{\code{  observation_time}}
-#'  \item{\code{  vessel_activity_code}}
-#'  \item{\code{  latitude}}
-#'  \item{\code{  longitude}}
-#'  \item{\code{  operation_on_object_code}}
-#'  \item{\code{  fob_type_when_arriving}}
-#'  \item{\code{  activity_id}}
+#' \preformatted{
+#'    program          | vessel | observer_name | trip_end_date | observation_date | observation_time | vessel_activity_code | latitude | longitude | operation_on_object_code | fob_type_when_arriving | activity_id
+#'    ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+#'    DCF Senne (IRD)  | 887    | Martin        | 2022-05-03    | 2022-04-13       | 14:45:00         | 16                   | -3.7600  | 57.1900   | NA                       | /                      | fr.ird.data.ps.observation.Activity#164986
+#'    DCF Senne (IRD)  | 887    | Martin        | 2022-05-03    | 2022-04-13       | 02:15:00         | 0                    | -4.6248  | 55.4552   | NA                       | /                      | fr.ird.data.ps.observation.Activity#164987
+#'    DCF Senne (IRD)  | 887    | Martin        | 2022-05-03    | 2022-04-13       | 10:18:00         | 13                   | -3.9707  | 57.0382   | 2                        | DFAD                   | fr.ird.data.ps.observation.Activity#164988
 #' }
-#' \itemize{
 #' Dataframe logbook:
-#'  \item{\code{  vessel}}
-#'  \item{\code{  latitude}}
-#'  \item{\code{  longitude}}
-#'  \item{\code{  date}}
-#'  \item{\code{  number}}
-#'  \item{\code{  vessel_activity_code}}
-#'  \item{\code{  activity_id}}
-#' }\itemize{
+#' \preformatted{
+#'    vessel    | latitude | longitude | date        | number | vessel_activity_code | activity_id
+#'    --------------------------------------------------------------------------------------------------------------------
+#'    AVEL VAD  | 4.9668   | 59.2168   | 2022-01-01  | 1      |  6                   | fr.ird.data.ps.logbook.Activity#170
+#'    AVEL VAD  | 4.9668   | 59.2175   | 2022-01-01  | 2      | 13                   | fr.ird.data.ps.logbook.Activity#171
+#'    AVEL VAD  | 5.0168   | 59.2785   | 2022-01-01  | 3      | 13                   | fr.ird.data.ps.logbook.Activity#172
+#' }
 #' Dataframe vms:
-#'  \item{\code{  vesselname}}
-#'  \item{\code{  date}}
-#'  \item{\code{  time}}
-#'  \item{\code{  longitude}}
-#'  \item{\code{  latitude}}
+#' \preformatted{
+#'    vessel  |  date        | longitude | latitude | time     |
+#'    -------------------------------------------------------------
+#'    887     |  2022-04-13  | 59.197    | 4.909    | 01:05:00 |
+#'    887     |  2022-04-13  | 59.654    | 4.712    | 01:10:00 |
+#'    887     |  2022-04-13  | 59.951    | 4.632    | 02:25:00 |
 #' }
 #' @return The function return ggplot R plot.
 #' @export
-#' @importFrom codama r_type_checking
-#' @importFrom graphics par plot axis lines abline legend text points box
-#' @importFrom dplyr summarize filter mutate if_else group_by n_distinct
-#' @importFrom PBSmapping importShapefile addPolys
-#' @importFrom stringr str_split
-#' @importFrom stats time
-#' @importFrom grDevices x11 dev.off png
-#' @importFrom cowplot ggdraw
 control_trip_map <- function(dataframe_observe,
                              dataframe_logbook,
                              dataframe_vms,
                              trip_i,
                              graph_type = "plot",
                              control_dist_vms = FALSE,
-                             path_to_shp = NULL,
                              path_to_png = NULL) {
   # 0 - Global variables assignement ----
   vessel <- NULL
   trip_end_date <- NULL
-  vesselname <- NULL
+  vessel <- NULL
   observation_date <- NULL
   activity_id <- NULL
   wrld_simpl <- NULL
@@ -190,7 +172,7 @@ control_trip_map <- function(dataframe_observe,
                   date %in% seq_date_i)
   # Vms
   dataframe_vms <- dataframe_vms %>%
-    dplyr::filter(vesselname %in% vessel_i,
+    dplyr::filter(vessel %in% vessel_i,
                   date %in% seq_date_i)
   # Distance to vms
   if (control_dist_vms == TRUE) {
@@ -303,34 +285,34 @@ control_trip_map <- function(dataframe_observe,
                        "_",
                        program_i)
     if (!is.null(path_to_png)) {
-      png(filename = paste0(path_to_png,
-                            filename,
-                            "_",
-                            gsub("-",
-                                 "",
-                                 Sys.Date()),
-                            ".png"),
-          width = 7,
-          height = 10,
-          units = "in",
-          res = 300)
+      grDevices::png(filename = paste0(path_to_png,
+                                       filename,
+                                       "_",
+                                       gsub("-",
+                                            "",
+                                            Sys.Date()),
+                                       ".png"),
+                     width = 7,
+                     height = 10,
+                     units = "in",
+                     res = 300)
     } else {
-      png(filename = paste0(filename,
-                            "_",
-                            gsub("-",
-                                 "",
-                                 Sys.Date()),
-                            ".png"),
-          width = 7,
-          height = 10,
-          units = "in",
-          res = 300)
+      grDevices::png(filename = paste0(filename,
+                                       "_",
+                                       gsub("-",
+                                            "",
+                                            Sys.Date()),
+                                       ".png"),
+                     width = 7,
+                     height = 10,
+                     units = "in",
+                     res = 300)
     }
     load(file = system.file("wrld_simpl.RData",
                             package = "fishi"))
-    layout(matrix(c(rep(1, 12), 2, 2, 2, 3), 4, 4,
-                  byrow = TRUE))
-    par(mar = c(1.1, 3.1, 5.1, 1.1))
+    graphics::layout(matrix(c(rep(1, 12), 2, 2, 2, 3), 4, 4,
+                            byrow = TRUE))
+    graphics::par(mar = c(1.1, 3.1, 5.1, 1.1))
     maps::map(wrld_simpl,
               main = "",
               resolution = 0.1,
@@ -342,16 +324,16 @@ control_trip_map <- function(dataframe_observe,
               xaxs = "i",
               mar = c(4, 4.1, 3, 2),
               border = 0)
-    if (!is.null(path_to_shp)) {
-      zee_v11 <- PBSmapping::importShapefile(path_to_shp,
-                                             readDBF = TRUE,
-                                             projection = "LL")
-      zee_v11_trop <- zee_v11[zee_v11$PID %in% unique(zee_v11[zee_v11$X >= (-35) & zee_v11$X <= 90 & zee_v11$Y >= (-35) & zee_v11$Y <= 25, ]$PID), ]
-      PBSmapping::addPolys(zee_v11_trop,
-                           xlim = xlim,
-                           ylim = ylim,
-                           border = "pink")
-    }
+    # if (!is.null(path_to_shp)) {
+    #   zee_v11 <- PBSmapping::importShapefile(path_to_shp,
+    #                                          readDBF = TRUE,
+    #                                          projection = "LL")
+    #   zee_v11_trop <- zee_v11[zee_v11$PID %in% unique(zee_v11[zee_v11$X >= (-35) & zee_v11$X <= 90 & zee_v11$Y >= (-35) & zee_v11$Y <= 25, ]$PID), ]
+    #   PBSmapping::addPolys(zee_v11_trop,
+    #                        xlim = xlim,
+    #                        ylim = ylim,
+    #                        border = "pink")
+    # }
     graphics::lines(dataframe_vms$longitude,
                     dataframe_vms$latitude,
                     type = "o",
@@ -392,21 +374,21 @@ control_trip_map <- function(dataframe_observe,
     }
     mygrid(5)
     myaxes(5)
-    box()
-    legend("topright",
-           legend = c("vms position",
-                      "logbook activity",
-                      "observe activity",
-                      "logbook set",
-                      "observe set"),
-           col = c("grey",
-                   "red",
-                   "blue",
-                   "red",
-                   "blue"),
-           pch = c(16, 1, 16, 3, 4),
-           pt.cex = c(.5, 1, .5, 1, 1),
-           bg = "white")
+    graphics::box()
+    graphics::legend("topright",
+                     legend = c("vms position",
+                                "logbook activity",
+                                "observe activity",
+                                "logbook set",
+                                "observe set"),
+                     col = c("grey",
+                             "red",
+                             "blue",
+                             "red",
+                             "blue"),
+                     pch = c(16, 1, 16, 3, 4),
+                     pt.cex = c(.5, 1, .5, 1, 1),
+                     bg = "white")
     if (control_dist_vms == TRUE) {
       graphics::legend("bottomright",
                        legend = paste(perrors,
@@ -422,7 +404,7 @@ control_trip_map <- function(dataframe_observe,
                           program_i,
                           sep = " | "))
     # 2 - sets ----
-    par(mar = c(6.1, 3.1, 3.1, 1.1))
+    graphics::par(mar = c(6.1, 3.1, 3.1, 1.1))
     graphics::plot(obsets$observation_date,
                    obsets$n_sets,
                    ylim = c(0,
@@ -525,7 +507,7 @@ control_trip_map <- function(dataframe_observe,
                              "blue"),
                      pch = c(3, 4),
                      bg = "white")
-    dev.off()
+    grDevices::dev.off()
   } else if (graph_type == "plotly") {
     dataframe_logbook_bis <- dataframe_logbook %>%
       dplyr::filter(vessel_activity_code %in% 6)
