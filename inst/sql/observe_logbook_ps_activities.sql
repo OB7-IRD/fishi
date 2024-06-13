@@ -5,9 +5,11 @@
 -------------------------------------------------------------------------------
 -- Philippe Sabarros <philippe.sabarros@ird.fr>
 -- Esther Mollier <esther.mollier@ird.fr>
+-- Clara Lerebourg <clara.lerebourg@ird.fr>
 -------------------------------------------------------------------------------
 -- 2023-10-31 -- v1.0 -- EM -- t3 query adapted to observe database
 -- 2023-11-02 -- v1.1 -- PS -- object and buoy operation added
+-- 2024-06-13 -- V1.2 -- CL -- homogenised for fishi
 -------------------------------------------------------------------------------
 
 SELECT

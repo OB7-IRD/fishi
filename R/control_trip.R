@@ -1,8 +1,8 @@
 #' @name control_trip
 #' @title Control trip
 #' @description Control trip
-#' @param dataframe_observe {\link[base]{data.frame}} expected. Dataframe from the Observe database. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the control_trip() function.
-#' @param dataframe_logbook {\link[base]{data.frame}} expected. Dataframe from the logbook database. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the control_trip() function.
+#' @param dataframe_observe {\link[base]{data.frame}} expected. Dataframe from the Observe database. Csv or output of the function {\link[furdeb]{data_extraction}}, which must be done before using the control_trip() function.
+#' @param dataframe_logbook {\link[base]{data.frame}} expected. Dataframe from the logbook database. Csv or output of the function {\link[furdeb]{data_extraction}}, which must be done before using the control_trip() function.
 #' @param reported_year  {\link[base]{integer}} expected. Year of the report.
 #' @param ocean {\link[base]{character}} expected. Atlantic or Indian. Atlantic by default.
 #' @param flag_selected {\link[base]{character}} expected. Flag of the country; isocode.
@@ -10,35 +10,24 @@
 #' @param table {\link[base]{character}} expected. code_case, controltrip or vessel_set. vessel_set by default.
 #' @details
 #' The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:
-#' \itemize{
 #' Dataframe observe:
-#'  \item{\code{  ocean}}
-#'  \item{\code{  program}}
-#'  \item{\code{  vessel}}
-#'  \item{\code{  trip_end_date}}
-#'  \item{\code{  observation_date}}
-#'  \item{\code{  observation_time}}
-#'  \item{\code{  trip_id}}
-#'  \item{\code{  set_id}}
+#' \preformatted{
+#'    program          | vessel |  trip_end_date | observation_date | observation_time | ocean  | trip_id                            | flag | set_id
+#'    -----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+#'    DCF Senne (IRD)  | 887    |  2022-05-03    | 2022-04-13       | 14:45:00         | Indian | fr.ird.data.ps.common.Trip#164984  | FRA  | fr.ird.data.ps.observation.Set
+#'    DCF Senne (IRD)  | 887    |  2022-05-03    | 2022-04-13       | 02:15:00         | Indian | fr.ird.data.ps.common.Trip#164984  | FRA  |
+#'    DCF Senne (IRD)  | 887    |  2022-05-03    | 2022-04-13       | 10:18:00         | Indian | fr.ird.data.ps.common.Trip#164984  | FRA  |
 #' }
-#' \itemize{
 #' Dataframe logbook:
-#'  \item{\code{  ocean}}
-#'  \item{\code{  flag}}
-#'  \item{\code{  vessel}}
-#'  \item{\code{  vessel_activity_code}}
-#'  \item{\code{  school_type}}
-#'  \item{\code{  activity_id}}
-#'  \item{\code{  trip_id}}
-#'  \item{\code{  departure_date}}
-#'  \item{\code{  landing_date}}
+#' \preformatted{
+#'    vessel    | ocean  | flag  | school_type | trip_id                        | vessel_activity_code | activity_id                          | departure_date | landing_date
+#'    ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+#'    AVEL VAD  | Indian | FRA   | FOB         | fr.ird.data.ps.common.Trip#17  |  6                   | fr.ird.data.ps.logbook.Activity#170  | 2021-12-18     | 2022-01-26
+#'    AVEL VAD  | Indian | FRA   | NA          | fr.ird.data.ps.common.Trip#18  | 13                   | fr.ird.data.ps.logbook.Activity#171  | 2021-12-18     | 2022-01-26
+#'    AVEL VAD  | Indian | FRA   | FSC         | fr.ird.data.ps.common.Trip#19  | 13                   | fr.ird.data.ps.logbook.Activity#172  | 2021-12-18     | 2022-01-26
 #' }
 #' @return The function return ggplot R plot.
 #' @export
-#' @importFrom codama r_type_checking
-#' @importFrom graphics par plot axis lines abline legend text
-#' @importFrom utils write.csv
-#' @importFrom dplyr summarize mutate group_by select row_number recode case_when n_distinct full_join
 control_trip <- function(dataframe_observe,
                          dataframe_logbook,
                          reported_year,
@@ -210,7 +199,7 @@ control_trip <- function(dataframe_observe,
   return(ct_data)
   # path to csv
   if (!is.null(path_to_csv)) {
-    write.csv(controltrips,
+    utils::write.csv(controltrips,
               paste(path_to_csv,
                     "/control_trips_observe_logbook_",
                     ocean,

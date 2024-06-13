@@ -1,5 +1,16 @@
+-------------------------------------------------------------------------------
+-- VMS ACTIVITIES - PURSE SEINE 
+-------------------------------------------------------------------------------
+-- Generic extraction of vms activities from vms
+-------------------------------------------------------------------------------
+-- Philippe Sabarros <philippe.sabarros@ird.fr>
+-- Esther Mollier <esther.mollier@ird.fr>
+-- Clara Lerebourg <clara.lerebourg@ird.fr>
+-------------------------------------------------------------------------------
+-- 2024-06-13 -- v1.0 -- CL -- adapt for fishi
+-------------------------------------------------------------------------------
 (SELECT
-	v.vesselname
+	v.vesselname AS vessel
 	,v.date
 	,v.time 
 	,v.longitude 

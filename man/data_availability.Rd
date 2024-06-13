@@ -15,11 +15,11 @@ data_availability(
 )
 }
 \arguments{
-\item{dataframe_observe}{{\link[base]{data.frame}} expected. Dataframe from the Observe database. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the data_availability() function.}
+\item{dataframe_observe}{{\link[base]{data.frame}} expected. Dataframe from the Observe database. Csv or output of the function {\link[furdeb]{data_extraction}}, which must be done before using the data_availability() function.}
 
-\item{dataframe_logbook}{{\link[base]{data.frame}} expected. Dataframe from the logbook database. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the data_availability() function.}
+\item{dataframe_logbook}{{\link[base]{data.frame}} expected. Dataframe from the logbook database. Csv or output of the function {\link[furdeb]{data_extraction}}, which must be done before using the data_availability() function.}
 
-\item{dataframe_vms}{{\link[base]{data.frame}} expected. Dataframe from the Vms database. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the data_availability() function.}
+\item{dataframe_vms}{{\link[base]{data.frame}} expected. Dataframe from the Vms database. Csv or output of the function {\link[furdeb]{data_extraction}}, which must be done before using the data_availability() function.}
 
 \item{reported_year}{{\link[base]{integer}} expected. Year of the report.}
 
@@ -34,4 +34,31 @@ The function return ggplot R plot.
 }
 \description{
 Control to verify the availability of LB, OBS and OBS data.
+}
+\details{
+The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:
+Dataframe observe:
+\preformatted{
+   vessel |  observation_date |
+   ----------------------------
+   887    |  2022-04-13       |
+   887    |  2022-04-13       |
+   887    |  2022-04-13       |
+}
+Dataframe logbook:
+\preformatted{
+   vessel |  date        |
+   -----------------------
+   887    |  2022-04-13  |
+   887    |  2022-04-13  |
+   887    |  2022-04-13  |
+}
+Dataframe vms:
+\preformatted{
+   vessel      |  date        | longitude |
+   ----------------------------------------
+   887         |  2022-04-13  | 59.197   |
+   887         |  2022-04-13  | 59.654   |
+   887         |  2022-04-13  | 59.951   |
+}
 }

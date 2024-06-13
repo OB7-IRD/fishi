@@ -4,11 +4,13 @@
 -- Generic extraction of observed activities from Observe v9
 -------------------------------------------------------------------------------
 -- Philippe Sabarros <philippe.sabarros@ird.fr>
+-- Clara Lerebourg <clara.lerebourg@ird.fr>
 -------------------------------------------------------------------------------
 -- 2022-06-13 -- v1.0 -- PS -- initial version
 -- 2022-10-30 -- v1.1 -- PS -- modified for ANAPO-OBS-PS
 -- 2023-11-06 -- v1.2 -- PS -- classes defined
 -- 2024-01-11 -- V1.3 -- CL -- update to fishi
+-- 2024-06-13 -- V1.4 -- CL -- homogenised for fishi
 -------------------------------------------------------------------------------
 
 SELECT

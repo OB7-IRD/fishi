@@ -1,18 +1,41 @@
 #' @name data_availability
 #' @title Assessing data availability
 #' @description Control to verify the availability of LB, OBS and OBS data.
-#' @param dataframe_observe {\link[base]{data.frame}} expected. Dataframe from the Observe database. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the data_availability() function.
-#' @param dataframe_logbook {\link[base]{data.frame}} expected. Dataframe from the logbook database. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the data_availability() function.
-#' @param dataframe_vms {\link[base]{data.frame}} expected. Dataframe from the Vms database. Csv or output of the function {\link[fishi]{data_extraction}}, which must be done before using the data_availability() function.
+#' @param dataframe_observe {\link[base]{data.frame}} expected. Dataframe from the Observe database. Csv or output of the function {\link[furdeb]{data_extraction}}, which must be done before using the data_availability() function.
+#' @param dataframe_logbook {\link[base]{data.frame}} expected. Dataframe from the logbook database. Csv or output of the function {\link[furdeb]{data_extraction}}, which must be done before using the data_availability() function.
+#' @param dataframe_vms {\link[base]{data.frame}} expected. Dataframe from the Vms database. Csv or output of the function {\link[furdeb]{data_extraction}}, which must be done before using the data_availability() function.
 #' @param reported_year  {\link[base]{integer}} expected. Year of the report.
 #' @param graph_type {\link[base]{character}} expected. plot or plotly. Plot by default.
 #' @param ocean {\link[base]{character}} expected. Atlantic or Indian Atlantic by default.
 #' @param path_to_png {\link[base]{character}} expected. Add a link to the path to save the figure as a png.
+#' @details
+#' The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:
+#' Dataframe observe:
+#' \preformatted{
+#'    vessel |  observation_date |
+#'    ----------------------------
+#'    887    |  2022-04-13       |
+#'    887    |  2022-04-13       |
+#'    887    |  2022-04-13       |
+#' }
+#' Dataframe logbook:
+#' \preformatted{
+#'    vessel |  date        |
+#'    -----------------------
+#'    887    |  2022-04-13  |
+#'    887    |  2022-04-13  |
+#'    887    |  2022-04-13  |
+#' }
+#' Dataframe vms:
+#' \preformatted{
+#'    vessel      |  date        | longitude |
+#'    ----------------------------------------
+#'    887         |  2022-04-13  | 59.197   |
+#'    887         |  2022-04-13  | 59.654   |
+#'    887         |  2022-04-13  | 59.951   |
+#' }
 #' @return The function return ggplot R plot.
 #' @export
-#' @importFrom codama r_type_checking
-#' @importFrom graphics par plot axis lines abline legend text
-#' @importFrom dplyr group_by summarize n_distinct
 data_availability <- function(dataframe_observe,
                               dataframe_logbook,
                               dataframe_vms,
@@ -21,7 +44,7 @@ data_availability <- function(dataframe_observe,
                               graph_type = "plot",
                               path_to_png = NULL) {
   # 0 - Global variables assignement ----
-  vesselname <- NULL
+  vessel <- NULL
   observation_date <- NULL
   # 1 - Arguments verification ----
   if (codama::r_type_checking(r_object = reported_year,
@@ -66,9 +89,9 @@ data_availability <- function(dataframe_observe,
   # Merge the data to create the ggplot graph
   data <- merge(vessel_data, day_data, all = TRUE)
   dataframe_vms$date <- as.Date(dataframe_vms$date)
-  dataframe_vms$vesselname <- trimws(dataframe_vms$vesselname)
+  dataframe_vms$vessel <- trimws(dataframe_vms$vessel)
   dataframe_vms <- dataframe_vms %>%
-    dplyr::filter(vesselname %in% vessel)
+    dplyr::filter(vessel %in% vessel)
   # Ggplot
   (graph <- ggplot2::ggplot(data,
                             ggplot2::aes(x = day,
@@ -97,7 +120,7 @@ data_availability <- function(dataframe_observe,
                      panel.background = ggplot2::element_rect(fill = NA)) +
       ggplot2::geom_point(data = dataframe_vms,
                           ggplot2::aes(x = date,
-                                       y = vesselname,
+                                       y = vessel,
                                        color = "vms"),
                           shape = 3,
                           size = 1.5,
