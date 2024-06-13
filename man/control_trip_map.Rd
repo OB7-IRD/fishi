@@ -33,7 +33,7 @@ control_trip_map(
 The function return ggplot R plot.
 }
 \description{
-Check the consistency between LB and OBS data (Positions, number of sets and deployments)
+Check the consistency between logbook and observer data (Positions, number of sets and deployments)
 }
 \details{
 The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:

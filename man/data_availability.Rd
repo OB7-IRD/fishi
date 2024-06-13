@@ -33,7 +33,7 @@ data_availability(
 The function return ggplot R plot.
 }
 \description{
-Control to verify the availability of LB, OBS and OBS data.
+Control to verify the availability of logbook, observer and vms data.
 }
 \details{
 The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:

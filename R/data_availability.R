@@ -1,6 +1,6 @@
 #' @name data_availability
 #' @title Assessing data availability
-#' @description Control to verify the availability of LB, OBS and OBS data.
+#' @description Control to verify the availability of logbook, observer and vms data.
 #' @param dataframe_observe {\link[base]{data.frame}} expected. Dataframe from the Observe database. Csv or output of the function {\link[furdeb]{data_extraction}}, which must be done before using the data_availability() function.
 #' @param dataframe_logbook {\link[base]{data.frame}} expected. Dataframe from the logbook database. Csv or output of the function {\link[furdeb]{data_extraction}}, which must be done before using the data_availability() function.
 #' @param dataframe_vms {\link[base]{data.frame}} expected. Dataframe from the Vms database. Csv or output of the function {\link[furdeb]{data_extraction}}, which must be done before using the data_availability() function.

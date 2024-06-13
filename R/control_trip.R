@@ -1,6 +1,6 @@
 #' @name control_trip
 #' @title Control trip
-#' @description Control trip
+#' @description Trip data consistency control
 #' @param dataframe_observe {\link[base]{data.frame}} expected. Dataframe from the Observe database. Csv or output of the function {\link[furdeb]{data_extraction}}, which must be done before using the control_trip() function.
 #' @param dataframe_logbook {\link[base]{data.frame}} expected. Dataframe from the logbook database. Csv or output of the function {\link[furdeb]{data_extraction}}, which must be done before using the control_trip() function.
 #' @param reported_year  {\link[base]{integer}} expected. Year of the report.

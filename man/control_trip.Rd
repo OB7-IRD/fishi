@@ -33,7 +33,7 @@ control_trip(
 The function return ggplot R plot.
 }
 \description{
-Control trip
+Trip data consistency control
 }
 \details{
 The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:
