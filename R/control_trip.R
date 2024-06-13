@@ -128,11 +128,10 @@ control_trip <- function(dataframe_observe,
                   ocean = dplyr::recode(ocean,
                                         "Atlantique" = "Atlantic",
                                         "Indien" = "Indian"),
-                  logbook_school_type = dplyr::case_when(
-                    school_type == "BL" ~ "FSC",
-                    school_type == "BO" ~ "FAD",
-                    school_type == "IND" ~ "UNK",
-                    TRUE ~ NA),
+                  logbook_school_type = dplyr::case_when(school_type == "BL" ~ "FSC",
+                                                         school_type == "BO" ~ "FAD",
+                                                         school_type == "IND" ~ "UNK",
+                                                         TRUE ~ NA),
                   logbook_trip_id = trip_id)
   # logbooktrips
   logbooktrips <- dataframe_logbook %>%
@@ -155,10 +154,10 @@ control_trip <- function(dataframe_observe,
                             "common_trip_id",
                             "vessel"))
   controltrips <- merge(logbooktrips[, c("ocean",
-                                    "vessel",
-                                    "common_trip_id",
-                                    "logbook_trip_id",
-                                    "logbook_n_sets")],
+                                         "vessel",
+                                         "common_trip_id",
+                                         "logbook_trip_id",
+                                         "logbook_n_sets")],
                         obstrips[, c("ocean",
                                      "vessel",
                                      "common_trip_id",
@@ -188,9 +187,9 @@ control_trip <- function(dataframe_observe,
     ct_data <- controltrips %>%
       dplyr::group_by(vessel) %>%
       dplyr::summarize(logbook_n_sets = sum(logbook_n_sets,
-                                       na.rm = TRUE),
-        obs_n_sets = sum(obs_n_sets,
-                         na.rm = TRUE))
+                                            na.rm = TRUE),
+                       obs_n_sets = sum(obs_n_sets,
+                                        na.rm = TRUE))
     ct_data$perc_sets_obs <- round(100 * ct_data$obs_n_sets / ct_data$logbook_n_sets)
     ct_data <- ct_data[order(ct_data$perc_sets_obs,
                              decreasing = TRUE), ]
@@ -200,13 +199,13 @@ control_trip <- function(dataframe_observe,
   # path to csv
   if (!is.null(path_to_csv)) {
     utils::write.csv(controltrips,
-              paste(path_to_csv,
-                    "/control_trips_observe_logbook_",
-                    ocean,
-                    "_",
-                    reported_year,
-                    ".csv",
-                    sep = ""),
-              row.names = FALSE)
+                     paste(path_to_csv,
+                           "/control_trips_observe_logbook_",
+                           ocean,
+                           "_",
+                           reported_year,
+                           ".csv",
+                           sep = ""),
+                     row.names = FALSE)
   }
 }

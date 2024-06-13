@@ -74,14 +74,6 @@ control_trip_map <- function(dataframe_observe,
                                    type = "character",
                                    output = "message"))
   }
-  if ((! is.null(x = path_to_shp))
-      && codama::r_type_checking(r_object = path_to_shp,
-                                 type = "character",
-                                 output = "logical") != TRUE) {
-    return(codama::r_type_checking(r_object = path_to_shp,
-                                   type = "character",
-                                   output = "message"))
-  }
   # 2 - Functions ----
   # My axes
   myaxes <- function(step) {
@@ -263,9 +255,8 @@ control_trip_map <- function(dataframe_observe,
                   na.rm = TRUE),
               max(latitudes,
                   na.rm = TRUE))
-  maxrange <- round(max(c(
-    abs(diff(xrange)),
-    abs(diff(yrange)))))
+  maxrange <- round(max(c(abs(diff(xrange)),
+                          abs(diff(yrange)))))
   xlim <- mean(xrange) + (1 + maxrange / 2) * c(-1, 1)
   ylim <- mean(yrange) + (1 + maxrange / 2) * c(-1, 1)
   if (graph_type == "plot") {
