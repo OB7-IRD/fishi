@@ -44,7 +44,7 @@ This query is extracting information related to the time at sea and fishing time
 
 ## Vessel number
 
-This query is extracting information related to ocean activities, including the ocean's ID and name, the date of the activity, vessel details (ID, type, and name), and the country associated with the activity.
+This query is extracting information related to vessel activities, including the ocean's ID and name, the date of the activity, vessel details (ID, type, and name), and the country associated with the activity.
 
 # 
 
@@ -78,6 +78,10 @@ This query is extracting information related to the fishing capacity of the flee
 
 This query is extracting information related to the time at sea and fishing time, for the **fishing_time** function.
 
+## Logbook activities
+
+This query is extracting information related to logbook activities, for **control_trip_map**, **control_trip** and **data_availability** functions.
+
 ## Map catch
 
 This query is extracting information related to the spatial distribution, catch and effort. It works for the functions **map_catch_distribution** and **map_effort_distribution**.
@@ -85,6 +89,10 @@ This query is extracting information related to the spatial distribution, catch 
 ## Number fads years
 
 This query is extracting information related to the number of fads by year, for the **number_fad** function.
+
+## PS activities
+
+This query is extracting information related to observed activities, for **control_trip_map**, **control_trip** and **data_availability** functions.
 
 ## Sample summary logbook
 
@@ -108,4 +116,10 @@ This query is extracting information related to the species like the FAO code, t
 
 ## Vessel number
 
-This query is extracting information related to ocean activities, including the ocean's ID and name, the date of the activity, vessel details (ID, type, and name), and the country associated with the activity.
+This query is extracting information related to vessel activities, including the ocean's ID and name, the date of the activity, vessel details (ID, type, and name), and the country associated with the activity.
+
+# VMS
+
+## Vms ps
+
+This query is extracting information related to vms activities, including the vms'ID, the date and the time of the activity, and longitude/latitude associated with the activity, for **control_trip_map** and **data_availability** functions.

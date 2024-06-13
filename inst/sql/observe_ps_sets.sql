@@ -38,7 +38,7 @@ FROM ps_common.trip t
 
 WHERE
 	extract(year from r.date) IN (?time_period)
-	AND c.code::numeric  IN (?country)
+	AND c.iso3code IN (?flag)
 	AND vt.code::numeric IN (?vessel_type)
 	AND o.code::numeric IN (?ocean)
 	AND p.topiaid IN ('fr.ird.referential.ps.common.Program#1239832686262#0.31033946454061234', -- DCF (IRD)
