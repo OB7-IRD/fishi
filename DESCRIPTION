@@ -45,6 +45,7 @@ Imports:
     gridExtra (>= 2.3.0),
     maps (>= 3.4.2),
     stringr (>= 1.5.1),
+    sf (>= 1.0-16),
     scatterpie, 
     utils
 URL: https://github.com/OB7-IRD/fishi
