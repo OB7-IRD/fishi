@@ -4,12 +4,10 @@
 \alias{deploiement_density_dcp}
 \title{Map deployment of dcp}
 \usage{
-deploiement_density_dcp(dataframe, graph_type = "plot")
+deploiement_density_dcp(dataframe)
 }
 \arguments{
 \item{dataframe}{{\link[base]{data.frame}} expected. 'Csv' or 'output' of the function {\link[furdeb]{data_extraction}}, which must be done before using the deploiement_density_dcp() function.}
-
-\item{graph_type}{{\link[base]{character}} expected. 'plot', 'plotly' or 'table'. Plot by default.}
 }
 \value{
 The function return ggplot R plot.
@@ -20,10 +18,10 @@ Map of the the number of deployments of dFADs
 \details{
 The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:
 \preformatted{
-   poly_geom                   | count | year
-   -------------------------------------------
-   ((0 0, 0 1, 1 1, 1 0, 0 0)) |  9    | 2016
-   ((0 0, 0 1, 1 1, 1 0, 0 0)) | 10    | 2014
-   ((0 0, 0 1, 1 1, 1 0, 0 0)) | 11    | 2014
+   poly_geom                   | count | year | ocean_code
+   --------------------------------------------------------
+   ((0 0, 0 1, 1 1, 1 0, 0 0)) |  9    | 2016 | 1
+   ((0 0, 0 1, 1 1, 1 0, 0 0)) | 10    | 2014 | 1
+   ((0 0, 0 1, 1 1, 1 0, 0 0)) | 11    | 2014 | 1
 }
 }

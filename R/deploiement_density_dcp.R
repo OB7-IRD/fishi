@@ -2,38 +2,28 @@
 #' @title Map deployment of dcp
 #' @description Map of the the number of deployments of dFADs
 #' @param dataframe {\link[base]{data.frame}} expected. 'Csv' or 'output' of the function {\link[furdeb]{data_extraction}}, which must be done before using the deploiement_density_dcp() function.
-#' @param graph_type {\link[base]{character}} expected. 'plot', 'plotly' or 'table'. Plot by default.
 #' @details
 #' The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:
 #' \preformatted{
-#'    poly_geom                   | count | year
-#'    -------------------------------------------
-#'    ((0 0, 0 1, 1 1, 1 0, 0 0)) |  9    | 2016
-#'    ((0 0, 0 1, 1 1, 1 0, 0 0)) | 10    | 2014
-#'    ((0 0, 0 1, 1 1, 1 0, 0 0)) | 11    | 2014
+#'    poly_geom                   | count | year | ocean_code
+#'    --------------------------------------------------------
+#'    ((0 0, 0 1, 1 1, 1 0, 0 0)) |  9    | 2016 | 1
+#'    ((0 0, 0 1, 1 1, 1 0, 0 0)) | 10    | 2014 | 1
+#'    ((0 0, 0 1, 1 1, 1 0, 0 0)) | 11    | 2014 | 1
 #' }
 #' @return The function return ggplot R plot.
 #' @export
-deploiement_density_dcp <- function(dataframe,
-                                    graph_type = "plot") {
+deploiement_density_dcp <- function(dataframe) {
   # 0 - Global variables assignement ----
   year <- NULL
   count <- NULL
-  # 1 - Arguments verification ----
-  if (codama::r_type_checking(r_object = graph_type,
-                              type = "character",
-                              output = "logical") != TRUE) {
-    return(codama::r_type_checking(r_object = graph_type,
-                                   type = "character",
-                                   output = "message"))
-  }
-  # 2 - Data design ----
+  # 1 - Data design ----
   dataframe <- sf::st_as_sf(dataframe, wkt = "poly_geom")
   sf::st_crs(dataframe) <- 4326
   report_year <- max(dataframe$year)
   years <- c((report_year - 8):report_year)
   ocean <- dataframe$ocean_code[1]
-  # 3 - Graphic design ----
+  # 2 - Graphic design ----
   if (ocean == 1) {
     ocean_xlim <- c(-40, 20)
     ocean_ylim <- c(-30, 30)
