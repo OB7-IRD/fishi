@@ -9,7 +9,6 @@
 -- 2023-08-22 -- v1.0 -- IT -- initial version
 -- 2024-06-28 -- v1.1 -- CL -- adapt to fishi
 -------------------------------------------------------------------------------------------
-
 WITH A AS (
     SELECT 
         o.label1 AS ocean
@@ -50,7 +49,8 @@ WITH A AS (
     WHERE 
         o.code::numeric IN (?ocean)
         AND ct1.code::numeric  IN (?country)
-        AND (oo.code = '1' OR tbo.code = '3')),
+        AND (oo.code = '1' OR tbo.code = '3')
+        AND EXTRACT(year FROM r.date) IN (?time_period)),
 -- extract geom center of 1x1 grid cell from lon/lat of deployment
 B AS (SELECT 
 		fishing_year AS year,
@@ -59,8 +59,7 @@ B AS (SELECT
         ST_ASText(ST_SetSRID(ST_MakePoint(longitude, latitude), 4326)) pt_geom,
         st_snaptogrid(ST_SetSRID(ST_MakePoint(longitude, latitude), 4326), 0.5, 0.5, 1, 1) AS center_pt_geom,
         ocean_code
-   	  FROM A 
-   	  WHERE fishing_year IN (?time_period))
+   	  FROM A)
 -- Aggregate and count the number of deployment in each 1x1 grid cell
 SELECT  
     DISTINCT ST_AsText(st_expand(center_pt_geom , 0.5)) AS poly_geom,
