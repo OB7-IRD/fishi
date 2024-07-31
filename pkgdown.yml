@@ -1,13 +1,12 @@
 pandoc: 3.1.11
-pkgdown: 2.0.9
+pkgdown: 2.1.0
 pkgdown_sha: ~
 articles:
   Db_and_csv: Db_and_csv.html
   Referentials: Referentials.html
   sql_and_function: sql_and_function.html
   sql_and_functions: sql_and_functions.html
-last_built: 2024-07-03T09:15Z
+last_built: 2024-07-31T09:12Z
 urls:
   reference: https://ob7-ird.github.io/fishi/reference
   article: https://ob7-ird.github.io/fishi/articles
-

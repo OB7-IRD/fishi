@@ -1,111 +1,40 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://ob7-ird.github.io/fishi/404.html</loc>
-  </url>
-  <url>
-    <loc>https://ob7-ird.github.io/fishi/LICENSE-text.html</loc>
-  </url>
-  <url>
-    <loc>https://ob7-ird.github.io/fishi/articles/Db_and_csv.html</loc>
-  </url>
-  <url>
-    <loc>https://ob7-ird.github.io/fishi/articles/Referentials.html</loc>
-  </url>
-  <url>
-    <loc>https://ob7-ird.github.io/fishi/articles/index.html</loc>
-  </url>
-  <url>
-    <loc>https://ob7-ird.github.io/fishi/articles/sql_and_function.html</loc>
-  </url>
-  <url>
-    <loc>https://ob7-ird.github.io/fishi/articles/sql_and_functions.html</loc>
-  </url>
-  <url>
-    <loc>https://ob7-ird.github.io/fishi/authors.html</loc>
-  </url>
-  <url>
-    <loc>https://ob7-ird.github.io/fishi/index.html</loc>
-  </url>
-  <url>
-    <loc>https://ob7-ird.github.io/fishi/reference/bio_size_tuna.html</loc>
-  </url>
-  <url>
-    <loc>https://ob7-ird.github.io/fishi/reference/bio_weight_tuna.html</loc>
-  </url>
-  <url>
-    <loc>https://ob7-ird.github.io/fishi/reference/biological_UO_count.html</loc>
-  </url>
-  <url>
-    <loc>https://ob7-ird.github.io/fishi/reference/catch_per_searching_day.html</loc>
-  </url>
-  <url>
-    <loc>https://ob7-ird.github.io/fishi/reference/catch_per_unit_effort.html</loc>
-  </url>
-  <url>
-    <loc>https://ob7-ird.github.io/fishi/reference/code_manipulation.html</loc>
-  </url>
-  <url>
-    <loc>https://ob7-ird.github.io/fishi/reference/control_trip.html</loc>
-  </url>
-  <url>
-    <loc>https://ob7-ird.github.io/fishi/reference/control_trip_map.html</loc>
-  </url>
-  <url>
-    <loc>https://ob7-ird.github.io/fishi/reference/data_availability.html</loc>
-  </url>
-  <url>
-    <loc>https://ob7-ird.github.io/fishi/reference/deploiement_density_dcp.html</loc>
-  </url>
-  <url>
-    <loc>https://ob7-ird.github.io/fishi/reference/fishery_production.html</loc>
-  </url>
-  <url>
-    <loc>https://ob7-ird.github.io/fishi/reference/fishi-package.html</loc>
-  </url>
-  <url>
-    <loc>https://ob7-ird.github.io/fishi/reference/fishing_activity.html</loc>
-  </url>
-  <url>
-    <loc>https://ob7-ird.github.io/fishi/reference/fishing_capacity.html</loc>
-  </url>
-  <url>
-    <loc>https://ob7-ird.github.io/fishi/reference/fishing_effort.html</loc>
-  </url>
-  <url>
-    <loc>https://ob7-ird.github.io/fishi/reference/fishing_time.html</loc>
-  </url>
-  <url>
-    <loc>https://ob7-ird.github.io/fishi/reference/index.html</loc>
-  </url>
-  <url>
-    <loc>https://ob7-ird.github.io/fishi/reference/map_catch_distribution.html</loc>
-  </url>
-  <url>
-    <loc>https://ob7-ird.github.io/fishi/reference/map_effort_distribution.html</loc>
-  </url>
-  <url>
-    <loc>https://ob7-ird.github.io/fishi/reference/number_fad.html</loc>
-  </url>
-  <url>
-    <loc>https://ob7-ird.github.io/fishi/reference/pipe.html</loc>
-  </url>
-  <url>
-    <loc>https://ob7-ird.github.io/fishi/reference/psu_total.html</loc>
-  </url>
-  <url>
-    <loc>https://ob7-ird.github.io/fishi/reference/sample_summary.html</loc>
-  </url>
-  <url>
-    <loc>https://ob7-ird.github.io/fishi/reference/set_per_searching_day.html</loc>
-  </url>
-  <url>
-    <loc>https://ob7-ird.github.io/fishi/reference/set_total.html</loc>
-  </url>
-  <url>
-    <loc>https://ob7-ird.github.io/fishi/reference/spatial_occupancy.html</loc>
-  </url>
-  <url>
-    <loc>https://ob7-ird.github.io/fishi/reference/species_biological_variable.html</loc>
-  </url>
+<urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
+<url><loc>https://ob7-ird.github.io/fishi/404.html</loc></url>
+<url><loc>https://ob7-ird.github.io/fishi/LICENSE-text.html</loc></url>
+<url><loc>https://ob7-ird.github.io/fishi/articles/Db_and_csv.html</loc></url>
+<url><loc>https://ob7-ird.github.io/fishi/articles/Referentials.html</loc></url>
+<url><loc>https://ob7-ird.github.io/fishi/articles/index.html</loc></url>
+<url><loc>https://ob7-ird.github.io/fishi/articles/sql_and_function.html</loc></url>
+<url><loc>https://ob7-ird.github.io/fishi/articles/sql_and_functions.html</loc></url>
+<url><loc>https://ob7-ird.github.io/fishi/authors.html</loc></url>
+<url><loc>https://ob7-ird.github.io/fishi/index.html</loc></url>
+<url><loc>https://ob7-ird.github.io/fishi/reference/bio_size_tuna.html</loc></url>
+<url><loc>https://ob7-ird.github.io/fishi/reference/bio_weight_tuna.html</loc></url>
+<url><loc>https://ob7-ird.github.io/fishi/reference/biological_UO_count.html</loc></url>
+<url><loc>https://ob7-ird.github.io/fishi/reference/catch_per_searching_day.html</loc></url>
+<url><loc>https://ob7-ird.github.io/fishi/reference/catch_per_unit_effort.html</loc></url>
+<url><loc>https://ob7-ird.github.io/fishi/reference/code_manipulation.html</loc></url>
+<url><loc>https://ob7-ird.github.io/fishi/reference/control_trip.html</loc></url>
+<url><loc>https://ob7-ird.github.io/fishi/reference/control_trip_map.html</loc></url>
+<url><loc>https://ob7-ird.github.io/fishi/reference/data_availability.html</loc></url>
+<url><loc>https://ob7-ird.github.io/fishi/reference/density_dcp_1deg.html</loc></url>
+<url><loc>https://ob7-ird.github.io/fishi/reference/deploiement_density_dcp.html</loc></url>
+<url><loc>https://ob7-ird.github.io/fishi/reference/fishery_production.html</loc></url>
+<url><loc>https://ob7-ird.github.io/fishi/reference/fishi-package.html</loc></url>
+<url><loc>https://ob7-ird.github.io/fishi/reference/fishing_activity.html</loc></url>
+<url><loc>https://ob7-ird.github.io/fishi/reference/fishing_capacity.html</loc></url>
+<url><loc>https://ob7-ird.github.io/fishi/reference/fishing_effort.html</loc></url>
+<url><loc>https://ob7-ird.github.io/fishi/reference/fishing_time.html</loc></url>
+<url><loc>https://ob7-ird.github.io/fishi/reference/index.html</loc></url>
+<url><loc>https://ob7-ird.github.io/fishi/reference/map_catch_distribution.html</loc></url>
+<url><loc>https://ob7-ird.github.io/fishi/reference/map_effort_distribution.html</loc></url>
+<url><loc>https://ob7-ird.github.io/fishi/reference/number_fad.html</loc></url>
+<url><loc>https://ob7-ird.github.io/fishi/reference/pipe.html</loc></url>
+<url><loc>https://ob7-ird.github.io/fishi/reference/psu_total.html</loc></url>
+<url><loc>https://ob7-ird.github.io/fishi/reference/sample_summary.html</loc></url>
+<url><loc>https://ob7-ird.github.io/fishi/reference/set_per_searching_day.html</loc></url>
+<url><loc>https://ob7-ird.github.io/fishi/reference/set_total.html</loc></url>
+<url><loc>https://ob7-ird.github.io/fishi/reference/spatial_occupancy.html</loc></url>
+<url><loc>https://ob7-ird.github.io/fishi/reference/species_biological_variable.html</loc></url>
 </urlset>
+
