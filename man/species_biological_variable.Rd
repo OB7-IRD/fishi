@@ -41,10 +41,10 @@ Give the number of each biological variable sampled for a given year.
 \details{
 The input dataframe frome sql must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:
 \preformatted{
-   fish_sampling_date | weight  | length | sex | species_code_fao | count
+   fishing_year | weight  | length | sex | species_code | count
    -------------------------------------------------------------------------------
-   2022               | 35.2    | 200    | 4   | SAI              | 1
-   2022               |  9.93   |  44    | 2   | LKV              | 1
-   2022               |  0.058  |  24    | 4   | REO              | 1
+   2022         | 35.2    | 200    | 4   | SAI              | 1
+   2022         |  9.93   |  44    | 2   | LKV              | 1
+   2022         |  0.058  |  24    | 4   | REO              | 1
 }
 }

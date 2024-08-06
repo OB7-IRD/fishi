@@ -8,13 +8,13 @@
 -- 2024-02 -- v1.0 -- JL -- initial version
 -------------------------------------------------------------------------------------------
 SELECT
-	o.c_ocea::numeric AS ocean_id
-	,o.l_ocea::text AS ocean_name
+	o.c_ocea::numeric AS ocean_code
+	,o.l_ocea::text AS ocean_label
 	,a.d_act::date AS activity_date
-	,a.c_bat::numeric AS vessel_id
-	,e.c_engin::numeric AS vessel_type_id
-	,e.l_engin::text AS vessel_type_name
-	,b.c_pav_b::numeric AS country_id 
+	,a.c_bat::numeric AS vessel_code
+	,e.c_engin::numeric AS vessel_type_code
+	,e.l_engin::text AS vessel_type_label
+	,b.c_pav_b::numeric AS country_code
 	
 FROM 
 	public.activite a 

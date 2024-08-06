@@ -11,7 +11,7 @@
 -------------------------------------------------------------------------------------------
 WITH A AS (
     SELECT 
-        o.label1 AS ocean
+        o.label1 AS ocean_label
         ,o.code AS ocean_code
         ,ct1.iso3code AS flag
         ,CASE
@@ -53,7 +53,7 @@ WITH A AS (
         AND EXTRACT(year FROM r.date) IN (?time_period)),
 -- extract geom center of 1x1 grid cell from lon/lat of deployment
 B AS (SELECT 
-		fishing_year AS year,
+		fishing_year AS activity_date,
         longitude,
         latitude,
         ST_ASText(ST_SetSRID(ST_MakePoint(longitude, latitude), 4326)) pt_geom,
@@ -64,11 +64,11 @@ B AS (SELECT
 SELECT  
     DISTINCT ST_AsText(st_expand(center_pt_geom , 0.5)) AS poly_geom,
     COUNT(center_pt_geom)::INT,
-    year,
+    activity_date,
     ocean_code
 FROM 
     B
 GROUP BY 
     poly_geom,
-    year,
+    activity_date,
     ocean_code;

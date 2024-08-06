@@ -16,7 +16,7 @@ SELECT
 	 	WHEN mensur.c_banc IN (2) THEN 'FSC'
 	 	WHEN mensur.c_banc IN (3) THEN 'FSC'
 	 	WHEN mensur.c_banc IN (9) THEN 'FSC'
-	 END AS school_code
+	 END AS school_type
 	,mensur.c_esp AS species_code
 	,temps.an AS activity_date
 	,mensur.c_ocean AS ocean_code

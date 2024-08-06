@@ -10,8 +10,8 @@
 -- 2024-06-13 -- v1.0 -- CL -- adapt for fishi
 -------------------------------------------------------------------------------
 (SELECT
-	v.vesselname AS vessel
-	,v.date
+	v.vesselname AS vessel_label
+	,v.date AS activity_date
 	,v.time 
 	,v.longitude 
 	,v.latitude 
@@ -38,5 +38,5 @@ WHERE
 	EXTRACT(year FROM v.date) IN (?time_period)
 	AND t."PAYS"::numeric  IN (?country)
 	AND v.vesselname IN (?vessel))
-ORDER BY vesselname, date, time
+ORDER BY vessel_label, activity_date, time
 ;

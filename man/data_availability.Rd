@@ -39,26 +39,26 @@ Control to verify the availability of logbook, observer and vms data.
 The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:
 Dataframe observe:
 \preformatted{
-   vessel |  observation_date |
-   ----------------------------
-   887    |  2022-04-13       |
-   887    |  2022-04-13       |
-   887    |  2022-04-13       |
+   vessel_label  |  observation_date |
+   ----------------------------------
+   AVEL VAD      |  2022-04-13       |
+   BELLE ISLE    |  2022-04-13       |
+   BELLE RIVE    |  2022-04-13       |
 }
 Dataframe logbook:
 \preformatted{
-   vessel |  date        |
-   -----------------------
-   887    |  2022-04-13  |
-   887    |  2022-04-13  |
-   887    |  2022-04-13  |
+   vessel_label |  date        |
+   -----------------------------
+   AVEL VAD     |  2022-04-13  |
+   BELLE ISLE   |  2022-04-13  |
+   BELLE RIVE   |  2022-04-13  |
 }
 Dataframe vms:
 \preformatted{
-   vessel      |  date        | longitude |
-   ----------------------------------------
-   887         |  2022-04-13  | 59.197   |
-   887         |  2022-04-13  | 59.654   |
-   887         |  2022-04-13  | 59.951   |
+   vessel_label |  date        | longitude |
+   -----------------------------------------
+   AVEL VAD     |  2022-04-13  | 59.197    |
+   BELLE ISLE   |  2022-04-13  | 59.654    |
+   BELLE RIVE   |  2022-04-13  | 59.951    |
 }
 }

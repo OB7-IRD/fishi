@@ -12,27 +12,27 @@
 #' The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:
 #' Dataframe observe:
 #' \preformatted{
-#'    program          | vessel | observer_name | trip_end_date | observation_date | observation_time | vessel_activity_code | latitude | longitude | operation_on_object_code | fob_type_when_arriving | activity_id
+#'    program          | vessel_label | observer_name | trip_end_date | observation_date | observation_time | vessel_activity_code | latitude | longitude | operation_on_object_code | fob_type_when_arriving | activity_id
 #'    ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-#'    DCF Senne (IRD)  | 887    | Martin        | 2022-05-03    | 2022-04-13       | 14:45:00         | 16                   | -3.7600  | 57.1900   | NA                       | /                      | fr.ird.data.ps.observation.Activity#164986
-#'    DCF Senne (IRD)  | 887    | Martin        | 2022-05-03    | 2022-04-13       | 02:15:00         | 0                    | -4.6248  | 55.4552   | NA                       | /                      | fr.ird.data.ps.observation.Activity#164987
-#'    DCF Senne (IRD)  | 887    | Martin        | 2022-05-03    | 2022-04-13       | 10:18:00         | 13                   | -3.9707  | 57.0382   | 2                        | DFAD                   | fr.ird.data.ps.observation.Activity#164988
+#'    DCF Senne (IRD)  | AVEL VAD     | Martin        | 2022-05-03    | 2022-04-13       | 14:45:00         | 16                   | -3.7600  | 57.1900   | NA                       | /                      | fr.ird.data.ps.observation.Activity#164986
+#'    DCF Senne (IRD)  | BELLE ISLE   | Martin        | 2022-05-03    | 2022-04-13       | 02:15:00         | 0                    | -4.6248  | 55.4552   | NA                       | /                      | fr.ird.data.ps.observation.Activity#164987
+#'    DCF Senne (IRD)  | BELLE ISLE   | Martin        | 2022-05-03    | 2022-04-13       | 10:18:00         | 13                   | -3.9707  | 57.0382   | 2                        | DFAD                   | fr.ird.data.ps.observation.Activity#164988
 #' }
 #' Dataframe logbook:
 #' \preformatted{
-#'    vessel    | latitude | longitude | date        | number | vessel_activity_code | activity_id
+#'    vessel_label | latitude | longitude | activity_date | number | vessel_activity_code | activity_id
 #'    --------------------------------------------------------------------------------------------------------------------
-#'    AVEL VAD  | 4.9668   | 59.2168   | 2022-01-01  | 1      |  6                   | fr.ird.data.ps.logbook.Activity#170
-#'    AVEL VAD  | 4.9668   | 59.2175   | 2022-01-01  | 2      | 13                   | fr.ird.data.ps.logbook.Activity#171
-#'    AVEL VAD  | 5.0168   | 59.2785   | 2022-01-01  | 3      | 13                   | fr.ird.data.ps.logbook.Activity#172
+#'    AVEL VAD     | 4.9668   | 59.2168   | 2022-01-01    | 1      |  6                   | fr.ird.data.ps.logbook.Activity#170
+#'    AVEL VAD     | 4.9668   | 59.2175   | 2022-01-01    | 2      | 13                   | fr.ird.data.ps.logbook.Activity#171
+#'    AVEL VAD     | 5.0168   | 59.2785   | 2022-01-01    | 3      | 13                   | fr.ird.data.ps.logbook.Activity#172
 #' }
 #' Dataframe vms:
 #' \preformatted{
-#'    vessel  |  date        | longitude | latitude | time     |
+#'    vessel_label |  activity_date | longitude | latitude | time     |
 #'    -------------------------------------------------------------
-#'    887     |  2022-04-13  | 59.197    | 4.909    | 01:05:00 |
-#'    887     |  2022-04-13  | 59.654    | 4.712    | 01:10:00 |
-#'    887     |  2022-04-13  | 59.951    | 4.632    | 02:25:00 |
+#'    AVEL VAD     |  2022-04-13    | 59.197    | 4.909    | 01:05:00 |
+#'    BELLE RIVE   |  2022-04-13    | 59.654    | 4.712    | 01:10:00 |
+#'    BELLE RIVE   |  2022-04-13    | 59.951    | 4.632    | 02:25:00 |
 #' }
 #' @return The function return ggplot R plot.
 #' @export
@@ -44,9 +44,8 @@ control_trip_map <- function(dataframe_observe,
                              control_dist_vms = FALSE,
                              path_to_png = NULL) {
   # 0 - Global variables assignement ----
-  vessel <- NULL
+  vessel_label <- NULL
   trip_end_date <- NULL
-  vessel <- NULL
   observation_date <- NULL
   activity_id <- NULL
   wrld_simpl <- NULL
@@ -59,6 +58,7 @@ control_trip_map <- function(dataframe_observe,
   long <- NULL
   lat <- NULL
   group <- NULL
+  activity_date <- NULL
   # 1 - Arguments verification ----
   if (codama::r_type_checking(r_object = trip_i,
                               type = "character",
@@ -143,7 +143,7 @@ control_trip_map <- function(dataframe_observe,
                                    "#")[[1]][1]
   # Observe
   dataframe_observe <- dataframe_observe %>%
-    dplyr::filter(vessel %in% vessel_i,
+    dplyr::filter(vessel_label %in% vessel_i,
                   trip_end_date %in% end_date_i) %>%
     dplyr::mutate(fob_type_when_arriving = dplyr::if_else(is.na(fob_type_when_arriving),
                                                           "/",
@@ -160,18 +160,18 @@ control_trip_map <- function(dataframe_observe,
                          by = "day")
   # logbook
   dataframe_logbook <- dataframe_logbook %>%
-    dplyr::filter(vessel %in% vessel_i,
-                  date %in% seq_date_i)
+    dplyr::filter(vessel_label %in% vessel_i,
+                  activity_date %in% seq_date_i)
   # Vms
   dataframe_vms <- dataframe_vms %>%
-    dplyr::filter(vessel %in% vessel_i,
-                  date %in% seq_date_i)
+    dplyr::filter(vessel_label %in% vessel_i,
+                  activity_date %in% seq_date_i)
   # Distance to vms
   if (control_dist_vms == TRUE) {
     if (nrow(dataframe_vms) > 0) {
       threshold_km <- 10
       dataframe_vms <- dataframe_vms %>%
-        dplyr::mutate(timestamp = as.POSIXct(paste(date,
+        dplyr::mutate(timestamp = as.POSIXct(paste(activity_date,
                                                    time),
                                              format = "%Y-%m-%d %H:%M:%S",
                                              tz = "UTC"))
@@ -183,8 +183,7 @@ control_trip_map <- function(dataframe_observe,
                                                                        units = "hours"),
                       latitude_vms = NA,
                       longitude_vms = NA,
-                      delta_vms = NA
-        )
+                      delta_vms = NA)
       for (n in 1:nrow(dataframe_observe)) {
         d <- as.numeric(difftime(dataframe_vms$timestamp,
                                  dataframe_observe$timestamp[n],
@@ -220,7 +219,7 @@ control_trip_map <- function(dataframe_observe,
     dplyr::summarise(n_sets = dplyr::n_distinct(activity_id))
   logbooksets <- dataframe_logbook %>%
     dplyr::filter(vessel_activity_code %in% 6) %>%
-    dplyr::group_by(date) %>%
+    dplyr::group_by(activity_date) %>%
     dplyr::summarise(n_sets = dplyr::n_distinct(activity_id))
   # fads deployed
   logbookfadsdeployed <- length(unique(dataframe_logbook[dataframe_logbook$vessel_activity_code
@@ -417,7 +416,7 @@ control_trip_map <- function(dataframe_observe,
     graphics::abline(h = 0:10,
                      lty = 3,
                      col = "grey")
-    graphics::points(as.Date(as.character(logbooksets$date)),
+    graphics::points(as.Date(as.character(logbooksets$activity_date)),
                      logbooksets$n_sets,
                      pch = 3,
                      col = "red",
@@ -507,96 +506,96 @@ control_trip_map <- function(dataframe_observe,
     # 1 - MAP ----
     load(file = system.file("wrld_simpl.RData",
                             package = "fishi"))
-    (graph_map <- ggplot2::ggplot() +
-        ggplot2::geom_blank() +
-        ggplot2::geom_polygon(data = wrld_simpl,
-                              ggplot2::aes(x = long,
-                                           y = lat,
-                                           group = group),
-                              fill = "lightgrey",
-                              color = "white") +
-        ggplot2::coord_cartesian(xlim = xlim,
-                                 ylim = ylim) +
-        ggplot2::theme_minimal() +
-        ggplot2::geom_point(data = dataframe_vms,
-                            ggplot2::aes(x = longitude,
-                                         y = latitude,
-                                         text = paste("date: ", date,
-                                                      "<br>time: ", time),
-                                         color = "VMS position"),
-                            size = 0.5,
-                            pch = 16) +
+    graph_map <- ggplot2::ggplot() +
+      ggplot2::geom_blank() +
+      ggplot2::geom_polygon(data = wrld_simpl,
+                            ggplot2::aes(x = long,
+                                         y = lat,
+                                         group = group),
+                            fill = "lightgrey",
+                            color = "white") +
+      ggplot2::coord_cartesian(xlim = xlim,
+                               ylim = ylim) +
+      ggplot2::theme_minimal() +
+      ggplot2::geom_point(data = dataframe_vms,
+                          ggplot2::aes(x = longitude,
+                                       y = latitude,
+                                       text = paste("date: ", date,
+                                                    "<br>time: ", time),
+                                       color = "VMS position"),
+                          size = 0.5,
+                          pch = 16) +
 
-        # logbook activity
-        ggplot2::geom_point(data = dataframe_logbook,
-                            ggplot2::aes(x = longitude,
-                                         y = latitude,
-                                         text = paste("date: ", date),
-                                         color = "Logbook activity"),
-                            size = 2,
-                            pch = 1) +
+      # logbook activity
+      ggplot2::geom_point(data = dataframe_logbook,
+                          ggplot2::aes(x = longitude,
+                                       y = latitude,
+                                       text = paste("date: ", date),
+                                       color = "Logbook activity"),
+                          size = 2,
+                          pch = 1) +
 
-        # observe activity
-        ggplot2::geom_point(data = dataframe_observe,
-                            ggplot2::aes(x = longitude,
-                                         y = latitude,
-                                         text = paste("date: ", observation_date,
-                                                      "<br>time: ", observation_time),
-                                         color = "Observe activity"),
-                            size = 1,
-                            pch = 16) +
+      # observe activity
+      ggplot2::geom_point(data = dataframe_observe,
+                          ggplot2::aes(x = longitude,
+                                       y = latitude,
+                                       text = paste("date: ", observation_date,
+                                                    "<br>time: ", observation_time),
+                                       color = "Observe activity"),
+                          size = 1,
+                          pch = 16) +
 
-        # logbook set
-        ggplot2::geom_point(data = dataframe_logbook_bis,
-                            ggplot2::aes(x = longitude,
-                                         y = latitude,
-                                         text = paste("date: ", date),
-                                         color = "Logbook set"),
-                            size = 3,
-                            pch = 3) +
+      # logbook set
+      ggplot2::geom_point(data = dataframe_logbook_bis,
+                          ggplot2::aes(x = longitude,
+                                       y = latitude,
+                                       text = paste("date: ", date),
+                                       color = "Logbook set"),
+                          size = 3,
+                          pch = 3) +
 
-        # observe activity
-        ggplot2::geom_point(data = dataframe_observe_bis,
-                            ggplot2::aes(x = longitude,
-                                         y = latitude,
-                                         text = paste("date: ", observation_date,
-                                                      "<br>time: ", observation_time),
-                                         color = "Observe set"),
-                            size = 0.5,
-                            pch = 16) +
-        ggplot2::geom_vline(xintercept = seq(-180, 180,
-                                             by = 5),
-                            linetype = "dotted") +
-        ggplot2::geom_hline(yintercept = seq(-90, 90,
-                                             by = 5),
-                            linetype = "dotted") +
-        ggplot2::theme(plot.margin = ggplot2::unit(c(4, 4.1, 3, 2),
-                                                   "lines"),
-                       panel.background = ggplot2::element_rect(fill = NA),
-                       panel.border = ggplot2::element_rect(fill = "NA"),
-                       axis.title = ggplot2::element_blank(),
-                       aspect.ratio = 1,
-                       plot.title = ggplot2::element_text(size = 11,
-                                                          face = "bold")) +
-        ggplot2::ggtitle(paste(start_date_i,
-                               end_date_i,
-                               vessel_i,
-                               observer_i,
-                               program_i,
-                               sep = " | ")) +
-        ggplot2::scale_color_manual(values = c("VMS position" = "grey",
-                                               "Logbook activity" = "red",
-                                               "Observe activity" = "blue",
-                                               "Logbook set" = "red",
-                                               "Observe set" = "blue")) +
-        ggplot2::scale_shape_manual(values = c("VMS position" = 16,
-                                               "Logbook activity" = 1,
-                                               "Observe activity" = 16,
-                                               "Logbook set" = 3,
-                                               "Observe set" = 4)) +
-        ggplot2::theme(legend.position = "bottom")  +
-        ggplot2::labs(color = "") +
-        ggplot2::guides(color = ggplot2::guide_legend(override.aes = list(shape = c(1, 3, 16, 4, 19)))))
+      # observe activity
+      ggplot2::geom_point(data = dataframe_observe_bis,
+                          ggplot2::aes(x = longitude,
+                                       y = latitude,
+                                       text = paste("date: ", observation_date,
+                                                    "<br>time: ", observation_time),
+                                       color = "Observe set"),
+                          size = 0.5,
+                          pch = 16) +
+      ggplot2::geom_vline(xintercept = seq(-180, 180,
+                                           by = 5),
+                          linetype = "dotted") +
+      ggplot2::geom_hline(yintercept = seq(-90, 90,
+                                           by = 5),
+                          linetype = "dotted") +
+      ggplot2::theme(plot.margin = ggplot2::unit(c(4, 4.1, 3, 2),
+                                                 "lines"),
+                     panel.background = ggplot2::element_rect(fill = NA),
+                     panel.border = ggplot2::element_rect(fill = "NA"),
+                     axis.title = ggplot2::element_blank(),
+                     aspect.ratio = 1,
+                     plot.title = ggplot2::element_text(size = 11,
+                                                        face = "bold")) +
+      ggplot2::ggtitle(paste(start_date_i,
+                             end_date_i,
+                             vessel_i,
+                             observer_i,
+                             program_i,
+                             sep = " | ")) +
+      ggplot2::scale_color_manual(values = c("VMS position" = "grey",
+                                             "Logbook activity" = "red",
+                                             "Observe activity" = "blue",
+                                             "Logbook set" = "red",
+                                             "Observe set" = "blue")) +
+      ggplot2::scale_shape_manual(values = c("VMS position" = 16,
+                                             "Logbook activity" = 1,
+                                             "Observe activity" = 16,
+                                             "Logbook set" = 3,
+                                             "Observe set" = 4)) +
+      ggplot2::theme(legend.position = "bottom")  +
+      ggplot2::labs(color = "") +
+      ggplot2::guides(color = ggplot2::guide_legend(override.aes = list(shape = c(1, 3, 16, 4, 19))))
     # Plotly ----
     plotly_map <- plotly::ggplotly(graph_map,
                                    height = 750,

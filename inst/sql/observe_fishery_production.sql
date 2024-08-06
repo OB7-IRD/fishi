@@ -21,7 +21,7 @@ SELECT
 	,ct.iso3code AS flag
 	,s.code AS species_code
 	,c.weight::numeric AS total_catch_weight 
-	,st.homeid as school_code
+	,st.homeid as school_type
 	,o.code::numeric AS ocean_code
 	,vt.code::numeric AS vessel_type_code
 	,ct.code::numeric AS country_code

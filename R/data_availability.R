@@ -12,27 +12,27 @@
 #' The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:
 #' Dataframe observe:
 #' \preformatted{
-#'    vessel |  observation_date |
-#'    ----------------------------
-#'    887    |  2022-04-13       |
-#'    887    |  2022-04-13       |
-#'    887    |  2022-04-13       |
+#'    vessel_label  |  observation_date |
+#'    ----------------------------------
+#'    AVEL VAD      |  2022-04-13       |
+#'    BELLE ISLE    |  2022-04-13       |
+#'    BELLE RIVE    |  2022-04-13       |
 #' }
 #' Dataframe logbook:
 #' \preformatted{
-#'    vessel |  date        |
-#'    -----------------------
-#'    887    |  2022-04-13  |
-#'    887    |  2022-04-13  |
-#'    887    |  2022-04-13  |
+#'    vessel_label |  date        |
+#'    -----------------------------
+#'    AVEL VAD     |  2022-04-13  |
+#'    BELLE ISLE   |  2022-04-13  |
+#'    BELLE RIVE   |  2022-04-13  |
 #' }
 #' Dataframe vms:
 #' \preformatted{
-#'    vessel      |  date        | longitude |
-#'    ----------------------------------------
-#'    887         |  2022-04-13  | 59.197   |
-#'    887         |  2022-04-13  | 59.654   |
-#'    887         |  2022-04-13  | 59.951   |
+#'    vessel_label |  date        | longitude |
+#'    -----------------------------------------
+#'    AVEL VAD     |  2022-04-13  | 59.197    |
+#'    BELLE ISLE   |  2022-04-13  | 59.654    |
+#'    BELLE RIVE   |  2022-04-13  | 59.951    |
 #' }
 #' @return The function return ggplot R plot.
 #' @export
@@ -44,7 +44,8 @@ data_availability <- function(dataframe_observe,
                               graph_type = "plot",
                               path_to_png = NULL) {
   # 0 - Global variables assignement ----
-  vessel <- NULL
+  vessel_label <- NULL
+  activity_date <- NULL
   observation_date <- NULL
   # 1 - Arguments verification ----
   if (codama::r_type_checking(r_object = reported_year,
@@ -62,8 +63,8 @@ data_availability <- function(dataframe_observe,
                                    output = "message"))
   }
   # 2 - Data design ----
-  # vessel
-  vessel <- as.character(sort(unique(dataframe_logbook$vessel)))
+  # vessel_label
+  vessel_label <- as.character(sort(unique(dataframe_logbook$vessel_label)))
   # day
   day <- seq(as.Date(paste(min(reported_year),
                            "01-01",
@@ -81,71 +82,71 @@ data_availability <- function(dataframe_observe,
   }
   # 3 - Graphic design ----
   # Creating a data frame for boat names
-  vessel_data <- data.frame(vessel = as.character(sort(unique(dataframe_logbook$vessel))))
+  vessel_data <- data.frame(vessel_label = as.character(sort(unique(dataframe_logbook$vessel_label))))
   # Creating a data frame for dates
   day_data <- data.frame(day = seq(as.Date(paste(min(reported_year), "01-01", sep = "-")),
                                    as.Date(paste(max(reported_year) + 1, "01-01", sep = "-")),
                                    by = 1))
   # Merge the data to create the ggplot graph
   data <- merge(vessel_data, day_data, all = TRUE)
-  dataframe_vms$date <- as.Date(dataframe_vms$date)
-  dataframe_vms$vessel <- trimws(dataframe_vms$vessel)
+  dataframe_vms$activity_date <- as.Date(dataframe_vms$activity_date)
+  dataframe_vms$vessel_label <- trimws(dataframe_vms$vessel_label)
   dataframe_vms <- dataframe_vms %>%
-    dplyr::filter(vessel %in% vessel)
+    dplyr::filter(vessel_label %in% vessel_label)
   # Ggplot
-  (graph <- ggplot2::ggplot(data,
-                            ggplot2::aes(x = day,
-                                         y = vessel)) +
-      ggplot2::geom_blank() +
-      ggplot2::geom_hline(yintercept = seq_along(vessel),
-                          linetype = "dotted",
-                          color = "grey") +
-      ggplot2::geom_vline(xintercept = data$day[format(data$day, "%d") == "01"],
-                          linetype = "dotted",
-                          color = "grey") +
-      ggplot2::scale_x_date(date_labels = "%Y-%m-%d",
-                            date_breaks = "1 month") +
-      ggplot2::scale_y_discrete(labels = vessel) +
-      ggplot2::labs(x = NULL,
-                    y = NULL) +
-      ggplot2::theme_minimal() +
-      ggplot2::ggtitle(paste("Data availability for purse seiners in the",
-                             ocean,
-                             "Ocean in",
-                             reported_year)) +
-      ggplot2::theme(plot.title = ggplot2::element_text(hjust = 0.5),
-                     plot.margin = ggplot2::margin(6.1, 10.1, 4.1, 2.1)) +
-      ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 90,
-                                                         hjust = 1),
-                     panel.background = ggplot2::element_rect(fill = NA)) +
-      ggplot2::geom_point(data = dataframe_vms,
-                          ggplot2::aes(x = date,
-                                       y = vessel,
-                                       color = "vms"),
-                          shape = 3,
-                          size = 1.5,
-                          position = ggplot2::position_nudge(y = - 0.17),
-                          na.rm = TRUE) +
-      ggplot2::geom_point(data = dataframe_logbook,
-                          ggplot2::aes(x = date,
-                                       y = vessel,
-                                       color = "logbook"),
-                          shape = 3,
-                          size = 1.5,
-                          na.rm = TRUE) +
-      ggplot2::geom_point(data = dataframe_observe,
-                          ggplot2::aes(x = observation_date,
-                                       y = vessel,
-                                       color = "observe"),
-                          shape = 3,
-                          position = ggplot2::position_nudge(y = 0.17),
-                          size = 1.5,
-                          na.rm = TRUE) +
-      ggplot2::scale_color_manual(values = c("vms" = "grey",
-                                             "logbook" = "red",
-                                             "observe" = "blue")) +
-      ggplot2::theme(legend.position = "bottom") +
-      ggplot2::labs(color = ""))
+  graph <- ggplot2::ggplot(data,
+                           ggplot2::aes(x = day,
+                                        y = vessel_label)) +
+    ggplot2::geom_blank() +
+    ggplot2::geom_hline(yintercept = seq_along(vessel_label),
+                        linetype = "dotted",
+                        color = "grey") +
+    ggplot2::geom_vline(xintercept = data$day[format(data$day, "%d") == "01"],
+                        linetype = "dotted",
+                        color = "grey") +
+    ggplot2::scale_x_date(date_labels = "%Y-%m-%d",
+                          date_breaks = "1 month") +
+    ggplot2::scale_y_discrete(labels = vessel_label) +
+    ggplot2::labs(x = NULL,
+                  y = NULL) +
+    ggplot2::theme_minimal() +
+    ggplot2::ggtitle(paste("Data availability for purse seiners in the",
+                           ocean,
+                           "Ocean in",
+                           reported_year)) +
+    ggplot2::theme(plot.title = ggplot2::element_text(hjust = 0.5),
+                   plot.margin = ggplot2::margin(6.1, 10.1, 4.1, 2.1)) +
+    ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 90,
+                                                       hjust = 1),
+                   panel.background = ggplot2::element_rect(fill = NA)) +
+    ggplot2::geom_point(data = dataframe_vms,
+                        ggplot2::aes(x = activity_date,
+                                     y = vessel_label,
+                                     color = "vms"),
+                        shape = 3,
+                        size = 1.5,
+                        position = ggplot2::position_nudge(y = - 0.17),
+                        na.rm = TRUE) +
+    ggplot2::geom_point(data = dataframe_logbook,
+                        ggplot2::aes(x = activity_date,
+                                     y = vessel_label,
+                                     color = "logbook"),
+                        shape = 3,
+                        size = 1.5,
+                        na.rm = TRUE) +
+    ggplot2::geom_point(data = dataframe_observe,
+                        ggplot2::aes(x = observation_date,
+                                     y = vessel_label,
+                                     color = "observe"),
+                        shape = 3,
+                        position = ggplot2::position_nudge(y = 0.17),
+                        size = 1.5,
+                        na.rm = TRUE) +
+    ggplot2::scale_color_manual(values = c("vms" = "grey",
+                                           "logbook" = "red",
+                                           "observe" = "blue")) +
+    ggplot2::theme(legend.position = "bottom") +
+    ggplot2::labs(color = "")
   if (graph_type == "plot") {
     if (!is.null(path_to_png)) {
       ggplot2::ggsave(filename = paste0(path_to_png,

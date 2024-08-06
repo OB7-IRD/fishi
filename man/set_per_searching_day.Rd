@@ -29,7 +29,7 @@ Annual number of sets per searching day on FOB-associated and free-swimming scho
 \details{
 The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:
 \preformatted{
-   activity_date | school_code | set_duration | positive_set | total_set | total_hour_fished
+   activity_date | school_type | set_duration | positive_set | total_set | total_hour_fished
    -----------------------------------------------------------------------------------------
    2010-03-06    | FOB         | 0            | 0            | 0         |  1.00
    2010-12-04    | FOB         | 0            | 0            | 0         | 11.8

@@ -8,7 +8,7 @@
 #' @details
 #' The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:
 #' \preformatted{
-#'    activity_date | cwp11_act | positive_set | total_set | total_hour_fished | school_code
+#'    activity_date | cwp11_act | positive_set | total_set | total_hour_fished | school_type
 #'    --------------------------------------------------------------------------------------
 #'    2010-03-06    | 404004    | 0            | 0         |  7.0              | UND
 #'    2010-12-04    | 404005    | 0            | 0         | 24.0              | FSC
@@ -59,9 +59,9 @@ spatial_occupancy <- function(dataframe,
   # 2 - Data design ----
   spatial_occupancy_t1 <- dataframe %>%
     dplyr::mutate(year = lubridate::year(x = activity_date),
-                  school_type = dplyr::case_when(school_code == "UND" ~ "free",
-                                                 school_code == "FSC"  ~ "free",
-                                                 school_code == "FOB"  ~ "log",
+                  school_type = dplyr::case_when(school_type == "UND" ~ "free",
+                                                 school_type == "FSC"  ~ "free",
+                                                 school_type == "FOB"  ~ "log",
                                                  TRUE ~ "und"))
   # Fishing type
   if (fishing_type == "ALL") {

@@ -12,19 +12,19 @@
 #' The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:
 #' Dataframe observe:
 #' \preformatted{
-#'    program          | vessel |  trip_end_date | observation_date | observation_time | ocean  | trip_id                            | flag | set_id
+#'    program          | vessel_code |  trip_end_date | observation_date | observation_time | ocean_label  | trip_id                            | flag | set_id
 #'    -----------------------------------------------------------------------------------------------------------------------------------------------------------------------
-#'    DCF Senne (IRD)  | 887    |  2022-05-03    | 2022-04-13       | 14:45:00         | Indian | fr.ird.data.ps.common.Trip#164984  | FRA  | fr.ird.data.ps.observation.Set
-#'    DCF Senne (IRD)  | 887    |  2022-05-03    | 2022-04-13       | 02:15:00         | Indian | fr.ird.data.ps.common.Trip#164984  | FRA  |
-#'    DCF Senne (IRD)  | 887    |  2022-05-03    | 2022-04-13       | 10:18:00         | Indian | fr.ird.data.ps.common.Trip#164984  | FRA  |
+#'    DCF Senne (IRD)  | 887         |  2022-05-03    | 2022-04-13       | 14:45:00         | Indian | fr.ird.data.ps.common.Trip#164984  | FRA  | fr.ird.data.ps.observation.Set
+#'    DCF Senne (IRD)  | 887         |  2022-05-03    | 2022-04-13       | 02:15:00         | Indian | fr.ird.data.ps.common.Trip#164984  | FRA  |
+#'    DCF Senne (IRD)  | 887         |  2022-05-03    | 2022-04-13       | 10:18:00         | Indian | fr.ird.data.ps.common.Trip#164984  | FRA  |
 #' }
 #' Dataframe logbook:
 #' \preformatted{
-#'    vessel    | ocean  | flag  | school_type | trip_id                        | vessel_activity_code | activity_id                          | departure_date | landing_date
+#'    vessel_code    | ocean_label  | flag  | school_type | trip_id                        | vessel_activity_code | activity_id                          | departure_date | landing_date
 #'    ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-#'    AVEL VAD  | Indian | FRA   | FOB         | fr.ird.data.ps.common.Trip#17  |  6                   | fr.ird.data.ps.logbook.Activity#170  | 2021-12-18     | 2022-01-26
-#'    AVEL VAD  | Indian | FRA   | NA          | fr.ird.data.ps.common.Trip#18  | 13                   | fr.ird.data.ps.logbook.Activity#171  | 2021-12-18     | 2022-01-26
-#'    AVEL VAD  | Indian | FRA   | FSC         | fr.ird.data.ps.common.Trip#19  | 13                   | fr.ird.data.ps.logbook.Activity#172  | 2021-12-18     | 2022-01-26
+#'    AVEL VAD       | Indian | FRA   | FOB         | fr.ird.data.ps.common.Trip#17  |  6                   | fr.ird.data.ps.logbook.Activity#170  | 2021-12-18     | 2022-01-26
+#'    AVEL VAD       | Indian | FRA   | NA          | fr.ird.data.ps.common.Trip#18  | 13                   | fr.ird.data.ps.logbook.Activity#171  | 2021-12-18     | 2022-01-26
+#'    AVEL VAD       | Indian | FRA   | FSC         | fr.ird.data.ps.common.Trip#19  | 13                   | fr.ird.data.ps.logbook.Activity#172  | 2021-12-18     | 2022-01-26
 #' }
 #' @return The function return ggplot R plot.
 #' @export
@@ -39,7 +39,7 @@ control_trip <- function(dataframe_observe,
   flag <- NULL
   vessel_activity_code <- NULL
   logbook_trip_id <- NULL
-  vessel <- NULL
+  vessel_code <- NULL
   departure_date <- NULL
   landing_date <- NULL
   activity_id <- NULL
@@ -55,6 +55,8 @@ control_trip <- function(dataframe_observe,
   trip_id <- NULL
   observation_time <- NULL
   route_id <- NULL
+  ocean_label <- NULL
+  activity_date <- NULL
   # 1 - Arguments verification ----
   if (codama::r_type_checking(r_object = reported_year,
                               type = "integer",
@@ -110,22 +112,22 @@ control_trip <- function(dataframe_observe,
                   obs_trip_id = trip_id)
   # obstrips
   obstrips <- dataframe_observe %>%
-    dplyr::group_by(ocean,
+    dplyr::group_by(ocean_label,
                     obs_trip_id,
-                    vessel,
+                    vessel_code,
                     trip_end_date,
                     program) %>%
     dplyr::summarize(obs_n_sets = dplyr::n_distinct(set_id),
                      .groups = "drop") %>%
     dplyr::mutate(common_trip_id = paste(trip_end_date,
-                                         vessel,
+                                         vessel_code,
                                          sep = "#"))
   ## logbook data ----
   dataframe_logbook <- dataframe_logbook %>%
     dplyr::filter(flag %in% flag_selected,
                   vessel_activity_code %in% 6) %>%
-    dplyr::mutate(year = as.numeric(substr(date, 1, 4)),
-                  ocean = dplyr::recode(ocean,
+    dplyr::mutate(year = as.numeric(substr(activity_date, 1, 4)),
+                  ocean_label = dplyr::recode(ocean_label,
                                         "Atlantique" = "Atlantic",
                                         "Indien" = "Indian"),
                   logbook_school_type = dplyr::case_when(school_type == "BL" ~ "FSC",
@@ -135,38 +137,47 @@ control_trip <- function(dataframe_observe,
                   logbook_trip_id = trip_id)
   # logbooktrips
   logbooktrips <- dataframe_logbook %>%
-    dplyr::group_by(ocean,
+    dplyr::group_by(ocean_label,
                     logbook_trip_id,
-                    vessel,
+                    vessel_code,
                     departure_date,
                     landing_date) %>%
     dplyr::summarize(logbook_n_sets = dplyr::n_distinct(activity_id),
                      .groups = "drop") %>%
     dplyr::mutate(common_trip_id = paste(landing_date,
-                                         vessel,
+                                         vessel_code,
                                          sep = "#"))
   ## controltrips ----
   logbooktrips <- logbooktrips %>%
-    dplyr::select(ocean, vessel, common_trip_id, logbook_trip_id, logbook_n_sets) %>%
+    dplyr::select(ocean_label,
+                  vessel_code,
+                  common_trip_id,
+                  logbook_trip_id,
+                  logbook_n_sets) %>%
     dplyr::full_join(obstrips %>%
-                       dplyr::select(ocean, vessel, common_trip_id, obs_trip_id, obs_n_sets, program),
-                     by = c("ocean",
+                       dplyr::select(ocean_label,
+                                     vessel_code,
+                                     common_trip_id,
+                                     obs_trip_id,
+                                     obs_n_sets,
+                                     program),
+                     by = c("ocean_label",
                             "common_trip_id",
-                            "vessel"))
-  controltrips <- merge(logbooktrips[, c("ocean",
-                                         "vessel",
+                            "vessel_code"))
+  controltrips <- merge(logbooktrips[, c("ocean_label",
+                                         "vessel_code",
                                          "common_trip_id",
                                          "logbook_trip_id",
                                          "logbook_n_sets")],
-                        obstrips[, c("ocean",
-                                     "vessel",
+                        obstrips[, c("ocean_label",
+                                     "vessel_code",
                                      "common_trip_id",
                                      "obs_trip_id",
                                      "obs_n_sets",
                                      "program")],
-                        by = c("ocean",
+                        by = c("ocean_label",
                                "common_trip_id",
-                               "vessel"),
+                               "vessel_code"),
                         all = TRUE)
   controltrips$diff_n_sets <- rowSums(data.frame(bal_n_sets = controltrips$logbook_n_sets * -1,
                                                  obs_n_sets = controltrips$obs_n_sets),
@@ -185,7 +196,7 @@ control_trip <- function(dataframe_observe,
     ct_data <- controltrips
   } else if (table == "vessel_set") {
     ct_data <- controltrips %>%
-      dplyr::group_by(vessel) %>%
+      dplyr::group_by(vessel_code) %>%
       dplyr::summarize(logbook_n_sets = sum(logbook_n_sets,
                                             na.rm = TRUE),
                        obs_n_sets = sum(obs_n_sets,
@@ -201,7 +212,7 @@ control_trip <- function(dataframe_observe,
     utils::write.csv(controltrips,
                      paste(path_to_csv,
                            "/control_trips_observe_logbook_",
-                           ocean,
+                           ocean_label,
                            "_",
                            reported_year,
                            ".csv",

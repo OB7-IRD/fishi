@@ -13,14 +13,14 @@
 -------------------------------------------------------------------------------
 
 SELECT
-o.label1::text AS ocean
+o.label1::text AS ocean_label
 ,p.label1::text AS program
 ,c.iso3code::text AS flag
-,v.label1::text AS vessel
+,v.label1::text AS vessel_label
 ,v.code::integer AS vessel_code
 ,a.latitude::numeric AS latitude
 ,a.longitude::numeric AS longitude
-,r.date::date AS date
+,r.date::date AS activity_date
 ,a.number::integer AS number
 ,va.code::text AS vessel_activity_code
 ,va.label1::text AS vessel_activity

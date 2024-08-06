@@ -23,7 +23,7 @@ SELECT
 		WHEN a.c_tban::numeric IN (1) THEN 'FOB'
 	 	WHEN a.c_tban::numeric IN (2) THEN 'FSC'
 		WHEN a.c_tban::numeric IN (3) THEN 'UND'
-	 END AS school_code
+	 END AS school_type
 	,o.c_ocea::numeric AS ocean_code
 	,e.c_engin::numeric AS vessel_type_code
 	,b.c_pav_b::numeric AS country_code

@@ -18,10 +18,10 @@ Map of the the number of deployments of dFADs
 \details{
 The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:
 \preformatted{
-   poly_geom                   | count | year | ocean_code
+   poly_geom                   | count | activity_date | ocean_code
    --------------------------------------------------------
-   ((0 0, 0 1, 1 1, 1 0, 0 0)) |  9    | 2016 | 1
-   ((0 0, 0 1, 1 1, 1 0, 0 0)) | 10    | 2014 | 1
-   ((0 0, 0 1, 1 1, 1 0, 0 0)) | 11    | 2014 | 1
+   ((0 0, 0 1, 1 1, 1 0, 0 0)) |  9    | 2016          | 1
+   ((0 0, 0 1, 1 1, 1 0, 0 0)) | 10    | 2014          | 1
+   ((0 0, 0 1, 1 1, 1 0, 0 0)) | 11    | 2014          | 1
 }
 }

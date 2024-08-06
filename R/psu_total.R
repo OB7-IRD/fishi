@@ -76,7 +76,7 @@ psu_total <- function(dataframe,
   # dataframe filter
   psu_total_t1 <- dataframe %>%
     dplyr::mutate(landing_year = lubridate::year(x = arrival))
-  (psu_total_t1 <- psu_total_t1 %>%
+  psu_total_t1 <- psu_total_t1 %>%
     dplyr::filter(country_code %in% selected_country,
                   ocean_code %in% selected_ocean,
                   port_code %in% selected_harbour,
@@ -85,7 +85,7 @@ psu_total <- function(dataframe,
                                                  vessel_type_code %in% c(4, 5, 6) ~ "PS",
                                                  vessel_type_code %in% c(7) ~ "LL",
                                                  vessel_type_code %in% c(10) ~ "SV",
-                                                 TRUE ~ "OTH")))
+                                                 TRUE ~ "OTH"))
   if (selected_variable == "trip") {
     (psu_total_t2 <- psu_total_t1 %>%
        dplyr::group_by(ocean_label,
@@ -125,16 +125,16 @@ psu_total <- function(dataframe,
                         .groups = "drop"))
   } else if (selected_variable == "vessel") {
     psu_total_t2 <- psu_total_t1 %>%
-       dplyr::group_by(ocean_label,
-                       fleet,
-                       vessel_type,
-                       vessel_label) %>%
-       dplyr::summarise(.groups = "drop") %>%
-       dplyr::group_by(ocean_label,
-                       fleet,
-                       vessel_type) %>%
-       dplyr::summarise("nb_vessel" = dplyr::n(),
-                        .groups = "drop")
+      dplyr::group_by(ocean_label,
+                      fleet,
+                      vessel_type,
+                      vessel_label) %>%
+      dplyr::summarise(.groups = "drop") %>%
+      dplyr::group_by(ocean_label,
+                      fleet,
+                      vessel_type) %>%
+      dplyr::summarise("nb_vessel" = dplyr::n(),
+                       .groups = "drop")
   }
   # 3 - Graphic design ----
   as.data.frame(psu_total_t2)

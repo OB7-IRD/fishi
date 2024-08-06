@@ -8,7 +8,7 @@
 #' @details
 #' The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:
 #' \preformatted{
-#'    activity_date | school_code | species_code | size_class | estimated_individual
+#'    activity_date | school_type | species_code | size_class | estimated_individual
 #'    -------------------------------------------------------------------------------
 #'    2018          | FOB         | 6            | 45         | 1.97
 #'    2018          | FSC         | 6            | 44         | 1.25
@@ -28,7 +28,7 @@ bio_size_tuna <- function(dataframe,
                           title = FALSE) {
   # 0 - Global variables assignement ----
   species_code <- NULL
-  school_code <- NULL
+  school_type <- NULL
   activity_date <- NULL
   estimated_individual <- NULL
   size_class <- NULL
@@ -73,7 +73,7 @@ bio_size_tuna <- function(dataframe,
   # Dataframe - Mode : LOG, Year : Report year
   t0 <- dataframe %>%
     dplyr::filter(species_code %in% 2,
-                  school_code %in% "FOB",
+                  school_type %in% "FOB",
                   activity_date %in% report_year) %>%
     dplyr::mutate(numbers_total = sum(estimated_individual, na.rm = TRUE)) %>%
     dplyr::group_by(size_class,
@@ -86,7 +86,7 @@ bio_size_tuna <- function(dataframe,
   # Dataframe - Mode : LOG, Year : Five previous
   t1 <- dataframe %>%
     dplyr::filter(species_code %in% 2,
-                  school_code %in% "FOB",
+                  school_type %in% "FOB",
                   activity_date %in% five_previous) %>%
     dplyr::mutate(numbers_total = sum(estimated_individual / 5, na.rm = TRUE)) %>%
     dplyr::group_by(size_class,
@@ -99,7 +99,7 @@ bio_size_tuna <- function(dataframe,
   # Dataframe - Mode : FREE, Year : Report year
   t2 <- dataframe %>%
     dplyr::filter(species_code %in% 2,
-                  school_code %in% "FSC",
+                  school_type %in% "FSC",
                   activity_date %in% report_year) %>%
     dplyr::mutate(numbers_total = sum(estimated_individual, na.rm = TRUE)) %>%
     dplyr::group_by(size_class,
@@ -112,7 +112,7 @@ bio_size_tuna <- function(dataframe,
   # Dataframe - Mode : FREE, Year : Five previous
   t3 <- dataframe %>%
     dplyr::filter(species_code %in% 2,
-                  school_code %in% "FSC",
+                  school_type %in% "FSC",
                   activity_date %in% five_previous) %>%
     dplyr::mutate(numbers_total = sum(estimated_individual / 5, na.rm = TRUE)) %>%
     dplyr::group_by(size_class,
@@ -156,7 +156,7 @@ bio_size_tuna <- function(dataframe,
   # Dataframe - Mode : LOG, Year : Report year
   t0 <- dataframe %>%
     dplyr::filter(species_code %in% 3,
-                  school_code %in% "FOB",
+                  school_type %in% "FOB",
                   activity_date %in% report_year) %>%
     dplyr::mutate(numbers_total = sum(estimated_individual,
                                       na.rm = TRUE)) %>%
@@ -171,7 +171,7 @@ bio_size_tuna <- function(dataframe,
   # Dataframe - Mode : LOG, Year : Previous years
   t1 <- dataframe %>%
     dplyr::filter(species_code %in% 3,
-                  school_code  == "FOB",
+                  school_type  == "FOB",
                   activity_date %in% five_previous) %>%
     dplyr::mutate(numbers_total = sum(estimated_individual / 5,
                                       na.rm = TRUE)) %>%
@@ -186,7 +186,7 @@ bio_size_tuna <- function(dataframe,
   # Dataframe - Mode : FREE, Year : Report year
   t2 <- dataframe %>%
     dplyr::filter(species_code %in% 3,
-                  school_code %in% "FSC",
+                  school_type %in% "FSC",
                   activity_date %in% report_year) %>%
     dplyr::mutate(numbers_total = sum(estimated_individual,
                                       na.rm = TRUE)) %>%
@@ -201,7 +201,7 @@ bio_size_tuna <- function(dataframe,
   # Dataframe - Mode : FREE, Year : Previous years
   t3 <- dataframe %>%
     dplyr::filter(species_code %in% 3,
-                  school_code %in% "FSC",
+                  school_type %in% "FSC",
                   activity_date %in% five_previous) %>%
     dplyr::mutate(numbers_total = sum(estimated_individual / 5,
                                       na.rm = TRUE)) %>%
@@ -251,7 +251,7 @@ bio_size_tuna <- function(dataframe,
   # Dataframe - Mode : LOG, Year : Report year
   t0 <- dataframe %>%
     dplyr::filter(species_code %in% 1,
-                  school_code %in% "FOB",
+                  school_type %in% "FOB",
                   activity_date %in% report_year) %>%
     dplyr::mutate(numbers_total = sum(estimated_individual,
                                       na.rm = TRUE)) %>%
@@ -266,7 +266,7 @@ bio_size_tuna <- function(dataframe,
   # Dataframe - Mode : LOG, Year : Previous years
   t1 <- dataframe %>%
     dplyr::filter(species_code %in% 1,
-                  school_code %in% "FOB",
+                  school_type %in% "FOB",
                   activity_date %in% five_previous) %>%
     dplyr::mutate(numbers_total = sum(estimated_individual / 5,
                                       na.rm = TRUE)) %>%
@@ -281,7 +281,7 @@ bio_size_tuna <- function(dataframe,
   # Dataframe - Mode : FREE, Year : Report year
   t2 <- dataframe %>%
     dplyr::filter(species_code %in% 1,
-                  school_code %in% "FSC",
+                  school_type %in% "FSC",
                   activity_date %in% report_year) %>%
     dplyr::mutate(numbers_total = sum(estimated_individual, na.rm = TRUE)) %>%
     dplyr::group_by(size_class,
@@ -294,7 +294,7 @@ bio_size_tuna <- function(dataframe,
   # Dataframe - Mode : FREE, Year : Previous years
   t3 <- dataframe %>%
     dplyr::filter(species_code %in% 1,
-                  school_code %in% "FSC",
+                  school_type %in% "FSC",
                   activity_date %in% five_previous) %>%
     dplyr::mutate(numbers_total = sum(estimated_individual / 5,
                                       na.rm = TRUE)) %>%

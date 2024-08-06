@@ -29,7 +29,7 @@ Spatial distribution of tuna catches.
 \details{
 The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:
 \preformatted{
-   activity_date | vessel_code | species_code | ocean_code | school_code | cwp11_act | activity_id | positive_set | total_catch_weight
+   activity_date | vessel_code | species_code | ocean_code | school_type | cwp11_act | activity_id | positive_set | total_catch_weight
    -----------------------------------------------------------------------------------------------------------------------------------
    2022-01-02    | 703         | 3            | 1          | FSC         | 301000    | 1           | 1            |  2.60
    2022-01-02    | 703         | 1            | 1          | FSC         | 301000    | 1           | 1            | 17.8

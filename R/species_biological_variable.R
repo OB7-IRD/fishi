@@ -12,11 +12,11 @@
 #' @details
 #' The input dataframe frome sql must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:
 #' \preformatted{
-#'    fish_sampling_date | weight  | length | sex | species_code_fao | count
+#'    fishing_year | weight  | length | sex | species_code | count
 #'    -------------------------------------------------------------------------------
-#'    2022               | 35.2    | 200    | 4   | SAI              | 1
-#'    2022               |  9.93   |  44    | 2   | LKV              | 1
-#'    2022               |  0.058  |  24    | 4   | REO              | 1
+#'    2022         | 35.2    | 200    | 4   | SAI              | 1
+#'    2022         |  9.93   |  44    | 2   | LKV              | 1
+#'    2022         |  0.058  |  24    | 4   | REO              | 1
 #' }
 #'
 #' @return The function return ggplot or table R plot.
@@ -30,11 +30,11 @@ species_biological_variable <- function(dataframe,
                                         selected_variable = NULL,
                                         selected_species = NULL) {
   # 0 - Global variables assignement ----
-  fish_sampling_date <- NULL
+  fishing_year <- NULL
   sampling_year <- NULL
   total_length <- NULL
   fork_length <- NULL
-  species_code_fao <- NULL
+  species_code <- NULL
   whole_fish_weight <- NULL
   sex <- NULL
   macro_maturity_stage <- NULL
@@ -161,72 +161,72 @@ species_biological_variable <- function(dataframe,
                                                na = "na")
     ## Data manipulation ----
     tunabio[["biology"]] <- dplyr::mutate(.data =  tunabio[["biology"]],
-                                          sampling_year = lubridate::year(fish_sampling_date))
+                                          sampling_year = lubridate::year(fishing_year))
     ## Data analyze ----
     if (!is.null(reported_year)) {
       df <- tunabio[["biology"]] %>%
         dplyr::filter(sampling_year == reported_year)
     } else if (!is.null(start_date) && !is.null(end_date)) {
       df <- tunabio[["biology"]] %>%
-        dplyr::filter(fish_sampling_date >= start_date &
-                        fish_sampling_date <= end_date)
+        dplyr::filter(fishing_year >= start_date &
+                        fishing_year <= end_date)
     }
 
     #### Length
     sampled_length_summarize <- df %>%
       dplyr::filter(!is.na(total_length) | !is.na(fork_length)) %>%
-      dplyr::group_by(species_code_fao) %>%
+      dplyr::group_by(species_code) %>%
       dplyr::summarise(length = dplyr::n())
     #### Weight
     sampled_weight_summarize <- df %>%
       dplyr::filter(!is.na(whole_fish_weight)) %>%
-      dplyr::group_by(species_code_fao) %>%
+      dplyr::group_by(species_code) %>%
       dplyr::summarise(weight = dplyr::n())
     #### Sex
     sampled_sex_summarize <- df %>%
       dplyr::filter(!is.na(sex)) %>%
-      dplyr::group_by(species_code_fao) %>%
+      dplyr::group_by(species_code) %>%
       dplyr::summarise(maturity = dplyr::n())
     #### Maturity
     sampled_maturity_summarize <- df %>%
       dplyr::filter(!is.na(macro_maturity_stage)) %>%
-      dplyr::group_by(species_code_fao) %>%
+      dplyr::group_by(species_code) %>%
       dplyr::summarise(sex = dplyr::n())
     #### Table join
     sampled_summarize <- dplyr::full_join(sampled_length_summarize,
                                           sampled_weight_summarize,
-                                          by = "species_code_fao") %>%
+                                          by = "species_code") %>%
       dplyr::full_join(sampled_sex_summarize,
-                       by = "species_code_fao") %>%
+                       by = "species_code") %>%
       dplyr::full_join(sampled_maturity_summarize,
-                       by = "species_code_fao")
+                       by = "species_code")
   } else if (data_type == "observe") {
     # OBSERVE ----
     #### Lenght
     sampled_length_summarize <- dataframe %>%
       dplyr::filter(!is.na(length)) %>%
-      dplyr::group_by(species_code_fao) %>%
+      dplyr::group_by(species_code) %>%
       dplyr::reframe(length = sum(count,
                                   na.rm = TRUE))
     #### Weight
     sampled_weight_summarize <- dataframe %>%
       dplyr::filter(!is.na(weight)) %>%
-      dplyr::group_by(species_code_fao) %>%
+      dplyr::group_by(species_code) %>%
       dplyr::reframe(weight = sum(count,
                                   na.rm = TRUE))
     #### Sex
     sampled_sex_summarize <- dataframe %>%
       dplyr::filter(!(sex %in% c(0, 3, 4))) %>%
       dplyr::filter(!is.na(sex)) %>%
-      dplyr::group_by(species_code_fao) %>%
+      dplyr::group_by(species_code) %>%
       dplyr::reframe(sex = sum(count,
                                na.rm = TRUE))
     #### Table join
     sampled_summarize <- dplyr::full_join(sampled_length_summarize,
                                           sampled_weight_summarize,
-                                          by = "species_code_fao") %>%
+                                          by = "species_code") %>%
       dplyr::full_join(sampled_sex_summarize,
-                       by = "species_code_fao")
+                       by = "species_code")
   }
   ## filtered data ----
   ### variable selection
@@ -234,7 +234,7 @@ species_biological_variable <- function(dataframe,
     filtered_data <- sampled_summarize
   } else {
     filtered_data <- sampled_summarize %>%
-      dplyr::select(dplyr::all_of(c("species_code_fao",
+      dplyr::select(dplyr::all_of(c("species_code",
                                     selected_variable)))
   }
   ### species selection
@@ -244,10 +244,10 @@ species_biological_variable <- function(dataframe,
     df_arrange <- dplyr::arrange(filtered_data,
                                  dplyr::desc(length))
     df_cut <- df_arrange[1:5, ]
-    df_end <- df_arrange[6:length(df_arrange$species_code_fao), ]
+    df_end <- df_arrange[6:length(df_arrange$species_code), ]
 
     df_sum <- df_end %>%
-      dplyr::select(-species_code_fao) %>%
+      dplyr::select(-species_code) %>%
       colSums()
 
     sampled_summarize_filtred <- dplyr::bind_rows(df_cut,
@@ -256,7 +256,7 @@ species_biological_variable <- function(dataframe,
 
   } else if (selected_species != "shorter") {
     sampled_summarize_filtred <- filtered_data %>%
-      dplyr::filter(species_code_fao == selected_species)
+      dplyr::filter(species_code == selected_species)
   }
   # 3 - Graphic design ----
   if (graph_type == "plot") {
@@ -267,25 +267,25 @@ species_biological_variable <- function(dataframe,
                                                    names_to = "variable",
                                                    values_to = "number")
     # ggplot
-    (ggplot2::ggplot(data = sampled_summarize_pivot,
-                     ggplot2::aes(x = species_code_fao,
-                                  y = number,
-                                  fill = variable)) +
-        ggplot2::geom_histogram(position = "dodge",
-                                stat = "identity") +
-        ggplot2::geom_text(ggplot2::aes(label = number),
-                           vjust = -.3,
-                           size = 2.5,
-                           position = ggplot2::position_dodge(width = 0.9),
-                           color = "black") +
-        ggplot2::labs(fill = "Biological variables",
-                      x = "Species",
-                      y = "Number of fish sampled") +
-        ggplot2::scale_fill_manual(values = c("#cc0033",
-                                              "#009900",
-                                              "#FFCC33",
-                                              "#6633cc")) +
-        ggplot2::theme_light())
+    ggplot2::ggplot(data = sampled_summarize_pivot,
+                    ggplot2::aes(x = species_code,
+                                 y = number,
+                                 fill = variable)) +
+      ggplot2::geom_histogram(position = "dodge",
+                              stat = "identity") +
+      ggplot2::geom_text(ggplot2::aes(label = number),
+                         vjust = -.3,
+                         size = 2.5,
+                         position = ggplot2::position_dodge(width = 0.9),
+                         color = "black") +
+      ggplot2::labs(fill = "Biological variables",
+                    x = "Species",
+                    y = "Number of fish sampled") +
+      ggplot2::scale_fill_manual(values = c("#cc0033",
+                                            "#009900",
+                                            "#FFCC33",
+                                            "#6633cc")) +
+      ggplot2::theme_light()
   } else if (graph_type == "table") {
     as.data.frame(sampled_summarize_filtred)
   }
