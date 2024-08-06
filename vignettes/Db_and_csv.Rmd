@@ -19,52 +19,114 @@ library(fishi)
 
 The databases and csv used by fishi contain a large number of columns. To be able to use the functions, you need to provide a dataset with identical column names. Here's what they correspond to :
 
-**activity_date** : Date of activity (boat out of service, transit, catch+ and catch+ weight, etc.). It is entered in dd/mm/yyyy format. The first record should correspond to the departure date for a trip.
+**activity_date** **/** **fishing_year :** Date of activity (boat out of service, transit, catch+ and catch+ weight, etc.). It is entered in dd/mm/yyyy format. The first record should correspond to the departure date for a trip.
 
 **activity_id** : Numeric identifier of the activity (from 1 to n). This is the only field that can be used to differentiate one activity from another for the same day of the week. Note that an increasing range of numbers does not necessarily correspond to the chronological range.
 
-**boat_code**: The boat's internal code (note that the same boat may have several different codes when changing flag, etc.).
+**arrival :** Date and time when the vessel arrived at the destination port (dd/mm/yyyy format).
+
+**buoy_code_activity** : Code identifying the buoy used during the activity.
+
+**buoy_id** : Unique identifier for the buoy.
 
 **catch** : Weight of fish caught during the current activity (commercial or non-commercial species, stored in tanks or dumped at sea).
+
+**center_geom_x** : X-coordinate of the geometric center of the activity area.
+
+**center_geom_y** : Y-coordinate of the geometric center of the activity area.
+
+**count**: Number of occurrences or instances of a particular event or object.
 
 **country_code** : Code of the country
 
 **cwp11_act** : code of the 1x1 square in which the activity is located
 
+***departure / departure_date :** Date and time when the vessel departed from the port (dd/mm/yyyy format).*
+
+**estimated_individual**: Estimated number of individual fish caught.
+
+**fishing_time** : Total time spent fishing during the activity (hh format).
+
 **fleet** : Country's fleet.
 
 **flag** : Country's flag.
 
+**fob_type_when_arriving**: Type of FOB (Fish Aggregating Device) used when the vessel arrived.
+
 **gear** : Name for type of vessel used.
+
+**harbour_label** : Name of the harbor from which the vessel operates.
+
+**hrsea** : Total number of hours at sea for the activity.
 
 **keel_code** : Keel coding (unique throughout the ship's life).
 
 **landing_date** : Boat landing date (dd/mm/yyyy format).
 
+**landing_year** : Year in which the landing occurred.
+
+**latitude / longitude :** Coordinates of the activity location.
+
+**length :** Length of the species.
+
+**number :** Identifier or count number for various recorded elements.
+
+**object_code_activity :** Code for the object associated with the activity.
+
+**observation_date / observation_time :** Date and time of the observation (dd/mm/yyyy and hh format).
+
+**observer_name :** Name of the observer who recorded the activity.
+
 **ocean_code**: Code of the ocean in which the geographical area is located
 
 **ocean_label** : Name of the ocean in which the geographical area is located
 
-**port_code** : Code of the port designation (ORSTOM)
+**operation_on_object_code :** Code for the operation performed on the object during the activity.
 
-**port_label** : Name of the port designation (ORSTOM)
+**poly_geom :** Geometric polygon representing the activity area.
 
-**positive_set**: total number of positive sets during the activity.
+**port_arrival/port_departure :** Date and time when the vessel arrived/departed at the port (dd/mm/yyyy format).
 
-**set_duration**: set duration calculated using several parameters: fishing method, tonnage and fishing year
+**positive_set**: total number of positive sets during the activity.
 
-**school_code** : School type code.
+**program :** Program or project associated with the activity.
+
+**school_type** : School type code encountered during the activity.
 
 **school_label**: Abbreviated name of school type
 
+**set_duration**: set duration calculated using several parameters: fishing method, tonnage and fishing year
+
+**set_id :** Identifier for a specific fishing set.
+
+**sex :** Sex of the fish caught (male or female).
+
+**size_class :** Size classification of the fish caught.
+
 **species_code** : Internal species code
+
+**time :** Specific time when an event or activity occurred (hh format).
+
+**total_catch_weight / weight:** Total weight of fish caught during the activity.
 
 **total_hour_at_sea**: Total hours at sea for the activity (from 0 to 24h). Note that if several activities take place on the same date, the first will take 24h and the others 0.
 
 **total_hour_fished**: Total hours fished during the activity (= set +search +transit etc.). Approximately 12h in OA and 13h in OI. Note that if several activities take place on the same date, the first will take the total hours and the others 0.
 
-**total_set**: total number of sets during the activity.
+**total_landing :** Total weight of fish landed from the vessel.
+
+**total_set** : total number of sets during the activity.
+
+**trip_end_date :** Date when the fishing trip ended (dd/mm/yyyy format).
+
+**vessel_activity_code :** Code representing the vessel's activity.
+
+**vessel_code**: The boat's internal code (note that the same boat may have several different codes when changing flag, etc.).
 
 **vessel_label** : Name of the ship.
 
+**vessel_type :** Type or category of the vessel.
+
 **vessel_type_code** : Code for type of vessel used
+
+**vessel_well_number :** Number identifying the well (storage compartment) on the vessel.

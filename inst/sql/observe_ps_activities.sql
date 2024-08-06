@@ -14,9 +14,9 @@
 -------------------------------------------------------------------------------
 
 SELECT
-o.label1::text AS ocean
+o.label1::text AS ocean_label
 	,p.label1::text AS program
-	,v.label1::text AS vessel
+	,v.label1::text AS vessel_label
 	,v.code::integer AS vessel_code
 	,c.iso3code::text AS flag
 	,v.fleetcountry::text AS fleet_country

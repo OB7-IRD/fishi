@@ -17,7 +17,7 @@ SELECT
 		WHEN activite.c_tban::numeric IN (1) THEN 'FOB'
 	 	WHEN activite.c_tban::numeric IN (2) THEN 'FSC'
 		WHEN activite.c_tban::numeric IN (3) THEN 'UND'
-	 END AS school_code
+	 END AS school_type
 	,activite.v_dur_cal AS set_duration
 	,activite.c_ocea::numeric AS ocean_code
 	,bateau.c_pav_b::numeric AS country_code

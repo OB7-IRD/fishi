@@ -29,7 +29,7 @@ Fishing operations. Annual number of fishing sets on FOB-associated and free-swi
 \details{
 The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:
 \preformatted{
-   activity_date | school_code | positive_set | total_set
+   activity_date | school_type | positive_set | total_set
    ------------------------------------------------------
    2010-03-06    | FOB         | 0            | 0
    2010-12-04    | FOB         | 0            | 0

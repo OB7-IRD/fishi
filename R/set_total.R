@@ -104,26 +104,26 @@ set_total <- function(dataframe,
                                                  vessel_type_code %in% c(7) ~ "LL",
                                                  vessel_type_code %in% c(10) ~ "SV",
                                                  TRUE ~ "OTH"))
-  (set_summarize <- dataframe %>%
-      dplyr::group_by(program,
-                      ocean_label,
-                      fleet,
-                      vessel_type,
-                      vessel_label,
-                      landing_year,
-                      departure,
-                      port_departure,
-                      arrival,
-                      port_arrival) %>%
-      dplyr::summarise(.groups = "drop")  %>%
-      dplyr::group_by(landing_year,
-                      ocean_label,
-                      port_arrival,
-                      fleet,
-                      vessel_type,
-                      vessel_label) %>%
-      dplyr::summarise(nb_trip = dplyr::n_distinct(arrival),
-                       .groups = "drop"))
+  set_summarize <- dataframe %>%
+    dplyr::group_by(program,
+                    ocean_label,
+                    fleet,
+                    vessel_type,
+                    vessel_label,
+                    landing_year,
+                    departure,
+                    port_departure,
+                    arrival,
+                    port_arrival) %>%
+    dplyr::summarise(.groups = "drop")  %>%
+    dplyr::group_by(landing_year,
+                    ocean_label,
+                    port_arrival,
+                    fleet,
+                    vessel_type,
+                    vessel_label) %>%
+    dplyr::summarise(nb_trip = dplyr::n_distinct(arrival),
+                     .groups = "drop")
   # 3 - Graphic design ----
   if (graph_type == "number") {
     sum(set_summarize$nb_trip)

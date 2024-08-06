@@ -39,18 +39,18 @@ Trip data consistency control
 The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:
 Dataframe observe:
 \preformatted{
-   program          | vessel |  trip_end_date | observation_date | observation_time | ocean  | trip_id                            | flag | set_id
+   program          | vessel_code |  trip_end_date | observation_date | observation_time | ocean_label  | trip_id                            | flag | set_id
    -----------------------------------------------------------------------------------------------------------------------------------------------------------------------
-   DCF Senne (IRD)  | 887    |  2022-05-03    | 2022-04-13       | 14:45:00         | Indian | fr.ird.data.ps.common.Trip#164984  | FRA  | fr.ird.data.ps.observation.Set
-   DCF Senne (IRD)  | 887    |  2022-05-03    | 2022-04-13       | 02:15:00         | Indian | fr.ird.data.ps.common.Trip#164984  | FRA  |
-   DCF Senne (IRD)  | 887    |  2022-05-03    | 2022-04-13       | 10:18:00         | Indian | fr.ird.data.ps.common.Trip#164984  | FRA  |
+   DCF Senne (IRD)  | 887         |  2022-05-03    | 2022-04-13       | 14:45:00         | Indian | fr.ird.data.ps.common.Trip#164984  | FRA  | fr.ird.data.ps.observation.Set
+   DCF Senne (IRD)  | 887         |  2022-05-03    | 2022-04-13       | 02:15:00         | Indian | fr.ird.data.ps.common.Trip#164984  | FRA  |
+   DCF Senne (IRD)  | 887         |  2022-05-03    | 2022-04-13       | 10:18:00         | Indian | fr.ird.data.ps.common.Trip#164984  | FRA  |
 }
 Dataframe logbook:
 \preformatted{
-   vessel    | ocean  | flag  | school_type | trip_id                        | vessel_activity_code | activity_id                          | departure_date | landing_date
+   vessel_code    | ocean_label  | flag  | school_type | trip_id                        | vessel_activity_code | activity_id                          | departure_date | landing_date
    ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-   AVEL VAD  | Indian | FRA   | FOB         | fr.ird.data.ps.common.Trip#17  |  6                   | fr.ird.data.ps.logbook.Activity#170  | 2021-12-18     | 2022-01-26
-   AVEL VAD  | Indian | FRA   | NA          | fr.ird.data.ps.common.Trip#18  | 13                   | fr.ird.data.ps.logbook.Activity#171  | 2021-12-18     | 2022-01-26
-   AVEL VAD  | Indian | FRA   | FSC         | fr.ird.data.ps.common.Trip#19  | 13                   | fr.ird.data.ps.logbook.Activity#172  | 2021-12-18     | 2022-01-26
+   AVEL VAD       | Indian | FRA   | FOB         | fr.ird.data.ps.common.Trip#17  |  6                   | fr.ird.data.ps.logbook.Activity#170  | 2021-12-18     | 2022-01-26
+   AVEL VAD       | Indian | FRA   | NA          | fr.ird.data.ps.common.Trip#18  | 13                   | fr.ird.data.ps.logbook.Activity#171  | 2021-12-18     | 2022-01-26
+   AVEL VAD       | Indian | FRA   | FSC         | fr.ird.data.ps.common.Trip#19  | 13                   | fr.ird.data.ps.logbook.Activity#172  | 2021-12-18     | 2022-01-26
 }
 }

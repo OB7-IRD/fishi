@@ -30,7 +30,7 @@ Generates a figure for catches (x 1000 t) of the three main tunas: BET, SKJ and 
 \details{
 The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:
 \preformatted{
-   activity_date | species_code | flag   | fleet  | gear | school_code | ocean_label | total_catch_weight
+   activity_date | species_code | flag   | fleet  | gear | school_type | ocean_label | total_catch_weight
    -----------------------------------------------------------------------------------------
    1999-07-09    | 2            | France | France | PS   | FOB         | 1           |  119.
    1999-07-09    | 1            | France | France | PS   | FOB         | 1           |   20.6

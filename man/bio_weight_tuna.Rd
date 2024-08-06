@@ -24,7 +24,7 @@ Weight distribution of major tuna catches (in percentage of the total number of 
 \details{
 The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:
 \preformatted{
-   activity_date | school_code | species_code | size_class | estimated_individual
+   activity_date | school_type | species_code | size_class | estimated_individual
    -------------------------------------------------------------------------------
    2018          | FOB         | 6            | 45         | 1.97
    2018          | FSC         | 6            | 44         | 1.25

@@ -5,22 +5,22 @@
 #' @details
 #' The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:
 #' \preformatted{
-#'    poly_geom                   | count | year | ocean_code
+#'    poly_geom                   | count | activity_date | ocean_code
 #'    --------------------------------------------------------
-#'    ((0 0, 0 1, 1 1, 1 0, 0 0)) |  9    | 2016 | 1
-#'    ((0 0, 0 1, 1 1, 1 0, 0 0)) | 10    | 2014 | 1
-#'    ((0 0, 0 1, 1 1, 1 0, 0 0)) | 11    | 2014 | 1
+#'    ((0 0, 0 1, 1 1, 1 0, 0 0)) |  9    | 2016          | 1
+#'    ((0 0, 0 1, 1 1, 1 0, 0 0)) | 10    | 2014          | 1
+#'    ((0 0, 0 1, 1 1, 1 0, 0 0)) | 11    | 2014          | 1
 #' }
 #' @return The function return ggplot R plot.
 #' @export
 deploiement_density_dcp <- function(dataframe) {
   # 0 - Global variables assignement ----
-  year <- NULL
+  activity_date <- NULL
   count <- NULL
   # 1 - Data design ----
   dataframe <- sf::st_as_sf(dataframe, wkt = "poly_geom")
   sf::st_crs(dataframe) <- 4326
-  report_year <- max(dataframe$year)
+  report_year <- max(dataframe$activity_date)
   years <- c((report_year - 8):report_year)
   ocean <- dataframe$ocean_code[1]
   # 2 - Graphic design ----
@@ -33,7 +33,7 @@ deploiement_density_dcp <- function(dataframe) {
   }
   func_plot_density_dep <- function(dt, yr) {
     data <- dt %>%
-      dplyr::filter(year == !!yr)
+      dplyr::filter(activity_date == !!yr)
 
     p <- ggplot2::ggplot() +
       ggplot2::geom_sf(data = rnaturalearth::ne_countries(returnclass = "sf"),

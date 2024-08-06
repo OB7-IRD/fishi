@@ -8,7 +8,7 @@
 #' @details
 #' The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:
 #' \preformatted{
-#'    activity_date | school_code | set_duration | positive_set | total_set | total_hour_fished
+#'    activity_date | school_type | set_duration | positive_set | total_set | total_hour_fished
 #'    -----------------------------------------------------------------------------------------
 #'    2010-03-06    | FOB         | 0            | 0            | 0         |  1.00
 #'    2010-12-04    | FOB         | 0            | 0            | 0         | 11.8
@@ -30,7 +30,7 @@ set_per_searching_day <- function(dataframe,
   activity_date <- NULL
   total_hour_fished <- NULL
   set_duration <- NULL
-  school_code <- NULL
+  school_type <- NULL
   positive_set <- NULL
   total_set <- NULL
   sets_per_day_all <- NULL
@@ -72,7 +72,7 @@ set_per_searching_day <- function(dataframe,
   # db t1 - Add columns : nb_sets_pos and nb_sets
   t1 <- dataframe %>%
     dplyr::group_by(year,
-                    school_code) %>%
+                    school_type) %>%
     dplyr::summarise(nb_sets_pos = sum(positive_set,
                                        na.rm = TRUE),
                      nb_sets = sum(total_set,
@@ -91,11 +91,11 @@ set_per_searching_day <- function(dataframe,
   # Create columns sets_per_day for ALL, FOB and FSC
   table_cpue_set_per_day <- table_cpue_set_per_day %>%
     dplyr::group_by(year) %>%
-    dplyr::reframe(sets_per_day_all = dplyr::case_when(school_code %in% "FOB" | school_code %in% "FSC" | school_code %in% "UND" ~ nb_sets / (t_recherche / set_time),
+    dplyr::reframe(sets_per_day_all = dplyr::case_when(school_type %in% "FOB" | school_type %in% "FSC" | school_type %in% "UND" ~ nb_sets / (t_recherche / set_time),
                                                        TRUE ~ 0),
-                   sets_per_day_fad = dplyr::case_when(school_code %in% "FOB" ~ nb_sets / (t_recherche / set_time),
+                   sets_per_day_fad = dplyr::case_when(school_type %in% "FOB" ~ nb_sets / (t_recherche / set_time),
                                                        TRUE ~ 0),
-                   sets_per_day_fsc = dplyr::case_when(school_code %in% c("FSC", "UND") ~ nb_sets / (t_recherche / set_time)))
+                   sets_per_day_fsc = dplyr::case_when(school_type %in% c("FSC", "UND") ~ nb_sets / (t_recherche / set_time)))
   # Sum columns sets_per_day for ALL, FOB and FSC
   table_cpue_set_per_day <- table_cpue_set_per_day %>%
     dplyr::group_by(year) %>%
@@ -126,76 +126,76 @@ set_per_searching_day <- function(dataframe,
   # 4 - Graphic design ----
   if (fishing_type == "FOB") {
     table_cpue_set_per_day$sets_per_day_fad <- round(table_cpue_set_per_day$sets_per_day_fad, 3)
-    (ggplot_table_cpue <- ggplot2::ggplot(data = table_cpue_set_per_day) +
-        ggplot2::geom_hline(yintercept = c(0.25, 0.5, 0.75, 1, 1.25),
-                            color = "grey",
-                            linetype = "longdash",
-                            alpha = 0.5) +
-        ggplot2::geom_line(ggplot2::aes(x = year,
-                                        y = sets_per_day_fad),
-                           color = "black") +
-        ggplot2::geom_point(ggplot2::aes(x = year,
-                                         y = sets_per_day_fad),
-                            shape = 16,
-                            size = 2) +
-        ggplot2::labs(x = "",
-                      y = "Number of sets per searching day") +
-        ggplot2::ylim(0,
-                      max(table_cpue_set_per_day$sets_per_day_fad)) +
-        ggplot2::theme(panel.background = ggplot2::element_rect(fill = "white",
-                                                                color = "black"),
-                       axis.text.x = ggplot2::element_text(angle = 45,
-                                                           hjust = 1,
-                                                           size = 13),
-                       axis.text.y = ggplot2::element_text(size = 13),
-                       axis.title.y = ggplot2::element_text(size = 14)) +
-        ggplot2::labs(colour = "") +
-        ggplot2::scale_x_continuous(breaks = unique(table_cpue_set_per_day$year)) +
-        ggplot2::theme(legend.position = c(0.84, 0.97),
-                       legend.justification = c(0, 1)) +
-        ggplot2::annotate("text", x = max(table_cpue_set_per_day$year),
-                          y = 0.05,
-                          label = "(FOB)",
-                          color = "black",
-                          hjust = 1,
-                          vjust = 1,
-                          size = 7))
+    ggplot_table_cpue <- ggplot2::ggplot(data = table_cpue_set_per_day) +
+      ggplot2::geom_hline(yintercept = c(0.25, 0.5, 0.75, 1, 1.25),
+                          color = "grey",
+                          linetype = "longdash",
+                          alpha = 0.5) +
+      ggplot2::geom_line(ggplot2::aes(x = year,
+                                      y = sets_per_day_fad),
+                         color = "black") +
+      ggplot2::geom_point(ggplot2::aes(x = year,
+                                       y = sets_per_day_fad),
+                          shape = 16,
+                          size = 2) +
+      ggplot2::labs(x = "",
+                    y = "Number of sets per searching day") +
+      ggplot2::ylim(0,
+                    max(table_cpue_set_per_day$sets_per_day_fad)) +
+      ggplot2::theme(panel.background = ggplot2::element_rect(fill = "white",
+                                                              color = "black"),
+                     axis.text.x = ggplot2::element_text(angle = 45,
+                                                         hjust = 1,
+                                                         size = 13),
+                     axis.text.y = ggplot2::element_text(size = 13),
+                     axis.title.y = ggplot2::element_text(size = 14)) +
+      ggplot2::labs(colour = "") +
+      ggplot2::scale_x_continuous(breaks = unique(table_cpue_set_per_day$year)) +
+      ggplot2::theme(legend.position = c(0.84, 0.97),
+                     legend.justification = c(0, 1)) +
+      ggplot2::annotate("text", x = max(table_cpue_set_per_day$year),
+                        y = 0.05,
+                        label = "(FOB)",
+                        color = "black",
+                        hjust = 1,
+                        vjust = 1,
+                        size = 7)
   } else if (fishing_type == "FSC") {
     table_cpue_set_per_day$sets_per_day_fsc <- round(table_cpue_set_per_day$sets_per_day_fsc, 3)
-    (ggplot_table_cpue <- ggplot2::ggplot(data = table_cpue_set_per_day) +
-        ggplot2::geom_hline(yintercept = c(0.25, 0.5, 0.75, 1),
-                            color = "grey",
-                            linetype = "longdash",
-                            alpha = 0.5) +
-        ggplot2::geom_line(ggplot2::aes(x = year,
-                                        y = sets_per_day_fsc),
-                           color = "black") +
-        ggplot2::geom_point(ggplot2::aes(x = year,
-                                         y = sets_per_day_fsc),
-                            shape = 16,
-                            size = 2) +
+    ggplot_table_cpue <- ggplot2::ggplot(data = table_cpue_set_per_day) +
+      ggplot2::geom_hline(yintercept = c(0.25, 0.5, 0.75, 1),
+                          color = "grey",
+                          linetype = "longdash",
+                          alpha = 0.5) +
+      ggplot2::geom_line(ggplot2::aes(x = year,
+                                      y = sets_per_day_fsc),
+                         color = "black") +
+      ggplot2::geom_point(ggplot2::aes(x = year,
+                                       y = sets_per_day_fsc),
+                          shape = 16,
+                          size = 2) +
 
-        ggplot2::labs(x = "",
-                      y = "Number of sets per searching day") +
-        ggplot2::ylim(0, 1) +
-        ggplot2::theme(panel.background = ggplot2::element_rect(fill = "white",
-                                                                color = "black"),
-                       axis.text.x = ggplot2::element_text(angle = 45,
-                                                           hjust = 1,
-                                                           size = 13),
-                       axis.text.y = ggplot2::element_text(size = 13),
-                       axis.title.y = ggplot2::element_text(size = 14)) +
-        ggplot2::labs(colour = "") +
-        ggplot2::scale_x_continuous(breaks = unique(table_cpue_set_per_day$year)) +
-        ggplot2::theme(legend.position = c(0.84, 0.97),
-                       legend.justification = c(0, 1)) +
-        ggplot2::annotate("text", x = max(table_cpue_set_per_day$year),
-                          y = 0.05,
-                          label = "(FSC)",
-                          color = "black",
-                          hjust = 1,
-                          vjust = 1,
-                          size = 7))
+      ggplot2::labs(x = "",
+                    y = "Number of sets per searching day") +
+      ggplot2::ylim(0, 1) +
+      ggplot2::theme(panel.background = ggplot2::element_rect(fill = "white",
+                                                              color = "black"),
+                     axis.text.x = ggplot2::element_text(angle = 45,
+                                                         hjust = 1,
+                                                         size = 13),
+                     axis.text.y = ggplot2::element_text(size = 13),
+                     axis.title.y = ggplot2::element_text(size = 14)) +
+      ggplot2::labs(colour = "") +
+      ggplot2::scale_x_continuous(breaks = unique(table_cpue_set_per_day$year)) +
+      ggplot2::theme(legend.position = c(0.84, 0.97),
+                     legend.justification = c(0, 1)) +
+      ggplot2::annotate("text", x = max(table_cpue_set_per_day$year),
+                        y = 0.05,
+                        label = "(FSC)",
+                        color = "black",
+                        hjust = 1,
+                        vjust = 1,
+                        size = 7)
   }
   if (graph_type == "plot") {
     return(ggplot_table_cpue)

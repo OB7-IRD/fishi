@@ -8,11 +8,11 @@
 -- 2023 -- v1.0 -- CL -- initial version
 -------------------------------------------------------------------------------------------
 SELECT
-	EXTRACT(YEAR FROM r.date) AS fish_sampling_date
+	EXTRACT(YEAR FROM r.date) AS fishing_year
 	,sm.weight 
 	,sm.length 
 	,sx.code AS sex
-	,sp.faocode AS species_code_fao
+	,sp.faocode AS species_code
 	,sm.count 
 	
 FROM ps_observation.route r

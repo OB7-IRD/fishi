@@ -8,7 +8,7 @@
 #' @details
 #' The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:
 #' \preformatted{
-#'    activity_date | school_code | positive_set | total_set
+#'    activity_date | school_type | positive_set | total_set
 #'    ------------------------------------------------------
 #'    2010-03-06    | FOB         | 0            | 0
 #'    2010-12-04    | FOB         | 0            | 0
@@ -30,7 +30,7 @@ fishing_activity <- function(dataframe,
   activity_date <- NULL
   total_set <- NULL
   positive_set <- NULL
-  school_code <- NULL
+  school_type <- NULL
   l_total <- NULL
   a_total <- NULL
   f_total <- NULL
@@ -73,7 +73,7 @@ fishing_activity <- function(dataframe,
                      .groups = "drop")
   # db a2 - Add : Number of total, positive, and null sets by FOB
   a2 <- fishing_activity_t1 %>%
-    dplyr::filter(school_code %in% "FOB") %>%
+    dplyr::filter(school_type %in% "FOB") %>%
     dplyr::group_by(year) %>%
     dplyr::summarise(l_total = sum(total_set,
                                    na.rm = TRUE),
@@ -84,7 +84,7 @@ fishing_activity <- function(dataframe,
                      .groups = "drop")
   # db a3 - Add : Number of total, positive, and null sets by FSC
   a3 <- fishing_activity_t1 %>%
-    dplyr::filter(school_code %in% "FSC" | school_code %in% "UND") %>%
+    dplyr::filter(school_type %in% "FSC" | school_type %in% "UND") %>%
     dplyr::group_by(year) %>%
     dplyr::summarise(f_total = sum(total_set,
                                    na.rm = TRUE),
@@ -145,47 +145,46 @@ fishing_activity <- function(dataframe,
   }
   # 4 - Graphic design ----
   t_set$`%_log` <- round(t_set$`%_log`, 3)
-  (ggplot_graph <- ggplot2::ggplot() +
-      # Theme and background
-      ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 45,
-                                                         hjust = 1,
-                                                         size = 13),
-                     axis.text.y = ggplot2::element_text(size = 13),
-                     axis.title.y = ggplot2::element_text(size = 14),
-                     legend.position = "top",
-                     legend.justification = "right",
-                     legend.text = ggplot2::element_text(size = 10),
-                     panel.background = ggplot2::element_rect(fill = "white",
-                                                              color = "black"),
-                     panel.grid.major = ggplot2::element_blank(),
-                     panel.grid.minor.x = ggplot2::element_blank(),
-                     panel.grid.major.y = ggplot2::element_line(linewidth = 0.2,
-                                                                color = "gray90")) +
-      ggplot2::scale_x_continuous(breaks = t_set$year) +
-      # Lines and point
-      ggplot2::geom_bar(data = t_set_pivot,
-                        mapping = ggplot2::aes(x = year,
-                                               y = nb_sets,
-                                               fill = type),
-                        stat = "identity",
-                        colour = "black") +
-      ggplot2::scale_fill_manual(values = c("grey95", "grey26")) +
-      ggplot2::geom_line(data = t_set,
-                         ggplot2::aes(x = year,
-                                      y = `%_log` * perc),
-                         size = 0.5,
-                         linetype = "longdash",
-                         color = "black") +
-      ggplot2::geom_point(data = t_set,
-                          ggplot2::aes(x = year,
-                                       y = `%_log` * perc)) +
-      ggplot2::labs(fill = "",
-                    x = "") +
-      ggplot2::scale_y_continuous(name = name_set,
+  ggplot_graph <- ggplot2::ggplot() +
+    # Theme and background
+    ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 45,
+                                                       hjust = 1,
+                                                       size = 13),
+                   axis.text.y = ggplot2::element_text(size = 13),
+                   axis.title.y = ggplot2::element_text(size = 14),
+                   legend.position = "top",
+                   legend.justification = "right",
+                   legend.text = ggplot2::element_text(size = 10),
+                   panel.background = ggplot2::element_rect(fill = "white",
+                                                            color = "black"),
+                   panel.grid.major = ggplot2::element_blank(),
+                   panel.grid.minor.x = ggplot2::element_blank(),
+                   panel.grid.major.y = ggplot2::element_line(linewidth = 0.2,
+                                                              color = "gray90")) +
+    ggplot2::scale_x_continuous(breaks = t_set$year) +
+    # Lines and point
+    ggplot2::geom_bar(data = t_set_pivot,
+                      mapping = ggplot2::aes(x = year,
+                                             y = nb_sets,
+                                             fill = type),
+                      stat = "identity",
+                      colour = "black") +
+    ggplot2::scale_fill_manual(values = c("grey95", "grey26")) +
+    ggplot2::geom_line(data = t_set,
+                       ggplot2::aes(x = year,
+                                    y = `%_log` * perc),
+                       size = 0.5,
+                       linetype = "longdash",
+                       color = "black") +
+    ggplot2::geom_point(data = t_set,
+                        ggplot2::aes(x = year,
+                                     y = `%_log` * perc)) +
+    ggplot2::labs(fill = "",
+                  x = "") +
+    ggplot2::scale_y_continuous(name = name_set,
 
-                                  sec.axis = ggplot2::sec_axis(~ . / perc,
-                                                               name = "% FOB-associated sets")))
-
+                                sec.axis = ggplot2::sec_axis(~ . / perc,
+                                                             name = "% FOB-associated sets"))
   if (graph_type == "plot") {
     return(ggplot_graph)
   } else if (graph_type == "plotly") {

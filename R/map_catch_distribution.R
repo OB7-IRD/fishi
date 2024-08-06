@@ -8,7 +8,7 @@
 #' @details
 #' The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:
 #' \preformatted{
-#'    activity_date | vessel_code | species_code | ocean_code | school_code | cwp11_act | activity_id | positive_set | total_catch_weight
+#'    activity_date | vessel_code | species_code | ocean_code | school_type | cwp11_act | activity_id | positive_set | total_catch_weight
 #'    -----------------------------------------------------------------------------------------------------------------------------------
 #'    2022-01-02    | 703         | 3            | 1          | FSC         | 301000    | 1           | 1            |  2.60
 #'    2022-01-02    | 703         | 1            | 1          | FSC         | 301000    | 1           | 1            | 17.8
@@ -31,7 +31,7 @@ map_catch_distribution <- function(dataframe,
   vessel_code <- NULL
   species_code <- NULL
   positive_set <- NULL
-  school_code <- NULL
+  school_type <- NULL
   cwp11_act <- NULL
   total_catch_weight <- NULL
   total <- NULL
@@ -79,7 +79,7 @@ map_catch_distribution <- function(dataframe,
                     vessel_code,
                     species_code,
                     positive_set,
-                    school_code,
+                    school_type,
                     cwp11_act) %>%
     dplyr::summarise(poids = sum(total_catch_weight,
                                  na.rm = TRUE),
@@ -99,7 +99,7 @@ map_catch_distribution <- function(dataframe,
   } else if (fishing_type == "FSC") {
     datafile <- t1  %>%
       dplyr::filter(positive_set > 0,
-                    school_code %in% c("FSC", "UND")) %>%
+                    school_type %in% c("FSC", "UND")) %>%
       dplyr::group_by(cwp11_act) %>%
       dplyr::summarise(yft = sum(dplyr::case_when(species_code == 1 ~ poids,
                                                   TRUE ~ 0.00000001), na.rm = TRUE),
@@ -112,7 +112,7 @@ map_catch_distribution <- function(dataframe,
   } else if (fishing_type == "FOB") {
     datafile <- t1  %>%
       dplyr::filter(positive_set > 0,
-                    school_code %in% "FOB") %>%
+                    school_type %in% "FOB") %>%
       dplyr::group_by(cwp11_act) %>%
       dplyr::summarise(yft = sum(dplyr::case_when(species_code == 1 ~ poids,
                                                   TRUE ~ 0.00000001), na.rm = TRUE),
@@ -194,35 +194,35 @@ map_catch_distribution <- function(dataframe,
                                       names_to = "specie",
                                       values_to = "catch (t)")
     data_pivot$`catch (t)` <- round(data_pivot$`catch (t)`, 3)
-    (map <- ggplot2::ggplot() +
-        ggplot2::theme(legend.position = "top",
-                       legend.justification = "right",
-                       legend.text = ggplot2::element_text(size = 10),
-                       panel.background = ggplot2::element_rect(fill = "white"),
-                       panel.border = ggplot2::element_rect(color = "black",
-                                                            fill = NA,
-                                                            size = 0.3))  +
-        ggplot2::geom_sf(data = world_boundaries) +
-        ggspatial::coord_sf(xlim = ocean_xlim,
-                            ylim = ocean_ylim) +
-        scatterpie::geom_scatterpie(data = datafile,
-                                    ggplot2::aes(x = LONG,
-                                                 y = LAT,
-                                                 r = (sqrt(TOTAL) / sqrt(2000)),
-                                                 group = CWP11_ACT),
-                                    cols = c("YFT", "SKJ", "BET"))  +
-        ggplot2::scale_fill_manual(values = c("YFT" = "khaki1",
-                                              "SKJ" = "firebrick2",
-                                              "BET" = "cornflowerblue")) +
-        ggplot2::geom_hline(yintercept = ocean_yintercept,
-                            linetype = "dashed",
-                            color = "darkgrey",
-                            linewidth = 0.2) +
-        ggplot2::labs(fill = "Catch in t") +
-        ggplot2::geom_vline(xintercept = ocean_xintercept,
-                            linetype = "dashed",
-                            color = "darkgrey",
-                            linewidth = 0.2))
+    map <- ggplot2::ggplot() +
+      ggplot2::theme(legend.position = "top",
+                     legend.justification = "right",
+                     legend.text = ggplot2::element_text(size = 10),
+                     panel.background = ggplot2::element_rect(fill = "white"),
+                     panel.border = ggplot2::element_rect(color = "black",
+                                                          fill = NA,
+                                                          size = 0.3))  +
+      ggplot2::geom_sf(data = world_boundaries) +
+      ggspatial::coord_sf(xlim = ocean_xlim,
+                          ylim = ocean_ylim) +
+      scatterpie::geom_scatterpie(data = datafile,
+                                  ggplot2::aes(x = LONG,
+                                               y = LAT,
+                                               r = (sqrt(TOTAL) / sqrt(2000)),
+                                               group = CWP11_ACT),
+                                  cols = c("YFT", "SKJ", "BET"))  +
+      ggplot2::scale_fill_manual(values = c("YFT" = "khaki1",
+                                            "SKJ" = "firebrick2",
+                                            "BET" = "cornflowerblue")) +
+      ggplot2::geom_hline(yintercept = ocean_yintercept,
+                          linetype = "dashed",
+                          color = "darkgrey",
+                          linewidth = 0.2) +
+      ggplot2::labs(fill = "Catch in t") +
+      ggplot2::geom_vline(xintercept = ocean_xintercept,
+                          linetype = "dashed",
+                          color = "darkgrey",
+                          linewidth = 0.2)
     return(map)
   } else if (graph_type == "plotly") {
     if (ocean == 1) {
@@ -249,41 +249,40 @@ map_catch_distribution <- function(dataframe,
                                       names_to = "specie",
                                       values_to = "catch (t)")
     data_pivot$`catch (t)` <- round(data_pivot$`catch (t)`, 3)
-    (map <- ggplot2::ggplot() +
-        ggplot2::theme(legend.position = "top",
-                       legend.justification = "right",
-                       panel.background = ggplot2::element_rect(fill = "white"),
-                       panel.border = ggplot2::element_rect(color = "black",
-                                                            fill = NA,
-                                                            linewidth = 0.3),
-                       axis.title.x = ggplot2::element_blank(),
-                       axis.title.y = ggplot2::element_blank()) +
-        ggplot2::geom_sf(data = world_boundaries) +
-        ggspatial::coord_sf(xlim = ocean_xlim,
-                            ylim = ocean_ylim) +
-        ggplot2::geom_point(data = datafile,
-                            ggplot2::aes(x     = long,
-                                         y     = lat,
-                                         color = total,
-                                         size  = total,
-                                         text  = paste("bet: ", bet,
-                                                       "<br>yft: ", yft,
-                                                       "<br>skj: ", skj)),
-                            alpha = 0.65) +
-        ggplot2::scale_color_viridis_c(option = "plasma") +
-        ggplot2::guides(size = "none") +
-        ggplot2::labs(color = "Catch in t") +
-        ggplot2::theme(panel.background = ggplot2::element_rect(fill = "white"),
-                       panel.border = ggplot2::element_rect(color = "black", fill = NA, size = 0.3))  +
-        ggplot2::geom_hline(yintercept = ocean_yintercept,
-                            linetype = "dashed",
-                            color = "darkgrey",
-                            linewidth = 0.2) +
-        ggplot2::geom_vline(xintercept = ocean_xintercept,
-                            linetype = "dashed",
-                            color = "darkgrey",
-                            linewidth = 0.2))
-
+    map <- ggplot2::ggplot() +
+      ggplot2::theme(legend.position = "top",
+                     legend.justification = "right",
+                     panel.background = ggplot2::element_rect(fill = "white"),
+                     panel.border = ggplot2::element_rect(color = "black",
+                                                          fill = NA,
+                                                          linewidth = 0.3),
+                     axis.title.x = ggplot2::element_blank(),
+                     axis.title.y = ggplot2::element_blank()) +
+      ggplot2::geom_sf(data = world_boundaries) +
+      ggspatial::coord_sf(xlim = ocean_xlim,
+                          ylim = ocean_ylim) +
+      ggplot2::geom_point(data = datafile,
+                          ggplot2::aes(x     = long,
+                                       y     = lat,
+                                       color = total,
+                                       size  = total,
+                                       text  = paste("bet: ", bet,
+                                                     "<br>yft: ", yft,
+                                                     "<br>skj: ", skj)),
+                          alpha = 0.65) +
+      ggplot2::scale_color_viridis_c(option = "plasma") +
+      ggplot2::guides(size = "none") +
+      ggplot2::labs(color = "Catch in t") +
+      ggplot2::theme(panel.background = ggplot2::element_rect(fill = "white"),
+                     panel.border = ggplot2::element_rect(color = "black", fill = NA, size = 0.3))  +
+      ggplot2::geom_hline(yintercept = ocean_yintercept,
+                          linetype = "dashed",
+                          color = "darkgrey",
+                          linewidth = 0.2) +
+      ggplot2::geom_vline(xintercept = ocean_xintercept,
+                          linetype = "dashed",
+                          color = "darkgrey",
+                          linewidth = 0.2)
     plotly_map <- plotly::ggplotly(map) %>%
       plotly::style(hoverinfo = "text")
     # Add a title

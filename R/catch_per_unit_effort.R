@@ -10,16 +10,16 @@
 #' The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:
 #' Dataframe 1:
 #' \preformatted{
-#'    activity_date | species_code | school_code | set_duration | positive_set | total_set | total_catch_weight | total_hour_fished
+#'    activity_date | species_code | school_type | set_duration | positive_set | total_set | total_catch_weight | total_hour_fished
 #'    -------------------------------------------------------------------------------------------------------------------------------
-#'    1999-07-09    | 2            | FOB         | 3.54        | 1            | 1         | 119.0              | 12.1
-#'    1999-07-09    | 1            | FOB         | 3.54        | 1            | 1         | 20.6               | 12.1
-#'    1999-07-09    | 1            | FOB         | 3.54        | 1            | 1         | 24.4               | 12.1
+#'    1999-07-09    | 2            | FOB         | 3.54         | 1            | 1         | 119.0              | 12.1
+#'    1999-07-09    | 1            | FOB         | 3.54         | 1            | 1         | 20.6               | 12.1
+#'    1999-07-09    | 1            | FOB         | 3.54         | 1            | 1         | 24.4               | 12.1
 #' }
 #'
 #'  Dataframe 2:
 #' \preformatted{
-#'    activity_date | school_code | set_duration | positive_set | total_set | total_hour_fished
+#'    activity_date | school_type | set_duration | positive_set | total_set | total_hour_fished
 #'    -----------------------------------------------------------------------------------------
 #'    2010-03-06    | FOB         | 0            | 0            | 0         |  1.00
 #'    2010-12-04    | FOB         | 0            | 0            | 0         | 11.8
@@ -93,15 +93,15 @@ catch_per_unit_effort <- function(dataframe1,
   #Creation of t1 database from dataframe2
   t1 <- dataframe1 %>%
     dplyr::group_by(year) %>%
-    dplyr::summarise(yft = sum(dplyr::case_when(school_code %in% "FOB" & species_code == 1 ~ total_catch_weight,
+    dplyr::summarise(yft = sum(dplyr::case_when(school_type %in% "FOB" & species_code == 1 ~ total_catch_weight,
                                                 TRUE ~ 0), na.rm = TRUE),
-                     skj = sum(dplyr::case_when(school_code %in% "FOB" & species_code == 2 ~ total_catch_weight,
+                     skj = sum(dplyr::case_when(school_type %in% "FOB" & species_code == 2 ~ total_catch_weight,
                                                 TRUE ~ 0), na.rm = TRUE),
-                     bet = sum(dplyr::case_when(school_code %in% "FOB" & species_code == 3 ~ total_catch_weight,
+                     bet = sum(dplyr::case_when(school_type %in% "FOB" & species_code == 3 ~ total_catch_weight,
                                                 TRUE ~ 0), na.rm = TRUE),
-                     alb = sum(dplyr::case_when(school_code %in% "FOB" & species_code == 4 ~ total_catch_weight,
+                     alb = sum(dplyr::case_when(school_type %in% "FOB" & species_code == 4 ~ total_catch_weight,
                                                 TRUE ~ 0), na.rm = TRUE),
-                     total = sum(dplyr::case_when(school_code %in% "FOB" ~ total_catch_weight,
+                     total = sum(dplyr::case_when(school_type %in% "FOB" ~ total_catch_weight,
                                                   TRUE ~ 0), na.rm = TRUE),
                      .groups = "drop")
   #merge t0 and t1
@@ -125,15 +125,15 @@ catch_per_unit_effort <- function(dataframe1,
   #Creation of t3 database from dataframe2
   t3 <- dataframe1 %>%
     dplyr::group_by(year) %>%
-    dplyr::summarise(yft = sum(dplyr::case_when(school_code %in% c("FSC", "UND") & species_code == 1 ~ total_catch_weight,
+    dplyr::summarise(yft = sum(dplyr::case_when(school_type %in% c("FSC", "UND") & species_code == 1 ~ total_catch_weight,
                                                 TRUE ~ 0), na.rm = TRUE),
-                     skj = sum(dplyr::case_when(school_code %in% c("FSC", "UND") & species_code == 2 ~ total_catch_weight,
+                     skj = sum(dplyr::case_when(school_type %in% c("FSC", "UND") & species_code == 2 ~ total_catch_weight,
                                                 TRUE ~ 0), na.rm = TRUE),
-                     bet = sum(dplyr::case_when(school_code %in% c("FSC", "UND") & species_code == 3 ~ total_catch_weight,
+                     bet = sum(dplyr::case_when(school_type %in% c("FSC", "UND") & species_code == 3 ~ total_catch_weight,
                                                 TRUE ~ 0), na.rm = TRUE),
-                     alb = sum(dplyr::case_when(school_code %in% c("FSC", "UND") & species_code == 4 ~ total_catch_weight,
+                     alb = sum(dplyr::case_when(school_type %in% c("FSC", "UND") & species_code == 4 ~ total_catch_weight,
                                                 TRUE ~ 0), na.rm = TRUE),
-                     total = sum(dplyr::case_when(school_code %in% c("FSC", "UND") ~ total_catch_weight,
+                     total = sum(dplyr::case_when(school_type %in% c("FSC", "UND") ~ total_catch_weight,
                                                   TRUE ~ 0), na.rm = TRUE),
                      .groups = "drop")
   #merge t2 and t3
@@ -184,75 +184,75 @@ catch_per_unit_effort <- function(dataframe1,
     dataframe <- table_cpue_fsc
   }
   # plot
-  (ggplot_graph <- ggplot2::ggplot(data = dataframe) +
-      # Theme and background
-      ggplot2::geom_hline(yintercept = c(40, 30, 20, 15, 10, 5),
-                          color = "grey",
-                          linetype = "longdash",
-                          alpha = 0.5) +
-      ggplot2::scale_x_continuous(expand = c(0, 0),
-                                  breaks = dataframe$year) +
-      ggplot2::theme_bw() +
-      ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 45,
-                                                         hjust = 1,
-                                                         size = 13),
-                     axis.text.y = ggplot2::element_text(size = 13),
-                     axis.title.y = ggplot2::element_text(size = 14),
-                     legend.position = "top",
-                     legend.justification = "right",
-                     legend.text = ggplot2::element_text(size = 10),
-                     panel.background = ggplot2::element_rect(fill = "white",
-                                                              color = "black"),
-                     panel.grid.major = ggplot2::element_blank(),
-                     panel.grid.minor.x = ggplot2::element_blank(),
-                     panel.grid.major.y = ggplot2::element_line(size = 0.2,
-                                                                color = "gray90")) +
-      # Lines and points
-      ggplot2::geom_line(ggplot2::aes(x = year,
-                                      y = yft),
-                         size = 0.15) +
-      ggplot2::geom_line(ggplot2::aes(x = year,
-                                      y = skj),
-                         size = 0.15) +
-      ggplot2::geom_line(ggplot2::aes(x = year,
-                                      y = bet),
-                         size = 0.15) +
-      ggplot2::geom_line(ggplot2::aes(x = year,
-                                      y = total),
-                         size = 0.15) +
-      ggplot2::geom_point(ggplot2::aes(x = year,
-                                       y = yft,
-                                       shape = "Yellowfin"),
-                          size = 2) +
-      ggplot2::geom_point(ggplot2::aes(x = year,
-                                       y = skj,
-                                       shape = "Skipjack"),
-                          size = 2) +
-      ggplot2::geom_point(ggplot2::aes(x = year,
-                                       y = bet,
-                                       shape = "Bigeye"),
-                          size = 2) +
-      ggplot2::geom_point(ggplot2::aes(x = year,
-                                       y = total,
-                                       shape = "Total"),
-                          size = 2) +
-      ggplot2::scale_shape_manual(values = c("Yellowfin" =  15,
-                                             "Skipjack" = 5,
-                                             "Bigeye" = 2,
-                                             "Total" = 16)) +
-      ggplot2::labs(x = "",
-                    y = "Catch per unit effort (t/d)") +
-      ggplot2::ylim(0, max(dataframe$total)) +
-      ggplot2::guides(shape = ggplot2::guide_legend(title = NULL)) +
-      ggplot2::annotate("text",
-                        x = 1994,
-                        y = max(dataframe$total) - 1,
-                        label = label_ft,
-                        hjust = 1.2,
-                        vjust = 0.002,
-                        size = 5,
-                        color = "black") +
-      ggplot2::scale_x_continuous(breaks = unique(dataframe$year)))
+  ggplot_graph <- ggplot2::ggplot(data = dataframe) +
+    # Theme and background
+    ggplot2::geom_hline(yintercept = c(40, 30, 20, 15, 10, 5),
+                        color = "grey",
+                        linetype = "longdash",
+                        alpha = 0.5) +
+    ggplot2::scale_x_continuous(expand = c(0, 0),
+                                breaks = dataframe$year) +
+    ggplot2::theme_bw() +
+    ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 45,
+                                                       hjust = 1,
+                                                       size = 13),
+                   axis.text.y = ggplot2::element_text(size = 13),
+                   axis.title.y = ggplot2::element_text(size = 14),
+                   legend.position = "top",
+                   legend.justification = "right",
+                   legend.text = ggplot2::element_text(size = 10),
+                   panel.background = ggplot2::element_rect(fill = "white",
+                                                            color = "black"),
+                   panel.grid.major = ggplot2::element_blank(),
+                   panel.grid.minor.x = ggplot2::element_blank(),
+                   panel.grid.major.y = ggplot2::element_line(size = 0.2,
+                                                              color = "gray90")) +
+    # Lines and points
+    ggplot2::geom_line(ggplot2::aes(x = year,
+                                    y = yft),
+                       size = 0.15) +
+    ggplot2::geom_line(ggplot2::aes(x = year,
+                                    y = skj),
+                       size = 0.15) +
+    ggplot2::geom_line(ggplot2::aes(x = year,
+                                    y = bet),
+                       size = 0.15) +
+    ggplot2::geom_line(ggplot2::aes(x = year,
+                                    y = total),
+                       size = 0.15) +
+    ggplot2::geom_point(ggplot2::aes(x = year,
+                                     y = yft,
+                                     shape = "Yellowfin"),
+                        size = 2) +
+    ggplot2::geom_point(ggplot2::aes(x = year,
+                                     y = skj,
+                                     shape = "Skipjack"),
+                        size = 2) +
+    ggplot2::geom_point(ggplot2::aes(x = year,
+                                     y = bet,
+                                     shape = "Bigeye"),
+                        size = 2) +
+    ggplot2::geom_point(ggplot2::aes(x = year,
+                                     y = total,
+                                     shape = "Total"),
+                        size = 2) +
+    ggplot2::scale_shape_manual(values = c("Yellowfin" =  15,
+                                           "Skipjack" = 5,
+                                           "Bigeye" = 2,
+                                           "Total" = 16)) +
+    ggplot2::labs(x = "",
+                  y = "Catch per unit effort (t/d)") +
+    ggplot2::ylim(0, max(dataframe$total)) +
+    ggplot2::guides(shape = ggplot2::guide_legend(title = NULL)) +
+    ggplot2::annotate("text",
+                      x = 1994,
+                      y = max(dataframe$total) - 1,
+                      label = label_ft,
+                      hjust = 1.2,
+                      vjust = 0.002,
+                      size = 5,
+                      color = "black") +
+    ggplot2::scale_x_continuous(breaks = unique(dataframe$year))
   if (graph_type == "plot") {
     return(ggplot_graph)
   } else if (graph_type == "plotly") {

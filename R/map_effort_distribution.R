@@ -126,37 +126,37 @@ map_effort_distribution <- function(dataframe,
   world_boundaries <- rnaturalearth::ne_countries(returnclass = "sf",
                                                   scale       = "medium")
   datafile$effort <- round(datafile$effort, 3)
-  (map <- ggplot2::ggplot() +
-      ggplot2::theme(legend.position = "top",
-                     legend.justification = "right",
-                     panel.background = ggplot2::element_rect(fill = "white"),
-                     panel.border = ggplot2::element_rect(color = "black",
-                                                          fill = NA,
-                                                          linewidth = 0.3),
-                     axis.title.x = ggplot2::element_blank(),
-                     axis.title.y = ggplot2::element_blank()) +
-      ggplot2::geom_sf(data = world_boundaries) +
-      ggspatial::coord_sf(xlim = ocean_xlim,
-                          ylim = ocean_ylim) +
-      ggplot2::geom_point(data = datafile,
-                          ggplot2::aes(x     = long,
-                                       y     = lat,
-                                       color = effort,
-                                       size  = effort),
-                          alpha = 0.65) +
-      ggplot2::scale_color_viridis_c(option = "plasma") +
-      ggplot2::guides(size = "none") +
-      ggplot2::labs(color = "Effort in d") +
-      ggplot2::theme(panel.background = ggplot2::element_rect(fill = "white"),
-                     panel.border = ggplot2::element_rect(color = "black", fill = NA, size = 0.3))  +
-      ggplot2::geom_hline(yintercept = ocean_yintercept,
-                          linetype = "dashed",
-                          color = "darkgrey",
-                          linewidth = 0.2) +
-      ggplot2::geom_vline(xintercept = ocean_xintercept,
-                          linetype = "dashed",
-                          color = "darkgrey",
-                          linewidth = 0.2))
+  map <- ggplot2::ggplot() +
+    ggplot2::theme(legend.position = "top",
+                   legend.justification = "right",
+                   panel.background = ggplot2::element_rect(fill = "white"),
+                   panel.border = ggplot2::element_rect(color = "black",
+                                                        fill = NA,
+                                                        linewidth = 0.3),
+                   axis.title.x = ggplot2::element_blank(),
+                   axis.title.y = ggplot2::element_blank()) +
+    ggplot2::geom_sf(data = world_boundaries) +
+    ggspatial::coord_sf(xlim = ocean_xlim,
+                        ylim = ocean_ylim) +
+    ggplot2::geom_point(data = datafile,
+                        ggplot2::aes(x     = long,
+                                     y     = lat,
+                                     color = effort,
+                                     size  = effort),
+                        alpha = 0.65) +
+    ggplot2::scale_color_viridis_c(option = "plasma") +
+    ggplot2::guides(size = "none") +
+    ggplot2::labs(color = "Effort in d") +
+    ggplot2::theme(panel.background = ggplot2::element_rect(fill = "white"),
+                   panel.border = ggplot2::element_rect(color = "black", fill = NA, size = 0.3))  +
+    ggplot2::geom_hline(yintercept = ocean_yintercept,
+                        linetype = "dashed",
+                        color = "darkgrey",
+                        linewidth = 0.2) +
+    ggplot2::geom_vline(xintercept = ocean_xintercept,
+                        linetype = "dashed",
+                        color = "darkgrey",
+                        linewidth = 0.2)
   if (graph_type == "plot") {
     return(map)
   } else if (graph_type == "plotly") {

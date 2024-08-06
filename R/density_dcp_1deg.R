@@ -5,29 +5,29 @@
 #' @details
 #' The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:
 #' \preformatted{
-#'    count | center_geom_x | center_geom_y |  year  | poly_geom
+#'    count | center_geom_x | center_geom_y |  activity_date  | poly_geom
 #'    ------------------------------------------------------------------------
-#'     110  | 0.5           | 0.5           | 2013 | POLYGON ((0 0, 0 1, 1 1, 1 ...
-#'     174  | 0.5           | 0.5           | 2014 | POLYGON ((0 0, 0 1, 1 1, 1 ...
-#'     175  | 0.5           | 0.5           | 2023 | POLYGON ((0 0, 0 1, 1 1, 1 ...
+#'     110  | 0.5           | 0.5           | 2013            | POLYGON ((0 0, 0 1, 1 1, 1 ...
+#'     174  | 0.5           | 0.5           | 2014            | POLYGON ((0 0, 0 1, 1 1, 1 ...
+#'     175  | 0.5           | 0.5           | 2023            | POLYGON ((0 0, 0 1, 1 1, 1 ...
 #' }
 #' @return The function return ggplot R plot.
 #' @export
 density_dcp_1deg <- function(dataframe) {
   # 0 - Global variables assignement ----
-  year <- NULL
+  activity_date <- NULL
   count <- NULL
   # 1 - Data design ----
   dataframe <- sf::st_as_sf(dataframe, wkt = "poly_geom")
   sf::st_crs(dataframe) <- 4326
-  report_year <- max(dataframe$year)
+  report_year <- max(dataframe$activity_date)
   years <- c((report_year - 8):report_year)
   # 2 - Graphic design ----
   ocean_xlim <- c(-40, 20)
   ocean_ylim <- c(-30, 30)
   func_plot_density <- function(dt, yr) {
     data <- dt %>%
-      dplyr::filter(year == !!yr)
+      dplyr::filter(activity_date == !!yr)
 
     p <- ggplot2::ggplot() +
       ggplot2::geom_sf(data = rnaturalearth::ne_countries(returnclass = "sf"),
@@ -70,8 +70,7 @@ density_dcp_1deg <- function(dataframe) {
                                                                                          face = "bold",
                                                                                          colour = "black",
                                                                                          angle = 0))) +
-      ggplot2::ggtitle(year)
-
+      ggplot2::ggtitle(yr)
     return(p)
   }
 

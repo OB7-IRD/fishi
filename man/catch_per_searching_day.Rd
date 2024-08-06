@@ -34,15 +34,15 @@ The input dataframe must contain all these columns for the function to work [\hr
 
 Dataframe 1:
 \preformatted{
-   activity_date | species_code | school_code | set_duration | positive_set | total_set | total_catch_weight | total_hour_fished
+   activity_date | species_code | school_type | set_duration | positive_set | total_set | total_catch_weight | total_hour_fished
    -------------------------------------------------------------------------------------------------------------------------------
-   1999-07-09    | 2            | FOB         | 3.54        | 1            | 1         | 119.0              | 12.1
-   1999-07-09    | 1            | FOB         | 3.54        | 1            | 1         | 20.6               | 12.1
-   1999-07-09    | 1            | FOB         | 3.54        | 1            | 1         | 24.4               | 12.1
+   1999-07-09    | 2            | FOB         | 3.54         | 1            | 1         | 119.0              | 12.1
+   1999-07-09    | 1            | FOB         | 3.54         | 1            | 1         | 20.6               | 12.1
+   1999-07-09    | 1            | FOB         | 3.54         | 1            | 1         | 24.4               | 12.1
 }
 Dataframe 2:
 \preformatted{
-   activity_date | school_code | set_duration | positive_set | total_set | total_hour_fished
+   activity_date | school_type | set_duration | positive_set | total_set | total_hour_fished
    -----------------------------------------------------------------------------------------
    2010-03-06    | FOB         | 0            | 0            | 0         |  1.00
    2010-12-04    | FOB         | 0            | 0            | 0         | 11.8

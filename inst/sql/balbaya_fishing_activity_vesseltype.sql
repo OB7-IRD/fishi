@@ -26,7 +26,7 @@ SELECT
 		WHEN tb.c_tban::numeric IN (1) THEN 'FOB'
 	 	WHEN tb.c_tban::numeric IN (2) THEN 'FSC'
 		WHEN tb.c_tban::numeric IN (3) THEN 'UND'
-	 END AS school_code
+	 END AS school_type
 	,a.cwp11_act
 	,b.v_ct_m3::numeric AS catch
 	,o.c_ocea::numeric AS ocean_code

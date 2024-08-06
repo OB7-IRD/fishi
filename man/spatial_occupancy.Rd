@@ -29,7 +29,7 @@ Changes in the spatial extent of the fishery over time. Annual number of 1-degre
 \details{
 The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:
 \preformatted{
-   activity_date | cwp11_act | positive_set | total_set | total_hour_fished | school_code
+   activity_date | cwp11_act | positive_set | total_set | total_hour_fished | school_type
    --------------------------------------------------------------------------------------
    2010-03-06    | 404004    | 0            | 0         |  7.0              | UND
    2010-12-04    | 404005    | 0            | 0         | 24.0              | FSC

@@ -39,26 +39,26 @@ Check the consistency between logbook and observer data (Positions, number of se
 The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:
 Dataframe observe:
 \preformatted{
-   program          | vessel | observer_name | trip_end_date | observation_date | observation_time | vessel_activity_code | latitude | longitude | operation_on_object_code | fob_type_when_arriving | activity_id
+   program          | vessel_label | observer_name | trip_end_date | observation_date | observation_time | vessel_activity_code | latitude | longitude | operation_on_object_code | fob_type_when_arriving | activity_id
    ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-   DCF Senne (IRD)  | 887    | Martin        | 2022-05-03    | 2022-04-13       | 14:45:00         | 16                   | -3.7600  | 57.1900   | NA                       | /                      | fr.ird.data.ps.observation.Activity#164986
-   DCF Senne (IRD)  | 887    | Martin        | 2022-05-03    | 2022-04-13       | 02:15:00         | 0                    | -4.6248  | 55.4552   | NA                       | /                      | fr.ird.data.ps.observation.Activity#164987
-   DCF Senne (IRD)  | 887    | Martin        | 2022-05-03    | 2022-04-13       | 10:18:00         | 13                   | -3.9707  | 57.0382   | 2                        | DFAD                   | fr.ird.data.ps.observation.Activity#164988
+   DCF Senne (IRD)  | AVEL VAD     | Martin        | 2022-05-03    | 2022-04-13       | 14:45:00         | 16                   | -3.7600  | 57.1900   | NA                       | /                      | fr.ird.data.ps.observation.Activity#164986
+   DCF Senne (IRD)  | BELLE ISLE   | Martin        | 2022-05-03    | 2022-04-13       | 02:15:00         | 0                    | -4.6248  | 55.4552   | NA                       | /                      | fr.ird.data.ps.observation.Activity#164987
+   DCF Senne (IRD)  | BELLE ISLE   | Martin        | 2022-05-03    | 2022-04-13       | 10:18:00         | 13                   | -3.9707  | 57.0382   | 2                        | DFAD                   | fr.ird.data.ps.observation.Activity#164988
 }
 Dataframe logbook:
 \preformatted{
-   vessel    | latitude | longitude | date        | number | vessel_activity_code | activity_id
+   vessel_label | latitude | longitude | activity_date | number | vessel_activity_code | activity_id
    --------------------------------------------------------------------------------------------------------------------
-   AVEL VAD  | 4.9668   | 59.2168   | 2022-01-01  | 1      |  6                   | fr.ird.data.ps.logbook.Activity#170
-   AVEL VAD  | 4.9668   | 59.2175   | 2022-01-01  | 2      | 13                   | fr.ird.data.ps.logbook.Activity#171
-   AVEL VAD  | 5.0168   | 59.2785   | 2022-01-01  | 3      | 13                   | fr.ird.data.ps.logbook.Activity#172
+   AVEL VAD     | 4.9668   | 59.2168   | 2022-01-01    | 1      |  6                   | fr.ird.data.ps.logbook.Activity#170
+   AVEL VAD     | 4.9668   | 59.2175   | 2022-01-01    | 2      | 13                   | fr.ird.data.ps.logbook.Activity#171
+   AVEL VAD     | 5.0168   | 59.2785   | 2022-01-01    | 3      | 13                   | fr.ird.data.ps.logbook.Activity#172
 }
 Dataframe vms:
 \preformatted{
-   vessel  |  date        | longitude | latitude | time     |
+   vessel_label |  activity_date | longitude | latitude | time     |
    -------------------------------------------------------------
-   887     |  2022-04-13  | 59.197    | 4.909    | 01:05:00 |
-   887     |  2022-04-13  | 59.654    | 4.712    | 01:10:00 |
-   887     |  2022-04-13  | 59.951    | 4.632    | 02:25:00 |
+   AVEL VAD     |  2022-04-13    | 59.197    | 4.909    | 01:05:00 |
+   BELLE RIVE   |  2022-04-13    | 59.654    | 4.712    | 01:10:00 |
+   BELLE RIVE   |  2022-04-13    | 59.951    | 4.632    | 02:25:00 |
 }
 }
