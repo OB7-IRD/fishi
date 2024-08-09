@@ -1,6 +1,6 @@
 #' @name percentage_coverage
-#' @title Size distribution of major tuna catches
-#' @description Size distribution of major tuna catches (in percentage of the total number of fishes).
+#' @title Percentage of well cover
+#' @description Percentage of well cover
 #' @param dataframe {\link[base]{data.frame}} expected. 'Csv' or 'output' of the function {\link[furdeb]{data_extraction}}, which must be done before using the bio_size_tuna() function.
 #' @param report_year {\link[base]{integer}} expected. Year of the statistical report.
 #' @param vesseltype {\link[base]{character}} expected. 'SV', 'BB' and/or 'PS'. PS by default.
