@@ -2,6 +2,7 @@
 #' @title Density of dcp 1 deg
 #' @description Map of the the density of deployments of dFADs 1 deg (Only for OA for the moment)
 #' @param dataframe {\link[base]{data.frame}} expected. 'Csv' or 'output' of the function {\link[furdeb]{data_extraction}}, which must be done before using the density_dcp_1deg() function.
+#' @param ocean {\link[base]{integer}} expected. Ocean code to choose the ocean, 1 by default.
 #' @details
 #' The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:
 #' \preformatted{
@@ -13,7 +14,8 @@
 #' }
 #' @return The function return ggplot R plot.
 #' @export
-density_dcp_1deg <- function(dataframe) {
+density_dcp_1deg <- function(dataframe,
+                             ocean = 1) {
   # 0 - Global variables assignement ----
   activity_date <- NULL
   count <- NULL
@@ -23,8 +25,13 @@ density_dcp_1deg <- function(dataframe) {
   report_year <- max(dataframe$activity_date)
   years <- c((report_year - 8):report_year)
   # 2 - Graphic design ----
-  ocean_xlim <- c(-40, 20)
-  ocean_ylim <- c(-30, 30)
+  if (ocean == 1) {
+    ocean_xlim <- c(-40, 20)
+    ocean_ylim <- c(-30, 30)
+  } else if (ocean == 2) {
+    ocean_xlim <- c(30, 90)
+    ocean_ylim <- c(-30, 20)
+  }
   func_plot_density <- function(dt, yr) {
     data <- dt %>%
       dplyr::filter(activity_date == !!yr)
