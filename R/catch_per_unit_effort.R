@@ -253,6 +253,26 @@ catch_per_unit_effort <- function(dataframe1,
                       size = 5,
                       color = "black") +
     ggplot2::scale_x_continuous(breaks = unique(dataframe$year))
+  # Add title conditionally
+  if (title == TRUE) {
+    title <- paste0("Annual catch rates (in t per searching day) of the ",
+                    country_legend,
+                    " ",
+                    vessel_type_legend,
+                    " fishing fleet on ",
+                    "\n",
+                    fishing_type,
+                    " fishing",
+                    "mode schools in the ",
+                    ocean_legend,
+                    " ocean during ",
+                    min(time_period),
+                    "-",
+                    max(time_period),
+                    ".")
+    ggplot_graph <- ggplot_graph +
+      ggplot2::ggtitle(title)
+  }
   if (graph_type == "plot") {
     return(ggplot_graph)
   } else if (graph_type == "plotly") {
@@ -261,21 +281,7 @@ catch_per_unit_effort <- function(dataframe1,
     # Add a title
     if (title == TRUE) {
       plotly_graph <- plotly_graph %>%
-        plotly::layout(title = list(text = paste0("Annual catch rates (in t per searching day) of the ",
-                                                  country_legend,
-                                                  " ",
-                                                  vessel_type_legend,
-                                                  " fishing fleet on ",
-                                                  "\n",
-                                                  fishing_type,
-                                                  " fishing",
-                                                  "mode schools in the ",
-                                                  ocean_legend,
-                                                  " ocean during ",
-                                                  min(time_period),
-                                                  "-",
-                                                  max(time_period),
-                                                  "."),
+        plotly::layout(title = list(text = title,
                                     font = list(size = 15)),
                        margin = list(t = 120))
 

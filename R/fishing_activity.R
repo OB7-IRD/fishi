@@ -185,6 +185,22 @@ fishing_activity <- function(dataframe,
 
                                 sec.axis = ggplot2::sec_axis(~ . / perc,
                                                              name = "% FOB-associated sets"))
+  # Add title conditionally
+  if (title == TRUE) {
+    title <- paste0("Fishing operations. Annual number of fishing sets in the ",
+                    country_legend, " ",
+                    vessel_type_legend,
+                    " fishery \n",
+                    "on FOB-associated and free-swimming tuna schools during ",
+                    min(time_period),
+                    "-",
+                    max(time_period),
+                    " in the ",
+                    ocean_legend,
+                    " ocean.")
+    ggplot_graph <- ggplot_graph +
+      ggplot2::ggtitle(title)
+  }
   if (graph_type == "plot") {
     return(ggplot_graph)
   } else if (graph_type == "plotly") {
@@ -192,17 +208,7 @@ fishing_activity <- function(dataframe,
     # Add a title
     if (title == TRUE) {
       plotly_graph <- plotly_graph %>%
-        plotly::layout(title = list(text = paste0("Fishing operations. Annual number of fishing sets in the ",
-                                                  country_legend, " ",
-                                                  vessel_type_legend,
-                                                  " fishery \n",
-                                                  "on FOB-associated and free-swimming tuna schools during ",
-                                                  min(time_period),
-                                                  "-",
-                                                  max(time_period),
-                                                  " in the ",
-                                                  ocean_legend,
-                                                  " ocean."),
+        plotly::layout(title = list(text = title,
                                     font = list(size = 15)),
                        margin = list(t = 120))
 
