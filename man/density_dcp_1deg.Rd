@@ -4,10 +4,12 @@
 \alias{density_dcp_1deg}
 \title{Density of dcp 1 deg}
 \usage{
-density_dcp_1deg(dataframe)
+density_dcp_1deg(dataframe, ocean = 1)
 }
 \arguments{
 \item{dataframe}{{\link[base]{data.frame}} expected. 'Csv' or 'output' of the function {\link[furdeb]{data_extraction}}, which must be done before using the density_dcp_1deg() function.}
+
+\item{ocean}{{\link[base]{integer}} expected. Ocean code to choose the ocean, 1 by default.}
 }
 \value{
 The function return ggplot R plot.
