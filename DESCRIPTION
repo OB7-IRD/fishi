@@ -23,7 +23,6 @@ Authors@R:
               email = "julien.lebranchu@ird.fr",
               role = c("aut"),
               comment = c(ORCID = "0000-0002-7759-0534")),
-
         person(given = "IRD - Ob7",
               family = "Observatory of Exploited Tropical Pelagic Ecosystems",
               email = "ob7@ird.fr",
