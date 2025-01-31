@@ -106,6 +106,18 @@ fishing_time <- function(dataframe,
                    x = "",
                    y = "Fleet Operational Hours (x 1000 hours)") +
      ggplot2::scale_x_continuous(breaks = unique(fishing_time_by_year$year)))
+  # Add title conditionally
+  if (title == TRUE) {
+    title <- paste0("Time spent by the ",
+                    country_legend,
+                    " purse seine fleet in ",
+                    report_year,
+                    " in the ",
+                    ocean_legend,
+                    " ocean.")
+    ggplot_table_time <- ggplot_table_time +
+      ggplot2::ggtitle(title)
+  }
   if (graph_type == "plot") {
     return(ggplot_table_time)
   } else if (graph_type == "plotly") {
@@ -117,13 +129,7 @@ fishing_time <- function(dataframe,
                                    y = 0.95))
     if (title == TRUE) {
       (plotly_graph <- plotly_graph %>%
-         plotly::layout(title = list(text = paste0("Time spent by the ",
-                                                   country_legend,
-                                                   " purse seine fleet in ",
-                                                   report_year,
-                                                   " in the ",
-                                                   ocean_legend,
-                                                   " ocean."),
+         plotly::layout(title = list(text = title,
                                      font = list(size = 15)),
                         margin = list(t = 120)))
 

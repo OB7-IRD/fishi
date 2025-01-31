@@ -188,6 +188,22 @@ fishing_capacity <- function(dataframe,
     ggplot2::scale_y_continuous(name = "Number of vessel",
                                 sec.axis = ggplot2::sec_axis(~ . / 2,
                                                              name = "Carrying capacity (x1000m^3)"))
+  # Add title conditionally
+  if (title == TRUE) {
+    title <- paste0("Fishing capacity of the ",
+                    country_legend, " ",
+                    vessel_type_legend,
+                    " fleet in the ",
+                    ocean_legend,
+                    " ocean. Annual changes in the", "\n",
+                    "number of purse seiners by tonnage categories during ",
+                    min(time_period),
+                    "-",
+                    max(time_period),
+                    ".")
+    ggplot_graph <- ggplot_graph +
+      ggplot2::ggtitle(title)
+  }
   if (graph_type == "plot") {
     return(ggplot_graph)
   } else if (graph_type == "plotly") {
@@ -195,17 +211,7 @@ fishing_capacity <- function(dataframe,
     # Add a title
     if (title == TRUE) {
       plotly_graph <- plotly_graph %>%
-        plotly::layout(title = list(text = paste0("Fishing capacity of the ",
-                                                  country_legend, " ",
-                                                  vessel_type_legend,
-                                                  " fleet in the ",
-                                                  ocean_legend,
-                                                  " ocean. Annual changes in the", "\n",
-                                                  "number of purse seiners by tonnage categories during ",
-                                                  min(time_period),
-                                                  "-",
-                                                  max(time_period),
-                                                  "."),
+        plotly::layout(title = list(text = title,
                                     font = list(size = 17)),
                        margin = list(t = 120))
     }

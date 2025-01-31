@@ -258,6 +258,23 @@ catch_per_searching_day <- function(dataframe1,
                       size = 5,
                       color = "black") +
     ggplot2::scale_x_continuous(breaks = unique(dataframe$year))
+  # Add title conditionally
+  if (title == TRUE) {
+    ggplot_graph <- ggplot_graph +
+      ggplot2::ggtitle(paste0("Annual number of catch per positive set on ",
+                              fishing_type,
+                              " fishing mode schools for the ",
+                              country_legend,
+                              "\n",
+                              vessel_type_legend,
+                              " fishing fleet in the ",
+                              ocean_legend,
+                              " ocean during ",
+                              min(time_period),
+                              "-",
+                              max(time_period),
+                              "."))
+  }
   if (graph_type == "plot") {
     return(ggplot_graph)
   } else if (graph_type == "plotly") {

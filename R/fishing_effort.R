@@ -187,6 +187,21 @@ fishing_effort <- function(dataframe,
      ggplot2::ylim(0.5,
                    5) +
      ggplot2::scale_x_continuous(breaks = unique(table_effort$year)))
+  # Add title conditionally
+  if (title == TRUE) {
+    title <- paste0("Changes in nominal effort over time. Annual total number of fishing and searching ", "\n",
+                    "days for the ",
+                    country_legend, " ",
+                    vessel_type_legend,
+                    " in the ",
+                    ocean_legend,
+                    " ocean during ",
+                    min(time_period),
+                    "-",
+                    max(time_period), ".")
+    ggplot_table_effort <- ggplot_table_effort +
+      ggplot2::ggtitle(title)
+  }
   if (graph_type == "plot") {
     return(ggplot_table_effort)
   } else if (graph_type == "plotly") {
@@ -194,16 +209,7 @@ fishing_effort <- function(dataframe,
     # Add a title
     if (title == TRUE) {
       plotly_graph <- plotly_graph %>%
-        plotly::layout(title = list(text = paste0("Changes in nominal effort over time. Annual total number of fishing and searching ", "\n",
-                                                  "days for the ",
-                                                  country_legend, " ",
-                                                  vessel_type_legend,
-                                                  " in the ",
-                                                  ocean_legend,
-                                                  " ocean during ",
-                                                  min(time_period),
-                                                  "-",
-                                                  max(time_period), "."),
+        plotly::layout(title = list(text = title,
                                     font = list(size = 17)),
                        margin = list(t = 120))
 

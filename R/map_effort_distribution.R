@@ -157,6 +157,20 @@ map_effort_distribution <- function(dataframe,
                         linetype = "dashed",
                         color = "darkgrey",
                         linewidth = 0.2)
+  # Add title conditionally
+  if (title == TRUE) {
+    title <- paste0("Spatial distribution of fishing effort (in searching days) of the ",
+                    country_legend, " ",
+                    vessel_type_legend, "\n", " fishing fleet in ",
+                    ifelse(test = length(x = time_period) != 1,
+                           yes  = paste0(min(time_period), "-", max(time_period)),
+                           no   = time_period),
+                    ", in the ",
+                    ocean_legend,
+                    " ocean.")
+    map <- map +
+      ggplot2::ggtitle(title)
+  }
   if (graph_type == "plot") {
     return(map)
   } else if (graph_type == "plotly") {
@@ -165,15 +179,7 @@ map_effort_distribution <- function(dataframe,
     # Add a title
     if (title == TRUE) {
       plotly_map <- plotly_map %>%
-        plotly::layout(title = list(text = paste0("Spatial distribution of fishing effort (in searching days) of the ",
-                                                  country_legend, " ",
-                                                  vessel_type_legend, "\n", " fishing fleet in ",
-                                                  ifelse(test = length(x = time_period) != 1,
-                                                         yes  = paste0(min(time_period), "-", max(time_period)),
-                                                         no   = time_period),
-                                                  ", in the ",
-                                                  ocean_legend,
-                                                  " ocean."),
+        plotly::layout(title = list(text = title,
                                     font = list(size = 15)),
                        margin = list(t = 120))
     }

@@ -212,6 +212,25 @@ spatial_occupancy <- function(dataframe,
                        size = 5,
                        color = "black") +
      ggplot2::scale_x_continuous(breaks = unique(table_occ$year)))
+  # Add title conditionally
+  if (title == TRUE) {
+    title <- paste0("Changes in the spatial extent of the fishery over time. Annual number of 1-degree ",
+                    "\n",
+                    "squares explored by each vessel of the ",
+                    country_legend,
+                    " ",
+                    vessel_type_legend,
+                    " fishing fleet during ",
+                    "\n",
+                    min(time_period),
+                    "-",
+                    max(time_period),
+                    " in the ",
+                    ocean_legend,
+                    " ocean.")
+    ggplot_table_occ <- ggplot_table_occ +
+      ggplot2::ggtitle(title)
+  }
   if (graph_type == "plot") {
     return(ggplot_table_occ)
   } else if (graph_type == "plotly") {
@@ -220,20 +239,7 @@ spatial_occupancy <- function(dataframe,
     # Add a title
     if (title == TRUE) {
       plotly_graph <- plotly_graph %>%
-        plotly::layout(title = list(text = paste0("Changes in the spatial extent of the fishery over time. Annual number of 1-degree ",
-                                                  "\n",
-                                                  "squares explored by each vessel of the ",
-                                                  country_legend,
-                                                  " ",
-                                                  vessel_type_legend,
-                                                  " fishing fleet during ",
-                                                  "\n",
-                                                  min(time_period),
-                                                  "-",
-                                                  max(time_period),
-                                                  " in the ",
-                                                  ocean_legend,
-                                                  " ocean."),
+        plotly::layout(title = list(text = title,
                                     font = list(size = 15)),
                        margin = list(t = 120))
 
