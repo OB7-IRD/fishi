@@ -66,6 +66,11 @@ fishing_effort <- function(dataframe,
     dplyr::mutate(year = lubridate::year(x = activity_date),
                   landing_in_activity_year = dplyr::case_when(landing_date == activity_date ~ 1,
                                                               TRUE ~ 0))
+
+  #modif Added By Taha 09/10/2025 . Replace sum by mean for landing_in_activity_year, with an additional criterion to ignore zeros.this allows to :
+  # Fixes trip duplications in recent data (2024) caused by multiple activities on the same landing day.
+  # Also corrects trip duplications in earlier years when multiple school type are declared for the same trip (ex: FSC and UND).
+
   #Adding columns by condition (vtmer, vtpec, ndurcal, nbdays)
   fishing_effort_t2 <- fishing_effort_t1 %>%
     dplyr::group_by(ocean_code,
@@ -84,8 +89,7 @@ fishing_effort <- function(dataframe,
                      "set_duration" = sum(set_duration,
                                           na.rm = TRUE),
                      "nb_days" = max(activity_date) - min(activity_date),
-                     "nb_landings_in_activity_year" = sum(landing_in_activity_year,
-                                                          na.rm = TRUE),
+                     "nb_landings_in_activity_year" = mean(landing_in_activity_year[landing_in_activity_year != 0], na.rm = TRUE),
                      .groups = "drop")
   #Group rows by conditions
   fishing_effort_t2b <- fishing_effort_t2 %>%
