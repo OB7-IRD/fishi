@@ -34,7 +34,11 @@ density_dcp_1deg <- function(dataframe,
   }
   func_plot_density <- function(dt, yr) {
     data <- dt %>%
-      dplyr::filter(activity_date == !!yr)
+      dplyr::filter(activity_date == !!yr) %>%
+      # For legend scale
+      dplyr::mutate(count=ifelse(count>1000,
+                                 1000,
+                                 count))
 
     p <- ggplot2::ggplot() +
       ggplot2::geom_sf(data = rnaturalearth::ne_countries(returnclass = "sf"),
@@ -54,13 +58,25 @@ density_dcp_1deg <- function(dataframe,
                        ggplot2::aes(fill = count),
                        lwd = 0,
                        color = NA) +
-      ggplot2::scale_fill_gradient(low = "cornsilk1",
-                                   high = "brown") +
+      ggplot2::scale_fill_gradientn(colours = c("cornsilk1",
+                                                "burlywood1",
+                                                "lightsalmon",
+                                                "coral",
+                                                "coral3",
+                                                "brown",
+                                                "brown4",
+                                                "darkred"),
+                                    limits=c(0, 1000),
+                                    breaks=c(0, 100, 200, 400, 600, 800,
+                                             1000),
+                                    labels=c("0",  "100", "200", "400","600",
+                                             "800", ">1000")) +
       ggplot2::coord_sf(xlim = ocean_xlim,
                         ylim = ocean_ylim) +
-      ggplot2::theme(legend.position = c(0.14, 0.3),
-                     legend.key.size = ggplot2::unit(0.3, "cm"),
+      ggplot2::theme(legend.position = "right",
+                     legend.key.size = ggplot2::unit(0.5, "cm"),
                      legend.key.width = ggplot2::unit(0.3, "cm"),
+                     legend.text = ggplot2::element_text(size = 7),
                      plot.title = ggplot2::element_text(hjust = 0.5,
                                                         color = "black",
                                                         size = 12,
@@ -73,7 +89,7 @@ density_dcp_1deg <- function(dataframe,
                                                  "lines")) +
       ggplot2::guides(fill = ggplot2::guide_colorbar(title = "Number",
                                                      title.position = "top",
-                                                     title.theme = ggplot2::element_text(size = 6,
+                                                     title.theme = ggplot2::element_text(size = 7,
                                                                                          face = "bold",
                                                                                          colour = "black",
                                                                                          angle = 0))) +
@@ -88,6 +104,9 @@ density_dcp_1deg <- function(dataframe,
                               labels = NULL,
                               widths = rep(1, length(plots)),
                               ncol = 3,
-                              nrow = 3)
+                              nrow = 3,
+                              common.legend = TRUE,
+                              legend="right")
   return(figure)
 }
+
