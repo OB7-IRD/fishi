@@ -1,12 +1,12 @@
 Package: fishi
 Type: Package
 Title: Package Fisheries Indicators
-Version: 0.9.3
+Version: 0.9.4
 Authors@R: 
     c(person(given = "Clara",
               family = "Lerebourg",
               email = "clara.lerebourg@ird.fr",
-              role = c("aut", "cre"),
+              role = c("aut"),
               comment = c(ORCID = "0000-0003-0589-8932")),
         person(given = "Julien",
               family = "Lebranchu",
@@ -26,12 +26,12 @@ Authors@R:
         person(given = "Taha",
             family = "Imzilen",
             email = "taha.imzilen@ird.fr",
-            role = c("aut"),
+            role = c("aut", "cre"),
             comment = c(ORCID = "0000-0001-8257-9113")),
         person(given = "Jeanne",
            family = "Clément",
            email = "jeanne.clement@ird.fr",
-           role = c("aut", "cre"),
+           role = c("aut"),
            comment = c(ORCID = "0000-0002-5228-5015")),
         person(given = "IRD - Ob7",
               family = "Observatory of Exploited Tropical Pelagic Ecosystems",
