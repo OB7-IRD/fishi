@@ -19,12 +19,15 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Clara Lerebourg \email{clara.lerebourg@ird.fr} (\href{https://orcid.org/0000-0003-0589-8932}{ORCID})
+\strong{Maintainer}: Taha Imzilen \email{taha.imzilen@ird.fr} (\href{https://orcid.org/0000-0001-8257-9113}{ORCID})
 
 Authors:
 \itemize{
-  \item Mathieu Depetris \email{mathieu.depetris@ird.fr} (\href{https://orcid.org/0000-0001-8080-0531}{ORCID})
+  \item Clara Lerebourg \email{clara.lerebourg@ird.fr} (\href{https://orcid.org/0000-0003-0589-8932}{ORCID})
   \item Julien Lebranchu \email{julien.lebranchu@ird.fr} (\href{https://orcid.org/0000-0002-7759-0534}{ORCID})
+  \item Mathieu Depetris \email{mathieu.depetris@ird.fr} (\href{https://orcid.org/0000-0001-8080-0531}{ORCID})
+  \item Antoine Duparc \email{antoine.duparc@ird.fr} (\href{https://orcid.org/0000-0002-3919-8208}{ORCID})
+  \item Jeanne Clément \email{jeanne.clement@ird.fr} (\href{https://orcid.org/0000-0002-5228-5015}{ORCID})
 }
 
 Other contributors:
