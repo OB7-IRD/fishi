@@ -64,10 +64,10 @@ map_effort_distribution <- function(dataframe,
   # effort per ocean
   if (ocean == 1) {
     datafile <- t2 %>%
-      dplyr::mutate(effort = effort / 12)
+      dplyr::mutate(effort = round(effort / 12), 1)
   } else if (ocean == 2) {
     datafile <- t2 %>%
-      dplyr::mutate(effort = effort / 13)
+      dplyr::mutate(effort = round(effort / 13, 1))
   }
   datafile[datafile == 0] <- 1e-8
   # 3 - Legend design ----
@@ -97,15 +97,15 @@ map_effort_distribution <- function(dataframe,
   long <- quad2pos(as.numeric(datafile$cwp11_act + 5 * 1e6))$x
   if (title == TRUE) {
     #Ocean
-    ocean_legend <- code_manipulation(data         = dataframe$ocean_code,
+    ocean_legend <- code_manipulation(data = dataframe$ocean_code,
                                       referential  = "ocean",
                                       manipulation = "legend")
     #vessel
-    vessel_type_legend <- code_manipulation(data         = dataframe$vessel_type_code,
+    vessel_type_legend <- code_manipulation(data = dataframe$vessel_type_code,
                                             referential  = "vessel_simple_type",
                                             manipulation = "legend")
     #country
-    country_legend <- code_manipulation(data         = dataframe$country_code,
+    country_legend <- code_manipulation(data = dataframe$country_code,
                                         referential  = "country",
                                         manipulation = "legend")
   }
@@ -125,10 +125,11 @@ map_effort_distribution <- function(dataframe,
   datafile$long <- quad2pos(as.numeric(datafile$cwp11_act + 5 * 1e6))$x
   world_boundaries <- rnaturalearth::ne_countries(returnclass = "sf",
                                                   scale       = "medium")
-  datafile$effort <- round(datafile$effort, 3)
+  datafile$effort <- round(datafile$effort, 1)
   map <- ggplot2::ggplot() +
     ggplot2::theme(legend.position = "top",
                    legend.justification = "right",
+                   legend.key.size = ggplot2::unit(0.7, "cm"),
                    panel.background = ggplot2::element_rect(fill = "white"),
                    panel.border = ggplot2::element_rect(color = "black",
                                                         fill = NA,
@@ -148,7 +149,9 @@ map_effort_distribution <- function(dataframe,
     ggplot2::guides(size = "none") +
     ggplot2::labs(color = "Effort in d") +
     ggplot2::theme(panel.background = ggplot2::element_rect(fill = "white"),
-                   panel.border = ggplot2::element_rect(color = "black", fill = NA, size = 0.3))  +
+                   panel.border = ggplot2::element_rect(color = "black",
+                                                        fill = NA,
+                                                        linewidth = 0.3))  +
     ggplot2::geom_hline(yintercept = ocean_yintercept,
                         linetype = "dashed",
                         color = "darkgrey",
