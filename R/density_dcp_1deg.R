@@ -43,6 +43,7 @@ density_dcp_1deg <- function(dataframe,
     p <- ggplot2::ggplot() +
       ggplot2::geom_sf(data = rnaturalearth::ne_countries(returnclass = "sf"),
                        fill = "gray90",
+                       linewidth=2,
                        color = NA) +
       ggplot2::geom_sf(data = rnaturalearth::ne_coastline(returnclass = "sf")) +
       ggplot2::ylab("") +
@@ -56,6 +57,7 @@ density_dcp_1deg <- function(dataframe,
                                                by = 10)) +
       ggplot2::geom_sf(data = data,
                        ggplot2::aes(fill = count),
+                       alpha=0.75,
                        lwd = 0,
                        color = NA) +
       ggplot2::scale_fill_gradientn(colours = c("cornsilk1",
@@ -74,8 +76,8 @@ density_dcp_1deg <- function(dataframe,
       ggplot2::coord_sf(xlim = ocean_xlim,
                         ylim = ocean_ylim) +
       ggplot2::theme(legend.position = "right",
-                     legend.key.size = ggplot2::unit(0.5, "cm"),
-                     legend.key.width = ggplot2::unit(0.3, "cm"),
+                     legend.key.size = ggplot2::unit(0.65, "cm"),
+                     legend.key.width = ggplot2::unit(0.35, "cm"),
                      legend.text = ggplot2::element_text(size = 7),
                      plot.title = ggplot2::element_text(hjust = 0.5,
                                                         color = "black",
@@ -89,7 +91,7 @@ density_dcp_1deg <- function(dataframe,
                                                  "lines")) +
       ggplot2::guides(fill = ggplot2::guide_colorbar(title = "Number",
                                                      title.position = "top",
-                                                     title.theme = ggplot2::element_text(size = 7,
+                                                     title.theme = ggplot2::element_text(size = 8,
                                                                                          face = "bold",
                                                                                          colour = "black",
                                                                                          angle = 0))) +
