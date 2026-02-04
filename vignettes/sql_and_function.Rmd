@@ -2,7 +2,7 @@
 title: "Sql and functions"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{sql_and_function}
+  %\VignetteIndexEntry{Sql and functions}
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{knitr::rmarkdown}
 editor_options: 

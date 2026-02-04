@@ -1,14 +1,16 @@
 -------------------------------------------------------------------------------------------
 -- SAMPLE - TRIP - VESSEL - WELL - OBSERVE
 -------------------------------------------------------------------------------------------
--- Generic extraction of trip, vessel and well sampled from Observe (observation)
+-- Generic extraction of number of sets covered by observation from Observe (observation)
 -------------------------------------------------------------------------------------------
 -- Clara Lerebourg <clara.lerebourg@ird.fr>
 -------------------------------------------------------------------------------------------
 -- 2023 -- v1.0 -- CL -- initial version
 -------------------------------------------------------------------------------------------
+-- 2026 -- v2.0 -- JC --
+-------------------------------------------------------------------------------------------
 SELECT
-	t.topiaid 
+	t.topiaid
 	,o.label1 AS ocean_label
 	,t.startdate AS departure
 	,t.enddate AS arrival
@@ -29,7 +31,7 @@ SELECT
 	,h1.label1 AS port_departure
 	,h2.label1 AS port_arrival
 
-FROM ps_observation.sample s2 
+FROM ps_observation.sample s2
 	INNER JOIN ps_observation.set s ON (s.topiaid = s2.set)
 	INNER JOIN ps_observation.activity a ON (s.activity = a.topiaid)
 	INNER JOIN ps_observation.route r ON (a.route = r.topiaid)
