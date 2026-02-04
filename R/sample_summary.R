@@ -70,6 +70,7 @@ sample_summary <- function(dataframe,
   total_landing <- NULL
   sample_number <- NULL
   number_of_samples <- NULL
+  sample_type <- NULL
   # 1 - Arguments verification ----
   # data type
   if (codama::r_type_checking(r_object = data_type,
@@ -433,15 +434,18 @@ sample_summary <- function(dataframe,
                          port_departure,
                          arrival,
                          port_arrival,
-                         total_landing) %>%
+                         total_landing,
+                         sample_type) %>%
          dplyr::summarize("number_of_samples" = dplyr::n_distinct(sample_number,
                                                                   na.rm = TRUE)) %>%
          dplyr::group_by(landing_year,
                          port_arrival,
                          fleet,
                          vessel_type,
-                         vessel_label) %>%
+                         vessel_label,
+                         sample_type) %>%
          dplyr::summarize("nb_trip" = sum(number_of_samples != 0)))
+
     } else if (selected_variable == "well") {
       (sample_summarize <- dataframe %>%
          dplyr::group_by(ocean_label,
@@ -453,12 +457,14 @@ sample_summary <- function(dataframe,
                          port_departure,
                          arrival,
                          port_arrival,
-                         vessel_well_number) %>%
+                         vessel_well_number,
+                         sample_type) %>%
          dplyr::summarize(.groups = "drop") %>%
          dplyr::group_by(landing_year,
                          fleet,
                          vessel_type,
-                         vessel_label) %>%
+                         vessel_label,
+                         sample_type) %>%
          dplyr::summarize("nb_well" = dplyr::n(),
                           .groups = "drop"))
     } else if (selected_variable == "vessel") {
@@ -472,12 +478,14 @@ sample_summary <- function(dataframe,
                          port_departure,
                          arrival,
                          port_arrival,
-                         total_landing) %>%
+                         total_landing,
+                         sample_type) %>%
          dplyr::summarize(.groups = "drop") %>%
          dplyr::group_by(landing_year,
                          fleet,
                          vessel_type,
-                         vessel_label) %>%
+                         vessel_label,
+                         sample_type) %>%
          dplyr::summarize(.groups = "drop"))
     }
     # 3 - Graphic design ----
