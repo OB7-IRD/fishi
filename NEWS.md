@@ -1,3 +1,15 @@
+# fishi 0.9.6 -2026-03-11
+
+## Changed
+
+* Rename function `catch_per_searching_day` as `catch_per_positive_set` because it returns catch per positive set. 
+
+* Replace function `dplyr::summarise` by `dplyr::rename` or `dplyr::reframe` as required for `R >= 4.5.0` in `fishi` functions: 
+  - `catch_per_unit_effort`
+  - `catch_per_positive_set`
+  - `catch_per_searching_day`=`catch_per_unit_effort` for now
+
+
 # fishi 0.9.5 -2026-01-7
 
 ## Changed
