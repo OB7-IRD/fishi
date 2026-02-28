@@ -294,11 +294,11 @@ catch_per_unit_effort <- function(dataframe1,
   } else if (graph_type == "table") {
     dataframe <- round(dataframe, 2)
     dataframe <- dataframe %>%
-      dplyr::summarise(Year = year,
-                       YFT = yft,
-                       SKJ = skj,
-                       BET = bet,
-                       TOTAL = total)
+      dplyr::reframe(Year = year,
+                     YFT = yft,
+                     SKJ = skj,
+                     BET = bet,
+                     TOTAL = total)
     as.data.frame(dataframe)
   }
 }
