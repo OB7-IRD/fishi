@@ -294,7 +294,7 @@ catch_per_unit_effort <- function(dataframe1,
   } else if (graph_type == "table") {
     dataframe <- round(dataframe, 2)
     dataframe <- dataframe %>%
-      dplyr::reframe(Year = year,
+      dplyr::rename(Year = year,
                      YFT = yft,
                      SKJ = skj,
                      BET = bet,

@@ -307,7 +307,7 @@ catch_per_searching_day <- function(dataframe1,
   } else if (graph_type == "table") {
     dataframe <- round(dataframe, 2)
     dataframe <- dataframe %>%
-      dplyr::summarise(Year = year,
+      dplyr::rename(Year = year,
                        YFT = yft,
                        SKJ = skj,
                        BET = bet,
