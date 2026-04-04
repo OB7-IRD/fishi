@@ -12,7 +12,7 @@ percentage_coverage(
 )
 }
 \arguments{
-\item{dataframe}{{\link[base]{data.frame}} expected. 'Csv' or 'output' of the function {\link[furdeb]{data_extraction}}, which must be done before using the bio_size_tuna() function.}
+\item{dataframe}{{\link[base]{data.frame}} expected. 'Csv' or 'output' of the function {\link[furdeb]{data_extraction}}, which must be done before using the `percentage_coverage()` function.}
 
 \item{report_year}{{\link[base]{integer}} expected. Year of the statistical report.}
 

@@ -1,7 +1,7 @@
 #' @name percentage_coverage
 #' @title Percentage of well cover
 #' @description Percentage of well cover
-#' @param dataframe {\link[base]{data.frame}} expected. 'Csv' or 'output' of the function {\link[furdeb]{data_extraction}}, which must be done before using the bio_size_tuna() function.
+#' @param dataframe {\link[base]{data.frame}} expected. 'Csv' or 'output' of the function {\link[furdeb]{data_extraction}}, which must be done before using the `percentage_coverage()` function.
 #' @param report_year {\link[base]{integer}} expected. Year of the statistical report.
 #' @param vesseltype {\link[base]{character}} expected. 'SV', 'BB' and/or 'PS'. PS by default.
 #' @param ocean {\link[base]{character}} expected. 'Atlantic' or 'Indian'. Atlantic by default.

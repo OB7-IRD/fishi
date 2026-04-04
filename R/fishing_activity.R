@@ -31,17 +31,17 @@ fishing_activity <- function(dataframe,
   total_set <- NULL
   positive_set <- NULL
   school_type <- NULL
-  l_total <- NULL
-  a_total <- NULL
-  f_total <- NULL
+  FOB_total <- NULL
+  all_total <- NULL
+  FSC_total <- NULL
   nb_sets <- NULL
   type <- NULL
   `%_log` <- NULL
   time_period <- NULL
   year <- NULL
-  l_null <- NULL
-  a_null <- NULL
-  f_null <- NULL
+  FOB_null <- NULL
+  all_null <- NULL
+  FSC_null <- NULL
   # 1 - Arguments verification ----
   if (codama::r_type_checking(r_object = graph_type,
                               type = "character",
@@ -64,33 +64,33 @@ fishing_activity <- function(dataframe,
   # db a1 - Add : Number of total, positive, and null sets by ALL
   a1 <- fishing_activity_t1 %>%
     dplyr::group_by(year) %>%
-    dplyr::summarise(a_total = sum(total_set,
+    dplyr::summarise(all_total = sum(total_set,
                                    na.rm = TRUE),
-                     a_positive = sum(positive_set,
+                     all_positive = sum(positive_set,
                                       na.rm = TRUE),
-                     a_null = sum(total_set - positive_set,
+                     all_null = sum(total_set - positive_set,
                                   na.rm = TRUE),
                      .groups = "drop")
   # db a2 - Add : Number of total, positive, and null sets by FOB
   a2 <- fishing_activity_t1 %>%
     dplyr::filter(school_type %in% "FOB") %>%
     dplyr::group_by(year) %>%
-    dplyr::summarise(l_total = sum(total_set,
+    dplyr::summarise(FOB_total = sum(total_set,
                                    na.rm = TRUE),
-                     l_positive = sum(positive_set,
+                     FOB_positive = sum(positive_set,
                                       na.rm = TRUE),
-                     l_null = sum(total_set - positive_set,
+                     FOB_null = sum(total_set - positive_set,
                                   na.rm = TRUE),
                      .groups = "drop")
   # db a3 - Add : Number of total, positive, and null sets by FSC
   a3 <- fishing_activity_t1 %>%
     dplyr::filter(school_type %in% "FSC" | school_type %in% "UND") %>%
     dplyr::group_by(year) %>%
-    dplyr::summarise(f_total = sum(total_set,
+    dplyr::summarise(FSC_total = sum(total_set,
                                    na.rm = TRUE),
-                     f_positive = sum(positive_set,
+                     FSC_positive = sum(positive_set,
                                       na.rm = TRUE),
-                     f_null = sum(total_set - positive_set,
+                     FSC_null = sum(total_set - positive_set,
                                   na.rm = TRUE),
                      .groups = "drop")
   # Merge db by Year
@@ -99,12 +99,12 @@ fishing_activity <- function(dataframe,
   # For ggplot graph
   if (with_catch == "with") {
     table_sets <- table_sets %>%
-      dplyr::mutate("%_log" = l_total / a_total * 100)
+      dplyr::mutate("%_log" = FOB_total / all_total * 100)
     set <- as.matrix(table_sets[, c(1, 5, 8, 11)])
     t_set <- as.data.frame(set)
     t_set <- t_set %>%
-      dplyr::rename(`Free swimming schools` = l_total,
-                    `FOB-associated schools` = f_total)
+      dplyr::rename(`Free swimming schools` = FSC_total,
+                    `FOB-associated schools` = FOB_total)
     t_set_pivot <- tidyr::pivot_longer(t_set,
                                        cols = c(2:3),
                                        names_to = "type",
@@ -113,12 +113,12 @@ fishing_activity <- function(dataframe,
     name_set <- "Number of sets"
   } else if (with_catch == "without") {
     table_sets <- table_sets %>%
-      dplyr::mutate("%_log" = l_null / a_null * 100)
+      dplyr::mutate("%_log" = FOB_null / all_null * 100)
     set <- as.matrix(table_sets[, c(1, 7, 10, 11)])
     t_set <- as.data.frame(set)
     t_set <- t_set %>%
-      dplyr::rename(`Free swimming schools` = l_null,
-                    `FOB-associated schools` = f_null)
+      dplyr::rename(`Free swimming schools` = FSC_null,
+                    `FOB-associated schools` = FOB_null)
     t_set_pivot <- tidyr::pivot_longer(t_set,
                                        cols = c(2:3),
                                        names_to = "type",

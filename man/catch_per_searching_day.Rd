@@ -2,24 +2,21 @@
 % Please edit documentation in R/catch_per_searching_day.R
 \name{catch_per_searching_day}
 \alias{catch_per_searching_day}
-\title{Annual number of catch per positive set}
+\title{Annual catch rates (in t per searching day)}
 \usage{
 catch_per_searching_day(
-  dataframe1,
-  dataframe2,
+  dataframe,
   fishing_type,
   graph_type = "plot",
   title = FALSE
 )
 }
 \arguments{
-\item{dataframe1}{{\link[base]{data.frame}} expected. 'Csv' or 'output' of the function {\link[furdeb]{data_extraction}}, which must be done before using the catch_per_searching_day() function.}
+\item{dataframe}{{\link[base]{data.frame}} expected. 'Csv' or 'output' of the function {\link[furdeb]{data_extraction}}, which must be done before using the query named "balbaya_catch_effort.sql".}
 
-\item{dataframe2}{{\link[base]{data.frame}} expected. 'Csv' or 'output' of the function {\link[furdeb]{data_extraction}}, which must be done before using the catch_per_searching_day() function.}
+\item{fishing_type}{{\link[base]{character}} expected. 'FOB' or 'FSC'.}
 
-\item{fishing_type}{{\link[base]{character}} expected. 'FOB' and 'FSC'.}
-
-\item{graph_type}{{\link[base]{character}} expected. 'plot', 'plotly' or 'table'. Plot by default.}
+\item{graph_type}{{\link[base]{character}} expected. 'plot', 'plotly' or 'table.' Plot by default.}
 
 \item{title}{TRUE or FALSE expected. Title for plotly graph_type. False by default.}
 }
@@ -27,26 +24,17 @@ catch_per_searching_day(
 The function return ggplot R plot.
 }
 \description{
-Annual number of catch per positive set on FOB-associated and free-swimming schools.
+Annual catch rates (in t per searching day) on FOB- associated and free-swimming tuna schools (FSC).
 }
 \details{
 The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:
-
-Dataframe 1:
+Dataframe :
 \preformatted{
    activity_date | species_code | school_type | set_duration | positive_set | total_set | total_catch_weight | total_hour_fished
    -------------------------------------------------------------------------------------------------------------------------------
    1999-07-09    | 2            | FOB         | 3.54         | 1            | 1         | 119.0              | 12.1
    1999-07-09    | 1            | FOB         | 3.54         | 1            | 1         | 20.6               | 12.1
    1999-07-09    | 1            | FOB         | 3.54         | 1            | 1         | 24.4               | 12.1
-}
-Dataframe 2:
-\preformatted{
-   activity_date | school_type | set_duration | positive_set | total_set | total_hour_fished
-   -----------------------------------------------------------------------------------------
-   2010-03-06    | FOB         | 0            | 0            | 0         |  1.00
-   2010-12-04    | FOB         | 0            | 0            | 0         | 11.8
-   2010-05-19    | FOB         | 0            | 0            | 0         |  2.05
 }
 Add these columns for an automatic title (optional):
 \itemize{

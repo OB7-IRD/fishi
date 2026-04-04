@@ -74,7 +74,7 @@ fishery_production <- function(dataframe,
   # 2 - Data design ----
   # Add columns year, school type and species
   fishery_production_t1 <- dataframe %>%
-    dplyr::mutate(year = lubridate::year(x = activity_date),
+    dplyr::mutate(year = as.integer(lubridate::year(x = activity_date)),
                   school_type = dplyr::case_when(school_type == "UND" ~ "free",
                                                  school_type == "FSC"  ~ "free",
                                                  school_type == "FOB"  ~ "log",
@@ -274,7 +274,7 @@ fishery_production <- function(dataframe,
   } else if (graph_type == "table") {
     table_catch_all <- round(table_catch_all, 0)
     table_catch_all <- table_catch_all %>%
-      dplyr::summarise(Year = year,
+      dplyr::reframe(Year = year,
                        YFT = YFT,
                        SKJ = SKJ,
                        BET = BET,
@@ -284,13 +284,13 @@ fishery_production <- function(dataframe,
     as.data.frame(table_catch_all)
   } else if (graph_type == "percentage") {
     table_catch_all <- table_catch_all %>%
-      dplyr::summarise(Year = year,
-                       YFT = YFT / total * 100,
-                       SKJ = SKJ / total * 100,
-                       BET = BET / total * 100,
-                       ALB = ALB / total * 100,
-                       OTH = OTH / total * 100,
-                       TOTAL = total)
+      dplyr::reframe(Year = year,
+                     YFT = YFT / total * 100,
+                     SKJ = SKJ / total * 100,
+                     BET = BET / total * 100,
+                     ALB = ALB / total * 100,
+                     OTH = OTH / total * 100,
+                     TOTAL = total)
     table_catch_all <- round(table_catch_all, 1)
     table_catch_all$TOTAL <- round(table_catch_all$TOTAL, 0)
     as.data.frame(table_catch_all)
