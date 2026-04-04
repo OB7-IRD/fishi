@@ -59,13 +59,9 @@ fishing_capacity <- function(dataframe,
     dplyr::reframe(year = lubridate::year(x = activity_date),
                    month = lubridate::month(x = activity_date),
                    tons_month = (catch * 0.7) / 12,
-                   tons = catch * 0.7)
-  # Remove duplicates
-  fishing_capacity_t1 <- unique(fishing_capacity_t1[, c("year",
-                                                        "month",
-                                                        "keel_code",
-                                                        "tons",
-                                                        "tons_month")])
+                   tons = catch * 0.7) %>%
+    dplyr::distinct() # Remove duplicates
+
   # Add columns cc and keel_code_nb_month
   fishing_capacity_t2 <- fishing_capacity_t1 %>%
     dplyr::group_by(year,
@@ -83,8 +79,8 @@ fishing_capacity <- function(dataframe,
                                 na.rm = TRUE),
                    "cc" = sum(cc,
                               na.rm = TRUE),
-                   "keel_code_nb_months" = dplyr::n_distinct(keel_code_nb_months,
-                                                             na.rm = TRUE))
+                   "keel_code_nb_months" = sum(keel_code_nb_months,
+                                               na.rm = TRUE))
   # Number of ships per category
   fishing_capacity_t3 <- fishing_capacity_t2 %>%
     dplyr::group_by(year) %>%

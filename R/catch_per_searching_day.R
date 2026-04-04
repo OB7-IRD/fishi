@@ -1,29 +1,19 @@
 #' @name catch_per_searching_day
-#' @title Annual number of catch per positive set
-#' @description Annual number of catch per positive set on FOB-associated and free-swimming schools.
-#' @param dataframe1 {\link[base]{data.frame}} expected. 'Csv' or 'output' of the function {\link[furdeb]{data_extraction}}, which must be done before using the catch_per_searching_day() function.
-#' @param dataframe2 {\link[base]{data.frame}} expected. 'Csv' or 'output' of the function {\link[furdeb]{data_extraction}}, which must be done before using the catch_per_searching_day() function.
-#' @param fishing_type {\link[base]{character}} expected. 'FOB' and 'FSC'.
-#' @param graph_type {\link[base]{character}} expected. 'plot', 'plotly' or 'table'. Plot by default.
+#' @title  Annual catch rates (in t per searching day)
+#' @description Annual catch rates (in t per searching day) on FOB- associated and free-swimming tuna schools (FSC).
+#' @param dataframe {\link[base]{data.frame}} expected. 'Csv' or 'output' of the function {\link[furdeb]{data_extraction}}, which must be done before using the query named "balbaya_catch_effort.sql".
+#' @param fishing_type {\link[base]{character}} expected. 'FOB' or 'FSC'.
+#' @param graph_type {\link[base]{character}} expected. 'plot', 'plotly' or 'table.' Plot by default.
 #' @param title TRUE or FALSE expected. Title for plotly graph_type. False by default.
 #' @details
 #' The input dataframe must contain all these columns for the function to work [\href{https://ob7-ird.github.io/fishi/articles/Db_and_csv.html}{see referentials}]:
-#'
-#' Dataframe 1:
+#' Dataframe :
 #' \preformatted{
 #'    activity_date | species_code | school_type | set_duration | positive_set | total_set | total_catch_weight | total_hour_fished
 #'    -------------------------------------------------------------------------------------------------------------------------------
 #'    1999-07-09    | 2            | FOB         | 3.54         | 1            | 1         | 119.0              | 12.1
 #'    1999-07-09    | 1            | FOB         | 3.54         | 1            | 1         | 20.6               | 12.1
 #'    1999-07-09    | 1            | FOB         | 3.54         | 1            | 1         | 24.4               | 12.1
-#' }
-#' Dataframe 2:
-#' \preformatted{
-#'    activity_date | school_type | set_duration | positive_set | total_set | total_hour_fished
-#'    -----------------------------------------------------------------------------------------
-#'    2010-03-06    | FOB         | 0            | 0            | 0         |  1.00
-#'    2010-12-04    | FOB         | 0            | 0            | 0         | 11.8
-#'    2010-05-19    | FOB         | 0            | 0            | 0         |  2.05
 #' }
 #' Add these columns for an automatic title (optional):
 #' \itemize{
@@ -33,24 +23,22 @@
 #' }
 #' @return The function return ggplot R plot.
 #' @export
-catch_per_searching_day <- function(dataframe1,
-                                    dataframe2,
-                                    fishing_type,
-                                    graph_type = "plot",
-                                    title = FALSE) {
+catch_per_searching_day <- function(dataframe,
+                                  fishing_type,
+                                  graph_type = "plot",
+                                  title = FALSE) {
   # 0 - Global variables assignement ----
   activity_date <- NULL
-  year <- NULL
+  total_hour_fished <- NULL
+  set_duration <- NULL
   yft <- NULL
+  t_recherche <- NULL
   skj <- NULL
   bet <- NULL
   alb <- NULL
   total <- NULL
-  school_type <- NULL
-  positive_set <- NULL
-  total_set <- NULL
-  nb_sets_pos <- NULL
   time_period <- NULL
+  year <- NULL
   # 1 - Arguments verification ----
   if (codama::r_type_checking(r_object = fishing_type,
                               type = "character",
@@ -73,26 +61,26 @@ catch_per_searching_day <- function(dataframe1,
                                    type = "logical",
                                    output = "message"))
   }
-  # 2 - Data extraction ---
-  # 2 - Data design ----
-  # Creation of t0 database from dataframe2
-  # Add columns nb_sets_pos and nb_sets
-  dataframe1 <-  dataframe1 %>%
+  # Add column checking codama ------
+
+  # 2 - Data extraction ----
+  # 3.a - Data design for FOB----
+  #Creation of t0
+  dataframe <-  dataframe %>%
     dplyr::mutate(year = lubridate::year(x = activity_date))
-  dataframe2 <-  dataframe2 %>%
-    dplyr::mutate(year = lubridate::year(x = activity_date))
-  t0 <- dataframe2 %>%
-    dplyr::filter(school_type %in% "FOB") %>%
+  ocean_code <- dataframe$ocean_code[1]
+  if (ocean_code == 1) {
+    set_time <- as.integer(x = 12)
+  } else if (ocean_code == 2) {
+    set_time <- as.integer(x = 13)
+  }
+  t0 <- dataframe %>%
     dplyr::group_by(year) %>%
-    dplyr::summarise(nb_sets_pos = sum(positive_set,
-                                       na.rm = TRUE),
-                     nb_sets = sum(total_set,
-                                   na.rm = TRUE),
+    dplyr::summarise(t_peche = sum(total_hour_fished, na.rm = TRUE),
+                     t_recherche = sum(total_hour_fished - set_duration, na.rm = TRUE),
                      .groups = "drop")
-  #FOB
-  # Creation of t1 database from dataframe1
-  # Add columns species from fob school (school_type 1)
-  t1 <- dataframe1 %>%
+  #Creation of t1 database from dataframe
+  t1 <- dataframe %>%
     dplyr::group_by(year) %>%
     dplyr::summarise(yft = sum(dplyr::case_when(school_type %in% "FOB" & species_code == 1 ~ total_catch_weight,
                                                 TRUE ~ 0), na.rm = TRUE),
@@ -106,29 +94,25 @@ catch_per_searching_day <- function(dataframe1,
                                                   TRUE ~ 0), na.rm = TRUE),
                      .groups = "drop")
   #merge t0 and t1
-  table_cpue_fad_set <- merge(t0, t1, by = "year")
+  table_cpue_fad <- merge(t0, t1, by = "year")
   #final table
-  table_cpue_fad_set <- table_cpue_fad_set %>%
+  table_cpue_fad <- table_cpue_fad %>%
     dplyr::reframe(year = year,
-                   yft = (yft / nb_sets_pos),
-                   skj = (skj / nb_sets_pos),
-                   bet = (bet / nb_sets_pos),
-                   ALB = (alb / nb_sets_pos),
-                   total = (total / nb_sets_pos))
-  #FSC
-  #Creation of t2 database from dataframe2
-  # Add columns nb_sets_pos and nb_sets
-  t2 <- dataframe2 %>%
-    dplyr::filter(school_type %in% "FSC" | school_type %in% "UND") %>%
+                   yft = (yft / (t_recherche / set_time)),
+                   skj = (skj / (t_recherche / set_time)),
+                   bet = (bet / (t_recherche / set_time)),
+                   ALB = (alb / (t_recherche / set_time)),
+                   total = (total / (t_recherche / set_time)))
+  # 3.b - Data design for FSC----
+  #Creation of t2 database from dataframe
+  t2 <- dataframe %>%
     dplyr::group_by(year) %>%
-    dplyr::summarise(nb_sets_pos = sum(positive_set,
+    dplyr::summarise(t_peche = sum(total_hour_fished, na.rm = TRUE),
+                     t_recherche = sum(total_hour_fished - set_duration,
                                        na.rm = TRUE),
-                     nb_sets = sum(total_set,
-                                   na.rm = TRUE),
                      .groups = "drop")
-  #Creation of t1 database from dataframe1
-  # Add columns species from fsc school (school_type 2 et 3)
-  t3 <- dataframe1 %>%
+  #Creation of t3 database from dataframe
+  t3 <- dataframe %>%
     dplyr::group_by(year) %>%
     dplyr::summarise(yft = sum(dplyr::case_when(school_type %in% c("FSC", "UND") & species_code == 1 ~ total_catch_weight,
                                                 TRUE ~ 0), na.rm = TRUE),
@@ -142,56 +126,56 @@ catch_per_searching_day <- function(dataframe1,
                                                   TRUE ~ 0), na.rm = TRUE),
                      .groups = "drop")
   #merge t2 and t3
-  table_cpue_fsc_set <- merge(t2, t3, by = "year")
+  table_cpue_fsc <- merge(t2, t3, by = "year")
   #final table
-  table_cpue_fsc_set <- table_cpue_fsc_set %>%
+  table_cpue_fsc <- table_cpue_fsc %>%
     dplyr::reframe(year = year,
-                   yft = (yft / nb_sets_pos),
-                   skj = (skj / nb_sets_pos),
-                   bet = (bet / nb_sets_pos),
-                   ALB = (alb / nb_sets_pos),
-                   total = (total / nb_sets_pos))
-  # round values
-  table_cpue_fad_set$yft <- round(table_cpue_fad_set$yft, 3)
-  table_cpue_fad_set$skj <- round(table_cpue_fad_set$skj, 3)
-  table_cpue_fad_set$bet <- round(table_cpue_fad_set$bet, 3)
-  table_cpue_fad_set$ALB <- round(table_cpue_fad_set$ALB, 3)
-  table_cpue_fad_set$total <- round(table_cpue_fad_set$total, 3)
-  # round values
-  table_cpue_fsc_set$yft <- round(table_cpue_fsc_set$yft, 3)
-  table_cpue_fsc_set$skj <- round(table_cpue_fsc_set$skj, 3)
-  table_cpue_fsc_set$bet <- round(table_cpue_fsc_set$bet, 3)
-  table_cpue_fsc_set$ALB <- round(table_cpue_fsc_set$ALB, 3)
-  table_cpue_fsc_set$total <- round(table_cpue_fsc_set$total, 3)
-  # 3 - Legend design ----
+                   yft = (yft / (t_recherche / set_time)),
+                   skj = (skj / (t_recherche / set_time)),
+                   bet = (bet / (t_recherche / set_time)),
+                   ALB = (alb / (t_recherche / set_time)),
+                   total = (total / (t_recherche / set_time)))
+  # 4 - Legend design ----
   if (title == TRUE) {
     #Ocean
-    ocean_legend <- code_manipulation(data         = dataframe1$ocean_code,
+    ocean_legend <- code_manipulation(data         = dataframe$ocean_code,
                                       referential  = "ocean",
                                       manipulation = "legend")
     #country
-    country_legend <- code_manipulation(data         = dataframe1$country_code,
+    country_legend <- code_manipulation(data         = dataframe$country_code,
                                         referential  = "country",
                                         manipulation = "legend")
     #vessel
-    vessel_type_legend <- code_manipulation(data         = dataframe1$vessel_type_code,
+    vessel_type_legend <- code_manipulation(data         = dataframe$vessel_type_code,
                                             referential  = "vessel_simple_type",
                                             manipulation = "legend")
-    time_period <- c(unique(min(dataframe1$year):max(dataframe1$year)))
+    time_period <- c(unique(min(dataframe$year):max(dataframe$year)))
   }
-  # 4 - Graphic design ----
-  graphics::par(mar = c(4, 4.7, 4.1, 1.5))
-  # Define the positions of the x-axis tick marks
+  # 5 - Graphic design ----
+  # round values
+  table_cpue_fad$yft <- round(table_cpue_fad$yft, 3)
+  table_cpue_fad$skj <- round(table_cpue_fad$skj, 3)
+  table_cpue_fad$bet <- round(table_cpue_fad$bet, 3)
+  table_cpue_fad$ALB <- round(table_cpue_fad$ALB, 3)
+  table_cpue_fad$total <- round(table_cpue_fad$total, 3)
+  # round values
+  table_cpue_fsc$yft <- round(table_cpue_fsc$yft, 3)
+  table_cpue_fsc$skj <- round(table_cpue_fsc$skj, 3)
+  table_cpue_fsc$bet <- round(table_cpue_fsc$bet, 3)
+  table_cpue_fsc$ALB <- round(table_cpue_fsc$ALB, 3)
+  table_cpue_fsc$total <- round(table_cpue_fsc$total, 3)
+  # Fishing type
   if (fishing_type == "FOB") {
     label_ft <- " (FOB) "
-    dataframe <- table_cpue_fad_set
+    dataframe <- table_cpue_fad
   } else if (fishing_type == "FSC") {
     label_ft <- " (FSC) "
-    dataframe <- table_cpue_fsc_set
+    dataframe <- table_cpue_fsc
   }
+  # plot
   ggplot_graph <- ggplot2::ggplot(data = dataframe) +
     # Theme and background
-    ggplot2::geom_hline(yintercept = c(30, 20, 10, 0),
+    ggplot2::geom_hline(yintercept = c(40, 30, 20, 15, 10, 5),
                         color = "grey",
                         linetype = "longdash",
                         alpha = 0.5) +
@@ -246,56 +230,48 @@ catch_per_searching_day <- function(dataframe1,
                                            "Bigeye" = 2,
                                            "Total" = 16)) +
     ggplot2::labs(x = "",
-                  y = "Catch (t) per positive set",
-                  color = "") +
+                  y = "Catch per unit effort (t/d)") +
     ggplot2::ylim(0, max(dataframe$total)) +
     ggplot2::guides(shape = ggplot2::guide_legend(title = NULL)) +
-    ggplot2::annotate("text", x = max(dataframe$year) - 1.5,
+    ggplot2::annotate("text",
+                      x = 1994,
                       y = max(dataframe$total) - 1,
                       label = label_ft,
                       hjust = 1.2,
-                      vjust = 0.9,
+                      vjust = 0.002,
                       size = 5,
                       color = "black") +
     ggplot2::scale_x_continuous(breaks = unique(dataframe$year))
   # Add title conditionally
   if (title == TRUE) {
+    title <- paste0("Annual catch rates (in t per searching day) of the ",
+                    country_legend,
+                    " ",
+                    vessel_type_legend,
+                    " fishing fleet on ",
+                    "\n",
+                    fishing_type,
+                    " fishing",
+                    "mode schools in the ",
+                    ocean_legend,
+                    " ocean during ",
+                    min(time_period),
+                    "-",
+                    max(time_period),
+                    ".")
     ggplot_graph <- ggplot_graph +
-      ggplot2::ggtitle(paste0("Annual number of catch per positive set on ",
-                              fishing_type,
-                              " fishing mode schools for the ",
-                              country_legend,
-                              "\n",
-                              vessel_type_legend,
-                              " fishing fleet in the ",
-                              ocean_legend,
-                              " ocean during ",
-                              min(time_period),
-                              "-",
-                              max(time_period),
-                              "."))
+      ggplot2::ggtitle(title)
   }
   if (graph_type == "plot") {
     return(ggplot_graph)
   } else if (graph_type == "plotly") {
+    # Plotly
     plotly_graph <- plotly::ggplotly(ggplot_graph)
     # Add a title
     if (title == TRUE) {
       plotly_graph <- plotly_graph %>%
-        plotly::layout(title = list(text = paste0("Annual number of catch per positive set on ",
-                                                  fishing_type,
-                                                  " fishing mode schools for the ",
-                                                  country_legend,
-                                                  "\n",
-                                                  vessel_type_legend,
-                                                  " fishing fleet in the ",
-                                                  ocean_legend,
-                                                  " ocean during ",
-                                                  min(time_period),
-                                                  "-",
-                                                  max(time_period),
-                                                  "."),
-                                    font = list(size = 17)),
+        plotly::layout(title = list(text = title,
+                                    font = list(size = 15)),
                        margin = list(t = 120))
 
     }
@@ -307,11 +283,11 @@ catch_per_searching_day <- function(dataframe1,
   } else if (graph_type == "table") {
     dataframe <- round(dataframe, 2)
     dataframe <- dataframe %>%
-      dplyr::summarise(Year = year,
-                       YFT = yft,
-                       SKJ = skj,
-                       BET = bet,
-                       TOTAL = total)
+      dplyr::rename(Year = year,
+                    YFT = yft,
+                    SKJ = skj,
+                    BET = bet,
+                    TOTAL = total)
     as.data.frame(dataframe)
   }
 }
