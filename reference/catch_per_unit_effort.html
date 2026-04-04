@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">fishi</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.9.6</span>
       </span>
     </div>
 
@@ -78,8 +78,7 @@
 
     <div id="ref-usage">
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">catch_per_unit_effort</span><span class="op">(</span></span>
-<span>  <span class="va">dataframe1</span>,</span>
-<span>  <span class="va">dataframe2</span>,</span>
+<span>  <span class="va">dataframe</span>,</span>
 <span>  <span class="va">fishing_type</span>,</span>
 <span>  graph_type <span class="op">=</span> <span class="st">"plot"</span>,</span>
 <span>  title <span class="op">=</span> <span class="cn">FALSE</span></span>
@@ -90,12 +89,8 @@
     <h2>Arguments</h2>
 
 
-<dl><dt id="arg-dataframe-">dataframe1<a class="anchor" aria-label="anchor" href="#arg-dataframe-"></a></dt>
-<dd><p><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a> expected. 'Csv' or 'output' of the function data_extraction, which must be done before using the catch_per_searching_day() function.</p></dd>
-
-
-<dt id="arg-dataframe-">dataframe2<a class="anchor" aria-label="anchor" href="#arg-dataframe-"></a></dt>
-<dd><p><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a> expected. 'Csv' or 'output' of the function data_extraction, which must be done before using the catch_per_searching_day() function.</p></dd>
+<dl><dt id="arg-dataframe">dataframe<a class="anchor" aria-label="anchor" href="#arg-dataframe"></a></dt>
+<dd><p><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a> expected. 'Csv' or 'output' of the function data_extraction, which must be done before using the query named "balbaya_catch_effort.sql".</p></dd>
 
 
 <dt id="arg-fishing-type">fishing_type<a class="anchor" aria-label="anchor" href="#arg-fishing-type"></a></dt>
@@ -117,19 +112,12 @@
     <div id="details">
     <h2>Details</h2>
     <p>The input dataframe must contain all these columns for the function to work [<a href="https://ob7-ird.github.io/fishi/articles/Db_and_csv.html">see referentials</a>]:
-Dataframe 1:</p><div class="sourceCode"><pre><code><span></span>
+Dataframe :</p><div class="sourceCode"><pre><code><span></span>
 <span>   <span class="va">activity_date</span> <span class="op">|</span> <span class="va">species_code</span> <span class="op">|</span> <span class="va">school_type</span> <span class="op">|</span> <span class="va">set_duration</span> <span class="op">|</span> <span class="va">positive_set</span> <span class="op">|</span> <span class="va">total_set</span> <span class="op">|</span> <span class="va">total_catch_weight</span> <span class="op">|</span> <span class="va">total_hour_fished</span></span>
 <span>   <span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span></span>
 <span>   <span class="fl">1999</span><span class="op">-</span><span class="fl">07</span><span class="op">-</span><span class="fl">09</span>    <span class="op">|</span> <span class="fl">2</span>            <span class="op">|</span> <span class="va">FOB</span>         <span class="op">|</span> <span class="fl">3.54</span>         <span class="op">|</span> <span class="fl">1</span>            <span class="op">|</span> <span class="fl">1</span>         <span class="op">|</span> <span class="fl">119.0</span>              <span class="op">|</span> <span class="fl">12.1</span></span>
 <span>   <span class="fl">1999</span><span class="op">-</span><span class="fl">07</span><span class="op">-</span><span class="fl">09</span>    <span class="op">|</span> <span class="fl">1</span>            <span class="op">|</span> <span class="va">FOB</span>         <span class="op">|</span> <span class="fl">3.54</span>         <span class="op">|</span> <span class="fl">1</span>            <span class="op">|</span> <span class="fl">1</span>         <span class="op">|</span> <span class="fl">20.6</span>               <span class="op">|</span> <span class="fl">12.1</span></span>
-<span>   <span class="fl">1999</span><span class="op">-</span><span class="fl">07</span><span class="op">-</span><span class="fl">09</span>    <span class="op">|</span> <span class="fl">1</span>            <span class="op">|</span> <span class="va">FOB</span>         <span class="op">|</span> <span class="fl">3.54</span>         <span class="op">|</span> <span class="fl">1</span>            <span class="op">|</span> <span class="fl">1</span>         <span class="op">|</span> <span class="fl">24.4</span>               <span class="op">|</span> <span class="fl">12.1</span></span></code></pre></div>
-
-<p>Dataframe 2:</p><div class="sourceCode"><pre><code><span></span>
-<span>   <span class="va">activity_date</span> <span class="op">|</span> <span class="va">school_type</span> <span class="op">|</span> <span class="va">set_duration</span> <span class="op">|</span> <span class="va">positive_set</span> <span class="op">|</span> <span class="va">total_set</span> <span class="op">|</span> <span class="va">total_hour_fished</span></span>
-<span>   <span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span><span class="op">-</span></span>
-<span>   <span class="fl">2010</span><span class="op">-</span><span class="fl">03</span><span class="op">-</span><span class="fl">06</span>    <span class="op">|</span> <span class="va">FOB</span>         <span class="op">|</span> <span class="fl">0</span>            <span class="op">|</span> <span class="fl">0</span>            <span class="op">|</span> <span class="fl">0</span>         <span class="op">|</span>  <span class="fl">1.00</span></span>
-<span>   <span class="fl">2010</span><span class="op">-</span><span class="fl">12</span><span class="op">-</span><span class="fl">04</span>    <span class="op">|</span> <span class="va">FOB</span>         <span class="op">|</span> <span class="fl">0</span>            <span class="op">|</span> <span class="fl">0</span>            <span class="op">|</span> <span class="fl">0</span>         <span class="op">|</span> <span class="fl">11.8</span></span>
-<span>   <span class="fl">2010</span><span class="op">-</span><span class="fl">05</span><span class="op">-</span><span class="fl">19</span>    <span class="op">|</span> <span class="va">FOB</span>         <span class="op">|</span> <span class="fl">0</span>            <span class="op">|</span> <span class="fl">0</span>            <span class="op">|</span> <span class="fl">0</span>         <span class="op">|</span>  <span class="fl">2.05</span></span></code></pre></div><p>Add these columns for an automatic title (optional):</p><ul><li><p><code>  country_code</code></p></li>
+<span>   <span class="fl">1999</span><span class="op">-</span><span class="fl">07</span><span class="op">-</span><span class="fl">09</span>    <span class="op">|</span> <span class="fl">1</span>            <span class="op">|</span> <span class="va">FOB</span>         <span class="op">|</span> <span class="fl">3.54</span>         <span class="op">|</span> <span class="fl">1</span>            <span class="op">|</span> <span class="fl">1</span>         <span class="op">|</span> <span class="fl">24.4</span>               <span class="op">|</span> <span class="fl">12.1</span></span></code></pre></div><p>Add these columns for an automatic title (optional):</p><ul><li><p><code>  country_code</code></p></li>
 <li><p><code>  ocean_code</code></p></li>
 <li><p><code>  vessel_type_code</code></p></li>
 </ul></div>
@@ -142,11 +130,11 @@ Dataframe 1:</p><div class="sourceCode"><pre><code><span></span>
 
 
       <footer><div class="copyright">
-  <p></p><p>Developed by Clara Lerebourg, Julien Lebranchu, Mathieu Depetris, Antoine Duparc, Taha Imzilen, IRD - Ob7 Observatory of Exploited Tropical Pelagic Ecosystems.</p>
+  <p></p><p>Developed by Clara Lerebourg, Julien Lebranchu, Mathieu Depetris, Antoine Duparc, Taha Imzilen, Jeanne Clément, IRD - Ob7 Observatory of Exploited Tropical Pelagic Ecosystems.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
       </footer></div>
