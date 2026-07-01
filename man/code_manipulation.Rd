@@ -22,9 +22,9 @@ Code manipulation for ouput use in the graphic legend, color or modalities displ
 \details{
 So far, referential available are:
 \itemize{
- \item{country: }{code, name and color of countries}
- \item{ocean: }{code, name and color of oceans}
- \item{vessel_simple_type: }{code, name and color of simplified vessel type}
- \item{specie: }{code, name and color of species}
+ \item{country: code, name and color of countries}
+ \item{ocean: code, name and color of oceans}
+ \item{vessel_simple_type: code, name and color of simplified vessel type}
+ \item{specie: code, name and color of species}
 }
 }

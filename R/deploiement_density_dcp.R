@@ -33,8 +33,11 @@ deploiement_density_dcp <- function(dataframe) {
   }
   func_plot_density_dep <- function(dt, yr) {
     data <- dt %>%
-      dplyr::filter(activity_date == !!yr)
-
+      dplyr::filter(activity_date == !!yr) %>%
+    # For legend scale
+    dplyr::mutate(count=ifelse(count >125,
+                               125,
+                               count))
     p <- ggplot2::ggplot() +
       ggplot2::geom_sf(data = rnaturalearth::ne_countries(returnclass = "sf"),
                        fill = "gray90",
@@ -53,30 +56,35 @@ deploiement_density_dcp <- function(dataframe) {
                        ggplot2::aes(fill = count),
                        lwd = 0,
                        color = NA) +
-      ggplot2::scale_fill_gradient(low = "#CCFFFF",
-                                   high = "#000033") +
+      ggplot2::scale_fill_gradientn(colors=c("#CCFFFF","skyblue2",
+                                             "dodgerblue4",
+                                             "midnightblue","#000033"),
+                                   breaks=c(0, 25, 50, 75, 100, 125),
+                                   labels=c("0",  "25", "50",
+                                            "75","100", ">125"),
+                                   limits=c(0, 125)) +
       ggplot2::coord_sf(xlim = ocean_xlim,
                         ylim = ocean_ylim) +
       ggplot2::theme(legend.position = c(0.17,
                                          0.29),
-                     legend.key.size = ggplot2::unit(0.27,
+                     legend.key.size = ggplot2::unit(0.65,
                                                      "cm"),
-                     legend.key.width = ggplot2::unit(.27,
+                     legend.key.width = ggplot2::unit(0.35,
                                                       "cm"),
                      plot.title = ggplot2::element_text(hjust = 0.5,
                                                         color = "black",
-                                                        size = 8,
+                                                        size = 12,
                                                         face = "bold"),
                      plot.subtitle = ggplot2::element_text(color = "blue"),
                      plot.caption = ggplot2::element_text(color = "black"),
-                     legend.text = ggplot2::element_text(size = 6),
+                     legend.text = ggplot2::element_text(size = 7),
                      axis.text.x = ggplot2::element_text(size = 6),
                      axis.text.y = ggplot2::element_text(size = 6),
                      plot.margin = ggplot2::unit(c(0.5, 0.5, 0.5, 0.5),
                                                  "lines")) +
       ggplot2::guides(fill = ggplot2::guide_colorbar(title = "Number",
                                                      title.position = "top",
-                                                     title.theme = ggplot2::element_text(size = 6,
+                                                     title.theme = ggplot2::element_text(size = 8,
                                                                                          face = "bold",
                                                                                          colour = "black",
                                                                                          angle = 0))) +
@@ -88,6 +96,8 @@ deploiement_density_dcp <- function(dataframe) {
                               labels = NULL,
                               widths = rep(1, length(plots)),
                               ncol = 3,
-                              nrow = 3)
+                              nrow = 3,
+                              common.legend = TRUE,
+                              legend="right")
   return(figure)
 }
